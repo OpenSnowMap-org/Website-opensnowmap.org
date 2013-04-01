@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Mapper une piste de ski de fond - Le guide du débutant</TITLE>
+    <style type="text/css">
+body{
+    margin:0px;
+    overflow:hidden;
+    padding:0px;
+    font-family:sans-serif;
+    font-size: 0.8em;
+    font-weight: 400;
+    width: 100%; height:100%;
+    color: #303030
+   }
+h1{
+       font-family:sans-serif;
+       font-size: 1.3em;
+       font-weight: 300;
+       letter-spacing: 0.1ex;
+       border:0;
+       padding: 0px;
+       margin:0
+   }
+a:link, a:visited {
+        color: #5ca5ff;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
+    
+a:hover {
+        color: #FF7800;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0px
+    }
+li{
+list-style-position:outside;
+list-style-type:disc;
+/*
+margin-left: -20px
+*/
+}
+td {
+        border:1px solid #ffffff;
+        margin: 0px;
+        padding:-10px;
+        width: 70px;
+        text-align: center
+}
+select, option{
+        background-color: #FFFFFF;
+        width: 100px;
+        font-size: 0.9em;
+        border: 1px solid #CCCCCC;
+        text-align: left;
+        margin-left: 20px
+}
+label {
+        padding:0;
+        font-size: 0.9em
+    }
+
+.clear { clear: both}
+/*use to place divs side by side*/
+#centering{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto
+}
+#center{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width:750px
+
+    }
+    </style>
+</HEAD>
+<BODY LANG="en-US">
+<div id="centering"><div id="center">
+
+<div id="title" style="width:95%;height: 60px;border: 1px solid grey;" >
+
+<img src="/pics/pistes-nordiques-238-45.png" 
+style="margin: 5px 5px 10px 5px;" ALT="align box" ALIGN="left">
+<a href="/">Retour vers la carte</a>
+
+</div>
+
+<div id="content">
+<H1 style="font-size:2em;">Mapper une piste de ski de fond - Le guide du débutant</H1>
+<P>Votre piste de ski de fond favorite n'est pas sur la carte? Voici un guide pour vous aider à l'y faire figurer.</P>
+<P> Note: L'une des politiques du projet OpenStreetMap c'est de 'taguer comme vous voulez'. Comprenez  les éléments ci-après comme la manière dont je procédes, libre à vous de faire autrement. </P>
+<div style="border: 1px solid black;background-color:#F0F0F0;">
+    <P>Note:
+    Vous êtes sur le point d'éditer OpenStreetMap. Cette base de données est libre et ouverte, mais vous devez néanmoins respecter les points suivant:</P>
+    <P><B>_N'utilisez pas des données et des cartes sous copyright. </B>
+    </BR>
+    <I>En perdant votre temps à ajouter des éléments provenant de Google Maps ou de l'IGN, vous enfreignez leur conditions d'utilisations, et votre travail finira probablement effacé d'OpenStreetMap.</P>
+    <P><B>_Ne taguez pas pour le rendu</B></BR>
+    <I>OpenSteetMap n'est pas exactement une 'carte', mais une base de données géographiques. Un logiciel de rendu est celui qui représente une carte à partie de ces données.</I></BR>
+    <I>La priorité ici est de fournir des informations à la base de données. Contactez la personne en charge du rendu sur une carte ou un site web particulier si vous pensez que la représentation des données sur sa carte est fausse ou inadéquate. Garder à l'esprit que la plupart des utilisateurs de ces cartes ne s'intéressent pas au ski de fond!</I></P>
+</div></BR>
+<ul>
+<li><a href="#first">Premier pas: enregistrez-vous sur OpenStreetMap</a>
+</li>
+<li><a href="#source">Les sources</a>
+</li>
+<li><a href="#edit">Editer la carte</a>
+</li>
+<li><a href="#tags">Les tags</a>
+</li>
+<li><a href="#modify">Un chemin est emprunté par ma piste</a>
+</li>
+<li><a href="#color">Ma piste à un nom et une couleur de balisage</a>
+</li>
+<li><a href="#rendering">Le rendu de la piste sur la carte</a>
+</li>
+<li><a href="#further">Aller plus loin avec les relations</a>
+</li>
+<li><a href="#links">Liens Utiles</a>
+</li>
+</ul>
+<!-- ############################################################### -->
+<H2 id="first"><B>Premier pas: enregistrez-vous sur OpenStreetMap</B></H2>
+<P> Pour éditer la carte, il vous faut un compte OpenStreetMap. Inscrivez-vous ici, c'est rapide et gratuit: <a href="https://www.openstreetmap.org/user/new" target="blank">https://www.openstreetmap.org/user/new</a>
+</P></BR>
+<!-- ############################################################### -->
+
+<H2 id="source"><B>Les sources</B></H2>
+<P>Pour ajouter de nouveaux chemins sur la carte, les outils d'éditions mettent à votre disposition des photographies aériennes. Celà peut être suffisant pour tracer une piste de ski de fond.
+</BR>Si par contre vous avez enregistré une trace GPX avec un GPS ou votre téléphone, c'est le moment de l'envoyer au serveur ici:
+<a href="http://www.openstreetmap.org/trace/create" target="blank">
+http://www.openstreetmap.org/trace/create</a>
+</BR>L'autre solution est d'utiliser les chemins déjà existant dans la base.</P></BR>
+<!-- ############################################################### -->
+<H2 id="edit"><B>Editer la carte</B></H2>
+<P>Pour éditer la carte, commencer par zoomer sur la zone qui vous intéresse, puis utilisez le menu 'Modifier la carte'. Vous pouvez alors choisir entre deux éditeurs en ligne, Potlatch ou Potlatch2. Vous pouvez aussi choisir de télécharger JOSM ou Merkaartor, plus complets.
+</P>
+<P>Aprenez rapidement à utiliser ces éditeurs:</P>
+<ul>
+<li><a href="http://wiki.openstreetmap.org/wiki/Beginners_Guide_1.3" target="blank">
+Basic of editing</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Beginners_Guide_1.3.2" target="blank">
+Potlatch</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Potlatch_2/Primer" target="blank">
+Potlatch2</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/JOSM/Guide" target="blank">
+JOSM</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Merkaartor" target="blank">
+Merkaartor</a></li>
+</ul>
+</P></BR>
+<!-- ############################################################### -->
+<H2 id="tags"><B>Les tags</B></H2>
+<P>En suivant les liens précédants, vous êtes désormais capable d'ajouter un chemin dans OpenStreetMap. Maintenant il s'agit d'ajouter les informations nécessaires pour en faire une piste de ski de fond.</P>
+<P>Dans OpenstreetMap vous pouvez utiliser <b>'les tags que vous voulez'</b>. Bon, pour avoir une chance de voir vos travaux sur une carte, vous pouvez aussi utiliser les tags suivants, qui sont déjà largement employés:</P>
+<P>
+</P>
+<P><B>piste:type
+= nordic</B></BR>
+piste:type est le tag destiné aux sports d'hiver: ski, raquettes, luge, traineau, ...</BR>
+'nordic' représente une piste de ski nordique, ou ski de fond, pratiqué avec des skis long et étroits.</P>
+
+<P><B>Piste:grooming
+= classic, skating, classic;skating, scooter or backcountry</B></BR>
+'Grooming', c'est le damage utilisé sur la piste: alternatif ou skating, voire les deux, ou bien si juste une motoneige passe pour damer. 'Backcountry' signifie qu'il n'y a pas de damage particulier, il faut ici faire la trace!</P>
+
+<P><B>Piste:difficulty
+= novice, easy, intermediate, advanced, expert.</B></BR>
+Ce tag n'est pas là pour mettre des couleurs sur la carte! Une piste 'facile' sur 10km peut présenter seulement 100m de descente dangereuse, c'est cette section là uniquement qui sera tagguée en 'intermediate' ou 'advandced'. Voir plus loin pour marquer les couleurs de balisage.</BR>
+La difficulté d'une piste ne dépend pas de sa longueur non plus: la longueur d'une piste est <b>visible</b> sur une carte!</P>
+<P></P>
+	<I><B>Novice
+	</B></I>
+	Piste plate, aucun effort requis (du genre pas à plus de 2km d'un chocolat chaud, ideal pour un point amenity=ski_school). </BR>
+
+	<I><B>Easy </B></I>
+	Piste normale, sections en pente courtes. </BR>
+	
+	<I><B>Intermediate </B></I>
+	Pente importante, ou passage étroits en pente. Un peu de sueur nécessaire. N'utiliser que sur les sections concernées. </BR>
+	
+	<I><B>Advanced </B></I>
+	Pente importante, avec des passage étroit ou des virage serrés, pistes souvent glacées. N'utiliser que sur les sections concernées. </BR>
+	
+	<I><B>Expert </B></I>
+	Pente importante, avec des passage étroit ou des virage serrés, pistes souvent glacées. Terrain dangeureux à proximité (falaise). N'utiliser que sur les sections concernées. </BR>
+	
+	</P>
+
+<BR>
+<!-- ############################################################### -->
+<H2 id="modify"><B>Un chemin est emprunté par ma piste</B></H2>
+
+<P>Ne superposez pas des chemins. Le même chemin peut être utilisé par différent utilisateurs, pas seulement des skieurs!</P>
+<ul>
+	<li>Couper les chemin sur les points ou il croise la piste de ski de fond.</li>
+	<li>Ajouter les tags nécessaires sur le chemin existant entre ces points (soit piste:type=nordic, …)</li>
+	<li>Assurez-vous que les chemins sont bien connectés entre eux</li>
+</ul>
+<P><IMG SRC="split_600x371.png"></P>
+
+<!-- ############################################################### -->
+<H2 id="color"><B>Ma piste à un nom et une couleur de balisage</B></H2>
+
+<P>On va pouvoir faire une super carte avec ces infos. Mais si c'est une piste 'bleue', ne lui mettez pas juste le tag 'easy'!</P>
+
+<P>On peut ajouter beaucoup plus d'information dans la base à l'aide des relations. Les relations sont un groupe de chemin et de points qui partagent des caractéristiques communes. Pour les pistes de ski de fond, il s'agit de 'routes'. </BR>
+Dans l'exemple ci-dessous, nous avons deux boucles, la piste verte et la piste violette.
+</P>
+
+<P><IMG SRC="relations_01_300x235.png"></P>
+
+<P>Dans votre editeur favori, sélectionner tout les chemins composant la piste verte et créez une relation avec les tags suivants:</BR>
+<B>type=route</B><BR>
+<B>route=piste</B><BR>
+<B>piste:type=nordic</B><BR>
+</P>
+<P>Voici une route minimale créée.
+</P>
+
+<P><B>Tags optionnels</B></BR>
+<I>name</I> = *</BR>
+<I>ref</I> = nombre</BR>
+<I>operator</I> = *</BR>
+<I>network</I> = *</BR>
+<I>description</I> = *</BR>
+<I>distance</I> = nombre
+- longueur officielle de la piste </BR><I>colour</I> = <FONT COLOR="#008000"><B>green</B></FONT>
+<I>utilisez ici un <a href="http://en.wikipedia.org/wiki/HTML_color_names" target="blank">
+code couleur</a> ou un code hexa like #FFFF00</I></BR>
+<I>symbol</I> = symbole de balisage, description </BR><I>osmc:symbol</I> = * symbole de balisage, description lisible par un logiciel (voir <a href="http://wiki.openstreetmap.org/wiki/Key:osmc:symbol" target="blank">
+Key:osmc:symbol</a>)
+</BR>
+<I>website</I> = * - adresse d'un site web (par ex. les conditions d'enneigement) </BR>
+</P>
+
+<P>Notez bien que tout les membres d'une relation de type route 'piste:type=nordic' ne sont pas forcément destiné au ski de fond. Il se peut que vous ayez à déchausser les skis pour marcher le long d'une route secondaire (highway=secondary) un moment sur une pistes particulièrement longue. Cette petite marche peut pourtant faire partie de la relation.</P>
+
+<P>Plus d'infos sur la création de relation dans différents éditeurs: 
+<a href="http://wiki.openstreetmap.org/wiki/Potlatch_1/FAQs#How_do_I_create_relations.3F" target="blank">
+Potlatch FAQ</a> - 
+<a href="http://wiki.openstreetmap.org/wiki/JOSM/Advanced_editing#Relations" target="blank">
+JOSM</a>
+</P>
+<!-- ############################################################### -->
+<H2 id="rendering">Le rendu de la piste sur la carte</H2>
+<P>C'est le role du logiciel de rendu (ou de celui qui s'en occupe) de décider comment représenter une piste.
+</BR>
+Voici trois solutions:</P>
+<TABLE WIDTH=714 style="font-size: 0.8em;">
+	<COL WIDTH=470>
+	<COL WIDTH=244>
+	<TR>
+		<TD>
+			<P>La piste verte et la piste violette peuvent se chevaucher, ou être représentées cote à cote (si vous savez comment faire, dites-le moi!)</BR>
+			<B> En aucun cas un seul chemin sur le terrain ne doit être tracé comme deux chemins superposés ou parallèles dans OpenStreetMap.</B>
+			</P>
+		</TD>
+		<TD>
+			<P>La carte peut uniquement montrer les difficultés avec des couleurs, ici les deux pistes se partagent une section 'piste:difficulty = intermediate'. 
+			</BR>
+			<B>Cette section ne peut pas être facile ET difficile.</B></P>
+		</TD>
+	</TR>
+</TABLE>
+<P><IMG SRC="relations_02_714x202.png"></P>
+<BR>
+
+<!-- ############################################################### -->
+<H2 id="further"><B>Aller plus loin avec les relations</B></H2>
+<P>D'autres informations peuvent être insérées dans une relation à l'aide des 'roles' de chacun de ses membres. </P>
+<P><B>Role = forward/backward</B></P>
+<P>Si le chemin concerné à un sens obligatoire, soit dans le sens dans lequel vous l'avez tracé ou l'inverse.</P>
+<P><B>role = link </B>
+</P>
+<P>Une liaison qui n'est pas membre de la relation, mais qui la relie au reste du 'network'.</P>
+<P><B>role = shortcut/variant</B></P>
+<P>Variantes et raccourcis</P>
+<P><B>role = start</B></P>
+<P>Points d'entrée
+</P>
+
+<BR>
+<!-- ############################################################### -->
+<H2 id="links"><B>Liens utiles</B></H2>
+<P>
+<a href="http://wiki.openstreetmap.org/wiki/FR:Beginners_Guide" target="blank">
+OSM: Guide du débutant</a></BR>
+<a href="http://wiki.openstreetmap.org/wiki/FR:Proposed_features/Piste_Maps" target="blank">
+Piste Map proposal (comment tagguer les pistes)</a></BR>
+<a href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste" target="blank">
+Route=piste proposal (how to tag pistes relations)</a></BR>
+</P>
+<BR>
+</div></div></div>
+</BODY>
+</HTML>

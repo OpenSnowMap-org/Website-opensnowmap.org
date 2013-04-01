@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+    <HTML>
+<HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <TITLE></TITLE>
+<META NAME="GENERATOR" CONTENT="elevation profile computation via mod_python">
+    <link rel="stylesheet" type="text/css" href="main.css" >
+    </HEAD>
+    <BODY LANG="fr-CH" DIR="LTR">
+<h1>Vue d'ensemble</h1>
+<font style="color: #FFB471; font-size: 3em;">&bull;</font> Zone de pistes:
+ Clicker sur le point pour zoomer plus rapidemment vers les pistes.
+<p><img src="../pics/hot16.png"> Pistes récentes:
+ Une ou plusieurs pistes ont été ajoutées récemment dans cette zone.</p>
+<h1>Mode d'affichage</h1>
+<p>
+<input type="radio" id="mode_radio1" name="radio" value="difficulty"  CHECKED  />
+<label>Difficulté</label>:
+ pour colorer les pistes selon leur 
+ <a href="http://wiki.openstreetmap.org/wiki/FR:Proposed_features/Piste_Maps#Difficult.C3.A9"
+ target="blank">
+ difficultés</a>. Dans le mode difficulté, vous pouvez sélectionner les 
+ pistes morceau par morceau pour composer votre propre topo.
+</p>
+<p>
+<input type="radio" id="mode_radio2" name="radio" value="sign_color" />
+<label>Couleur de balisage</label>:
+ les pistes sont affichées selon leur couleur de balisage. Dans ce cas, 
+vous pouvez sélectionner une piste d'un seul coup. Ce mode ne peut être
+utilisé que si les pistes sont organisées en 
+<a href="http://wiki.openstreetmap.org/wiki/Tag:route%3Dpiste" target="blank">relation</a>
+dans la base.</p>
+
+<h1>Sélection des pistes</h1>
+<p>&nbsp;&nbsp;Lorsque le facteur d'échelle est suffisant, vous pouvez sélectionner une 
+ piste avec la souris. Un clic n'importe où sur la carte efface les sélection en cours.
+ Pour sélectionner plusieurs pistes, utiliser la touche 'shift' du clavier.
+ Pour enlever une section de la sélection, uiliser la touche 'ctrl'.<br>
+&nbsp;&nbsp;Vous pouvez ainsi faire votre propre 'topo' imprimable à l'aide du lien
+ <img src='pics/print.png'>.</p>
+ <p>
+&nbsp;&nbsp;Passez en mode '<input type="radio" id="mode_radio2" name="radio" value="sign_color" />
+<label>Couleur de balisage</label>' pour sélectionner une boucle compléte.<br>
+&nbsp;&nbsp;Les boucles complètes 
+(<a href="http://wiki.openstreetmap.org/wiki/Tag:route%3Dpiste" target="blank">relation</a>)
+présentes à l'écran sont visibles à tout instant à l'aide du menu déroulant
+ en bas de l'écran :
+ <select><option>Les Prises</option><option>Le Plateau</option></select>.</p>
+
+<h1>Profil d'altitude</h1>
+ <p>
+&nbsp;&nbsp;Le profil d'altitude calculé lorsqu'une piste est sélectionné provient 
+du jeu de données SRTM du domaine public. Dans certaines zones, ces données sont 
+inexistantes. De même, elles ne sont pas disponibles au-delà de 60° de latitude. 
+</p>
+</body>
+</HTML>

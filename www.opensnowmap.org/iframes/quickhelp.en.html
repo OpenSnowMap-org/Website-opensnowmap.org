@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+    <HTML>
+<HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <TITLE></TITLE>
+<META NAME="GENERATOR" CONTENT="elevation profile computation via mod_python">
+    <link rel="stylesheet" type="text/css" href="main.css" >
+    </HEAD>
+    <BODY LANG="fr-CH" DIR="LTR">
+<h1>Overview</h1>
+<font style="color: #FFB471; font-size: 3em;">&bull;</font> Pistes area:
+ Clic on the circle to zoom faster to the pistes.
+<p><img src="../pics/hot16.png"> Recent trails:
+ One or more pistes have been recently added there.</p>
+<h1>Display Mode</h1>
+<p>
+<input type="radio" id="mode_radio1" name="radio" value="difficulty"  CHECKED  />
+<label>Difficulty</label>:
+ color the trails according to their
+ <a href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#Difficulty"
+ target="blank">
+ difficulty</a>. In the difficulty mode, you can select trails part by part 
+ to build your own topo.
+</p>
+<p>
+<input type="radio" id="mode_radio2" name="radio" value="sign_color" />
+<label>Marking color</label>:
+ trails are displayed depending on the color of the signs on the field. 
+ In that case, you can directly select a complete piste. This mode is only
+  useful if the ways are organized in
+<a href="http://wiki.openstreetmap.org/wiki/Tag:route%3Dpiste" target="blank">relations</a>
+in the database.</p>
+
+<h1>Select trails</h1>
+<p>&nbsp;&nbsp;When the zoom factor is sufficent, you can select a trail 
+with the mouse. Clicking elsewhere on the map will clear the current
+ selection set. To select several trails, use the 'shift' key. To remove 
+ one piste from the selection, use the 'ctrl' key.<br>
+&nbsp;&nbsp;You can then make your own topo printable with this link:
+ <img src='pics/print.png'>.</p>
+ <p>
+&nbsp;&nbsp;In the mode '<input type="radio" id="mode_radio2" name="radio" value="sign_color" />
+<label>Marking color</label>' you can select a complete piste.<br>
+&nbsp;&nbsp;complete loops
+(<a href="http://wiki.openstreetmap.org/wiki/Tag:route%3Dpiste" target="blank">relation</a>)
+on the screen can be watch at any moment with the drop-down menu below:
+<select><option>Les Prises</option><option>Le Plateau</option></select>.</p>
+
+<h1>Elevation profile</h1>
+ <p>
+&nbsp;&nbsp;The elevation profile computed when you select a trail is 
+based on the public domain SRTM dataset. There is voids in this dataset 
+in a few areas. Moreover, this dataset does not extend beyond a 
+latitude of 60°.
+</p>
+</body>
+</HTML>

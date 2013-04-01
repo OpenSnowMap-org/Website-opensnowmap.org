@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /gtopo30/
+Disallow: /GTOPO30/
+Disallow: /cgi/
+Allow: /
+Sitemap: http://www.pistes-nordiques.org/sitemap.xml
