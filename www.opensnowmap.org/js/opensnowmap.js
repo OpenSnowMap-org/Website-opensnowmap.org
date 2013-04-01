@@ -180,9 +180,9 @@ function show_catcher(){
 		//~ }
 	//~ XMLHttp.send();
     document.getElementById('sideBar').style.display='inline';
-    document.getElementById('sideBar').style.height='150px';
+    document.getElementById('sideBar').style.height='180px';
     document.getElementById('sideBarContent').style.display='inline';
-    document.getElementById('sideBarContent').style.height='127px';
+    document.getElementById('sideBarContent').style.height='147px';
     document.getElementById('sideBarTitle').innerHTML='';
         var html='<a href="http://wiki.openstreetmap.org" target="blank"><img src="pics/osm-pistes-nordiques_logo-80px.png" style="float: left;margin: 5px;"></img></a>';
         html+='<p>';
@@ -194,6 +194,7 @@ function show_catcher(){
         html+=_('edit');
         html+='</a>';
         html+='</p>';
+    html+=get_stats();
     document.getElementById('sideBarContent').innerHTML=html;
     
 }
@@ -485,7 +486,34 @@ function get_length(){
 	var length= parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
     return length;
 }
-
+function get_stats(){
+    var oRequest = new XMLHttpRequest();
+    oRequest.open("GET",server+'data/stats.json',false);
+    oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+    oRequest.send();
+    var lengthes = JSON.parse(oRequest.responseText);
+    html='<table border="0">'
+    html+='<tr>'
+    html+='<td><img src="'+icon['nordic']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.nordic)+'&nbsp;km<td>'
+    html+='<td><img src="'+icon['downhill']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.downhill)+'&nbsp;km<td>'
+    html+='</tr>'
+    html+='<tr>'
+    html+='<td><img src="'+icon['sled']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.sled)+'&nbsp;km<td>'
+    html+='<td><img src="'+icon['skitour']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.skitour)+'&nbsp;km<td>'
+    html+='</tr>'
+    html+='<tr>'
+    html+='<td><img src="'+icon['hike']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.snowshoeing)+'&nbsp;km<td>'
+    html+='<td><img src="'+icon['drag_lift']+'">&nbsp;<td>'
+    html+='<td>'+(lengthes.aerialway)+'&nbsp;km<td>'
+    html+='</tr>'
+    html+='</table>'
+    return html;
+}
 function get_update(){
     var oRequest = new XMLHttpRequest();
     oRequest.open("GET",server+'data/update.txt',false);
