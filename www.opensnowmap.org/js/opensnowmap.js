@@ -516,10 +516,11 @@ function get_stats(){
 }
 function get_update(){
     var oRequest = new XMLHttpRequest();
-    oRequest.open("GET",server+'data/update.txt',false);
+    oRequest.open("GET",server+'data/stats.json',false);
     oRequest.setRequestHeader("User-Agent",navigator.userAgent);
     oRequest.send();
-    var date=oRequest.responseText.split('T')[0];
+    var lengthes = JSON.parse(oRequest.responseText);
+    var date=lenghtes.date;
     var H=oRequest.responseText.split('T')[1].split('\\')[0];
     var M=oRequest.responseText.split('T')[1].split('\\')[1];
     var DHM=date +' '+ H+M+'UTC';
