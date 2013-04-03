@@ -51,5 +51,7 @@
 "weekly": 'vekesvis',
 "monthly": 'månadsvis (stor)',
 "vector_help": 'Velj interaktivt kart for meir funksjonalitet: vis informasjon om løypene, sjå høgdeprofil ...',
-"offseter_explain":''
+"offseter_explain":'',
+"forum":'FORUM'
+}
 }
