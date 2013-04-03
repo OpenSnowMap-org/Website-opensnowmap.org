@@ -130,7 +130,7 @@ function trace_route(wktroute) {
 	// request the elevation profile
 	document.getElementById('topo_profile').innerHTML='Loading ...';
 	var XMLHttp = new XMLHttpRequest();
-	XMLHttp.open("POST", "http://beta.pistes-nordiques.org/profile?");
+	XMLHttp.open("POST", "http://beta.opensnowmap.org/demrequest?");
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			// cut when cgi is not able to work
