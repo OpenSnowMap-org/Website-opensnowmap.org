@@ -117,13 +117,12 @@ def application(environ,start_response):
 	db='pistes-mapnik'
 	conn = psycopg2.connect("dbname="+db+" user=mapnik")
 	cur = conn.cursor()
-	sql=" SELECT count(*) FROM planet_osm_line WHERE st_intersects(planet_osm_line.way,st_transform( ST_MakeEnvelope("+str(left)+","+ str(bottom)+","+ str(right)+","+ str(top)+", 4326),900913));"
 	cur.execute(" \
 				SELECT count(*) \
 				FROM planet_osm_line WHERE \
 				st_intersects(\
 						planet_osm_line.way,\
-						st_transform( ST_MakeEnvelope(%s,%s,%s,%s, 4326),900913)) and \"piste:type\" = 'nordic'; "\
+						st_transform( ST_MakeEnvelope(%s,%s,%s,%s, 4326),900913)); "\
 				, (left, bottom, right, top))
 	result=cur.fetchall()
 	cur.close()
