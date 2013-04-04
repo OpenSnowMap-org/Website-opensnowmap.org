@@ -520,7 +520,7 @@ function get_update(){
     oRequest.setRequestHeader("User-Agent",navigator.userAgent);
     oRequest.send();
     var stats = JSON.parse(oRequest.responseText);
-    var date=lengthes.date;
+    var date=stats.date;
     //~ var H=oRequest.responseText.split('T')[1].split(':')[0];
     //~ var M=oRequest.responseText.split('T')[1].split(':')[1];
     //~ var DHM=date +' '+ H+':'+M+'UTC';
