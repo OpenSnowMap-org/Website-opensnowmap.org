@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <meta name="description" content="Offline ski map on your Android phone" /> 
+    <meta name="keywords" content="ski, map, offline, free, ski de fond, crosscountry" /> 
+
+    <title>Offline ski map on your Android phone</title>
+    <link rel="stylesheet" href="main.css" media="screen" />
+    <link rel="shortcut icon"
+ href="favicon.ico" />
+
+    <script>
+    function get_length(){
+        var oRequest = new XMLHttpRequest();
+        oRequest.open("GET",'/data/pistes_length.en.txt',false);
+        oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+        oRequest.send()
+        return oRequest.responseText;
+    }
+    </script>
+    </HEAD>
+    <BODY LANG="en" DIR="LTR">
+<div id="centering"><div id="center">
+<img align="right" width="270" src="screenshot01.png">
+<h1>Load worldwide ski pistes on your phone and display them with Osmand (BETA)</h1>
+<ul><p>
+<li>
+Download the latest pistes extract <a href="/download/World-ski_2.obf"><b>here</b></a>, then copy it in /osmand/ on your phone sdcard, or directly in Osmand downloads
+</li><li>Choose the 'winter+ski' style as Vector renderer in Osmand settings</a>
+</li><li>Enjoy.
+</li>
+</br>
+</p>
+<p>
+</ul>
+<h1>OsmAnd Ski app</h1>
+<ul>
+<img align="left" src="icon.png">
+<p> You can also use this experimental app to install ski trails in OsmAnd.
+<a target="_blank" href="http://market.android.com/details?id=com.osmandski">OsmAnd Ski (beta)</a>
+</p>
+</ul>
+<h1>And give back !</h1>
+<ul>
+<p>
+<li>Record your GPS track when skiing on a unknown piste with Osmand
+</li><li>Create an OpenStreetMap <a target="_blank" href="https://www.openstreetmap.org/user/new">account</a>
+</li><li><a target="_blank" href="http://www.openstreetmap.org/trace/create">Upload</a> your track to osm
+</li><li>Edit the map by tracing the piste over your GPS track
+</li><li>Come back and download the new <a href="/download/World-ski_2.obf">extract</a>
+ after a few days, it's there for everyone!
+</li>
+</p>
+<p>
+It will take you maybe a couple of hours to get into Openstreetmap, but then it's easy.
+Keep in mind this is how all these data came into your phone!</p>
+<p>
+</ul>
+<h1>Thanks to</h1>
+<ul>
+<table>
+    <tr>
+        <td><img align="center" src="Osm_linkage_small.png"></td>
+        <td><img align="center" src="logo_osmand.png"></td>
+        <td><img align="center" src="pistes-nordiques-238-45.png"></td>
+    </tr>
+    <tr>
+        <td><a target="_blank" href="http://www.openstreetmap.org">OSM</a></td>
+        <td><a target="_blank" href="http://osmand.net/">Osmand.net</a></td>
+        <td><a target="_blank" href="http://www.pistes-nordiques.org/">www.pistes-nordiques.org</a></td>
+    </tr>
+</table>
+</p>
+<div style="font-size:0.7em"><b >On last update:</b>
+<p><script>document.write(get_length().replace(/\n/gm,"<br>"))</script>
+<br><br>
+<a href="http://market.android.com/details?id=com.osmandski">
+  <img src="http://www.android.com/images/brand/45_avail_market_logo1.png"
+       alt="Available in Android Market" />
+</a>
+<a href="mailto:webmaster_at_pistes-nordiques.org">Contact</a>&nbsp;&nbsp;</p>
+</ul>
+</div>
+</div></div>
+</body>
+</HTML>

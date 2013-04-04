@@ -1,0 +1,6 @@
+      AddHandler mod_python .py
+      PythonHandler mod_python.publisher
+      PythonDebug On
+      Options +ExecCGI 
+      AddHandler cgi-script .cgi
+
