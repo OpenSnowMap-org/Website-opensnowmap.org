@@ -832,7 +832,7 @@ function baseLayers() {
     map.addLayer(layerContours);
 // Layer 5
     var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-    "http://tiles.opensnowmap.org/tiles-pistes/",{
+    "http://tiles.opensnowmap.org/tiles-dev/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
             visibility: true, opacity: 0.8,
@@ -841,7 +841,7 @@ function baseLayers() {
     map.addLayer(PistesTilesLowZoom);
 // Layer 6
     var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-    "http://tiles.opensnowmap.org/tiles-pistes/",{
+    "http://tiles.opensnowmap.org/tiles-dev/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
             visibility: true, opacity: 0.95,
