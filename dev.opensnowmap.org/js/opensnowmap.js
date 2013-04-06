@@ -200,13 +200,13 @@ function show_catcher(){
 }
 function show_helper(){
     document.getElementById('sideBar').style.display='inline';
-    document.getElementById('sideBar').style.height='150px';
+    document.getElementById('sideBar').style.height='300px';
     document.getElementById('sideBarContent').style.display='inline';
-    document.getElementById('sideBarContent').style.height='127px';
+    document.getElementById('sideBarContent').style.height='277px';
     document.getElementById('sideBarTitle').innerHTML='';
     
-    var html='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
-    html+='<div id="zoomin-helper">'+_('zoom_in')+'</div>';
+    var html='<div id="zoomin-helper" style="font-size: 1.2em;font-weight:600;">'+_('zoom_in')+'</div>';
+    html+='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
     document.getElementById('sideBarContent').innerHTML=html;
     
     if (map.getZoom()<11){
@@ -832,7 +832,7 @@ function baseLayers() {
     map.addLayer(layerContours);
 // Layer 5
     var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-    "http://tiles.opensnowmap.org/tiles-dev/",{
+    "http://tiles.opensnowmap.org/tiles-pistes/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
             visibility: true, opacity: 0.8,
@@ -841,7 +841,7 @@ function baseLayers() {
     map.addLayer(PistesTilesLowZoom);
 // Layer 6
     var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-    "http://tiles.opensnowmap.org/tiles-dev/",{
+    "http://tiles.opensnowmap.org/tiles-pistes/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
             visibility: true, opacity: 0.95,
