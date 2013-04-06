@@ -20,7 +20,7 @@
 "intermediate": 'haladó',
 "expert": 'profi',
 "lit": 'Világítás',
-"member_of": 'Útvonal része																																																																																																										',
+"member_of": 'Útvonal része',
 "print": 'Nyomdasd ki a saját terep-kalauzod',
 "edit_the_map_using": 'Szerkesztheted a térképet!',
 "edit_the_map_explain": 'Ez a térkép az OpenStreetMap adataiból készült, ami egy ingyenes, szerkeszthető világtérkép. Olyan emberek készítik, mint te. A térkép szerkesztéséhez, pontosításához az alábbi eszközöket tudod használni.',
@@ -54,4 +54,4 @@
 "offseter_explain": 'Tudod állítani a színezett pályák láthatóságát a www.pistes-nordiques.org-on',
 "forum":'FORUM'
 }
-}
+
