@@ -6,12 +6,12 @@
 "help": 'POMOC',
 "edit": 'EDITOVAT MAPU',
 "routing_title": 'TRASA',
-"settings": 'NASTAVENI',
-"piste_length": 'km lyžařské sjezdovky sjezdovky stop již je zmapováno!',
+"settings": 'NASTAVENÍ',
+"piste_length": 'km lyžařských stop, sjezdovek a dalších tras již je zmapováno!',
 "you":' A vy?',
 "unknown": '<a style="color: #5ca5ff;" onclick="show_about()">(informace nejsou k dispozici)</a>',
 "grooming" : 'Úprava',
-"classic;skating" : 'classic and skating',
+"classic;skating" : 'klasika i bruslení',
 "classic" : 'klasika',
 "skating" : 'bruslení',
 "difficulty" : "Obtížnost",
@@ -51,6 +51,6 @@
 "weekly": 'za týden',
 "monthly": 'za měsíc (velké)',
 "vector_help": 'Interaktivní mapa umožňuje: zobrazovat informace o stopách, výškový profil trasy, ...',
-"offseter_explain": 'Zobrazování barev u tras na www.pistes-nordiques.org lze také přizpůsobit zde',
+"offseter_explain": 'Zobrazování barev u tras na www.opensnowmap.org lze také přizpůsobit zde',
 "forum":'FORUM'
 }
