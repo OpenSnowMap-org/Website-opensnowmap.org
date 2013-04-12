@@ -14,7 +14,7 @@
 "classic;skating" : 'klasszikus és sí-korcsolya',
 "classic" : 'klasszikus',
 "skating" : 'sí-korcsolya',
-"difficulty" : "Nehézség",
+"difficulty" : 'Nehézség',
 "novice":'kezdő',
 "easy": 'könnyű',
 "intermediate": 'haladó',
