@@ -59,7 +59,7 @@ def application(environ,start_response):
 	
 def getOsm(left, bottom, right, top):
 	db='pistes-xapi'
-	conn = psycopg2.connect("dbname="+db+" user=mapnik")
+	conn = psycopg2.connect("dbname="+db+" user=xapi")
 	
 	cur = conn.cursor()
 	#~ cur.execute(" \
