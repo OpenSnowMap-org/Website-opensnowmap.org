@@ -169,7 +169,7 @@ def application(environ,start_response):
 	
 	bg.paste(hs.convert('RGB'),None,value)
 	
-	pistes = getImage('http://tiles.pistes-nordiques.org/tiles-pistes2/', left, right, top, bottom, zoom,'osm',ext)
+	pistes = getImage('http://tiles.opensnowmap.org/tiles-pistes/', left, right, top, bottom, zoom,'osm',ext)
 	r, g, b, a = pistes.split()
 	mask = Image.merge("L", (a,))
 	
@@ -197,7 +197,7 @@ def application(environ,start_response):
 	outname=PIL_images_dir + printout_filename
 	
 	#bg.save(outname,'png', ppi=pistes.info['ppi'])
-	printout.save(outname,'PDF', resolution=200.0, quality=90)
+	printout.save(outname,'PDF', resolution=100.0, quality=90)
 	response_body='/tmp/'+printout_filename
 	status = '200 OK'
 	response_headers = [('Content-Type', 'text/plain'),('Content-Length', str(len(response_body)))]
