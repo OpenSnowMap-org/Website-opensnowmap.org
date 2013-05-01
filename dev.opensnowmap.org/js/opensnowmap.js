@@ -806,15 +806,15 @@ function baseLayers() {
         "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
     var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest);
     map.addLayer(mapquest);
-// Layer 2
-    var layerGTOPO30 = new OpenLayers.Layer.TMS( "GTOPO30", "http://tiles2.pistes-nordiques.org/gtopo30/",{   
-                type: 'png', getURL: get_tms_url, alpha: true, opacity: 0.3,
-                isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
-            });
-    map.addLayer(layerGTOPO30);
+//~ // Layer 2
+    //~ var layerGTOPO30 = new OpenLayers.Layer.TMS( "GTOPO30", "http://tiles2.pistes-nordiques.org/gtopo30/",{   
+                //~ type: 'png', getURL: get_tms_url, alpha: true, opacity: 0.3,
+                //~ isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
+            //~ });
+    //~ map.addLayer(layerGTOPO30);
 
 // layer 3
-    var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://tiles2.pistes-nordiques.org/hillshading/",{ 
+    var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://http://www2.opensnowmap.org/hillshading/",{ 
                 type: 'png', getURL: get_tms_url, alpha: true, 
                 buffer: 0,
                 isBaseLayer: false, 
@@ -823,7 +823,7 @@ function baseLayers() {
     map.addLayer(layerHillshade);
 // layer 4
     var layerContours = new OpenLayers.Layer.XYZ("Contour",
-    "http://tiles.pistes-nordiques.org/tiles-contours/",{
+    "http://www2.opensnowmap.org/tiles-contours/",{
             getURL: get_osm_url,
             numZoomLevels: 18, isBaseLayer: false,
             transparent: true, buffer: 0,
