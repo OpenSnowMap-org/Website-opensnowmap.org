@@ -814,7 +814,7 @@ function baseLayers() {
     //~ map.addLayer(layerGTOPO30);
 
 // layer 3
-    var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://http://www2.opensnowmap.org/hillshading/",{ 
+    var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://www2.opensnowmap.org/hillshading/",{ 
                 type: 'png', getURL: get_tms_url, alpha: true, 
                 buffer: 0,
                 isBaseLayer: false, 
