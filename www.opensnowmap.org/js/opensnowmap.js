@@ -822,14 +822,14 @@ function baseLayers() {
             });
     map.addLayer(layerHillshade);
 // layer 4
-    //~ var layerContours = new OpenLayers.Layer.XYZ("Contour",
-    //~ "http://www2.opensnowmap.org/tiles-contours/",{
-            //~ getURL: get_osm_url,
-            //~ numZoomLevels: 18, isBaseLayer: false,
-            //~ transparent: true, buffer: 0,
-            //~ minScale: 200000, visibility: true 
-        //~ });
-    //~ map.addLayer(layerContours);
+    var layerContours = new OpenLayers.Layer.XYZ("Contour",
+    "http://www2.opensnowmap.org/tiles-contours/",{
+            getURL: get_osm_url,
+            numZoomLevels: 18, isBaseLayer: false,
+            transparent: true, buffer: 0,
+            minScale: 200000, visibility: true 
+        });
+    map.addLayer(layerContours);
 // Layer 5
     var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
     "http://tiles.opensnowmap.org/tiles-pistes/",{
