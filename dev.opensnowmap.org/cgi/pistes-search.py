@@ -1,6 +1,5 @@
 #!/usr/bin/python
 #
-# 
 #
 
 import psycopg2
@@ -17,6 +16,9 @@ def application(environ,start_response):
 	point=''
 	radius=''
 	
+	full = False
+	if request.find('full=true') !=-1:
+		full = True
 	if request.find('ids=') !=-1:
 		ids=request.split('ids=')[1]
 		if ids.find('&'):
@@ -41,9 +43,9 @@ def application(environ,start_response):
 	sites, entrances, routes, ways = query_ids(name,point,radius)
 	response={}
 	response['sites']= query_sites(sites)
-	response['routes']= query_routes(routes)
-	response['pistes']= query_ways(ways)
-	response['aerialways']= query_aerialways(ways)
+	response['routes']= query_routes(routes, full)
+	response['pistes']= query_ways(ways,full)
+	response['aerialways']= query_aerialways(ways,full)
 	response_body=json.dumps(response)
 	status = '200 OK'
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
@@ -173,14 +175,19 @@ def query_sites(sites_ids):
 	con.close()
 	return sites
 	
-def query_routes(routes_ids):
+def query_routes(routes_ids, full):
 	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
 	routes={}
 	for idx in routes_ids:
-		cur.execute("select route_name, \"piste:type\", ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), color, colour \
-		from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
-		%(idx))
+		cur.execute("select \
+				route_name, \
+				\"piste:type\", \
+				ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD'), \
+				color, \
+				colour \
+			from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
+			%(idx))
 		resp=cur.fetchall()
 		for s in resp:
 			if s:
@@ -190,10 +197,28 @@ def query_routes(routes_ids):
 				routes[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
 				if not s[3]: routes[idx]['color']=s[4]
 				else:  routes[idx]['color']=s[3]
+		if full:
+			cur.execute("select in_site \
+				from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
+				%(idx))
+			resp=cur.fetchall()
+			try :
+				# only the first site is taken into account
+				s=-resp[0][0][0]
+				cur.execute("select site_name,  \
+					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD') \
+					from planet_osm_point where osm_id = %s and site_name is not null"\
+					%(s))
+				resp2=cur.fetchall()
+				routes[idx]['site_name']=resp2[0][0]
+				routes[idx]['site_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
+			except:
+				pass
+				
 	con.close()
 	return routes
 	
-def query_ways(ways_ids):
+def query_ways(ways_ids,full):
 	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
 	ways={}
@@ -212,10 +237,27 @@ def query_ways(ways_ids):
 				ways[idx]['difficulty']=s[3]
 				ways[idx]['grooming']=s[4]
 				ways[idx]['lit']=s[5]
+		if full:
+			cur.execute("select in_site \
+				from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
+				%(idx))
+			resp=cur.fetchall()
+			try :
+				# only the first site is taken into account
+				s=-resp[0][0][0]
+				cur.execute("select site_name,  \
+					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD') \
+					from planet_osm_point where osm_id = %s and site_name is not null"\
+					%(s))
+				resp2=cur.fetchall()
+				ways[idx]['site_name']=resp2[0][0]
+				ways[idx]['site_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
+			except:
+				pass
 	con.close()
 	return ways
 
-def query_aerialways(ways_ids):
+def query_aerialways(ways_ids,full):
 	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
 	aerialways={}
@@ -229,6 +271,23 @@ def query_aerialways(ways_ids):
 				aerialways[idx]['name']=s[0]
 				aerialways[idx]['types']=s[1]
 				aerialways[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
+		if full:
+			cur.execute("select in_site \
+				from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
+				%(idx))
+			resp=cur.fetchall()
+			try :
+				# only the first site is taken into account
+				s=-resp[0][0][0]
+				cur.execute("select site_name,  \
+					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD') \
+					from planet_osm_point where osm_id = %s and site_name is not null"\
+					%(s))
+				resp2=cur.fetchall()
+				aerialways[idx]['site_name']=resp2[0][0]
+				aerialways[idx]['site_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
+			except:
+				pass
 	con.close()
 	return aerialways
 #6.46,46.83

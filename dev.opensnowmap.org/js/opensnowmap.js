@@ -581,7 +581,7 @@ function loadend(){
         setTimeout('',500);
         var nom = JSON.parse(oRequest.responseText);
         
-        oRequest.open("GET",server+'search?name='+string,false);
+        oRequest.open("GET",server+'search?name='+string+'&full=true',false);
         oRequest.setRequestHeader("User-Agent",navigator.userAgent);
         oRequest.send();
         setTimeout('',1000);
@@ -607,7 +607,13 @@ function loadend(){
             + pist.routes[r].center +','
             + 15 +');">'
             + pist.routes[r].name +'</a>'
-            +'&nbsp;<img src="'+icon[type]+'"></li>';
+            +'&nbsp;<img src="'+icon[type]+'">'
+            +'</br>'
+            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
+            + pist.routes[r].site_center +','
+            + 12 +');">'
+            +pist.routes[r].site_name+'</a>'
+            +'</li>';
         }
         htmlResponse += '</ul></p><p><ul>'
         for (r in pist.pistes) {
@@ -617,7 +623,13 @@ function loadend(){
             + 15 +');">'
             + pist.pistes[r].name +'</a>'
             +'<b style="color:'+diffcolor[pist.pistes[r].difficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
-            +'&nbsp;<img src="'+icon[type]+'"></li>';
+            +'&nbsp;<img src="'+icon[type]+'">'
+            +'</br>'
+            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
+            + pist.pistes[r].site_center +','
+            + 12 +');">'
+            +pist.pistes[r].site_name+'</a>'
+            +'</li>';
         }
         htmlResponse += '</ul></p><p><ul>'
         for (r in pist.aerialways) {
@@ -626,7 +638,13 @@ function loadend(){
             + pist.aerialways[r].center +','
             + 15 +');">'
             + pist.aerialways[r].name +'</a>'
-            +'&nbsp;<img src="'+icon[type]+'"></li>';
+            +'&nbsp;<img src="'+icon[type]+'">'
+            +'</br>'
+            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
+            + pist.aerialways[r].site_center +','
+            + 12 +');">'
+            +pist.aerialways[r].site_name+'</a>'
+            +'</li>';
         }
         htmlResponse += '</ul></p>'
         
@@ -792,13 +810,13 @@ function baseLayers() {
     var mapnik = new OpenLayers.Layer.OSM("OSM");
     //map.addLayer(mapnik);
 // Layer 0
-    var snowCover = new OpenLayers.Layer.TMS( "Snow Cover",
-                    "http://tiles2.pistes-nordiques.org/snow-cover/",
-                    {   
-                    getURL: get_osm_url,
-                    isBaseLayer: false, visibility: true, maxScale: 6000000
-                    });
-    map.addLayer(snowCover);
+    //~ var snowCover = new OpenLayers.Layer.TMS( "Snow Cover",
+                    //~ "http://tiles2.pistes-nordiques.org/snow-cover/",
+                    //~ {   
+                    //~ getURL: get_osm_url,
+                    //~ isBaseLayer: false, visibility: true, maxScale: 6000000
+                    //~ });
+    //~ map.addLayer(snowCover);
 // Layer 1
     var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
         "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
@@ -806,46 +824,46 @@ function baseLayers() {
         "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
     var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest);
     map.addLayer(mapquest);
-//~ // Layer 2
+// Layer 2
     //~ var layerGTOPO30 = new OpenLayers.Layer.TMS( "GTOPO30", "http://tiles2.pistes-nordiques.org/gtopo30/",{   
                 //~ type: 'png', getURL: get_tms_url, alpha: true, opacity: 0.3,
                 //~ isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
             //~ });
     //~ map.addLayer(layerGTOPO30);
-
-// layer 3
-    var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://www2.opensnowmap.org/hillshading/",{ 
-                type: 'png', getURL: get_tms_url, alpha: true, 
-                buffer: 0,
-                isBaseLayer: false, 
-                opacity: 0.4,minScale: 3000000, visibility: true
-            });
-    map.addLayer(layerHillshade);
-// layer 4
-    var layerContours = new OpenLayers.Layer.XYZ("Contour",
-    "http://www2.opensnowmap.org/tiles-contours/",{
-            getURL: get_osm_url,
-            numZoomLevels: 18, isBaseLayer: false,
-            transparent: true, buffer: 0,
-            minScale: 200000, visibility: true 
-        });
-    map.addLayer(layerContours);
-// Layer 5
-    var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-    "http://tiles.opensnowmap.org/tiles-pistes/",{
-            getURL: get_osm_url, 
-            isBaseLayer: false, numZoomLevels: 19,
-            visibility: true, opacity: 0.8,
-            maxScale: 250000
-        });
-    map.addLayer(PistesTilesLowZoom);
+//~ 
+//~ // layer 3
+    //~ var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://www2.opensnowmap.org/hillshading/",{ 
+                //~ type: 'png', getURL: get_tms_url, alpha: true, 
+                //~ buffer: 0,
+                //~ isBaseLayer: false, 
+                //~ opacity: 0.4,minScale: 3000000, visibility: true
+            //~ });
+    //~ map.addLayer(layerHillshade);
+//~ // layer 4
+    //~ var layerContours = new OpenLayers.Layer.XYZ("Contour",
+    //~ "http://www2.opensnowmap.org/tiles-contours/",{
+            //~ getURL: get_osm_url,
+            //~ numZoomLevels: 18, isBaseLayer: false,
+            //~ transparent: true, buffer: 0,
+            //~ minScale: 200000, visibility: true 
+        //~ });
+    //~ map.addLayer(layerContours);
+//~ // Layer 5
+    //~ var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
+    //~ "http://tiles.opensnowmap.org/tiles-dev/",{
+            //~ getURL: get_osm_url, 
+            //~ isBaseLayer: false, numZoomLevels: 19,
+            //~ visibility: true, opacity: 0.8,
+            //~ maxScale: 250000
+        //~ });
+    //~ map.addLayer(PistesTilesLowZoom);
 // Layer 6
     var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-    "http://tiles.opensnowmap.org/tiles-pistes/",{
+    server+"assy/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
-            visibility: true, opacity: 0.95,
-            minScale: 250000
+            visibility: true/*9, opacity: 0.95,
+            minScale: 250000*/
         });
     map.addLayer(PistesTiles);
 
@@ -906,13 +924,13 @@ function map_init(){
     map.events.on({ "zoomend": function (e) {
         updateZoom();
         onZoomEnd();
-        if (map.getZoom() > 6) {
-            map.layers[1].setVisibility(true);
-            map.layers[1].redraw();
-        }
-        else {
-            map.layers[1].setVisibility(false);
-        }
+        //~ if (map.getZoom() > 6) {
+            //~ map.layers[1].setVisibility(true);
+            //~ map.layers[1].redraw();
+        //~ }
+        //~ else {
+            //~ map.layers[1].setVisibility(false);
+        //~ }
     }
     });
 
