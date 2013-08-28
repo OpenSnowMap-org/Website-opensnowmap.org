@@ -164,21 +164,13 @@ function close_sideBar() {
     
     document.getElementById('sideBar').style.display='none';
     EDIT_SHOWED = false;
+    CATCHER=false;
 }
 function close_helper(){
     close_sideBar();
 }
 function show_catcher(){
     CATCHER=true;
-	//~ var XMLHttp = new XMLHttpRequest();
-	//~ oRequest.open("GET",server+'data/stats.json',false);
-	//~ XMLHttp.onreadystatechange= function () {
-		//~ if (XMLHttp.readyState == 4) {
-			//~ var topo = JSON.parse(XMLHttp.responseText);
-			//~ makeTopo(topo,routeLength);
-			//~ }
-		//~ }
-	//~ XMLHttp.send();
     document.getElementById('sideBar').style.display='inline';
     document.getElementById('sideBar').style.height='180px';
     document.getElementById('sideBarContent').style.display='inline';
@@ -196,7 +188,6 @@ function show_catcher(){
         html+='</p>';
     html+=get_stats();
     document.getElementById('sideBarContent').innerHTML=html;
-    
 }
 function show_helper(){
     document.getElementById('sideBar').style.display='inline';
@@ -560,7 +551,7 @@ function loadend(){
     function setCenterMap(nlon, nlat, zoom) {
         nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
         map.setCenter(nlonLat, zoom);
-        document.getElementById('sideBar').style.display='none';
+        //document.getElementById('sideBar').style.display='inline';
     }
 
     function nominatimSearch(string) {
@@ -587,66 +578,78 @@ function loadend(){
         setTimeout('',1000);
         var pist = JSON.parse(oRequest.responseText);
         
-        htmlResponse='<p><ul>'
+        htmlResponse='<p>'
         for (r in pist.sites) {
+			htmlResponse += '<p>'
             types=pist.sites[r].types.split(';');
-            htmlResponse += '<li><a onclick="setCenterMap('
+            for (t in  types) {
+                htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
+            }
+            htmlResponse += '<a onclick="setCenterMap('
             + pist.sites[r].center +','
             + 12 +');">'
-            + pist.sites[r].name +'</a>'
-            for (t in  types) {
-                htmlResponse +='&nbsp;<img src="'+icon[types[t]]+'"></li>';
-            }
+            + pist.sites[r].name +'</a></p>'
         }
-        htmlResponse += '</p></ul><p><ul>'
+        htmlResponse += '</p><p>'
         for (r in pist.routes) {
             type=pist.routes[r].types;
             color=pist.routes[r].color;
-            htmlResponse += '<li><b style="color:'+color+';font-weight:900;">&#9679 </b>'
+            htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
+            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
             +'<a onclick="setCenterMap('
             + pist.routes[r].center +','
             + 15 +');">'
             + pist.routes[r].name +'</a>'
-            +'&nbsp;<img src="'+icon[type]+'">'
             +'</br>'
-            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
-            + pist.routes[r].site_center +','
-            + 12 +');">'
-            +pist.routes[r].site_name+'</a>'
-            +'</li>';
+            if (pist.routes[r].site_name){
+	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+	            + pist.routes[r].site_center +','
+	            + 12 +');">'
+	            +pist.routes[r].site_name+'</a>'
+			}
+			else {htmlResponse +='-'}
+            htmlResponse +='</p>';
         }
-        htmlResponse += '</ul></p><p><ul>'
+        htmlResponse += '</p><p>'
         for (r in pist.pistes) {
             type=pist.pistes[r].types;
-            htmlResponse += '<li><a onclick="setCenterMap('
+            htmlResponse += '<p>'
+            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
+            +'<a onclick="setCenterMap('
             + pist.pistes[r].center +','
             + 15 +');">'
             + pist.pistes[r].name +'</a>'
             +'<b style="color:'+diffcolor[pist.pistes[r].difficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
-            +'&nbsp;<img src="'+icon[type]+'">'
             +'</br>'
-            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
-            + pist.pistes[r].site_center +','
-            + 12 +');">'
-            +pist.pistes[r].site_name+'</a>'
-            +'</li>';
+            if (pist.pistes[r].site_name){
+	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+	            + pist.pistes[r].site_center +','
+	            + 12 +');">'
+	            +pist.pistes[r].site_name+'</a>'
+			}
+			else {htmlResponse +='-'}
+            htmlResponse +='</p>';
         }
-        htmlResponse += '</ul></p><p><ul>'
+        htmlResponse += '</p><p>'
         for (r in pist.aerialways) {
             type=pist.aerialways[r].types;
-            htmlResponse += '<li><a onclick="setCenterMap('
+            htmlResponse += '<p>'
+            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
+            +'<a onclick="setCenterMap('
             + pist.aerialways[r].center +','
             + 15 +');">'
             + pist.aerialways[r].name +'</a>'
-            +'&nbsp;<img src="'+icon[type]+'">'
             +'</br>'
-            +'<a style="font-size: 0.75em;" onclick="setCenterMap('
-            + pist.aerialways[r].site_center +','
-            + 12 +');">'
-            +pist.aerialways[r].site_name+'</a>'
-            +'</li>';
+            if (pist.aerialways[r].site_name){
+	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+	            + pist.aerialways[r].site_center +','
+	            + 12 +');">'
+	            +pist.aerialways[r].site_name+'</a>'
+			}
+			else {htmlResponse +='-'}
+			htmlResponse += '</p>'
         }
-        htmlResponse += '</ul></p>'
+        htmlResponse += '</p>'
         
         htmlResponse += '<hr/>'
         htmlResponse += '<p><ul>'
@@ -924,13 +927,6 @@ function map_init(){
     map.events.on({ "zoomend": function (e) {
         updateZoom();
         onZoomEnd();
-        //~ if (map.getZoom() > 6) {
-            //~ map.layers[1].setVisibility(true);
-            //~ map.layers[1].redraw();
-        //~ }
-        //~ else {
-            //~ map.layers[1].setVisibility(false);
-        //~ }
     }
     });
 
