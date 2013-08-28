@@ -46,7 +46,7 @@ def application(environ,start_response):
 	response['routes']= query_routes(routes, full)
 	response['pistes']= query_ways(ways,full)
 	response['aerialways']= query_aerialways(ways,full)
-	response_body=json.dumps(response)
+	response_body=json.dumps(response, sort_keys=True, indent=4)
 	status = '200 OK'
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
 	start_response(status, response_headers)
