@@ -117,7 +117,7 @@ def query_topo(str_id):
 		COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",''), \
 		member_of, \
 		\"aerialway\" \
-		from planet_osm_line where osm_id = %s" % (idx))
+		from planet_osm_line where osm_id = %s;" % (idx))
 		s=cur.fetchone()
 		if s:
 			topo[i]={}
@@ -132,9 +132,10 @@ def query_topo(str_id):
 			topo[i]['member_of']=[]
 			if s[4]:
 				for m in s[4]:
+					if m > 0: m =-m
 					cur.execute("select \
 					route_name, COALESCE(color,'')||''||COALESCE(colour,'') \
-					from planet_osm_line where osm_id = -%s" % (m))
+					from planet_osm_line where osm_id = %s;" % (m))
 					topo[i]['member_of'].append(cur.fetchone())
 			topo[i]['aerialway']=s[5]
 	
