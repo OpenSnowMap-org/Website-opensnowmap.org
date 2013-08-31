@@ -29,6 +29,8 @@ var permalink_potlatch;
 var zoomBar;
 var PRINT_TYPE= 'small';
 var ONCE=false;
+
+
 var icon = {
 "downhill":'pics/alpine.png',
 "cable_car":'pics/cable_car.png',
@@ -579,78 +581,86 @@ function loadend(){
         var pist = JSON.parse(oRequest.responseText);
         
         htmlResponse='<p>'
-        for (r in pist.sites) {
-			htmlResponse += '<p>'
-            types=pist.sites[r].types.split(';');
-            for (t in  types) {
-                htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
-            }
-            htmlResponse += '<a onclick="setCenterMap('
-            + pist.sites[r].center +','
-            + 12 +');">'
-            + pist.sites[r].name +'</a></p>'
-        }
-        htmlResponse += '</p><p>'
-        for (r in pist.routes) {
-            type=pist.routes[r].types;
-            color=pist.routes[r].color;
-            htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
-            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-            +'<a onclick="setCenterMap('
-            + pist.routes[r].center +','
-            + 15 +');">'
-            + pist.routes[r].name +'</a>'
-            +'</br>'
-            if (pist.routes[r].site_name){
-	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-	            + pist.routes[r].site_center +','
+        for (r in pist) {
+			var elt = pist[r]
+	        if (elt.type == 'SITE') {
+				htmlResponse += '<p>'
+	            types=elt.pistetype.split(';');
+	            for (t in  types) {
+	                htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
+	            }
+	            htmlResponse += '<a onclick="setCenterMap('
+	            + elt.center +','
 	            + 12 +');">'
-	            +pist.routes[r].site_name+'</a>'
-			}
-			else {htmlResponse +='-'}
-            htmlResponse +='</p>';
-        }
-        htmlResponse += '</p><p>'
-        for (r in pist.pistes) {
-            type=pist.pistes[r].types;
-            htmlResponse += '<p>'
-            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-            +'<a onclick="setCenterMap('
-            + pist.pistes[r].center +','
-            + 15 +');">'
-            + pist.pistes[r].name +'</a>'
-            +'<b style="color:'+diffcolor[pist.pistes[r].difficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
-            +'</br>'
-            if (pist.pistes[r].site_name){
-	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-	            + pist.pistes[r].site_center +','
-	            + 12 +');">'
-	            +pist.pistes[r].site_name+'</a>'
-			}
-			else {htmlResponse +='-'}
-            htmlResponse +='</p>';
-        }
-        htmlResponse += '</p><p>'
-        for (r in pist.aerialways) {
-            type=pist.aerialways[r].types;
-            htmlResponse += '<p>'
-            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-            +'<a onclick="setCenterMap('
-            + pist.aerialways[r].center +','
-            + 15 +');">'
-            + pist.aerialways[r].name +'</a>'
-            +'</br>'
-            if (pist.aerialways[r].site_name){
-	            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-	            + pist.aerialways[r].site_center +','
-	            + 12 +');">'
-	            +pist.aerialways[r].site_name+'</a>'
-			}
-			else {htmlResponse +='-'}
-			htmlResponse += '</p>'
-        }
-        htmlResponse += '</p>'
-        
+	            + elt.site_name +'</a></p>'
+	        }
+	        htmlResponse += '</p><p>'
+	        if (elt.type == 'ROUTE') {
+	            type=elt.pistetype;
+	            color=elt.color;
+	            htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
+	            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
+	            +'<a onclick="setCenterMap('
+	            + elt.center +','
+	            + 15 +');">'
+	            + elt.route_name +'</a>'
+	            +'</br>'
+	            if (elt.sites[0]) {
+		            if (elt.sites[0].site_name){
+			            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+			            + elt.sites[0].site_center +','
+			            + 12 +');">'
+			            +elt.sites[0].site_name+'</a>'
+					}
+				}
+				else {htmlResponse +='-'}
+	            htmlResponse +='</p>';
+	        }
+	        htmlResponse += '</p><p>'
+	        if (elt.type == 'PISTE'){
+	            type=elt.pistetype;
+	            htmlResponse += '<p>'
+	            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
+	            +'<a onclick="setCenterMap('
+	            + elt.center +','
+	            + 15 +');">'
+	            + elt.name +'</a>'
+	            +'<b style="color:'+diffcolor[elt.pistedifficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
+	            +'</br>'
+	            if (elt.sites[0]) {
+		            if (elt.sites[0].site_name){
+			            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+			            + elt.sites[0].site_center +','
+			            + 12 +');">'
+			            +elt.sites[0].site_name+'</a>'
+					}
+				}
+				else {htmlResponse +='-'}
+	            htmlResponse +='</p>';
+	        }
+	        htmlResponse += '</p><p>'
+	        if (elt.type == 'AERIALWAY') {
+	            type=elt.aerialway;
+	            htmlResponse += '<p>'
+	            +'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
+	            +'<a onclick="setCenterMap('
+	            + elt.center +','
+	            + 15 +');">'
+	            + elt.name +'</a>'
+	            +'</br>'
+	            if (elt.sites[0]) {
+		            if (elt.sites[0].site_name){
+			            htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
+			            + elt.sites[0].site_center +','
+			            + 12 +');">'
+			            +elt.sites[0].site_name+'</a>'
+					}
+				}
+				else {htmlResponse +='-'}
+				htmlResponse += '</p>'
+	        }
+	        htmlResponse += '</p>'
+		}
         htmlResponse += '<hr/>'
         htmlResponse += '<p><ul>'
         for (var i=0;i<nom.length;i++) {
