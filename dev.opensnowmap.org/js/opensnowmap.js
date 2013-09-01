@@ -837,13 +837,13 @@ function baseLayers() {
         "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
     var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest);
     map.addLayer(mapquest);
-// Layer 2
+//~ // Layer 2
     //~ var layerGTOPO30 = new OpenLayers.Layer.TMS( "GTOPO30", "http://tiles2.pistes-nordiques.org/gtopo30/",{   
                 //~ type: 'png', getURL: get_tms_url, alpha: true, opacity: 0.3,
                 //~ isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
             //~ });
     //~ map.addLayer(layerGTOPO30);
-//~ 
+
 // layer 3
     var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://www2.opensnowmap.org/hillshading/",{ 
                 type: 'png', getURL: get_tms_url, alpha: true, 
@@ -863,7 +863,7 @@ function baseLayers() {
     map.addLayer(layerContours);
 // Layer 5
     var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-    "http://tiles.opensnowmap.org/tiles-dev/",{
+    "http://tiles.opensnowmap.org/tiles-pistes/",{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
             visibility: true, opacity: 0.8,
@@ -871,14 +871,14 @@ function baseLayers() {
         });
     map.addLayer(PistesTilesLowZoom);
 // Layer 6
-    //~ var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-    //~ server+"assy/",{
-            //~ getURL: get_osm_url, 
-            //~ isBaseLayer: false, numZoomLevels: 19,
-            //~ visibility: true/*9, opacity: 0.95,
-            //~ minScale: 250000*/
-        //~ });
-    //~ map.addLayer(PistesTiles);
+    var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
+    "http://tiles.opensnowmap.org/tiles-pistes/",{
+            getURL: get_osm_url, 
+            isBaseLayer: false, numZoomLevels: 19,
+            visibility: true, opacity: 0.95,
+            minScale: 250000
+        });
+    map.addLayer(PistesTiles);
 
 }
 
