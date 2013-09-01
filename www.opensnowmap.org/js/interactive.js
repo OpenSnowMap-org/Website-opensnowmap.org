@@ -23,6 +23,8 @@ var routingPoints=new Array();
 var routingGeom=new Array();
 var routingFeatures=new Array();
 
+var topo;
+
 var routeStyle = new OpenLayers.Style({
 			strokeColor: "${getColor}", 
 			strokeDashstyle : "${getDash}",
@@ -81,7 +83,31 @@ function onClick(lonlat) {
 	routingPoint = lonlat.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
 	routingPoints.push(routingPoint);
 	loadWait();
-	requestRoute();
+	if (routingPoints.length == 1) { requestInfo();}
+	if (routingPoints.length > 1) { requestRoute();}
+}
+function requestInfo() {
+	var q = '';
+	for (pt in routingPoints) {
+		q = q + routingPoints[pt].lon + ',' +routingPoints[pt].lat;
+	};
+	
+	var XMLHttp = new XMLHttpRequest();
+	XMLHttp.open("GET", server+'search?point=' + q);
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			endWait();
+			show_profile_small();
+			if($("topo_profile")){$("topo_profile").innerHTML ='';}
+			var response = JSON.parse(XMLHttp.responseText);
+			if (response==null){
+				removeLastRoutePoint();
+				return null
+			}
+			else {makeTopo(response,0);}
+		}
+	}
+	XMLHttp.send();
 }
 
 function requestRoute() {
@@ -241,53 +267,6 @@ function requestInfos(ids,routeLength) {
 	XMLHttp.send();
 }
 
-function makeTopoBK(topo,routeLength){
-	var htmlResponse='\n<p><ul>\n';
-	total=parseFloat(routeLength);
-	for (r in topo) {
-		if (r != null) {
-			
-			var type=topo[r].type;
-			
-			var grooming;
-			var difficulty;
-			var member_of;
-			
-			htmlResponse += '<li><img src="'+icon[type]+'">&nbsp;&nbsp;';
-			
-			if (type == 'nordic' || type == 'hike') {
-				grooming=topo[r].grooming;
-				if (grooming == null){grooming='unknown';}
-				difficulty=topo[r].difficulty;
-				if (difficulty == null){difficulty='unknown';}
-			}
-			if (type == 'downhill') {
-				difficulty=topo[r].difficulty;
-				if (difficulty == null){difficulty='unknown';}
-			}
-			
-			member_of=topo[r].member_of;
-			var rel='';
-			if (member_of[0] != null) {
-				rel='<br/><i>'+_('member_of')+':</i>&nbsp;';
-				for (m in member_of) {
-					if (member_of[m] != null){
-					rel+=member_of[m][0]+'<b style="color:'+member_of[m][1]+';font-weight:900;">&nbsp;&#9679 </b><br/>';
-					}
-				}
-			}
-			
-			if (difficulty !=null) {htmlResponse +='<br/><i>'+_('difficulty')+':</i>&nbsp;'+_(difficulty) }
-			if (grooming !=null) {htmlResponse +='<br/><i>'+_('grooming')+':</i>&nbsp;'+_(grooming)+'.&nbsp;' }
-			htmlResponse +=rel+'</li>';
-		}
-	
-	}
-	htmlResponse+='\n</ul></p>\n';
-	if (total != 0. && !isNaN(total)) {htmlResponse +='<p>'+total.toFixed(1)+' km</p>'}
-	document.getElementById('topo_list').innerHTML = htmlResponse;
-}
-
 function makeTopo(topo,routeLength){
 	var htmlResponse='\n'
 			+'<a onclick="new_window()"'
@@ -299,38 +278,41 @@ function makeTopo(topo,routeLength){
 	
 	total=parseFloat(routeLength);
 	for (r in topo) {
-		if (r != null) {
+		if (topo[r] != null) {
 			
-			var type=topo[r].type;
+			var type=topo[r].pistetype;
+			if ( ! type) { type=topo[r].aerialway;}
 			
 			var grooming;
 			var difficulty;
 			var member_of;
+			
 			var name;
-			name=topo[r].piste_name;
-			if (name == null){name='unknown';}
+			name=topo[r].name;
+			if ( ! name) { name='-';}
 			
 			htmlResponse += '<tr><td>&nbsp;<img src="'+icon[type]+'">&nbsp;<td>';
 			
 			if (type == 'nordic' || type == 'hike') {
-				grooming=topo[r].grooming;
+				grooming=topo[r].pistegrooming;
 				if (grooming == null){grooming='unknown';}
-				difficulty=topo[r].difficulty;
+				difficulty=topo[r].pistedifficulty;
 				if (difficulty == null){difficulty='unknown';}
 			}
 			if (type == 'downhill') {
-				difficulty=topo[r].difficulty;
+				difficulty=topo[r].pistedifficulty;
 				if (difficulty == null){difficulty='unknown';}
 			}
 			
 			
-			member_of=topo[r].member_of;
+			member_of=topo[r].routes;
 			var rel='';
 			if (member_of[0] != null) {
 				rel='<br/><i>'+_('member_of')+':</i><br/>';
 				for (m in member_of) {
 					if (member_of[m] != null){
-					rel+='&nbsp;&nbsp;<b style="color:'+member_of[m][1]+';font-weight:900;">&nbsp;&#9679 </b>'+member_of[m][0]+'<br/>';
+					rel+='&nbsp;&nbsp;<b style="color:'+member_of[m].color
+					+';font-weight:900;">&nbsp;&#9679 </b>'+member_of[m].route_name+'<br/>';
 					}
 				}
 			}
@@ -338,7 +320,7 @@ function makeTopo(topo,routeLength){
 			if (name !=null) {htmlResponse +='<br/>&nbsp;'+name }
 			if (difficulty !=null) {htmlResponse +='<br/><i>'+_('difficulty')+':</i>&nbsp;'+_(difficulty) }
 			if (grooming !=null) {htmlResponse +='<br/><i>'+_('grooming')+':</i>&nbsp;'+_(grooming)+'.&nbsp;' }
-			htmlResponse +=rel;
+			if (member_of != null) {htmlResponse +=rel};
 			htmlResponse +='</td>';
 		}
 	

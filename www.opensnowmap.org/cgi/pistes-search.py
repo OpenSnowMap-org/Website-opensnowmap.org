@@ -1,6 +1,5 @@
 #!/usr/bin/python
 #
-# 
 #
 
 import psycopg2
@@ -17,13 +16,15 @@ def application(environ,start_response):
 	point=''
 	radius=''
 	
+	full = True
+	if request.find('full=true') !=-1:
+		full = True
 	if request.find('ids=') !=-1:
 		ids=request.split('ids=')[1]
 		if ids.find('&'):
-			ids=ids.split('&')[0]
-			response={}
-			response=query_topo(ids)
-			response_body=json.dumps(response)
+			ids=ids.split('&')[0].split(',')
+			response=query_ids(ids,full)
+			response_body=json.dumps(response, sort_keys=True, indent=4)
 			status = '200 OK'
 			response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
 			start_response(status, response_headers)
@@ -32,74 +33,66 @@ def application(environ,start_response):
 	if request.find('name=') !=-1:
 		name=request.split('name=')[1]
 		if name.find('&'): name=name.split('&')[0]
+		
 	if request.find('point=') !=-1:
 		point=request.split('point=')[1]
-		if point.find('&'): point=point.split('&')[0]
-	if request.find('radius=') !=-1:
-		radius=request.split('radius=')[1]
-		if radius.find('&'): radius=radius.split('&')[0]
-	sites, entrances, routes, ways = query_ids(name,point,radius)
-	response={}
-	response['sites']= query_sites(sites)
-	response['routes']= query_routes(routes)
-	response['pistes']= query_ways(ways)
-	response['aerialways']= query_aerialways(ways)
-	response_body=json.dumps(response)
+		if point.find('&'): point=point.split('&')[0].replace(';',',')
+	ids= query(name,point)
+	response=query_ids(ids,full)
+	response_body=json.dumps(response, sort_keys=True, indent=4)
 	status = '200 OK'
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
 	start_response(status, response_headers)
 	return [response_body]
 	
-def query_ids(name='', point='', radius=''):
+def query(name='', point=''):
 	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
 	
-	sites_ids=[]
-	entrances_ids=[]
-	routes_ids=[]
-	ways_ids=[]
+	oms_ids=[]
 	
 	# Query db, looking for 'name'
 	if name != '':
 		name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 		
-		cur.execute("select osm_id from planet_osm_point where to_tsvector(site_name) @@ to_tsquery('%s');"\
+		cur.execute("select osm_id from planet_osm_point \
+					where to_tsvector(site_name) @@ to_tsquery('%s');"\
 			%(name))
 		ids=cur.fetchall()
 		for i in ids:
 			idx=long(i[0])
-			if idx < 0: sites_ids.append(str(idx))
-			else: entrances_ids.append(str(idx))
+			oms_ids.append(str(idx))
 			
 		cur.execute("select osm_id from planet_osm_line where \
-		to_tsvector(COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",'')) @@ to_tsquery('%s');"\
+					to_tsvector(COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",'')) \
+					@@ to_tsquery('%s');"\
 			%(name))
 		ids=cur.fetchall()
 		for i in ids:
 			idx=long(i[0])
-			if idx < 0: routes_ids.append(str(idx))
-			else: ways_ids.append(str(idx))
-		
-	if point != '' and radius != '':
-		radius=float(radius)*1000
-		if radius > 500000: radius = 500000
-		cur.execute("select osm_id from planet_osm_point where ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(%s),4326),900913), way, %s);"\
-		%(point, str(radius)))
+			oms_ids.append(str(idx))
+			
+	elif point != '' :
+		cur.execute(" \
+		SELECT a.osm_id  \
+			FROM ( \
+			SELECT osm_id, way \
+			FROM planet_osm_polygon \
+			UNION ALL  \
+			SELECT osm_id, way \
+			FROM planet_osm_line where osm_id > 0 \
+			 ) as a \
+		ORDER BY \
+		  ST_Distance(a.way, ST_Transform(ST_SetSRID(ST_MakePoint(%s),4326),900913)) ASC\
+		LIMIT 1;" %(point,))
 		ids=cur.fetchall()
 		for i in ids:
 			idx=long(i[0])
-			if idx < 0: sites_ids.append(str(idx))
-			else: entrances_ids.append(str(idx))
-		
-		cur.execute("select osm_id from planet_osm_line where ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(%s),4326),900913), way, %s);"\
-		%(point, str(radius)))
-		ids=cur.fetchall()
-		for i in ids:
-			idx=long(i[0])
-			if idx < 0: routes_ids.append(str(idx))
-			else: ways_ids.append(str(idx))
+			oms_ids.append(str(idx))
+		ids=ids[0]
+	
 	con.close()
-	return sites_ids, entrances_ids, routes_ids, ways_ids
+	return oms_ids
 	
 def query_topo(str_id):
 	ids=str_id.split(',')
@@ -117,7 +110,9 @@ def query_topo(str_id):
 		COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",''), \
 		member_of, \
 		\"aerialway\" \
-		from planet_osm_line where osm_id = %s;" % (idx))
+		from planet_osm_line where osm_id = %s\
+		UNION ALL \
+		from planet_osm_polygon where osm_id = %s;" % (idx,idx))
 		s=cur.fetchone()
 		if s:
 			topo[i]={}
@@ -135,7 +130,9 @@ def query_topo(str_id):
 					if m > 0: m =-m
 					cur.execute("select \
 					route_name, COALESCE(color,'')||''||COALESCE(colour,'') \
-					from planet_osm_line where osm_id = %s;" % (m))
+					from planet_osm_line where osm_id = %s\
+					UNION ALL \
+					from planet_osm_polygon where osm_id = %s;" % (m,m))
 					topo[i]['member_of'].append(cur.fetchone())
 			topo[i]['aerialway']=s[5]
 	
@@ -156,82 +153,165 @@ def equal(d1,d2):
 		if d1[i] != d2[i]: return False
 	return True
 	
-def query_sites(sites_ids):
+def query_ids(ids,full):
 	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
-	sites={}
-	for idx in sites_ids:
-		cur.execute("select site_name, \"piste:type\", ST_AsLatLonText(ST_Transform(way,4326), 'D.DDDDD') \
-		from planet_osm_point where osm_id = %s and \"piste:type\" is not null;"\
-		%(idx))
+	elements=[]
+	for idx in ids:
+		relidx=-long(idx)
+		element={}
+		element['id']=''
+		element['name']=''
+		element['pistetype']=''
+		element['center'] =''
+		element['pistedifficulty'] =''
+		element['pistegrooming']=''
+		element['pistelit']=''
+		element['color']=''
+		element['aerialway']=''
+		element['member_of'] =''
+		element['in_site']=''
+		element['sites']=''
+		element['routes']=''
+		element['route_name']=''
+		element['site_name']=''
+		# ways and routes
+		# 
+		query = "select \
+			a.name, \
+			a.\"piste:name\", \
+			a.\"piste:type\", \
+			ST_AsLatLonText(st_centroid(ST_Transform(a.way,4326)), 'D.DDDDD'), \
+			a.\"piste:difficulty\",\
+			a.\"piste:grooming\",\
+			a.\"piste:lit\", \
+			a.route_name, \
+			a.color, \
+			a.colour, \
+			a.aerialway, \
+			a.member_of, \
+			a.in_site \
+			from (\
+				select way,\
+					name, \
+					\"piste:name\",\
+					\"piste:type\", \
+					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), \
+					\"piste:difficulty\",\
+					\"piste:grooming\",\
+					\"piste:lit\", \
+					route_name, \
+					color, \
+					colour, \
+					aerialway, \
+					member_of, \
+					in_site \
+				 from planet_osm_line where osm_id = %s or osm_id = %s \
+				UNION ALL \
+				select way,\
+					name, \
+					\"piste:name\",\
+					\"piste:type\", \
+					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), \
+					\"piste:difficulty\",\
+					\"piste:grooming\",\
+					\"piste:lit\", \
+					route_name, \
+					color, \
+					colour, \
+					aerialway, \
+					member_of, \
+					in_site  \
+				from planet_osm_polygon where osm_id = %s or osm_id = %s \
+				) as a;"
+		cur.execute(query %(idx,relidx,idx,relidx))
 		resp=cur.fetchall()
 		for s in resp:
 			if s:
-				sites[idx]={}
-				sites[idx]['name']=s[0]
-				sites[idx]['types']=s[1]
-				sites[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
+				element['id']=idx
+				if s[7]: element['name'] = s[7]
+				elif s[1]: element['name'] = s[1]
+				elif s[0]: element['name'] = s[0]
+				element['pistetype'] = s[2]
+				element['center'] = s[3].split(' ')[1]+','+s[3].split(' ')[0]
+				element['pistedifficulty'] = s[4]
+				element['pistegrooming'] = s[5]
+				element['pistelit'] = s[6]
+				element['route_name'] = s[7]
+				if s[8]: element['color'] = s[8]
+				elif s[9]: element['color'] = s[9]
+				element['aerialway'] = s[10]
+				element['member_of'] = s[11]
+				element['in_site'] = s[12]
+				if full:
+					if element['in_site']:
+						element['sites']=[]
+						for i in element['in_site']:
+							site_id=-long(i)
+							site={}
+							cur.execute("select site_name,  \
+								ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD') \
+								from planet_osm_point where osm_id = %s and site_name is not null;"\
+								%(site_id))
+							resp2=cur.fetchall()
+							if resp2:
+								site['site_name']=resp2[0][0]
+								site['site_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
+								element['sites'].append(site)
+					if element['member_of']:
+						element['routes']=[]
+						for i in element['member_of']:
+							route_id=-long(i)
+							route={}
+							cur.execute("select route_name, \
+								ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD'), \
+								COALESCE(color,colour) \
+								from planet_osm_line where osm_id = %s and route_name is not null;"\
+								%(route_id))
+							resp2=cur.fetchall()
+							if resp2:
+								route['route_name']=resp2[0][0]
+								route['route_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
+								if resp2[0][2]: route['color'] = resp2[0][2]
+								element['routes'].append(route)
+		
+		# sites
+		# 
+		if long(idx) < 0:
+			cur.execute("select site_name, \"piste:type\", ST_AsLatLonText(ST_Transform(way,4326), 'D.DDDDD') \
+			from planet_osm_point where osm_id = %s and \"piste:type\" is not null;"\
+			%(idx))
+			resp=cur.fetchall()
+			for s in resp:
+				if s:
+					element['id']=idx
+					element['site_name']=s[0]
+					element['pistetype']=s[1]
+					element['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
+		if len(element) !=0 : elements.append(element)
 	con.close()
-	return sites
-	
-def query_routes(routes_ids):
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
-	cur = con.cursor()
-	routes={}
-	for idx in routes_ids:
-		cur.execute("select route_name, \"piste:type\", ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), color, colour \
-		from planet_osm_line where osm_id = %s and \"piste:type\" is not null"\
-		%(idx))
-		resp=cur.fetchall()
-		for s in resp:
-			if s:
-				routes[idx]={}
-				routes[idx]['name']=s[0]
-				routes[idx]['types']=s[1]
-				routes[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
-				if not s[3]: routes[idx]['color']=s[4]
-				else:  routes[idx]['color']=s[3]
-	con.close()
-	return routes
-	
-def query_ways(ways_ids):
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
-	cur = con.cursor()
-	ways={}
-	for idx in ways_ids:
-		cur.execute("select COALESCE(name,'')||' '||COALESCE(\"piste:name\",''), \"piste:type\", \
-		ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), \"piste:difficulty\", \"piste:grooming\", \"piste:lit\" \
-		from planet_osm_line where osm_id = %s and \"piste:type\" is not null;"\
-		%(idx))
-		resp=cur.fetchall()
-		for s in resp:
-			if s:
-				ways[idx]={}
-				ways[idx]['name']=s[0]
-				ways[idx]['types']=s[1]
-				ways[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
-				ways[idx]['difficulty']=s[3]
-				ways[idx]['grooming']=s[4]
-				ways[idx]['lit']=s[5]
-	con.close()
-	return ways
+	return element_sort(elements)
 
-def query_aerialways(ways_ids):
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
-	cur = con.cursor()
-	aerialways={}
-	for idx in ways_ids:
-		cur.execute("select name, aerialway, ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD') from planet_osm_line where osm_id = %s and aerialway is not null;"\
-		%(idx))
-		resp=cur.fetchall()
-		for s in resp:
-			if s:
-				aerialways[idx]={}
-				aerialways[idx]['name']=s[0]
-				aerialways[idx]['types']=s[1]
-				aerialways[idx]['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
-	con.close()
-	return aerialways
+def element_sort(elements):
+	
+	for element in elements:
+		element['type']=''
+		if element['site_name'] and long(element['id']) < 0 : element['type']='SITE'
+		elif element['route_name'] and long(element['id']) < 0: element['type']='ROUTE'
+		elif element['aerialway']: element['type']='AERIALWAY'
+		else : element['type']='PISTE'
+	sorted_elements=[]
+	for element in elements:
+		if element['type']=='SITE' and element['id']: sorted_elements.append(element)
+	for element in elements:
+		if element['type']=='ROUTE'and element['id']: sorted_elements.append(element)
+	for element in elements:
+		if element['type']=='PISTE' and element['id']: sorted_elements.append(element)
+	for element in elements: 
+		if element['type']=='AERIALWAY' and element['id']: sorted_elements.append(element)
+	
+	return sorted_elements
+		
 #6.46,46.83
 #~ n=sys.argv[1]
 #~ r=sys.argv[2]
