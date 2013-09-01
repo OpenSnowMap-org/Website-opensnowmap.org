@@ -281,11 +281,15 @@ function makeTopo(topo,routeLength){
 		if (topo[r] != null) {
 			
 			var type=topo[r].pistetype;
+			if ( ! type) { type=topo[r].aerialway;}
+			
 			var grooming;
 			var difficulty;
 			var member_of;
+			
 			var name;
 			name=topo[r].name;
+			if ( ! name) { name='-';}
 			
 			htmlResponse += '<tr><td>&nbsp;<img src="'+icon[type]+'">&nbsp;<td>';
 			
