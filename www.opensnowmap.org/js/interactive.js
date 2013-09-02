@@ -277,35 +277,29 @@ function makeTopo(topo,routeLength){
 	htmlResponse+='\n<table border="0">\n';
 	
 	total=parseFloat(routeLength);
+	
+	var last_section; // for section comparison and concatenation if identical
+	
 	for (r in topo) {
 		if (topo[r] != null) {
 			
 			var type=topo[r].pistetype;
 			if ( ! type) { type=topo[r].aerialway;}
+			var grooming=topo[r].pistegrooming;
+			var difficulty=topo[r].pistedifficulty;
+			var member_of=topo[r].routes;;
+			var name=topo[r].name;
 			
-			var grooming;
-			var difficulty;
-			var member_of;
-			
-			var name;
-			name=topo[r].name;
 			if ( ! name) { name='-';}
 			
-			htmlResponse += '<tr><td>&nbsp;<img src="'+icon[type]+'">&nbsp;<td>';
-			
 			if (type == 'nordic' || type == 'hike') {
-				grooming=topo[r].pistegrooming;
 				if (grooming == null){grooming='unknown';}
-				difficulty=topo[r].pistedifficulty;
 				if (difficulty == null){difficulty='unknown';}
 			}
 			if (type == 'downhill') {
-				difficulty=topo[r].pistedifficulty;
 				if (difficulty == null){difficulty='unknown';}
 			}
 			
-			
-			member_of=topo[r].routes;
 			var rel='';
 			if (member_of[0] != null) {
 				rel='<br/><i>'+_('member_of')+':</i><br/>';
@@ -316,12 +310,18 @@ function makeTopo(topo,routeLength){
 					}
 				}
 			}
-			htmlResponse += '<td>'
-			if (name !=null) {htmlResponse +='<br/>&nbsp;'+name }
-			if (difficulty !=null) {htmlResponse +='<br/><i>'+_('difficulty')+':</i>&nbsp;'+_(difficulty) }
-			if (grooming !=null) {htmlResponse +='<br/><i>'+_('grooming')+':</i>&nbsp;'+_(grooming)+'.&nbsp;' }
-			if (member_of != null) {htmlResponse +=rel};
-			htmlResponse +='</td>';
+			
+			var this_section = type+grooming+difficulty+member_of+name
+			if (this_section != last_section) {
+				htmlResponse += '<tr><td>&nbsp;<img src="'+icon[type]+'">&nbsp;<td>';
+				htmlResponse += '<td>'
+				if (name !=null) {htmlResponse +='<br/>&nbsp;'+name }
+				if (difficulty !=null) {htmlResponse +='<br/><i>'+_('difficulty')+':</i>&nbsp;'+_(difficulty) }
+				if (grooming !=null) {htmlResponse +='<br/><i>'+_('grooming')+':</i>&nbsp;'+_(grooming)+'.&nbsp;' }
+				if (member_of != null) {htmlResponse +=rel};
+				htmlResponse +='</td>';
+			}
+			last_section=this_section
 		}
 	
 	}
@@ -329,6 +329,7 @@ function makeTopo(topo,routeLength){
 	if (total != 0. && !isNaN(total)) {htmlResponse +='<p>'+total.toFixed(1)+' km</p>'}
 	document.getElementById('topo_list').innerHTML = htmlResponse;
 }
+
 function new_window() {
 printWindow=window.open('print.html');
 printWindow.document.write(
