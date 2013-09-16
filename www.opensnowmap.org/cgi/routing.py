@@ -9,6 +9,7 @@ import xml
 import psycopg2
 import re
 from lxml import etree
+import random
 
 def application(environ,start_response):
 	# sent back:
@@ -28,49 +29,113 @@ def application(environ,start_response):
 		xml=info(lat1, lon1)
 		
 	else:
-		# define the bbox where requesting the data
-		minlat=float(coords[0].split(';')[0])
-		minlon=float(coords[0].split(';')[1])
-		maxlat=float(coords[0].split(';')[0])
-		maxlon=float(coords[0].split(';')[1])
-		
-		for c in coords:
-			if c :
-				if (float(c.split(';')[0])<minlat):minlat=float(c.split(';')[0])
-				if (float(c.split(';')[0])>maxlat):maxlat=float(c.split(';')[0])
-				if (float(c.split(';')[1])<minlon):minlon=float(c.split(';')[1])
-				if (float(c.split(';')[1])>maxlon):maxlon=float(c.split(';')[1])
-		margin = 0.02
-		left=str(minlon-margin)
-		right=str(maxlon+margin)
-		top=str(maxlat+margin)
-		bottom=str(minlat-margin)
-		s=getOsm(left, bottom, right, top)
-		
-		# Load data from the bbox
+		s=getOsm(coords)
+		#~ # Load data from the bbox
 		data = LoadOsm(s)
 		xml=xmlRoute(data, coords)
 	
 	status = '200 OK'
+	s.seek(0)
 	response_body= xml
 	response_headers = [('Content-Type', 'application/xml'),('Content-Length', str(len(response_body)))]
 	start_response(status, response_headers)
 	return [response_body]
 	
-def getOsm(left, bottom, right, top):
+def getOsm(coords):
+	
+	# define the bbox where requesting the data
+	minlat=float(coords[0].split(';')[0])
+	minlon=float(coords[0].split(';')[1])
+	maxlat=float(coords[0].split(';')[0])
+	maxlon=float(coords[0].split(';')[1])
+	
+	for c in coords:
+		if c :
+			if (float(c.split(';')[0])<minlat):minlat=float(c.split(';')[0])
+			if (float(c.split(';')[0])>maxlat):maxlat=float(c.split(';')[0])
+			if (float(c.split(';')[1])<minlon):minlon=float(c.split(';')[1])
+			if (float(c.split(';')[1])>maxlon):maxlon=float(c.split(';')[1])
+	margin = 0.05
+	left=str(minlon-margin)
+	right=str(maxlon+margin)
+	top=str(maxlat+margin)
+	bottom=str(minlat-margin)
+	
+	nd_ref=10000000
+	
 	db='pistes-xapi'
 	conn = psycopg2.connect("dbname="+db+" user=xapi")
-	
 	cur = conn.cursor()
-	#~ cur.execute(" \
-					#~ SELECT id, nodes \
-					#~ FROM ways WHERE \
-					#~ st_intersects(\
-							#~ ways.linestring,\
-							#~ ST_MakeEnvelope(%s,%s,%s,%s, 4326)\
-							#~ ) \
-					 #~ and tags ? 'piste:type'; "\
-					#~ , (left, bottom, right, top))
+	
+	#~ # insert nodes 
+	
+	for i in range(len(coords)-1):
+		lon = float(coords[i].split(';')[1])
+		lat = float(coords[i].split(';')[0])
+		nd_ref+=1
+		# closest way
+		cur.execute("""
+		select id, ST_Line_Locate_Point(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+		FROM ways
+		WHERE linestring && st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326)  \
+		ORDER BY ST_Distance(linestring, ST_GeometryFromText('POINT(%s %s)', 4326)) LIMIT 1;
+		""" % (lon, lat, left, bottom, right, top, lon, lat) )
+		wayid, l = cur.fetchone()
+		print wayid, l
+		
+
+		cur.execute("""
+		select st_x((g.gdump).geom),st_y((g.gdump).geom)
+		from (
+		select ST_DumpPoints(linestring) as gdump from ways where id = %s 
+		) as g;
+		""" % (wayid,))
+		nodes_before=cur.fetchall()
+		# node creation
+		cur.execute("""
+		UPDATE ways SET linestring=(
+		ST_LineMerge(
+			ST_Union(
+				ST_Line_Substring(linestring, 0, %s),
+				ST_Line_Substring(linestring, %s, 1)
+		)))
+		WHERE id=%s
+		""" % (l,l,wayid))
+
+		cur.execute("""
+		select st_x((g.gdump).geom),st_y((g.gdump).geom)
+		from (
+		select ST_DumpPoints(linestring) as gdump from ways where id = %s 
+		) as g;
+		""" % (wayid,))
+		nodes_after=cur.fetchall()
+		
+		for i in range(len(nodes_before)):
+			if nodes_before[i] != nodes_after[i]:
+				# update nodes[]
+				cur.execute("""
+				UPDATE ways SET nodes=(
+				nodes[1:%s] || %s::bigint || nodes[%s+1:1000]
+				)
+				WHERE id=%s
+				""" % (i,nd_ref,i,wayid))
+				break
+				
+		
+		
+		cur.execute("""
+		insert into nodes (version, user_id,changeset_id,tstamp, id, geom) 
+		values (0,0,0,(select LOCALTIMESTAMP),
+			%s,
+			ST_closestPoint(
+				(SELECT linestring from ways where id = %s),
+				ST_GeometryFromText('POINT(%s %s)', 4326)
+			)
+		)
+		""" % (nd_ref, wayid, lon, lat))
+		nd_ref+=1
+		
+		
 	cur.execute(" \
 					SELECT id, nodes \
 					FROM ways WHERE \
@@ -81,6 +146,7 @@ def getOsm(left, bottom, right, top):
 					, (left, bottom, right, top))
 	result=cur.fetchall()
 	ways={}
+	
 	for r in result:
 		ways[r[0]]=[]
 		for i in range(len(r[1])):
@@ -88,6 +154,7 @@ def getOsm(left, bottom, right, top):
 			cur.execute(" select st_x(geom), st_y(geom) from nodes where id=%s" % (nid))
 			nll=cur.fetchone()
 			ways[r[0]].append([nid,nll])
+		
 	
 	root = etree.Element("osm")
 	for wid in ways:
