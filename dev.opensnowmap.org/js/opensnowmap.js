@@ -945,10 +945,10 @@ function map_init(){
     map.addControl(zoomBar);
     
     permalink_marker = new OpenLayers.Control.Permalink("permalink.marker",
-    'file:///home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/index.html',{'createParams': permalink3Args});
+    server,{'createParams': permalink3Args});
     map.addControl(permalink_marker);
     permalink_simple = new OpenLayers.Control.Permalink("permalink.simple",
-    'file:///home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/index.html',{'createParams': permalink0Args});
+    server,{'createParams': permalink0Args});
     map.addControl(permalink_simple);
     
     baseLayers();
