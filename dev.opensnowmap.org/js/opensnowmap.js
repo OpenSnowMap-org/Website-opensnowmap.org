@@ -919,6 +919,7 @@ function permalink0Args() {
         );
     args['layers']='';
     //args['e'] = EXT_MENU;
+    args['marker'] = 'false';
     return args;
 }
 
