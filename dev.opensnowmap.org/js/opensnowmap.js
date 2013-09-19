@@ -969,7 +969,7 @@ function map_init(){
     // map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
     map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
     if (MARKER) {
-		markerIcon = new OpenLayers.Icon('pics/marker.svg',new OpenLayers.Size(25,30),new OpenLayers.Pixel(-12,-30)) 
+		markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) 
 		var markers = new OpenLayers.Layer.Markers( "Markers" );
 		map.addLayer(markers);
 		markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
