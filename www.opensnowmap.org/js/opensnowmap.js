@@ -24,6 +24,7 @@ var mode="raster";
 var EXT_MENU=false;
 var EDIT_SHOWED=false;
 var CATCHER;
+var MARKER = false;
 var permalink_potlatch2;
 var permalink_potlatch;
 var zoomBar;
@@ -349,6 +350,7 @@ function show_settings() {
     html +=' </td></table></div>';
     document.getElementById('sideBarContent').innerHTML=html;
 }
+
 function getWinHeight(){
       var myWidth = 0, myHeight = 0;
       if( typeof( window.innerWidth ) == 'number' ) {
@@ -691,14 +693,17 @@ OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
 // Redirect permalink
 if (location.search != "") {
+    readPermalink(location.search);
+}
+function readPermalink(link) {
     //?zoom=13&lat=46.82272&lon=6.87183&layers=B0TT
-    var x = location.search.substr(1).split("&")
+    var x = link.substr(1).split("&")
     for (var i=0; i<x.length; i++)
     {
         if (x[i].split("=")[0] == 'zoom') {zoom=x[i].split("=")[1];}
         if (x[i].split("=")[0] == 'lon') {lon=x[i].split("=")[1];}
         if (x[i].split("=")[0] == 'lat') {lat=x[i].split("=")[1];}
-        if (x[i].split("=")[0] == 'm') {m=x[i].split("=")[1];} // not used
+        if (x[i].split("=")[0] == 'marker' && x[i].split("=")[1] == 'true') { MARKER = true;}
         if (x[i].split("=")[0] == 'e') {
             var ext=x[i].split("=")[1];
             if (ext == 'false'){EXT_MENU=false;}
@@ -708,7 +713,6 @@ if (location.search != "") {
     }
     //Then hopefully map_init() will do the job when the map is loaded
 }
-
 function zoomSlider(options) {
 
     this.control = new OpenLayers.Control.PanZoomBar(options);
@@ -882,6 +886,15 @@ function baseLayers() {
 
 }
 
+function permalink3Args() {
+    var args = 
+        OpenLayers.Control.Permalink.prototype.createParams.apply(
+            this, arguments
+        );
+    args['marker'] = 'true';
+    return args;
+}
+
 function permalink2Args() {
     var args = 
         OpenLayers.Control.Permalink.prototype.createParams.apply(
@@ -905,8 +918,8 @@ function permalink0Args() {
             this, arguments
         );
     args['layers']='';
-    args['e'] = EXT_MENU;
-    args['m'] = mode;
+    //args['e'] = EXT_MENU;
+    args['marker'] = 'false';
     return args;
 }
 
@@ -932,6 +945,13 @@ function map_init(){
     zoomBar.zoomStopWidth=24;
     map.addControl(zoomBar);
     
+    permalink_marker = new OpenLayers.Control.Permalink("permalink.marker",
+    server,{'createParams': permalink3Args});
+    map.addControl(permalink_marker);
+    permalink_simple = new OpenLayers.Control.Permalink("permalink.simple",
+    server,{'createParams': permalink0Args});
+    map.addControl(permalink_simple);
+    
     baseLayers();
 // Switch base layer
     map.events.on({ "zoomend": function (e) {
@@ -949,6 +969,12 @@ function map_init(){
     map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.left=0;
     // map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
     map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
+    if (MARKER) {
+		markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) 
+		var markers = new OpenLayers.Layer.Markers( "Markers" );
+		map.addLayer(markers);
+		markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
+	}
     loadend();
 }
 
