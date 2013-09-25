@@ -590,7 +590,7 @@ function loadend(){
 		setTimeout('',1000);
 		var pist = JSON.parse(oRequest.responseText);
 		
-		htmlResponse='<p>'
+		var htmlResponse='<p>'
 		for (r in pist) {
 			var elt = pist[r]
 			if (elt.type == 'SITE') {
