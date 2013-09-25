@@ -590,10 +590,11 @@ function loadend(){
 		setTimeout('',1000);
 		var pist = JSON.parse(oRequest.responseText);
 		
-		var htmlResponse=''
+		var htmlResponse='<p>'
 		for (r in pist) {
 			var elt = pist[r]
 			if (elt.type == 'SITE') {
+				htmlResponse += '<p>'
 				types=elt.pistetype.split(';');
 				for (t in  types) {
 					htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
@@ -601,13 +602,13 @@ function loadend(){
 				htmlResponse += '<a onclick="setCenterMap('
 				+ elt.center +','
 				+ 12 +');">'
-				+ elt.site_name +'</a>'
+				+ elt.site_name +'</a></p>'
 			}
-				htmlResponse +='</br>';
+			htmlResponse += '</p><p>'
 			if (elt.type == 'ROUTE') {
 				type=elt.pistetype;
 				color=elt.color;
-				htmlResponse += '<b style="color:'+color+';font-weight:900;">&#9679 </b>'
+				htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -623,10 +624,12 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
+				htmlResponse +='</p>';
 			}
-				htmlResponse +='</br>';
+			htmlResponse += '</p><p>'
 			if (elt.type == 'PISTE'){
 				type=elt.pistetype;
+				htmlResponse += '<p>'
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -643,12 +646,12 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse +='</br>';
+				htmlResponse +='</p>';
 			}
-			htmlResponse += ''
+			htmlResponse += '</p><p>'
 			if (elt.type == 'AERIALWAY') {
 				type=elt.aerialway;
-				htmlResponse += ''
+				htmlResponse += '<p>'
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -664,7 +667,9 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
+				htmlResponse += '</p>'
 			}
+			htmlResponse += '</p>'
 		}
 		htmlResponse += '<hr/>'
 		htmlResponse += '<ul>'
