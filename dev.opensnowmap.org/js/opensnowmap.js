@@ -680,7 +680,7 @@ function loadend(){
 			+ 14 +');">'
 			+ nom[i].display_name +'</a></li><br/>';
 		}
-		htmlResponse += '</p></ul> <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
+		htmlResponse += '</ul></p> <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
 		
 		document.getElementById("sideBarContent").innerHTML = htmlResponse;
 		SIDEBARSIZE='full';
