@@ -590,11 +590,10 @@ function loadend(){
 		setTimeout('',1000);
 		var pist = JSON.parse(oRequest.responseText);
 		
-		var htmlResponse='<p>'
+		var htmlResponse=''
 		for (r in pist) {
 			var elt = pist[r]
 			if (elt.type == 'SITE') {
-				htmlResponse += '<p>'
 				types=elt.pistetype.split(';');
 				for (t in  types) {
 					htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
@@ -602,13 +601,13 @@ function loadend(){
 				htmlResponse += '<a onclick="setCenterMap('
 				+ elt.center +','
 				+ 12 +');">'
-				+ elt.site_name +'</a></p>'
+				+ elt.site_name +'</a>'
 			}
-			htmlResponse += '</p><p>'
+				htmlResponse +='</br>';
 			if (elt.type == 'ROUTE') {
 				type=elt.pistetype;
 				color=elt.color;
-				htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
+				htmlResponse += '<b style="color:'+color+';font-weight:900;">&#9679 </b>'
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -624,12 +623,10 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse +='</p>';
 			}
-			htmlResponse += '</p><p>'
+				htmlResponse +='</br>';
 			if (elt.type == 'PISTE'){
 				type=elt.pistetype;
-				htmlResponse += '<p>'
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -646,12 +643,12 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse +='</p>';
+				htmlResponse +='</br>';
 			}
-			htmlResponse += '</p><p>'
+			htmlResponse += ''
 			if (elt.type == 'AERIALWAY') {
 				type=elt.aerialway;
-				htmlResponse += '<p>'
+				htmlResponse += ''
 				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
@@ -667,12 +664,10 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse += '</p>'
 			}
-			htmlResponse += '</p>'
 		}
 		htmlResponse += '<hr/>'
-		htmlResponse += '<p><ul>'
+		htmlResponse += '<ul>'
 		for (var i=0;i<nom.length;i++) {
 			htmlResponse += '<li><a onclick="setCenterMap('
 			+ nom[i].lon +','
@@ -680,7 +675,7 @@ function loadend(){
 			+ 14 +');">'
 			+ nom[i].display_name +'</a></li><br/>';
 		}
-		htmlResponse += '</ul></p> <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
+		htmlResponse += '</ul> <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
 		
 		document.getElementById("sideBarContent").innerHTML = htmlResponse;
 		SIDEBARSIZE='full';
