@@ -161,7 +161,7 @@ label {
     text-align: center;
     vertical-align: center;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);
+    background-color: rgba(245,245,245);
     z-index: 990;
 }
 #slide{
@@ -180,7 +180,7 @@ label {
     text-align: right;
     vertical-align: middle;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);
+    background-color: rgba(245,245,245);
     z-index: 1000;
 }
 .float-right{
@@ -218,7 +218,7 @@ display: none;
     font-size: 0.75em;
     color: #444444;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);
+    background-color: rgba(245,245,245);
 }
 #menubar{
     top:2px;
@@ -240,12 +240,12 @@ display: none;
 .hrmenu{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 #sideBar{
     position: absolute;
-    right: 75px;
+    right: 0px;
     height: 200px;
-    width: 287px;
+    width: 362px;
     bottom: 60px;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);
+    background-color: rgba(245,245,245,0.5);
     -moz-border-radius:6px;
     border-radius:6px;
     border: 1px solid #aaaaaa;
@@ -255,7 +255,7 @@ display: none;
 #sideBarContent{
         font-size: 0.8em;
         background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.6);
+        background-color: rgba(245,245,245);
         opacity:1;
         height:160px;
 		width: 270px;
