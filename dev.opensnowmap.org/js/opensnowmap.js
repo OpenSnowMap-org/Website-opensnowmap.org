@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //TODO
 // "NetworkError: 404 Not Found - http://beta.opensnowmap.org/data/modis-update.txt" X-server request ... bof
 // http://beta.opensnowmap.org/search?name=puit&full=true 2 results ??
+// concatenate piste search results
+// Why aeriaways are at the topo's end ?
+
 var server="http://"+window.location.host+"/";
 
 var mode="raster";
@@ -40,6 +43,7 @@ var zoom=2;//2
 var modifyControl;
 var highlightCtrl, selectCtrl;
 var SIDEBARSIZE='full'; //persistent sidebar
+
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
@@ -590,7 +594,7 @@ function loadend(){
 		setTimeout('',1000);
 		var pist = JSON.parse(oRequest.responseText);
 		
-		var htmlResponse='<p>'
+		var htmlResponse='';
 		for (r in pist) {
 			var elt = pist[r]
 			if (elt.type == 'SITE') {
@@ -601,10 +605,10 @@ function loadend(){
 				}
 				htmlResponse += '<a onclick="setCenterMap('
 				+ elt.center +','
-				+ 12 +');">'
-				+ elt.site_name +'</a></p>'
+				+ 12 +');" ><b style="font-weight:900;">'
+				+ elt.site_name +'</b></a></p>\n<hr/>\n'
 			}
-			htmlResponse += '</p><p>'
+			//htmlResponse += '</p><p>'
 			if (elt.type == 'ROUTE') {
 				type=elt.pistetype;
 				color=elt.color;
@@ -613,8 +617,8 @@ function loadend(){
 				+'<a onclick="setCenterMap('
 				+ elt.center +','
 				+ 15 +');">'
-				+ elt.route_name +'</a>'
-				+'</br>'
+				+ elt.route_name +'</a>\n'
+				+'<br/>'
 				if (elt.sites[0]) {
 					if (elt.sites[0].site_name){
 						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
@@ -624,9 +628,9 @@ function loadend(){
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse +='</p>';
+				htmlResponse +='</p>\n';
 			}
-			htmlResponse += '</p><p>'
+			//htmlResponse += '</p><p>'
 			if (elt.type == 'PISTE'){
 				type=elt.pistetype;
 				htmlResponse += '<p>'
@@ -636,19 +640,19 @@ function loadend(){
 				+ 15 +');">'
 				+ elt.name +'</a>'
 				+'<b style="color:'+diffcolor[elt.pistedifficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
-				+'</br>'
+				+'<br/>'
 				if (elt.sites[0]) {
 					if (elt.sites[0].site_name){
 						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
 						+ elt.sites[0].site_center +','
 						+ 12 +');">'
-						+elt.sites[0].site_name+'</a>'
+						+elt.sites[0].site_name+'</a>\n'
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse +='</p>';
+				htmlResponse +='</p>\n';
 			}
-			htmlResponse += '</p><p>'
+			//htmlResponse += '</p><p>'
 			if (elt.type == 'AERIALWAY') {
 				type=elt.aerialway;
 				htmlResponse += '<p>'
@@ -657,30 +661,30 @@ function loadend(){
 				+ elt.center +','
 				+ 15 +');">'
 				+ elt.name +'</a>'
-				+'</br>'
+				+'<br/>'
 				if (elt.sites[0]) {
 					if (elt.sites[0].site_name){
 						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
 						+ elt.sites[0].site_center +','
 						+ 12 +');">'
-						+elt.sites[0].site_name+'</a>'
+						+elt.sites[0].site_name+'</a>\n'
 					}
 				}
 				else {htmlResponse +='-'}
-				htmlResponse += '</p>'
+				htmlResponse += '</p>\n'
 			}
-			htmlResponse += '</p>'
+			//htmlResponse += '</p>'
 		}
-		htmlResponse += '<hr/>'
-		htmlResponse += '<ul>'
+		htmlResponse += '<hr/>\n'
+		htmlResponse += '<ul>\n'
 		for (var i=0;i<nom.length;i++) {
 			htmlResponse += '<li><a onclick="setCenterMap('
 			+ nom[i].lon +','
 			+ nom[i].lat +','
 			+ 14 +');">'
-			+ nom[i].display_name +'</a></li><br/>';
+			+ nom[i].display_name +'</a></li><br/>\n';
 		}
-		htmlResponse += '</ul> <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
+		htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
 		
 		document.getElementById("sideBarContent").innerHTML = htmlResponse;
 		SIDEBARSIZE='full';
