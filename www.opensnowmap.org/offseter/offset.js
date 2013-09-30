@@ -118,7 +118,7 @@ function updateRelationList(){
 		'<a onClick="offset('+relationList[t]['id']+',15,\'right\');">++</a>&nbsp;'+
 		relationList[t]['id'] +'-'+relationList[t]['name']+'</p>';
 	}
-	$("content").innerHTML=html;
+	document.getElementById("content").innerHTML=html;
 	return true;
 }
 function get_extended_osm_url(bounds) {

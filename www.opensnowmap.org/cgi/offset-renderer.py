@@ -89,7 +89,7 @@ def application(environ,start_response):
 	host = 'localhost',
 	port = 5432
 	)
-	
+	# GRANT SELECT ON pg_statistic TO mapnik;
 	offset=3
 	i=0
 	
