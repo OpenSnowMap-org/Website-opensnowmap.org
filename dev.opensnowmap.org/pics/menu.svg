@@ -15,9 +15,9 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="menu.svg"
-   inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/menu-hover.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/menu_50.png"
+   inkscape:export-xdpi="384"
+   inkscape:export-ydpi="384">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -56,7 +56,7 @@
      id="layer1"
      transform="translate(0,-1037.3622)">
     <rect
-       style="opacity:0.98999999000000005;fill:#ff811c;fill-opacity:1;stroke:none"
+       style="opacity:0.98999999000000005;fill:#333333;fill-opacity:1;stroke:none"
        id="rect2985"
        width="15"
        height="3"
@@ -72,9 +72,9 @@
        height="3"
        width="15"
        id="rect2987"
-       style="opacity:0.98999999000000005;fill:#ff811c;fill-opacity:1;stroke:none" />
+       style="opacity:0.98999999000000005;fill:#333333;fill-opacity:1;stroke:none" />
     <rect
-       style="opacity:0.98999999000000005;fill:#ff811c;fill-opacity:1;stroke:none"
+       style="opacity:0.98999999000000005;fill:#333333;fill-opacity:1;stroke:none"
        id="rect2989"
        width="15"
        height="3"

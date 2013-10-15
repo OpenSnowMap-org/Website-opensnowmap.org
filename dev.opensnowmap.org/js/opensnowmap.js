@@ -944,10 +944,10 @@ function map_init(){
 	map.addControl(zoomBar);
 	
 	permalink_marker = new OpenLayers.Control.Permalink("permalink.marker",
-	server,{'createParams': permalink3Args});
+	server+'index.html',{'createParams': permalink3Args});
 	map.addControl(permalink_marker);
 	permalink_simple = new OpenLayers.Control.Permalink("permalink.simple",
-	server,{'createParams': permalink0Args});
+	server+'index.html',{'createParams': permalink0Args});
 	map.addControl(permalink_simple);
 	
 	baseLayers();
