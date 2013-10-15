@@ -230,6 +230,8 @@ function hideexcept(div) {
 	if (div != 'languages') {document.getElementById('languages').style.display='none';}
 }
 
+//======================================================================
+// LOCATION
 function toggleLocation() {
 	if (LOC) {
 		navigator.geolocation.clearWatch(geoWatchID);
@@ -259,7 +261,8 @@ function showLocation(position) {
 	LOC_ONCE=true;
   }
 }
-function errorLocation() {
+function errorLocation(error) {
+	alert(error.message);
 	navigator.geolocation.clearWatch(geoWatchID);
 	LOC=false;
 	document.getElementById('location').style.backgroundColor='#FAFAFA';
