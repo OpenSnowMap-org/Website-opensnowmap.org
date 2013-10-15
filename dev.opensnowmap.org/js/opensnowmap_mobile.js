@@ -697,7 +697,7 @@ function map_init(){
 
 //======================================================================
 // I18N
-var locs = [ "cz","de","en","es","fi","fr","hu","it","nl","no","ru","se"];
+var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","nl","no","ru","se"];
 var iloc= 0;
 var locale;
 var iframelocale;
