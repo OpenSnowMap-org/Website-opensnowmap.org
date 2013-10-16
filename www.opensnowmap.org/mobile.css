@@ -1,0 +1,236 @@
+body{
+    margin:0px;
+    overflow:hidden;
+    padding:0px;
+    font-family:sans-serif;
+    font-size: 1em;
+    font-weight: 400;
+    width: 100%; height:100%;
+    color: #505050
+   }
+h1{
+       font-family:sans-serif;
+       font-size: 3em;
+       font-weight: 300;
+       letter-spacing: 0.1ex;
+       border:0;
+       padding: 0px;
+       margin:0
+   }
+a:link, a:visited {
+        color: #000000;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
+    
+a.amenu:link, a.amenu:visited {
+		font-weight: 600;
+		color: #444444;
+		font-size: 1em;
+        text-decoration: none;
+        margin: 0px
+    }
+
+select, option, input{
+        background-color: #FFFFFF;
+        width: 80%;
+        font-size: 1em;
+        border: 1px solid #CCCCCC;
+        text-align: left;
+        margin: 5px 5px 5px 5px;
+}
+.hrmenu{border: 0; width: 100%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+.clear { clear: both}
+#map {
+        position: fixed;    width: 100%; 
+        top: 35px;
+        left: 0px;
+        bottom: 0px;
+        border: 0px;
+        padding: 0px;
+     }
+.olButton {
+    z-index: 1004
+}
+#zoom{
+    position: absolute;
+    top:0px;
+    right: 8px;
+    font-size: 0.5em;
+    color: #050505;
+    padding: 2px 5px 2px 5px;
+    text-align: center;
+    vertical-align: center;
+    -moz-border-radius:6px;
+    border-radius:6px;
+    border: 1px solid #AAAAAA;
+    background-color: #F5F5F5;
+    opacity: 0.5;
+    z-index: 1000;
+}
+#attribution{
+position: absolute;
+bottom: 1px;
+right:1px;
+font-size: 0.4em;
+font-weight:300;
+z-index: 1000;
+background-color: #F5F5F5;
+opacity: 0.4;
+color: black;
+
+}
+.olControlZoom {visibility:hidden;}
+#customZoom {
+	z-index: 1001;
+	position: relative;
+	top: 5px;
+	left: 5px;
+}
+#customZoom a {
+	text-decoration: none;
+	position: absolute;
+	display: block;
+	text-align: center;
+	vertical-align: center;
+	font-weight: bold;
+	color: #888;
+	background-color: #F5F5F5;
+    opacity: 0.7;
+	border: 2px solid #ccc;
+	border-radius: 6px;
+	width: 50px;
+	line-height: 50px;
+	height:50px;
+	font-size: 1.5em;
+}
+#customZoomOut {
+	top: 51px;
+}
+#customZoom a:hover {
+	background: #036;
+}
+#content {
+        position: fixed;
+        top: 35px;
+        bottom: 5px;
+        left: 10px;
+        right:10px;
+        padding: 0px 10px 10px 10px;
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+	    border: 1px solid #AAAAAA;
+        background-color:#FFF;
+        z-index: 1000;
+        overflow: auto;
+     }
+#content-control {
+	width: 100%;
+    background-color:#FAFAFA;
+}
+.closebox {float: right;}
+#header{
+    float:right;
+    -moz-border-radius:6px;
+    border-radius:6px;
+    border: 1px solid #AAAAAA;
+    font-size: 0.75em;
+    color: #050505;
+    width: 100%;
+    height: 33px;
+    vertical-align: center;
+    background-color:#FAFAFA;
+	background-image: url('pics/opensnowmap_title_thin_400.png');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-attachment: scroll;
+    background-size: 200px;
+	
+}
+.button {
+/*inside image and margin make the size*/
+float:left;
+-moz-border-radius:4px;
+border-radius:4px;
+/*
+border: 1px solid #D2D2D2;
+*/
+border: none;
+margin: 2px 2px 2px 2px;
+font-weight: 600;
+font-size:1em;
+}
+.button:hover{
+   background-color:#DDD;
+}
+
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+div.olMapViewport {
+    -ms-touch-action: none;
+}
+.olLayerGrid .olTileImage {
+    -webkit-transition: opacity 0.2s linear;
+    -moz-transition: opacity 0.2s linear;
+    -o-transition: opacity 0.2s linear;
+    transition: opacity 0.2s linear;
+}
+/* Turn on GPU support where available */
+/*
+.olTileImage {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -moz-perspective: 1000;
+    -ms-perspective: 1000;
+    perspective: 1000;
+}
+*/
+.button-img {
+vertical-align: middle;
+margin: 4px 4px 4px 4px;
+}
+@media screen and (min-width: 481px) {
+  .button-img {  width: 32px;  }
+  #header{height: 40px;background-size: 280px;}
+#content-control {height: 40px;}
+  #content {top: 42px;}
+  #map {top: 42px;}
+    #customZoom a {
+	width: 32px;
+	line-height: 32px;
+	height:32px;
+	font-size: 1em;
+	}
+	#customZoomOut {
+		top: 33px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+  .button-img {  width: 22px;}
+  #titleimg {width: 200px;} 
+  #header{height: 40px;background-size: 200px;}
+#content-control {height: 40px;}
+  #content {top: 42px;}
+  #map {top: 42px;}
+    #customZoom a {
+	width: 22px;
+	line-height: 22px;
+	height:22px;
+	font-size: 0.8em;
+	}
+	#customZoomOut {
+		top: 23px;
+	}
+}

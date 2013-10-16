@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   width="18"
+   height="18"
+   viewBox="0 0 18 18"
+   xml:space="preserve"
+   id="svg2"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="link_50.svg"
+   inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/link_50.png"
+   inkscape:export-xdpi="320"
+   inkscape:export-ydpi="320"><metadata
+   id="metadata14"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs12"><linearGradient
+     id="linearGradient3759"
+     osb:paint="solid"><stop
+       style="stop-color:#ff811c;stop-opacity:1;"
+       offset="0"
+       id="stop3761" /></linearGradient><linearGradient
+     inkscape:collect="always"
+     xlink:href="#linearGradient3759"
+     id="linearGradient3763"
+     x1="3.0039999"
+     y1="12"
+     x2="21"
+     y2="12"
+     gradientUnits="userSpaceOnUse" /></defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="864"
+   inkscape:window-height="521"
+   id="namedview10"
+   showgrid="false"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0"
+   inkscape:zoom="9.8333333"
+   inkscape:cx="8.9959999"
+   inkscape:cy="4"
+   inkscape:window-x="102"
+   inkscape:window-y="268"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg2" />
+<g
+   id="Icons"
+   style="opacity:1;fill:#333333;fill-opacity:1;fill-rule:nonzero"
+   transform="matrix(1,0,0,0.8125,-3.0040001,-1)"
+   inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/link_hover.png"
+   inkscape:export-xdpi="110.02444"
+   inkscape:export-ydpi="110.02444">
+	<g
+   id="link"
+   style="fill:#333333;fill-opacity:1;fill-rule:nonzero">
+		<path
+   id="right"
+   d="m 19.188,12.001 c 0,1.1 -0.891,2.015 -1.988,2.015 L 13.005,14.001 C 13.543,15.089 13.968,16 15.002,16 h 3 C 19.658,16 21,13.657 21,12 21,10.343 19.658,8 18.002,8 h -3 c -1.034,0 -1.459,0.911 -1.998,1.999 l 4.195,-0.015 c 1.098,0 1.989,0.917 1.989,2.017 z"
+   style="fill:#333333;fill-opacity:1;fill-rule:nonzero"
+   inkscape:connector-curvature="0" />
+		<path
+   id="center"
+   d="m 8,12 c 0,0.535 0.42,1 0.938,1 h 6.109 c 0.518,0 0.938,-0.465 0.938,-1 0,-0.534 -0.42,-1 -0.938,-1 H 8.938 C 8.42,11 8,11.466 8,12 z"
+   style="fill:#333333;fill-opacity:1;fill-rule:nonzero"
+   inkscape:connector-curvature="0" />
+		<path
+   id="left"
+   d="m 4.816,11.999 c 0,-1.1 0.891,-2.015 1.988,-2.015 L 11,9.999 C 10.461,8.911 10.036,8 9.002,8 h -3 c -1.656,0 -2.998,2.343 -2.998,4 0,1.657 1.342,4 2.998,4 h 3 c 1.034,0 1.459,-0.911 1.998,-1.999 l -4.195,0.015 c -1.098,0 -1.989,-0.917 -1.989,-2.017 z"
+   style="fill:#333333;fill-opacity:1;fill-rule:nonzero"
+   inkscape:connector-curvature="0" />
+	</g>
+</g>
+<g
+   id="Guides"
+   style="display:none"
+   transform="translate(-3.0040001,2)">
+</g>
+</svg>
