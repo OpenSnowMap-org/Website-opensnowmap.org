@@ -35,7 +35,9 @@ var lat=46.82084;
 var lon=6.39942;
 var zoom=3;//2
 var position;
-
+var lengthes;
+var today=new Date();
+var update;
 
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
@@ -198,13 +200,22 @@ function showlegend() {
 function showabout() {
 	hideexcept('about');
 	url = server+'iframes/about.'+iframelocale+'.html';
-	var html = get_page(url).replace('**update**',get_update()).replace('**length**',get_length());
+	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
+	
+	var content = get_page(url).replace('**update**',update)
+	.replace('**nordic**',lengthes.nordic)
+	.replace('**downhill**',lengthes.downhill)
+	.replace('**aerialway**',lengthes.aerialway)
+	.replace('**skitour**',lengthes.skitour)
+	.replace('**sled**',lengthes.sled)
+	.replace('**snowshoeing**',lengthes.snowshoeing);
 	document.getElementById('content_title').innerHTML='&nbsp;'+_('about');
-	document.getElementById('about').innerHTML = html;
+	document.getElementById('about').innerHTML = content;
 	document.getElementById('about').style.display='inline';
 	document.getElementById('content').style.display='inline';
 	document.getElementById('content').scrollTop = 0;
 }
+
 function showlanguages() {
 	hideexcept('languages');
 	document.getElementById('content').style.display='inline';
@@ -271,42 +282,12 @@ function errorLocation(error) {
 //======================================================================
 // INIT
 
-function get_length(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var lengthes = JSON.parse(oRequest.responseText);
-	var length= parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
-	return length;
-}
 function get_stats(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/stats.json',false);
 	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
-	var lengthes = JSON.parse(oRequest.responseText);
-	html='<table border="0">'
-	html+='<tr>'
-	html+='<td><img src="'+icon['nordic']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.nordic)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['downhill']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.downhill)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='<tr>'
-	html+='<td><img src="'+icon['sled']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.sled)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['skitour']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.skitour)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='<tr>'
-	html+='<td><img src="'+icon['hike']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.snowshoeing)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['drag_lift']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.aerialway)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='</table>'
-	return html;
+	lengthes = JSON.parse(oRequest.responseText);
 }
 function get_update(){
 	var oRequest = new XMLHttpRequest();
@@ -314,13 +295,8 @@ function get_update(){
 	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	var stats = JSON.parse(oRequest.responseText);
-	var date=stats.date;
-	//~ var H=oRequest.responseText.split('T')[1].split(':')[0];
-	//~ var M=oRequest.responseText.split('T')[1].split(':')[1];
-	//~ var DHM=date +' '+ H+':'+M+'UTC';
-	return date;
-}
-function get_modisupdate(){
+	update=stats.date;
+}function get_modisupdate(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/modis-update.txt',false);
 	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
@@ -332,7 +308,8 @@ function page_init(){
 	updateZoom();
 	initFlags();
 	//~ resize_sideBar();
-	
+	get_stats();
+	get_update();
 	document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
 	document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
 	document.getElementById('dailyVector').style.backgroundColor='#FFF';

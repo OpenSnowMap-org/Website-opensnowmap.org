@@ -43,6 +43,9 @@ var zoom=2;//2
 var modifyControl;
 var highlightCtrl, selectCtrl;
 var SIDEBARSIZE='full'; //persistent sidebar
+var lengthes;
+var today=new Date();
+var update;
 
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
@@ -191,18 +194,47 @@ function show_catcher(){
 	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
 	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-	document.getElementById('sideBarTitle').innerHTML='';
-		var html='<a href="http://wiki.openstreetmap.org" target="blank"><img src="pics/osm-pistes-nordiques_logo-80px.png" style="float: left;margin: 5px;"></img></a>';
-		html+='<p>';
-		html+=get_length()+' '+_('piste_length');
-		html+=_('you');
-		html+='</p>';
-		html+='<p>';
-		html+='<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;">';
-		html+=_('edit');
-		html+='</a>';
-		html+='</p>';
-	html+=get_stats();
+	
+	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+today.getMonth()+'.'+today.getFullYear()+'&nbsp;</i>';
+	
+	document.getElementById('sideBarTitle').innerHTML=title;
+	
+	var html=''
+	html+='<div style="float: left;margin: 5px;font-size:0.8em;" itemscope itemtype="http://data-vocabulary.org/Event">';
+	html+='<a href="http://wiki.openstreetmap.org" target="blank"><img src="pics/osm-pistes-nordiques_logo-80px.png"></img></a>';
+	html+='</div>'
+	html+='<p>';
+	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
+	html+='<span itemprop="summary">'+full_length+' '+_('piste_length')+'</span>';
+	html+=_('you');
+	html+='</p>';
+	html+='<p>';
+	html+='<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;">';
+	html+=_('edit');
+	html+='</a>';
+	html+='</p>';
+	html+='</div>';
+	html+='<table border="0">';
+	html+='<tr>';
+	html+='<td><img src="'+icon['nordic']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.nordic)+'&nbsp;km<td>';
+	html+='<td><img src="'+icon['downhill']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.downhill)+'&nbsp;km<td>';
+	html+='</tr>';
+	html+='<tr>';
+	html+='<td><img src="'+icon['sled']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.sled)+'&nbsp;km<td>';
+	html+='<td><img src="'+icon['skitour']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.skitour)+'&nbsp;km<td>';
+	html+='</tr>';
+	html+='<tr>';
+	html+='<td><img src="'+icon['hike']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.snowshoeing)+'&nbsp;km<td>';
+	html+='<td><img src="'+icon['drag_lift']+'">&nbsp;<td>';
+	html+='<td>'+(lengthes.aerialway)+'&nbsp;km<td>';
+	html+='</tr>';
+	html+='</table>';
+	
 	document.getElementById('sideBarContent').innerHTML=html;
 }
 function show_helper(){
@@ -228,7 +260,15 @@ function show_about() {
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	url = server+'iframes/about.'+iframelocale+'.html';
-	content = get_page(url).replace('**update**',get_update()).replace('**length**',get_length());//.replace('**modis-update**',get_modisupdate());
+	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
+	
+	var content = get_page(url).replace('**update**',update)
+	.replace('**nordic**',lengthes.nordic)
+	.replace('**downhill**',lengthes.downhill)
+	.replace('**aerialway**',lengthes.aerialway)
+	.replace('**skitour**',lengthes.skitour)
+	.replace('**sled**',lengthes.sled)
+	.replace('**snowshoeing**',lengthes.snowshoeing);
 	document.getElementById('sideBarContent').innerHTML = content;
 	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('about');
@@ -485,42 +525,12 @@ function echap() {
 		}
 		clearRoute();
 }
-function get_length(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var lengthes = JSON.parse(oRequest.responseText);
-	var length= parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
-	return length;
-}
 function get_stats(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/stats.json',false);
 	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
-	var lengthes = JSON.parse(oRequest.responseText);
-	html='<table border="0">'
-	html+='<tr>'
-	html+='<td><img src="'+icon['nordic']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.nordic)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['downhill']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.downhill)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='<tr>'
-	html+='<td><img src="'+icon['sled']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.sled)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['skitour']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.skitour)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='<tr>'
-	html+='<td><img src="'+icon['hike']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.snowshoeing)+'&nbsp;km<td>'
-	html+='<td><img src="'+icon['drag_lift']+'">&nbsp;<td>'
-	html+='<td>'+(lengthes.aerialway)+'&nbsp;km<td>'
-	html+='</tr>'
-	html+='</table>'
-	return html;
+	lengthes = JSON.parse(oRequest.responseText);
 }
 function get_update(){
 	var oRequest = new XMLHttpRequest();
@@ -528,11 +538,7 @@ function get_update(){
 	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	var stats = JSON.parse(oRequest.responseText);
-	var date=stats.date;
-	//~ var H=oRequest.responseText.split('T')[1].split(':')[0];
-	//~ var M=oRequest.responseText.split('T')[1].split(':')[1];
-	//~ var DHM=date +' '+ H+':'+M+'UTC';
-	return date;
+	update=stats.date;
 }
 function get_modisupdate(){
 	var oRequest = new XMLHttpRequest();
@@ -550,6 +556,8 @@ function stopRKey(evt) {
 }
 function page_init(){
 		document.onkeypress = stopRKey; 
+		get_stats();
+		get_update();
 		updateZoom();
 		initFlags();
 		resize_sideBar();
