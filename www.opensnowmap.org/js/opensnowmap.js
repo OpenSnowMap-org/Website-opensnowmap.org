@@ -195,7 +195,7 @@ function show_catcher(){
 	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
 	
-	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+today.getMonth()+'.'+today.getFullYear()+'&nbsp;</i>';
+	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
 	
 	document.getElementById('sideBarTitle').innerHTML=title;
 	

@@ -13,315 +13,413 @@ from lxml import etree
 import json
 import cgi
 import urllib
+"""
+http://beta.opensnowmap.org/search?name=Vourbey&ids_only=true
+http://beta.opensnowmap.org/search?name=Pauvre Conche&ids_only=true
+http://beta.opensnowmap.org/search?bbox=5,46,6,47&ids_only=true
+http://beta.opensnowmap.org/search?closest=5,46&ids_only=true
+"""
+
+con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
 
 def application(environ,start_response):
-	request = urllib.unquote(environ['QUERY_STRING'])
-	name=''
-	point=''
-	radius=''
 	
-	full = True
-	if request.find('full=true') !=-1:
-		full = True
-	if request.find('ids=') !=-1:
-		ids=request.split('ids=')[1]
-		if ids.find('&'):
-			ids=ids.split('&')[0].split(',')
-			response=query_ids(ids,full)
-			response_body=json.dumps(response, sort_keys=True, indent=4)
-			status = '200 OK'
-			response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-			start_response(status, response_headers)
-			return [response_body]
-		
+	NAME=False
+	CLOSEST=False
+	BBOX=False
+	ID_REQUEST=False
+	TOPO=False
+	GEO=False
+	IDS_ONLY=False
+	
+	#==================================================
+	# handle GET request paramaters
+	request = urllib.unquote(environ['QUERY_STRING'])
+	
 	if request.find('name=') !=-1:
+		NAME = True
+		# query: ...name=someplace&...
 		name=request.split('name=')[1]
 		if name.find('&'): name=name.split('&')[0]
+		#name='the%20blue slope'
 		
-	if request.find('point=') !=-1:
-		point=request.split('point=')[1]
-		if point.find('&'): point=point.split('&')[0].replace(';',',')
-	ids= query(name,point)
-	response=query_ids(ids,full)
-	response_body=json.dumps(response, sort_keys=True, indent=4)
-	status = '200 OK'
-	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-	start_response(status, response_headers)
-	return [response_body]
+	if request.find('closest=') !=-1:
+		CLOSEST = True
+		# query: ...closest=lon,lat&... or ...closest=lon; lat&...
+		point=request.split('closest=')[1]
+		if point.find('&'): point=point.split('&')[0].replace(';',',').replace(' ','')
+		center={}
+		center['lon']=float(point.split(',')[0])
+		center['lat']=float(point.split(',')[1])
+		# center={lat: 42.36, lon: 6.34}
+		
+	if request.find('ids=') !=-1:
+		ID_REQUEST = True
+		# query: ...ids=id1, id2, id3...
+		ids=request.split('ids=')[1]
+		if ids.find('&'): ids=ids.split('&')[0].split(',')
+		# ids=[id1, id2, ...]
+		
+	if request.find('bbox=') !=-1:
+		BBOX = True
+		# query: ...bbox=left, bottom, right, top&... 
+		bbox=request.split('bbox=')[1]
+		if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
+		for b in bbox: b=float(b)
+		# bbox=[left, bottom, right, top]
+		
+	if request.find('ids_only=true') !=-1:
+		IDS_ONLY = True
+		# query: ...ids=true... 
+		
+	elif request.find('topo=true') !=-1:
+		TOPO = True
+		# query: ...topo=true... 
+		if request.find('geo=true') !=-1:
+			GEO = True
+			# query: ...geo=true... 
 	
-def query(name='', point=''):
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
+	#==================================================
+	# basic queries: create the dict of elements osm ids corresponding to the query
+	if ID_REQUEST: 
+		site_ids, route_ids, way_ids= queryByIds(ids)
+		IDS=buildIds(site_ids, route_ids, way_ids)
+	elif BBOX:
+		site_ids, route_ids, way_ids= queryByBbox(bbox)
+		IDS=buildIds(site_ids, route_ids, way_ids)
+	elif CLOSEST:
+		site_ids, route_ids, way_ids= queryClosest(center)
+		IDS=buildIds(site_ids, route_ids, way_ids)
+	elif NAME:
+		site_ids, route_ids, way_ids= queryByName(name)
+		IDS=buildIds(site_ids, route_ids, way_ids)
+	else:
+		response_body=json.dumps({}, sort_keys=True, indent=4)
+		status = '400 Bad Request'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		con.close()
+		return [response_body]
+	
+	# Whatever the query was, we must now have an object like this:
+	"""
+	IDS={
+		sites : {
+					ids:[id, id, ...]
+				}
+		routes : {
+					ids:[id, id, ...]
+					in_site:[id, id, ...]
+				}
+		ways : {
+					ids:[[id, id], ...] # ways can be grouped if similar enough (touches each other, same name, same type, same difficulty)
+					in_site:[id, id, ...]
+					in_route:[id, id, ...]
+				}
+	}
+	"""
+	#==================================================
+	# build the response
+	if IDS_ONLY:
+		IDS['generator']="Opensnowmap.org piste search API"
+		IDS['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+		response_body=json.dumps(IDS, sort_keys=True, indent=4)
+		status = '200 OK'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		con.close()
+		return [response_body]
+		
+	elif TOPO:
+		if GEO:
+			topo=makeTopo(IDS,True)
+			response_body=json.dumps(topo, sort_keys=True, indent=4)
+		else:
+			topo=makeTopo(IDS,False)
+			response_body=json.dumps(topo, sort_keys=True, indent=4)
+		status = '200 OK'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		con.close()
+		return [response_body]
+	
+	else:
+		response_body=json.dumps({}, sort_keys=True, indent=4)
+		status = '400 Bad Request'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		con.close()
+		return [response_body]
+	
+#==================================================
+def queryByName(name):
+	cur = con.cursor()
+	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
+	
+	cur.execute("""
+	SELECT id FROM relations 
+	WHERE
+	to_tsvector(
+	COALESCE(tags->'name','')||' '||
+	COALESCE(tags->'piste:name','')
+	)@@ to_tsquery('%s')
+	and (tags->'type' = 'site');
+	"""
+	% (name,))
+	site_ids = cur.fetchall()
+	site_ids = [x[0] for x in site_ids]
+	con.commit()
+	
+	cur.execute("""
+	SELECT id FROM relations 
+	WHERE
+	to_tsvector(
+	COALESCE(tags->'name','')||' '||
+	COALESCE(tags->'piste:name','')
+	)@@ to_tsquery('%s')
+	and (tags->'route' = 'piste' or tags->'route' = 'ski');
+	"""
+	% (name,))
+	route_ids = cur.fetchall()
+	route_ids = [x[0] for x in route_ids]
+	con.commit()
+	
+	cur.execute("""
+	SELECT id FROM ways 
+	WHERE
+	to_tsvector(
+	COALESCE(tags->'name','')||' '||
+	COALESCE(tags->'piste:name','')
+	)@@ to_tsquery('%s');
+	"""
+	% (name,))
+	way_ids = cur.fetchall()
+	way_ids = [x[0] for x in way_ids]
+	con.commit()
+	
+	cur.close()
+	
+	return site_ids, route_ids, way_ids
+	
+def queryClosest(center):
 	cur = con.cursor()
 	
-	oms_ids=[]
+	cur.execute("""
+	SELECT id FROM ways 
+	ORDER BY 
+	ST_Distance(linestring, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
+	LIMIT 1;
+	"""
+	% (center['lon'],center['lat']))
+	way_ids = cur.fetchall()
+	way_ids = [x[0] for x in way_ids]
 	
-	# Query db, looking for 'name'
-	if name != '':
-		name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
+	
+	con.commit()
+	cur.close()
+	
+	return [], [], way_ids
+	
+def queryByBbox(bbox):
+	cur = con.cursor()
+	site_ids=[]
+	route_ids=[]
+	
+	#~ Need to build a geometryfor relations ...
+	cur.execute("""
+	SELECT id FROM relations 
+	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+	and (tags->'type' = 'site');
+	"""
+	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	site_ids = cur.fetchall()
+	site_ids = [x[0] for x in site_ids]
+	cur.close()
+	cur = con.cursor()
+	cur.execute("""
+	SELECT id FROM relations 
+	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+	and (tags->'route' = 'piste' or tags->'route' = 'ski');
+	"""
+	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	route_ids = cur.fetchall()
+	route_ids = [x[0] for x in route_ids]
+	
+	cur.close()
+	cur = con.cursor()
+	cur.execute("""
+	SELECT id FROM ways 
+	WHERE linestring && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326);
+	"""
+	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	way_ids = cur.fetchall()
+	way_ids = [x[0] for x in way_ids]
+	con.commit()
+	
+	
+	cur.close()
+	
+	return site_ids, route_ids, way_ids
+	
+def buildIds(site_ids, route_ids, way_ids):
+	cur = con.cursor()
+	if len(way_ids):
+		# remove duplicates: way member of a route of same piste:type
+		wayList = ','.join([str(long(i)) for i in way_ids])
+		to_remove=[]
+		for i in route_ids:
+			cur.execute(
+			"""
+			SELECT id FROM ways
+			WHERE id in (
+				SELECT member_id FROM relation_members 
+				WHERE relation_id =%s and member_id in (%s)
+				)
+			AND
+				tags->'piste:type' = (
+					SELECT tags->'piste:type' FROM relations
+					WHERE id = %s
+					);
+			"""
+			%(long(i),wayList,long(i)))
+			
+			to_remove.extend(cur.fetchall())
+			con.commit()
 		
-		cur.execute("select osm_id from planet_osm_point \
-					where to_tsvector(site_name) @@ to_tsquery('%s');"\
-			%(name))
-		ids=cur.fetchall()
-		for i in ids:
-			idx=long(i[0])
-			oms_ids.append(str(idx))
-			
-		cur.execute("select osm_id from planet_osm_line where \
-					to_tsvector(COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",'')) \
-					@@ to_tsquery('%s');"\
-			%(name))
-		ids=cur.fetchall()
-		for i in ids:
-			idx=long(i[0])
-			oms_ids.append(str(idx))
-			
-	elif point != '' :
-		cur.execute(" \
-		SELECT a.osm_id  \
-			FROM ( \
-			SELECT osm_id, way \
-			FROM planet_osm_polygon \
-			UNION ALL  \
-			SELECT osm_id, way \
-			FROM planet_osm_line where osm_id > 0 \
-			 ) as a \
-		ORDER BY \
-		  ST_Distance(a.way, ST_Transform(ST_SetSRID(ST_MakePoint(%s),4326),900913)) ASC\
-		LIMIT 1;" %(point,))
-		ids=cur.fetchall()
-		for i in ids:
-			idx=long(i[0])
-			oms_ids.append(str(idx))
-		ids=ids[0]
+		clean_way_ids=[]
+		for wid in way_ids:
+			if wid not in to_remove: clean_way_ids.append(wid)
+		way_ids=clean_way_ids
 	
-	con.close()
-	return oms_ids
+	if len(way_ids)>1:
+	# group ways
+		wayList = ','.join([str(long(i)) for i in way_ids])
+		cur.execute(
+		"""
+		SELECT distinct array_agg(distinct a.id)
+		FROM ways as a, ways as b
+		WHERE 
+			a.id in (%s)
+			and b.id in (%s)
+			and (a.tags->'name' <>'' or a.tags->'piste:name' <> '')
+		GROUP BY (COALESCE(a.tags->'name','')||' '|| COALESCE(a.tags->'piste:name','')) 
+				= (COALESCE(b.tags->'name','')||' '|| COALESCE(b.tags->'piste:name',''))
+				, ST_touches(a.linestring,b.linestring) , a.tags->'piste:difficulty';
+		"""
+		%(wayList,wayList))
+		way_ids=cur.fetchall()
+		con.commit()
+		way_ids = [list(set(x[0])) for x in way_ids]
+		
+		# ST_Touches() does not extend beyond nearest neighbors, we have now 
+		# to re-group further by id
+		grouped_ways_ids=[way_ids[0]]
+		print "ways:" 
+		for w in way_ids: print w
+		breakabove=False
+		for ids in way_ids:
+			for grouped_ids in grouped_ways_ids:
+				if grouped_ids == ids: continue
+				if set(grouped_ids).intersection(ids):
+					grouped_ids.extend(ids)
+					grouped_ids=list(set(grouped_ids))
+					break
+				else: 
+					grouped_ways_ids.append(ids)
+		way_ids=grouped_ways_ids
 	
-def query_topo(str_id):
-	ids=str_id.split(',')
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
+	IDS = {}
+	IDS['sites']=site_ids
+	IDS['routes']=route_ids
+	IDS['ways']=way_ids
+	
+	cur.close()
+	
+	return IDS
+
+def makeTopo(IDS, GEO):
 	cur = con.cursor()
 	topo={}
+	topo['sites']=[]
+	for osm_id in IDS['sites']:
+		osm_id=str(long(osm_id))
+		cur.execute("""
+		SELECT 
+		id,
+		tags->'name'
+		FROM relations 
+		WHERE id=%s;
+		"""
+		% (osm_id,))
+		site=cur.fetchone()
+		con.commit()
+		
+		s={}
+		if site:
+			s['id']=site[0]
+			s['name']=site[1]
+		topo['sites'].append(s)
+	cur.close()
 	
-	i=0 # we want to keep json order
-	for idx in ids:
-		i+=1
-		cur.execute("select \
-		\"piste:type\", \
-		\"piste:difficulty\", \
-		\"piste:grooming\", \
-		COALESCE(route_name,'')||' '||COALESCE(name,'')||' '||COALESCE(\"piste:name\",''), \
-		member_of, \
-		\"aerialway\" \
-		from planet_osm_line where osm_id = %s\
-		UNION ALL \
-		from planet_osm_polygon where osm_id = %s;" % (idx,idx))
-		s=cur.fetchone()
-		if s:
-			topo[i]={}
-			#topo[i]['id']=idx
-			if s[0]:
-				topo[i]['type']=s[0]
-			else:
-				topo[i]['type']=s[5]
-			topo[i]['difficulty']=s[1]
-			topo[i]['grooming']=s[2]
-			topo[i]['piste_name']=s[3]
-			topo[i]['member_of']=[]
-			if s[4]:
-				for m in s[4]:
-					if m > 0: m =-m
-					cur.execute("select \
-					route_name, COALESCE(color,'')||''||COALESCE(colour,'') \
-					from planet_osm_line where osm_id = %s\
-					UNION ALL \
-					from planet_osm_polygon where osm_id = %s;" % (m,m))
-					topo[i]['member_of'].append(cur.fetchone())
-			topo[i]['aerialway']=s[5]
-	
-	#remove duplicates
-	clean_topo={}
-	clean_topo[1]=topo[1]
-	j=1
-	for i in topo:
-		if not equal(topo[i],clean_topo[j]):
-			j+=1
-			clean_topo[j]=topo[i]
-	
-	con.close()
-	return clean_topo
-	
-def equal(d1,d2):
-	for i in d1:
-		if d1[i] != d2[i]: return False
-	return True
-	
-def query_ids(ids,full):
-	con = psycopg2.connect("dbname=pistes-mapnik user=mapnik")
 	cur = con.cursor()
-	elements=[]
-	for idx in ids:
-		relidx=-long(idx)
-		element={}
-		element['id']=''
-		element['name']=''
-		element['pistetype']=''
-		element['center'] =''
-		element['pistedifficulty'] =''
-		element['pistegrooming']=''
-		element['pistelit']=''
-		element['color']=''
-		element['aerialway']=''
-		element['member_of'] =''
-		element['in_site']=''
-		element['sites']=''
-		element['routes']=''
-		element['route_name']=''
-		element['site_name']=''
-		# ways and routes
-		# 
-		query = "select \
-			a.name, \
-			a.\"piste:name\", \
-			a.\"piste:type\", \
-			ST_AsLatLonText(st_centroid(ST_Transform(a.way,4326)), 'D.DDDDD'), \
-			a.\"piste:difficulty\",\
-			a.\"piste:grooming\",\
-			a.\"piste:lit\", \
-			a.route_name, \
-			a.color, \
-			a.colour, \
-			a.aerialway, \
-			a.member_of, \
-			a.in_site \
-			from (\
-				select way,\
-					name, \
-					\"piste:name\",\
-					\"piste:type\", \
-					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), \
-					\"piste:difficulty\",\
-					\"piste:grooming\",\
-					\"piste:lit\", \
-					route_name, \
-					color, \
-					colour, \
-					aerialway, \
-					member_of, \
-					in_site \
-				 from planet_osm_line where osm_id = %s or osm_id = %s \
-				UNION ALL \
-				select way,\
-					name, \
-					\"piste:name\",\
-					\"piste:type\", \
-					ST_AsLatLonText(st_centroid(ST_Transform(way,4326)), 'D.DDDDD'), \
-					\"piste:difficulty\",\
-					\"piste:grooming\",\
-					\"piste:lit\", \
-					route_name, \
-					color, \
-					colour, \
-					aerialway, \
-					member_of, \
-					in_site  \
-				from planet_osm_polygon where osm_id = %s or osm_id = %s \
-				) as a;"
-		cur.execute(query %(idx,relidx,idx,relidx))
-		resp=cur.fetchall()
-		for s in resp:
-			if s:
-				element['id']=idx
-				if s[7]: element['name'] = s[7]
-				elif s[1]: element['name'] = s[1]
-				elif s[0]: element['name'] = s[0]
-				element['pistetype'] = s[2]
-				element['center'] = s[3].split(' ')[1]+','+s[3].split(' ')[0]
-				element['pistedifficulty'] = s[4]
-				element['pistegrooming'] = s[5]
-				element['pistelit'] = s[6]
-				element['route_name'] = s[7]
-				if s[8]: element['color'] = s[8]
-				elif s[9]: element['color'] = s[9]
-				element['aerialway'] = s[10]
-				element['member_of'] = s[11]
-				element['in_site'] = s[12]
-				if full:
-					if element['in_site']:
-						element['sites']=[]
-						for i in element['in_site']:
-							site_id=-long(i)
-							site={}
-							cur.execute("select site_name,  \
-								ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD') \
-								from planet_osm_point where osm_id = %s and site_name is not null;"\
-								%(site_id))
-							resp2=cur.fetchall()
-							if resp2:
-								site['site_name']=resp2[0][0]
-								site['site_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
-								element['sites'].append(site)
-					if element['member_of']:
-						element['routes']=[]
-						for i in element['member_of']:
-							route_id=-long(i)
-							route={}
-							cur.execute("select route_name, \
-								ST_AsLatLonText(st_centroid(ST_Transform(way,4326)),'D.DDDDD'), \
-								COALESCE(color,colour) \
-								from planet_osm_line where osm_id = %s and route_name is not null;"\
-								%(route_id))
-							resp2=cur.fetchall()
-							if resp2:
-								route['route_name']=resp2[0][0]
-								route['route_center']=resp2[0][1].split(' ')[1]+','+resp2[0][1].split(' ')[0]
-								if resp2[0][2]: route['color'] = resp2[0][2]
-								element['routes'].append(route)
+	topo['pistes']=[]
+	for osm_id in IDS['routes']:
+		osm_id=str(long(osm_id))
+		cur.execute("""
+		SELECT 
+		id,
+		COALESCE(tags->'name','')||' '||COALESCE(tags->'piste:name',''),
+		tags->'piste:type',
+		tags->'color',
+		tags->'colour'
+		FROM relations 
+		WHERE id=%s;
+		"""
+		% (osm_id,))
+		piste=cur.fetchone()
+		con.commit()
 		
-		# sites
-		# 
-		if long(idx) < 0:
-			cur.execute("select site_name, \"piste:type\", ST_AsLatLonText(ST_Transform(way,4326), 'D.DDDDD') \
-			from planet_osm_point where osm_id = %s and \"piste:type\" is not null;"\
-			%(idx))
-			resp=cur.fetchall()
-			for s in resp:
-				if s:
-					element['id']=idx
-					element['site_name']=s[0]
-					element['pistetype']=s[1]
-					element['center']=s[2].split(' ')[1]+','+s[2].split(' ')[0]
-		if len(element) !=0 : elements.append(element)
-	con.close()
-	return element_sort(elements)
-
-def element_sort(elements):
+		s={}
+		if piste:
+			s['ids']=[piste[0]]
+			s['name']=piste[1]
+			s['pistetype']=piste[2]
+			if piste[3]:
+				s['color']=piste[3]
+			else :
+				s['color']=piste[4]
+			s['difficulty']=None
+			s['aerialway']=None
+		topo['pistes'].append(s)
+	cur.close()
 	
-	for element in elements:
-		element['type']=''
-		if element['site_name'] and long(element['id']) < 0 : element['type']='SITE'
-		elif element['route_name'] and long(element['id']) < 0: element['type']='ROUTE'
-		elif element['aerialway']: element['type']='AERIALWAY'
-		else : element['type']='PISTE'
-	sorted_elements=[]
-	for element in elements:
-		if element['type']=='SITE' and element['id']: sorted_elements.append(element)
-	for element in elements:
-		if element['type']=='ROUTE'and element['id']: sorted_elements.append(element)
-	for element in elements:
-		if element['type']=='PISTE' and element['id']: sorted_elements.append(element)
-	for element in elements: 
-		if element['type']=='AERIALWAY' and element['id']: sorted_elements.append(element)
-	
-	return sorted_elements
+	cur = con.cursor()
+	for osm_ids in IDS['ways']:
+		#~ osm_ids=[str(long(i)) for i in osm_id]
+		osm_id=str(long(osm_ids[0]))
+		cur.execute("""
+		SELECT 
+		id,
+		COALESCE(tags->'name','')||' '||COALESCE(tags->'piste:name',''),
+		tags->'piste:type',
+		tags->'piste:difficulty',
+		tags->'aerialway'
+		FROM ways 
+		WHERE id=%s;
+		"""
+		% (osm_id,))
+		piste=cur.fetchone()
+		con.commit()
 		
-#6.46,46.83
-#~ n=sys.argv[1]
-#~ r=sys.argv[2]
-#~ sites, entrances, routes, ways = query_ids('',n,r)
-#~ print query_sites(sites)
-#~ print query_routes(routes)
-#~ print query_ways(ways)
-#~ print query_aerialways(ways)
-
+		s={}
+		if piste:
+			s['ids']=osm_ids
+			s['name']=piste[1]
+			s['pistetype']=piste[2]
+			s['color']=''
+			s['difficulty']=piste[3]
+			s['aerialway']=piste[4]
+		topo['pistes'].append(s)
+	cur.close()
+	
+	return topo
