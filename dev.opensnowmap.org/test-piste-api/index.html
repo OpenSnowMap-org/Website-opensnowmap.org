@@ -1,0 +1,45 @@
+<html>
+<head>
+	<title>OpenLayers Example</title>
+	<link rel="stylesheet" href="../main.css" media="screen" />
+	<script src="http://openlayers.org/api/OpenLayers.js"></script>
+	<script src="map.js"></script>
+	
+	</head>
+	<body onload="init()">
+		<div id="search" 
+		style="width:29%;
+			height:100%;
+			position:absolute;
+			left:0px;
+			top:0px;
+			overflow:auto; 
+			bg-color:white" >
+		
+			<form name="search">
+				<input id="search_input" type="text" name="nom_search"/>
+				<a style="margin-bottom: 0px;" onclick="pisteSearch(document.search.nom_search.value)"
+				onmouseover="document.images['zoomPic'].src='../pics/zoom_hover.png'"
+				onmouseout="document.images['zoomPic'].src='../pics/zoom.png'">
+				<img name="zoomPic" align="absmiddle" src="../pics/zoom.png"></a>
+			</form>
+			<div class="button" 
+			style="background-color:#EEEEEE; 
+					margin: 4px; 
+					padding 4px; 
+					border:1px solid grey;
+					border-radius:4px;"
+			 onClick="showPistesInViewport();">List pistes on the map</div>
+			
+			<div id="search-results"></div>
+		
+		</div>
+		<div 
+		style="width:70%; 
+			height:100%;
+			position:absolute;
+			left:30%" id="map">
+		</div>
+		
+	</body>
+</html>
