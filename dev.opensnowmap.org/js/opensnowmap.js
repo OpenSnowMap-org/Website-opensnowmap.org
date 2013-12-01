@@ -829,7 +829,7 @@ function baseLayers() {
 	//map.addLayer(mapnik);
 // Layer 0
 	var snowCover = new OpenLayers.Layer.TMS( "Snow Cover",
-					"http://tiles2.pistes-nordiques.org/snow-cover/",
+					"http://www2.opensnowmap.org/snow-cover/",
 					{   
 					getURL: get_osm_url,
 					isBaseLayer: false, visibility: true, maxScale: 6000000,
