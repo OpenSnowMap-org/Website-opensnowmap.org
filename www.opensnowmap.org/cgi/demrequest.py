@@ -53,7 +53,7 @@ def application(environ,start_response):
 	length = int(environ["CONTENT_LENGTH"])
 	headers = {"Content-Type": environ["CONTENT_TYPE"]}
 	body = sys.stdin.read(length)
-	r = urllib2.Request('http://www.pistes-nordiques.org/profile?', data, headers)
+	r = urllib2.Request('http://www2.opensnowmap.org/profile?', data, headers)
 	y = urllib2.urlopen(r)
 	
 	# print content type header
