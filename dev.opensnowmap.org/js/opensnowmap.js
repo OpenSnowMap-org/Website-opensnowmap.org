@@ -1430,7 +1430,7 @@ map.events.register("click", map, onMapClick);
 
 //======================================================================
 // I18N
-var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","nl","no","ru","se"];
+var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","jp","nl","no","ru","se"];
 var iloc= 0;
 var locale;
 var iframelocale;
