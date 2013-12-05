@@ -1,0 +1,8 @@
+.pisteListButton{
+	background-color:#FFFFFF;
+	border: 0px solid grey;
+	padding: 2px;
+	margin: 2px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}

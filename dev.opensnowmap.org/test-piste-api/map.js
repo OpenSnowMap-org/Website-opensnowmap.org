@@ -1,5 +1,5 @@
 var lon, lat, zoom, map, layer, vectorLayer,highlightLayer, PistesTiles;
-var jsonList={};
+var jsonPisteList={};
 lat=46.41;
 lon=6.06;
 zoom=15;
@@ -47,11 +47,25 @@ var vectorStyle = new OpenLayers.Style({
 	pointRadius: 3
 	});
 var highlightStyle = new OpenLayers.Style({
-	strokeColor: "#00FFCE", 
+	strokeColor:"${getStroke}",
 	strokeLinecap : 'round',
-	strokeOpacity: 0.8,
-	strokeWidth: 20,
-	pointRadius: 10
+	strokeOpacity: 0.5,
+	strokeWidth: "${getWidth}",
+	pointRadius: 10,
+	fillColor:"#FFFFFF",
+	fillOpacity:0.5
+	
+	},
+	{context: {
+		getStroke: function(feature) {
+				if ( feature.attributes['polygon']) {return "#FFFFFF"}
+				else {return "#FFFF00"}
+				},
+		getWidth: function(feature) {
+				if ( feature.attributes['polygon']) {return 0}
+				else {return 20}
+				}
+			}
 	});
 var styleMap = new OpenLayers.StyleMap({"default": vectorStyle});
 var highlightStyleMap = new OpenLayers.StyleMap({"default": highlightStyle});
@@ -73,7 +87,7 @@ function readPermalink(link) {
 }
 
 // Requests
-function pisteSearch(name) {
+function getByName(name) {
 	LIVE=false;
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	var q = "http://beta.opensnowmap.org/search?group=true&geo=true&list=true&name="+name;
@@ -84,13 +98,13 @@ function pisteSearch(name) {
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
-			jsonList = JSON.parse(resp);
+			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search-results').innerHTML=makeHTMLPistesList();
 		}
 	}
 	XMLHttp.send();
 }
-function updatePisteList(){
+function getPistesInViewport(){
 	document.getElementById("search-results").innerHTML ='';
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	var bbox= map.getExtent().transform(
@@ -104,13 +118,13 @@ function updatePisteList(){
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
-			jsonList = JSON.parse(resp);
+			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search-results').innerHTML=makeHTMLPistesList();
 		}
 	}
 	XMLHttp.send();
 }
-function searchNear(lonlat){
+function getClosestPistes(lonlat){
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	lonlat.transform(
 		new OpenLayers.Projection("EPSG:900913"),
@@ -123,14 +137,14 @@ function searchNear(lonlat){
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
-			jsonList = JSON.parse(resp);
+			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search-results').innerHTML=makeHTMLPistesList();
-			drawPoint(jsonList.snap);
+			drawPoint(jsonPisteList.snap);
 		}
 	}
 	XMLHttp.send();
 }
-function showSite(id) {
+function getMembersById(id) {
 	LIVE=false;
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	var q = "http://beta.opensnowmap.org/search?geo=true&list=true&sort_alpha=true&group=true&members="+id;
@@ -141,7 +155,24 @@ function showSite(id) {
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
-			jsonList = JSON.parse(resp);
+			jsonPisteList = JSON.parse(resp);
+			document.getElementById('search-results').innerHTML=makeHTMLPistesList();
+		}
+	}
+	XMLHttp.send();
+}
+function getTopoById(ids) {
+	LIVE=false;
+	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
+	var q = "http://beta.opensnowmap.org/search?geo=true&topo=true&ids_ways="+ids;
+	var XMLHttp = new XMLHttpRequest();
+	XMLHttp.open("GET", q);
+	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+	
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			var resp=XMLHttp.responseText;
+			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search-results').innerHTML=makeHTMLPistesList();
 		}
 	}
@@ -165,27 +196,37 @@ function get_osm_url(bounds) {
 }
 function showPistesInViewport() {
 	LIVE=true;
-	updatePisteList();
+	getPistesInViewport();
 }
 function makeHTMLPistesList() {
 	var html='\n<div style="font-size:0.7em;">\n';
 	
 	html+='\n<hr>'
-	if (jsonList['sites'] != null) {
+	if (jsonPisteList['sites'] != null) {
 		
-		for (p in jsonList['sites']) {
+		for (p in jsonPisteList['sites']) {
 			
-			var site=jsonList['sites'][p];
+			var site=jsonPisteList['sites'][p];
 			var index;
 			index=site.result_index;
 			
-			var id=site.id;
+			var osm_id;
+			osm_id=site.ids.toString();
 			
 			var name = site.name;
 			if (name==' '){name=' x ';}
+			html+='<div class="sitesListElement pisteListButton" onClick="highlightElement('+osm_id+',\'sites\');getMembersById('+osm_id+');">\n';
+			var pic;
+			if (site.pistetype) {
+				var types=site.pistetype.split(';');
+				for (t in types) {
+					pic =icon[types[t]];
+					if (pic) {
+						html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
+					}
+				}
+			}
 			
-			
-			html+='<div class="sitesListElement" style="background-color:#EEEEEE; margin: 4px;" onClick="showSite('+id+');">\n'
 			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">Resort: '+name+'</b></div>\n';
 			
 		html+='\n<div class="clear"></div>'
@@ -193,13 +234,14 @@ function makeHTMLPistesList() {
 		}
 	}
 	html+='\n<hr>'
-	if (jsonList['pistes'] != null) {
+	if (jsonPisteList['pistes'] != null) {
 		
-		for (p in jsonList['pistes']) {
+		for (p in jsonPisteList['pistes']) {
 			
-			var piste=jsonList['pistes'][p];
-			var index;
-			index=piste.result_index;
+			var piste=jsonPisteList['pistes'][p];
+			
+			var osm_ids;
+			osm_ids=piste.ids.toString();
 			
 			var pic;
 			if (piste.pistetype) {pic =icon[piste.pistetype];}
@@ -215,20 +257,28 @@ function makeHTMLPistesList() {
 			var lon = piste.center[0];
 			var lat = piste.center[1];
 			
-			html+='<div class="pisteListElement" style="background-color:#EEEEEE; margin: 4px;" onClick="highlightPiste('+index+');">\n'
+			html+='<div class="pisteListElement" style="background-color:#EEEEEE; margin: 4px; padding:2px;">\n'
 			
-			html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-			if (color){
-			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'</div>\n';
-			} else {
-			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">x </b>'+name+'</div>\n';
-			}
+			html+='<div class="pisteElement pisteListButton" onClick="highlightElement('+osm_ids+',\'pistes\');">\n'
 			
+				if (pic) {
+					html+='	<div style="float:left; ">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
+				}
+				if (color){
+				html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'</div>\n';
+				} else {
+				html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">x </b>'+name+'</div>\n';
+				}
+				html+='\n<div class="clear"></div>\n'
 			
+			html+='\n</div>'; //pisteElement
+			
+			html+='\n<div class="clear"></div>\n'
+			// parent routes
 			if (piste.in_routes.length != 0) {
-				html+='<div class="clear">\n'
-				html+='	&nbsp;<b style="color:#000000;font-weight:900;">Part of: </b>';
+				
 				for (r in piste.in_routes) {
+					html+='<div class="inRouteElement pisteListButton" style="float:left;" onClick="highlightParentRoute('+osm_ids+','+r+');">\n'
 					var color;
 					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
 					else {color =diffcolor[piste.in_routes[r].difficulty];}
@@ -240,43 +290,124 @@ function makeHTMLPistesList() {
 					} else {
 					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
 					}
+					html+='</div>\n'; //inRouteElement
 				}
-				html+='</div>\n'
 				
 			}
-			
+			html+='\n<div class="clear"></div>\n'
+			// parent sites
 			if (piste.in_sites.length != 0) {
-				html+='<div class="clear">\n'
-				html+='	&nbsp;<b style="color:#000000;font-weight:900;">Resort: </b>';
+				
 				for (r in piste.in_sites) {
 					
+					html+='<div class="inSiteElement pisteListButton" style="float:left;" onClick="highlightParentSite('+osm_ids+','+r+');">\n'
 					var name = piste.in_sites[r].name;
 					if (name==' '){name=' ? ';}
-					html+=name+'&nbsp;<br/>\n';
+					html+='<b>'+name+'&nbsp;<b/>\n';
+					html+='</div>\n' // inSiteElement
 				}
-				html+='</div>\n'
 			}
-		html+='\n<div class="clear"></div>'
-		html+='\n</div>'
+		html+='\n<div class="clear"></div>\n';
+		html+='\n</div>\n'; // pisteListElement
 		}
 	}
 	
-	if (jsonList['limit_reached']) {
-		html+='<p>'+jsonList['info']+'</p>\n'
+	if (jsonPisteList['limit_reached']) {
+		html+='<p>'+jsonPisteList['info']+'</p>\n'
 	}
 	html+='\n</div>'
 	
 	return html
 }
-function highlightPiste(idx){
-	var piste = jsonList['pistes'][idx];
+function highlightElement(osm_id, type){
+	//type is either 'pistes' or 'sites'
+	var element=null;
+	for (p in jsonPisteList[type]) {
+		if (jsonPisteList[type][p].ids.toString() == osm_id) {
+			element=jsonPisteList[type][p];
+			break;
+		}
+	}
+	if (! element) {return false;}
 	
-	var bbox= piste.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+	var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
 	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
 	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
 	
 	var encPol= new OpenLayers.Format.EncodedPolyline();
-	var geometry=piste.geometry;
+	var geometry=element.geometry;
+	var features=[];
+	for (g in geometry) {
+		var escaped=geometry[g];
+		
+		if (type=='sites'){encPol.geometryType='polygon';}
+		else {encPol.geometryType='linestring';}
+		var feature = encPol.read(escaped);
+		
+		if (type=='sites'){feature.attributes.polygon=true;}
+		
+		feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+		features.push(feature);
+	}
+	
+	highlightLayer.destroyFeatures();
+	highlightLayer.addFeatures(features);
+	
+}
+function highlightParentSite(osm_id,r){
+	var piste=null;
+	for (p in jsonPisteList['pistes']) {
+		if (jsonPisteList['pistes'][p].ids.toString() == osm_id) {
+			piste=jsonPisteList['pistes'][p];
+			break;
+		}
+	}
+	if (! piste) {return false;}
+	
+	var parent=piste.in_sites[r];
+	
+	if (! parent) {return false;}
+	
+	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
+	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
+	
+	var encPol= new OpenLayers.Format.EncodedPolyline();
+	var geometry=parent.geometry;
+	var features=[];
+	for (g in geometry) {
+		var escaped=geometry[g];
+		encPol.geometryType='polygon';
+		var feature = encPol.read(escaped);
+		feature.attributes.polygon=true;
+		feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+		features.push(feature);
+	}
+	
+	highlightLayer.destroyFeatures();
+	highlightLayer.addFeatures(features);
+	
+}
+function highlightParentRoute(osm_id,r){
+	var piste=null;
+	for (p in jsonPisteList['pistes']) {
+		if (jsonPisteList['pistes'][p].ids.toString() == osm_id) {
+			piste=jsonPisteList['pistes'][p];
+			break;
+		}
+	}
+	if (! piste) {return false;}
+	
+	var parent=piste.in_routes[r];
+	
+	if (! parent) {return false;}
+	
+	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
+	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
+	
+	var encPol= new OpenLayers.Format.EncodedPolyline();
+	var geometry=parent.geometry;
 	var features=[];
 	for (g in geometry) {
 		var escaped=geometry[g];
@@ -287,7 +418,6 @@ function highlightPiste(idx){
 	
 	highlightLayer.destroyFeatures();
 	highlightLayer.addFeatures(features);
-	//~ highlightLayer.redraw();
 	
 }
 function drawPoint(lonlat) {
@@ -317,13 +447,13 @@ function init(){
 	map.addControl(new OpenLayers.Control.MousePosition());
 	
 	map.events.on({ "moveend": function (e) {
-		if (map.getZoom() >10 && LIVE){updatePisteList();}
+		if (map.getZoom() >10 && LIVE){getPistesInViewport();}
 		else if (map.getZoom() < 10 && !LIVE) {document.getElementById("search-results").innerHTML ='Please zoom in';}
 		}
 	});
 	map.events.on({"click": function(e) {
 		var lonlat = map.getLonLatFromPixel(e.xy);
-		searchNear(lonlat);
+		getClosestPistes(lonlat);
 		}
 	});
 	

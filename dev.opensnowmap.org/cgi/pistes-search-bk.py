@@ -1,6 +1,10 @@
 #!/usr/bin/python
 #
 #
+# todo:
+# Don't return pistes that are member of a route relation (Vourbey)
+# ST_union pistes with same ID (milles sapins)
+# ST_union touching pistes with same attributes (pauvre conche)
 
 import psycopg2
 import pdb
@@ -53,7 +57,6 @@ def query(name='', point=''):
 	
 	# Query db, looking for 'name'
 	if name != '':
-		print "name: ", name
 		name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 		
 		cur.execute("select osm_id from planet_osm_point \
