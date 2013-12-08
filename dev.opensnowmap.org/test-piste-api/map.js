@@ -35,9 +35,16 @@ var diffcolor = {
 "intermediate":'red',
 "advanced":'black',
 "expert":'orange',
-"freeride":'yellow'
+"freeride":'E9C900'
 }
-
+var diffcolorUS = {
+"novice":'green',
+"easy":'green',
+"intermediate":'blue',
+"advanced":'black',
+"expert":'black',
+"freeride":'#E9C900'
+}
 
 var vectorStyle = new OpenLayers.Style({
 	strokeColor: "#000000", 
@@ -90,7 +97,7 @@ function readPermalink(link) {
 function getByName(name) {
 	LIVE=false;
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/search?group=true&geo=true&list=true&name="+name;
+	var q = "http://beta.opensnowmap.org/request?group=true&geo=true&list=true&name="+name;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -110,7 +117,7 @@ function getPistesInViewport(){
 	var bbox= map.getExtent().transform(
 		new OpenLayers.Projection("EPSG:900913"),
 		new OpenLayers.Projection("EPSG:4326")).toString();
-	var q = "http://beta.opensnowmap.org/search?group=true&geo=true&sort_alpha=true&list=true&bbox="+bbox;
+	var q = "http://beta.opensnowmap.org/request?group=true&geo=true&sort_alpha=true&list=true&bbox="+bbox;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -129,7 +136,7 @@ function getClosestPistes(lonlat){
 	lonlat.transform(
 		new OpenLayers.Projection("EPSG:900913"),
 		new OpenLayers.Projection("EPSG:4326"));
-	var q = "http://beta.opensnowmap.org/search?geo=true&list=true&closest="+lonlat.lon+','+lonlat.lat;
+	var q = "http://beta.opensnowmap.org/request?geo=true&list=true&closest="+lonlat.lon+','+lonlat.lat;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -147,7 +154,7 @@ function getClosestPistes(lonlat){
 function getMembersById(id) {
 	LIVE=false;
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/search?geo=true&list=true&sort_alpha=true&group=true&members="+id;
+	var q = "http://beta.opensnowmap.org/request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -164,7 +171,7 @@ function getMembersById(id) {
 function getTopoById(ids) {
 	LIVE=false;
 	document.getElementById("search-results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/search?geo=true&topo=true&ids_ways="+ids;
+	var q = "http://beta.opensnowmap.org/request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -198,132 +205,12 @@ function showPistesInViewport() {
 	LIVE=true;
 	getPistesInViewport();
 }
-function makeHTMLPistesList() {
-	var html='\n<div style="font-size:0.7em;">\n';
-	
-	html+='\n<hr>'
-	if (jsonPisteList['sites'] != null) {
-		
-		for (p in jsonPisteList['sites']) {
-			
-			var site=jsonPisteList['sites'][p];
-			var index;
-			index=site.result_index;
-			
-			var osm_id;
-			osm_id=site.ids.toString();
-			
-			var name = site.name;
-			if (name==' '){name=' x ';}
-			html+='<div class="sitesListElement pisteListButton" onClick="highlightElement('+osm_id+',\'sites\');getMembersById('+osm_id+');">\n';
-			var pic;
-			if (site.pistetype) {
-				var types=site.pistetype.split(';');
-				for (t in types) {
-					pic =icon[types[t]];
-					if (pic) {
-						html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-					}
-				}
-			}
-			
-			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">Resort: '+name+'</b></div>\n';
-			
-		html+='\n<div class="clear"></div>'
-		html+='\n</div>'
-		}
-	}
-	html+='\n<hr>'
-	if (jsonPisteList['pistes'] != null) {
-		
-		for (p in jsonPisteList['pistes']) {
-			
-			var piste=jsonPisteList['pistes'][p];
-			
-			var osm_ids;
-			osm_ids=piste.ids.toString();
-			
-			var pic;
-			if (piste.pistetype) {pic =icon[piste.pistetype];}
-			else {pic =icon[piste.aerialway];}
-			
-			var color;
-			if (piste.color) {color =piste.color;}
-			else {color =diffcolor[piste.difficulty];}
-			
-			var name = piste.name;
-			if (name==' '){name=' x ';}
-			
-			var lon = piste.center[0];
-			var lat = piste.center[1];
-			
-			html+='<div class="pisteListElement" style="background-color:#EEEEEE; margin: 4px; padding:2px;">\n'
-			
-			html+='<div class="pisteElement pisteListButton" onClick="highlightElement('+osm_ids+',\'pistes\');">\n'
-			
-				if (pic) {
-					html+='	<div style="float:left; ">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-				}
-				if (color){
-				html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'</div>\n';
-				} else {
-				html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">x </b>'+name+'</div>\n';
-				}
-				html+='\n<div class="clear"></div>\n'
-			
-			html+='\n</div>'; //pisteElement
-			
-			html+='\n<div class="clear"></div>\n'
-			// parent routes
-			if (piste.in_routes.length != 0) {
-				
-				for (r in piste.in_routes) {
-					html+='<div class="inRouteElement pisteListButton" style="float:left;" onClick="highlightParentRoute('+osm_ids+','+r+');">\n'
-					var color;
-					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
-					else {color =diffcolor[piste.in_routes[r].difficulty];}
-					
-					var name = piste.in_routes[r].name;
-					if (name==' '){name=' ? ';}
-					if (color){
-					html+='	&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'&nbsp;\n';
-					} else {
-					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
-					}
-					html+='</div>\n'; //inRouteElement
-				}
-				
-			}
-			html+='\n<div class="clear"></div>\n'
-			// parent sites
-			if (piste.in_sites.length != 0) {
-				
-				for (r in piste.in_sites) {
-					
-					html+='<div class="inSiteElement pisteListButton" style="float:left;" onClick="highlightParentSite('+osm_ids+','+r+');">\n'
-					var name = piste.in_sites[r].name;
-					if (name==' '){name=' ? ';}
-					html+='<b>'+name+'&nbsp;<b/>\n';
-					html+='</div>\n' // inSiteElement
-				}
-			}
-		html+='\n<div class="clear"></div>\n';
-		html+='\n</div>\n'; // pisteListElement
-		}
-	}
-	
-	if (jsonPisteList['limit_reached']) {
-		html+='<p>'+jsonPisteList['info']+'</p>\n'
-	}
-	html+='\n</div>'
-	
-	return html
-}
 function highlightElement(osm_id, type){
 	//type is either 'pistes' or 'sites'
 	var element=null;
 	for (p in jsonPisteList[type]) {
-		if (jsonPisteList[type][p].ids.toString() == osm_id) {
+		var ids=jsonPisteList[type][p].ids.join('_').toString();
+		if (ids == osm_id ){
 			element=jsonPisteList[type][p];
 			break;
 		}
@@ -357,14 +244,15 @@ function highlightElement(osm_id, type){
 function highlightParentSite(osm_id,r){
 	var piste=null;
 	for (p in jsonPisteList['pistes']) {
-		if (jsonPisteList['pistes'][p].ids.toString() == osm_id) {
+		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
+		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
 			break;
 		}
 	}
 	if (! piste) {return false;}
 	
-	var parent=piste.in_sites[r];
+	var parent=piste.in_sites[r];			//!!//
 	
 	if (! parent) {return false;}
 	
@@ -391,14 +279,15 @@ function highlightParentSite(osm_id,r){
 function highlightParentRoute(osm_id,r){
 	var piste=null;
 	for (p in jsonPisteList['pistes']) {
-		if (jsonPisteList['pistes'][p].ids.toString() == osm_id) {
+		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
+		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
 			break;
 		}
 	}
 	if (! piste) {return false;}
 	
-	var parent=piste.in_routes[r];
+	var parent=piste.in_routes[r]; 			//!!//
 	
 	if (! parent) {return false;}
 	
@@ -431,7 +320,142 @@ function drawPoint(lonlat) {
 	highlightLayer.destroyFeatures();
 	highlightLayer.addFeatures([pt]);
 }
-
+function makeHTMLPistesList() {
+	var html='\n<div style="font-size:0.7em;">\n';
+	
+	html+='\n'
+	if (jsonPisteList['sites'] != null) {
+		
+		for (p in jsonPisteList['sites']) {
+			
+			var site=jsonPisteList['sites'][p];
+			var index;
+			index=site.result_index;
+			
+			var osm_id;
+			osm_id=site.ids.join('_').toString();
+			
+			var name = site.name;
+			if (name==' '){name=' x ';}
+			html+='<div class="sitesListElement pisteListButton" onClick="highlightElement(\''+osm_id+'\',\'sites\');getMembersById('+osm_id+');">\n';
+			var pic;
+			if (site.pistetype) {
+				var types=site.pistetype.split(';');
+				for (t in types) {
+					pic =icon[types[t]];
+					if (pic) {
+						html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
+					}
+				}
+			}
+			
+			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">'+name+'</b></div>\n';
+			
+		html+='\n<div class="clear"></div>'
+		html+='\n</div>'
+		}
+	}
+	html+='\n<hr>'
+	if (jsonPisteList['pistes'] != null) {
+		
+		for (p in jsonPisteList['pistes']) {
+			
+			var piste=jsonPisteList['pistes'][p];
+			
+			var osm_ids;
+			osm_ids=piste.ids.join('_').toString();
+			
+			var pic;
+			if (piste.pistetype) {pic =icon[piste.pistetype];}
+			else {pic =icon[piste.aerialway];}
+			
+			var color='';
+			if (piste.color) {
+				color ='&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
+			}
+			
+			var lon = piste.center[0];
+			var lat = piste.center[1];
+			
+			var difficulty='';
+			if (piste.difficulty) {
+				var marker = '&#9679;'
+				if (lat>0 && lon <-40) {
+					if (piste.difficulty =='expert') {marker = '&diams;';}
+					if (piste.difficulty =='advanced') {marker = '&diams;&diams;';}
+					if (piste.difficulty =='freeride') {marker = '!!';}
+					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolorUS[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
+				}
+				else {
+					if (piste.difficulty =='freeride') {marker = '!';}
+					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolor[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
+				}
+			}
+			
+			var name = piste.name;
+			if (name==' '){name=' - ';}
+			
+			html+='<div class="pisteListElement">\n'
+			
+			html+='<div class="pisteElement pisteListButton" onClick="highlightElement(\''+osm_ids+'\',\'pistes\');">\n'
+			
+				if (pic) {
+					html+='	<div style="float:left; ">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
+				}
+				
+				html+='	<div style="float:left;">&nbsp;'+color+name+difficulty+'</div>\n';
+				
+				html+='\n<div class="clear"></div>\n'
+			
+			html+='\n</div>'; //pisteElement
+			
+			html+='\n<div class="clear"></div>\n'
+			// parent routes
+			if (piste.in_routes.length != 0) {
+				
+				for (r in piste.in_routes) {
+					html+='<div class="inRouteElement pisteListButton" style="float:left;" onClick="highlightParentRoute(\''+osm_ids+'\','+r+');">\n'
+					var color;
+					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
+					else {color =diffcolor[piste.in_routes[r].difficulty];}
+					
+					var name = piste.in_routes[r].name;
+					if (name==' '){name=' ? ';}
+					if (color){
+					html+='	&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'&nbsp;\n';
+					} else {
+					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
+					}
+					html+='</div>\n'; //inRouteElement
+				}
+				
+			}
+			html+='\n<div class="clear"></div>\n'
+			// parent sites
+			if (piste.in_sites.length != 0) {
+				
+				for (r in piste.in_sites) {
+					
+					html+='<div class="inSiteElement pisteListButton" style="float:right;" onClick="highlightParentSite(\''+osm_ids+'\','+r+');">\n'
+					var name = piste.in_sites[r].name;
+					if (name==' '){name=' ? ';}
+					html+='<b>'+name+'&nbsp;</b>\n';
+					html+='</div>\n' // inSiteElement
+				}
+			}
+		html+='\n<div class="clear"></div>\n';
+		html+='\n</div>\n'; // pisteListElement
+		}
+	}
+	
+	if (jsonPisteList['limit_reached']) {
+		html+='<p>'+jsonPisteList['info']+'</p>\n'
+	}
+	html+='\n</div>'
+	
+	return html
+}
+function _(string){return string;}
 function init(){
 	map = new OpenLayers.Map ("map", {
 		maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
@@ -490,7 +514,7 @@ function init(){
 				strategies:[new OpenLayers.Strategy.BBOX()],
 				protocol: new OpenLayers.Protocol.HTTP({
 					//~ url:'search.json',
-					url: "http://beta.opensnowmap.org/search?limit=false&list=true&geo=true&",
+					url: "http://beta.opensnowmap.org/request?limit=false&list=true&geo=true&",
 					format: new OpenLayers.Format.JSON({
 						read: function(jsonp) {
 							var features = [];

@@ -164,6 +164,9 @@ font-size:1em;
 .button:hover{
    background-color:#DDD;
 }
+.button:active{
+   background-color:#BBB;
+}
 
 
 * {
