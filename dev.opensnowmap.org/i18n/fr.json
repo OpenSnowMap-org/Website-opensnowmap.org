@@ -52,5 +52,7 @@
 "monthly": 'Mensuel (long)',
 "vector_help": 'Utilisezla carte interactive pour plus de fonctionalités: informations sur les pistes, tracer les profils de dénivellation, ...',
 "offseter_explain":'Vous pouvez également modifier la visibilité des pistes sur www.opensnowmap.org',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }

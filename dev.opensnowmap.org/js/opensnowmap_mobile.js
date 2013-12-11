@@ -460,7 +460,6 @@ function getMembersById(id) {
 	}
 	XMLHttp.send();
 }
-
 function getByName(name) {
 	var q = server+"request?group=true&geo=true&list=true&name="+name;
 	var XMLHttp = new XMLHttpRequest();
@@ -502,7 +501,6 @@ function nominatimSearch(name) {
 	XMLHttp.send();
 	return true;
 }
-
 function SearchByName(name) {
 	if (name == '') {return false;};
 	document.getElementById("searchresult").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p></div>';
@@ -512,7 +510,6 @@ function SearchByName(name) {
 	getByName(name);
 	nominatimSearch(name);
 }
-
 function makeHTMLPistesList() {
 	var html='\n<div style="font-size:0.7em;">\n';
 	html+='\n<div class="clear"></div>'

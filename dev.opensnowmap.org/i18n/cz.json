@@ -52,5 +52,7 @@
 "monthly": 'za měsíc (velké)',
 "vector_help": 'Interaktivní mapa umožňuje: zobrazovat informace o stopách, výškový profil trasy, ...',
 "offseter_explain": 'Zobrazování barev u tras na www.opensnowmap.org lze také přizpůsobit zde',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }

@@ -52,5 +52,7 @@
 "monthly": 'mensual (grande)',
 "vector_help": 'Elige mapa interactivo para más funcionalidades: mostrar información de pistas, trazar perfil de altitud...',
 "offseter_explain":'',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }

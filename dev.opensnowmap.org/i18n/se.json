@@ -52,5 +52,7 @@
 "monthly": 'månad (stor)',
 "vector_help": 'Välj interaktiv karta för ytterligare funktionalitet: visa information om pister, spårhöjdprofil, ...',
 "offseter_explain":'Du kan också ställa in synlighet de färgade pister på www.opensnowmap.org',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }

@@ -52,6 +52,8 @@
 "monthly": 'havi (nagy)',
 "vector_help": 'Válaszd az interaktív térképet a további funkciók eléréséhez: pályainformációk megjelenítése, útvonal magassági profil, ...',
 "offseter_explain": 'Tudod állítani a színezett pályák láthatóságát a www.opensnowmap.org-on',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }
 
