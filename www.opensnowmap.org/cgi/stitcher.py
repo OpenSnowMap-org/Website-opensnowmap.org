@@ -65,7 +65,7 @@ def getImage(base_url, left, right, top, bottom, zoom, numbering, ext):
 			
 			f.write(url+'\n')
 			req = urllib2.Request(url,'')
-			req.add_header('User-Agent', 'www.pistes-nordiques.org')
+			req.add_header('User-Agent', 'www.opensnowmap.org')
 			
 			response = urllib2.urlopen(req)
 			tile = response.read()
@@ -149,7 +149,7 @@ def application(environ,start_response):
 	enhancer =  ImageEnhance.Contrast(bg)
 	bg = enhancer.enhance(0.8)
 	
-	contours = getImage('http://tiles.pistes-nordiques.org/tiles-contours/', left, right, top, bottom, zoom,'osm',ext)
+	contours = getImage('http://www2.opensnowmap.org/tiles-contours/', left, right, top, bottom, zoom,'osm',ext)
 	r, g, b, a = contours.split()
 	mask = Image.merge("L", (a,))
 	
@@ -159,7 +159,7 @@ def application(environ,start_response):
 	bg.paste(contours.convert('RGB'),None,value)
 	
 	
-	hs = getImage('http://tiles2.pistes-nordiques.org/hillshading/', left, right, top, bottom, zoom,'tms',ext)
+	hs = getImage('http://www2.opensnowmap.org/hillshading/', left, right, top, bottom, zoom,'tms',ext)
 	r, g, b, a = hs.split()
 	mask = Image.merge("L", (a,))
 	
