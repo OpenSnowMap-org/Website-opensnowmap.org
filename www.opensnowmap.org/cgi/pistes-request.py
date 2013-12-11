@@ -114,7 +114,7 @@ def application(environ,start_response):
 		ids=request.split('ids=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
 		# ids='id1, id2, ...'
-		print "id1", ids
+		
 		
 	if request.find('ids_ways=') !=-1:
 		TOPO_REQUEST = True
@@ -198,8 +198,6 @@ def application(environ,start_response):
 		IDS['sites']=site_ids
 		IDS['routes']=route_ids
 		IDS['ways']=way_ids
-		print way_ids
-		print IDS
 	else:
 		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
 	
@@ -876,12 +874,9 @@ def concatWaysByAttributes(topo):
 	return concatTopo
 	
 def compareAttributes(piste1, piste2):
-	print piste1['name']
 	for att in piste1:
-		print att
 		if att not in ('geometry','ids','result_index','bbox','center'):
 			if piste1[att]==piste2[att]:
-				print att
 				continue
 			else :
 				return False
