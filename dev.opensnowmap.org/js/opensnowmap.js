@@ -1516,7 +1516,7 @@ map.events.register("click", map, onMapClick);
 
 function makeHTMLPistesList() {
 	var html='\n<div style="font-size:0.7em;">\n';
-	
+	html+='\n<div class="clear"></div>'
 	html+='\n'
 			+'<a onclick="new_window()"'
 			+' onmouseover="document.images[\'printPic\'].src=\'pics/print_hover.png\'"\n'

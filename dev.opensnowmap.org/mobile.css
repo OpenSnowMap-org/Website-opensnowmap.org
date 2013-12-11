@@ -237,3 +237,36 @@ margin: 4px 4px 4px 4px;
 		top: 23px;
 	}
 }
+/*					Piste list						 */
+.pisteListButton{
+    font-size: 1.3em;
+	background-color:#FFFFFF;
+	border: 0px solid grey;
+	padding: 2px;
+	margin: 0px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}
+.pisteListButton:hover{
+	background-color:#DDDDDD;
+}
+.pisteListButton:active{
+	background-color:#CCCCCC;
+}
+.pisteListElement{
+	background-color:#EEEEEE;
+	margin: 2px;
+	padding:2px;
+}
+.sitesListElement{
+	padding:6px;
+}
+.pisteElement{}
+.inRouteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}
+.inSiteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}

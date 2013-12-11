@@ -417,5 +417,11 @@ display: none;
 	padding:6px;
 }
 .pisteElement{}
-.inRouteElement{}
-.inSiteElement{}
+.inRouteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}
+.inSiteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}
