@@ -446,7 +446,7 @@ function highlightParentRoute(osm_id,r){
 }
 function getMembersById(id) {
 	document.getElementById("search_results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
+	var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");

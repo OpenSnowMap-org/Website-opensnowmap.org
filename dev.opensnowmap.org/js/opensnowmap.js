@@ -756,7 +756,7 @@ function SearchByName(name) {
 function getTopoById(ids) {
 	LIVE=false;
 	document.getElementById("topo_list").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/request?geo=true&topo=true&ids_ways="+ids;
+	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -772,7 +772,7 @@ function getTopoById(ids) {
 }
 function getMembersById(id) {
 	document.getElementById("search_results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
-	var q = "http://beta.opensnowmap.org/request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
+	var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -792,7 +792,7 @@ function getClosestPistes(lonlat){
 	lonlat.transform(
 		new OpenLayers.Projection("EPSG:900913"),
 		new OpenLayers.Projection("EPSG:4326"));
-	var q = "http://beta.opensnowmap.org/request?geo=true&list=true&closest="+lonlat.lon+','+lonlat.lat;
+	var q = server+"request?geo=true&list=true&closest="+lonlat.lon+','+lonlat.lat;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
 	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
