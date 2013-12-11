@@ -52,6 +52,8 @@
 "monthly": 'maandelijks (groot)',
 "vector_help": 'kies de interactieve kaart voor meer functies: informatie over de piste, hoogteprofielen,...',
 "offseter_explain": 'De kleurcodering kan op www.opensnowmap.org kan wijzigen.',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }
 

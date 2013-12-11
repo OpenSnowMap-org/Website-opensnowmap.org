@@ -52,6 +52,8 @@
 "monthly": 'mensual (gran)',
 "vector_help": 'Seleccioneu el mapa interactiu per a més funcionalitatss: mostra informació de les pistes, traça el perfil d\'altitut...',
 "offseter_explain":'',
-"forum":'FÒRUM'
+"FORUM":'FÒRUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }
 

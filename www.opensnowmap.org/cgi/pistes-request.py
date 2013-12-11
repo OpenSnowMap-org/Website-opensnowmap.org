@@ -77,7 +77,8 @@ def application(environ,start_response):
 	BBOX=False
 	ID_REQUEST=False
 	MEMBERS_REQUEST=False
-	TOPO=False
+	LIST=False
+	TOPO_REQUEST=False
 	GEO=False
 	IDS_ONLY=False
 	SORT_ALPHA=False
@@ -113,13 +114,20 @@ def application(environ,start_response):
 		ids=request.split('ids=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
 		# ids='id1, id2, ...'
+		print "id1", ids
+		
+	if request.find('ids_ways=') !=-1:
+		TOPO_REQUEST = True
+		# query: ...ids=id1, id2, id3...
+		ids=request.split('ids_ways=')[1]
+		if ids.find('&'): ids=ids.split('&')[0]
+		# ids='id1, id2, ...'
 		
 	if request.find('members=') !=-1:
 		MEMBERS_REQUEST = True
 		# query: ...members=id1...
 		ids=request.split('members=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
-		
 		
 	if request.find('bbox=') !=-1:
 		BBOX = True
@@ -132,14 +140,23 @@ def application(environ,start_response):
 	if request.find('group=true') !=-1:
 		CONCAT = True
 		# query: ...group=true... 
+	
 	if request.find('limit=false') !=-1:
 		LIMIT = 100000000
 	
 	if request.find('ids_only=true') !=-1:
 		IDS_ONLY = True
 		# query: ...ids=true...
+	
+	elif request.find('topo=true') !=-1:
+		TOPO_REQUEST = True
+		# query: ...list=true... 
+		if request.find('geo=true') !=-1:
+			GEO = True
+			# query: ...geo=true... 
+	
 	elif request.find('list=true') !=-1:
-		TOPO = True
+		LIST = True
 		# query: ...list=true... 
 		if request.find('geo=true') !=-1:
 			GEO = True
@@ -152,6 +169,10 @@ def application(environ,start_response):
 	# basic queries: create the dict of elements osm ids corresponding to the query
 	if ID_REQUEST: 
 		site_ids, route_ids, way_ids = queryByIds(ids)
+	elif TOPO_REQUEST:
+		site_ids=[]
+		route_ids=[]
+		way_ids = ids.split(',')
 	elif MEMBERS_REQUEST: 
 		site_ids, route_ids, way_ids = queryMembersById(ids)
 	elif BBOX:
@@ -171,7 +192,16 @@ def application(environ,start_response):
 		
 		return [response_body]
 	
-	IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
+	if TOPO_REQUEST:
+		IDS = {}
+		way_ids=[[w] for w in way_ids]
+		IDS['sites']=site_ids
+		IDS['routes']=route_ids
+		IDS['ways']=way_ids
+		print way_ids
+		print IDS
+	else:
+		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
 	
 	# Whatever the query was, we must now have an object like this:
 	"""
@@ -200,8 +230,8 @@ def application(environ,start_response):
 		
 		return [response_body]
 		
-	elif TOPO:
-		topo=makeTopo(IDS,GEO)
+	elif LIST:
+		topo=makeList(IDS,GEO)
 		# sort by name
 		if SORT_ALPHA:
 			topo['sites'].sort(key=lambda k: nameSorter(k['name']))
@@ -234,6 +264,34 @@ def application(environ,start_response):
 		
 		return [response_body]
 	
+	elif TOPO_REQUEST :
+		topo=makeList(IDS,GEO)
+		
+		topo=concatWaysByAttributes(topo)
+		
+		# number the results
+		i=0
+		for s in topo['sites']:
+			s['result_index']=i
+			i+=1
+		i=0
+		for s in topo['pistes']:
+			s['result_index']=i
+			i+=1
+		
+		topo['generator']="Opensnowmap.org piste search API"
+		topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+		
+		if LIMIT_REACHED:
+			topo['limit_reached']= True;
+			topo['info']= 'Your request size exceed the API limit, results are truncated';
+		
+		response_body=json.dumps(topo, sort_keys=True, indent=4)
+		status = '200 OK'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		
+		return [response_body]
 	else:
 		response_body=json.dumps({'request': environ['QUERY_STRING']}, sort_keys=True, indent=4)
 		status = '400 Bad Request'
@@ -309,7 +367,7 @@ def queryByName(name):
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
 	# set limit for pg_trgm
-	cur.execute("""select set_limit(0.25);""")
+	cur.execute("""select set_limit(0.3);""")
 	con.commit()
 	
 	cur.execute("""
@@ -559,9 +617,11 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	
 	return IDS
 
-def makeTopo(IDS, GEO):
+def makeList(IDS, GEO):
 	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
 	
+	if GEO: geomS=',ST_AsText(ST_buffer(geom,0.01))'
+	else: geomR=''
 	if GEO: geomR=',ST_AsText(geom)'
 	else: geomR=''
 	if GEO: geomW=',ST_AsText(ST_Collect(ST_LineMerge(linestring)))'
@@ -578,23 +638,25 @@ def makeTopo(IDS, GEO):
 		SELECT 
 			id,
 			tags->'name',
+			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
 		FROM relations 
 		WHERE id=%s;
 		"""
-		% (geomR,osm_id))
+		% (geomS,osm_id))
 		site=cur.fetchone()
 		con.commit()
 		
 		s={}
 		if site:
-			s['id']=site[0]
+			s['ids']=[site[0]]
 			s['name']=site[1]
-			s['center']=[site[2],site[3]]
-			s['bbox']=site[4]
-			if GEO: s['geometry']=encodeWKT(site[5])
+			s['pistetype']=site[2]
+			s['center']=[site[3],site[4]]
+			s['bbox']=site[5]
+			if GEO: s['geometry']=encodeWKT(site[6])
 			
 		topo['sites'].append(s)
 	cur.close()
@@ -641,6 +703,7 @@ def makeTopo(IDS, GEO):
 		SELECT
 			id,
 			tags->'name',
+			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
@@ -661,9 +724,10 @@ def makeTopo(IDS, GEO):
 				tmp={}
 				tmp['id']=site[0]
 				tmp['name']=site[1]
-				tmp['center']=[site[2],site[3]]
-				tmp['bbox']=piste[4]
-				if GEO: tmp['geometry']=encodeWKT(site[5])
+				tmp['pistetype']=site[2]
+				tmp['center']=[site[3],site[4]]
+				tmp['bbox']=site[5]
+				if GEO: tmp['geometry']=encodeWKT(site[6])
 				s['in_sites'].append(tmp)
 		
 		topo['pistes'].append(s)
@@ -739,19 +803,20 @@ def makeTopo(IDS, GEO):
 			tags->'type'='route';
 		"""
 		% (geomR,osm_id))
-		sites=cur.fetchall()
+		routes=cur.fetchall()
 		con.commit()
 		
 		route_ids=[]
-		if sites:
-			for site in sites:
+		if routes:
+			for route in routes:
 				tmp={}
-				tmp['id']=site[0]
+				tmp['id']=route[0]
 				route_ids.append(tmp['id'])
-				tmp['name']=site[1]
-				tmp['color']=site[2]
-				tmp['center']=[site[3],site[4]]
-				tmp['bbox']=site[5]
+				tmp['name']=route[1]
+				tmp['color']=route[2]
+				tmp['center']=[route[3],route[4]]
+				tmp['bbox']=route[5]
+				if GEO: tmp['geometry']=encodeWKT(route[6])
 				s['in_routes'].append(tmp)
 		
 		#look for sites
@@ -762,6 +827,7 @@ def makeTopo(IDS, GEO):
 		SELECT
 			id,
 			tags->'name',
+			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
@@ -783,9 +849,10 @@ def makeTopo(IDS, GEO):
 				tmp={}
 				tmp['id']=site[0]
 				tmp['name']=site[1]
-				tmp['center']=[site[2],site[3]]
-				tmp['bbox']=site[4]
-				if GEO: tmp['geometry']=encodeWKT(site[5])
+				tmp['pistetype']=site[2]
+				tmp['center']=[site[3],site[4]]
+				tmp['bbox']=site[5]
+				if GEO: tmp['geometry']=encodeWKT(site[6])
 				s['in_sites'].append(tmp)
 		
 		topo['pistes'].append(s)
@@ -795,6 +862,31 @@ def makeTopo(IDS, GEO):
 	
 	return topo
 
+def concatWaysByAttributes(topo):
+	concatTopo={}
+	concatTopo['sites']=topo['sites']
+	concatTopo['pistes']=[topo['pistes'][0]]
+	for p in topo['pistes'][1:-1]:
+		if compareAttributes(p, concatTopo['pistes'][-1]):
+			concatTopo['pistes'][-1]['geometry'].extend(p['geometry'])
+			concatTopo['pistes'][-1]['ids'].extend(p['ids'])
+			
+		else:
+			concatTopo['pistes'].append(p)
+	return concatTopo
+	
+def compareAttributes(piste1, piste2):
+	print piste1['name']
+	for att in piste1:
+		print att
+		if att not in ('geometry','ids','result_index','bbox','center'):
+			if piste1[att]==piste2[att]:
+				print att
+				continue
+			else :
+				return False
+	return True
+	
 def nameSorter(name):
 	name=name.strip(' ')
 	if name !='': return name

@@ -49,6 +49,8 @@ li{
 list-style-position:outside;
 list-style-type:disc;
 }
+hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+.hrmenu{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 td {
         border:0px solid grey;
         margin: 0px;
@@ -237,7 +239,7 @@ display: none;
     font-weight: 400;
     font-style:italic;
 }
-.hrmenu{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+
 #sideBar{
     position: absolute;
     right: 0px;
@@ -390,4 +392,36 @@ display: none;
         border-radius:5px;
         border: 1px solid #888888;
 }
-
+/*					Piste list						 */
+.pisteListButton{
+    font-size: 1.3em;
+	background-color:#FFFFFF;
+	border: 0px solid grey;
+	padding: 2px;
+	margin: 0px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}
+.pisteListButton:hover{
+	background-color:#DDDDDD;
+}
+.pisteListButton:active{
+	background-color:#CCCCCC;
+}
+.pisteListElement{
+	background-color:#EEEEEE;
+	margin: 2px;
+	padding:2px;
+}
+.sitesListElement{
+	padding:6px;
+}
+.pisteElement{}
+.inRouteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}
+.inSiteElement{
+  font-size: 1.1em;
+  font-style:oblique;
+}

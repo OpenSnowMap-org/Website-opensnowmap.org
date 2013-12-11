@@ -52,6 +52,8 @@
 "monthly": 'viimeinen kk (suuri)',
 "vector_help": 'Valitse interaktiivinen kartta saadaksesi lisäominaisuuksia: näytä latujen tietoja, reitin korkeusprofiili yms.',
 "offseter_explain": 'Voit myös muokata värillisten latujen näkyvyyttä www.opensnowmap.org-sivustolla',
-"forum":'FORUM'
+"FORUM":'FORUM',
+"BLOG" : 'BLOG',
+"DATA": 'DATA'
 }
 
