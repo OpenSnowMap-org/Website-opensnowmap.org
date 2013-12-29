@@ -9,6 +9,7 @@
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="stylesheet" href="main.css" media="screen" />
 		<script>var isready= true;</script>
+		<script src="js/json2.js" type="text/javascript"></script> 
 		<script src="js/OpenLayers-opt.js" type="text/javascript"></script> 
 		<script src="js/OpenStreetMap.js" type="text/javascript"></script>
 		<script src="js/opensnowmap.js" type="text/javascript"></script>
@@ -27,36 +28,6 @@
 		<div id="map">
 			<!-- inside of map div to allow z-indexing under panzoombar -->
 			<div id="helper-centering">
-				<div id="print-settings" style="display: none;">
-					<div id="closeBox">
-						<a onclick="close_printSettings();"
-						onmouseover="document.images['closePic32'].src='pics/close-simple-hover.png'"
-						onmouseout="document.images['closePic32'].src='pics/close-simple.png'">
-						 <img name="closePic32" src="pics/close-simple.png"></a>
-					</div>
-					<a onclick="setPrint('hb');"
-						onmouseover="document.images['printPic20'].src='pics/ps_hb_hover.png'"
-						onmouseout="document.images['printPic20'].src='pics/ps_hb.png'">
-						 <img style="margin-left: 5px;" name="printPic20" src="pics/ps_hb.png"></a>
-					<a onclick="setPrint('vb');"
-						onmouseover="document.images['printPic21'].src='pics/ps_vb_hover.png'"
-						onmouseout="document.images['printPic21'].src='pics/ps_vb.png'">
-						 <img name="printPic21" src="pics/ps_vb.png"></a>
-					<a onclick="setPrint('hs');"
-						onmouseover="document.images['printPic22'].src='pics/ps_hs_hover.png'"
-						onmouseout="document.images['printPic22'].src='pics/ps_hs.png'">
-						 <img name="printPic22" src="pics/ps_hs.png"></a>
-					<a onclick="setPrint('vs');"
-						onmouseover="document.images['printPic23'].src='pics/ps_vs_hover.png'"
-						onmouseout="document.images['printPic23'].src='pics/ps_vs.png'">
-						 <img name="printPic23" src="pics/ps_vs.png"></a>
-						 
-					<a onclick="print();"
-						onmouseover="document.images['printPic2'].src='pics/print_hover.png'"
-						onmouseout="document.images['printPic2'].src='pics/print.png'">
-						 <img style="margin-left: 10px;border: 1px solid #aaaaaa; padding: 6px;" name="printPic2" src="pics/print.png"></a>
-					<div id='print_result' class="amenu"></div>
-				</div>
 				<div id="waiter" style="display: none;"><img src="pics/snake_transparent.gif"></div>
 			</div>	   
 		
@@ -65,156 +36,138 @@
 		<div id="zoom"></div>
 
 		<div id="right-container">
-
 			<div id="sideBar" class="float-right">
 				<div id="sideBarHeader" class="sideBarHeader">
-					<div id="closeBox">
-						<a onclick="close_sideBar();"
-						onmouseover="document.images['closePic'].src='pics/close-simple-hover.png'"
-						onmouseout="document.images['closePic'].src='pics/close-simple.png'">
-						 <img name="closePic" src="pics/close-simple.png"></a>
+					<div class="closeBox" id="sideBarCloseControl"
+						onclick="close_sideBar();"
+						onmouseover="document.images['sideBarClose'].src='pics/close-22-hover.png'"
+						onmouseout="document.images['sideBarClose'].src='pics/close-22-light.png'">
+						<img name="sideBarClose"  src="pics/close-22-light.png">
 					</div>
-					<div id="sideBarTitle"></div>
+					<div id="sideBarTitle"></div><br class="clear" />
 				</div>
+				
 				<!-- The content-->
 				<div id="sideBarContent"></div>
 			</div>
-			<div class="clear"></div>
-			<div id="extendedmenu" class="float-right">
-				<div id="menubar" class="float-right">
-					<div id="closeBox">
-						<a onclick="toggleMenu();"
-						onmouseover="document.images['closePic2'].src='pics/close-simple-hover.png'"
-						onmouseout="document.images['closePic2'].src='pics/close-simple.png'">
-						 <img name="closePic2" src="pics/close-simple.png"></a>
-					</div></br>
-
+			<br class="clear" />
+			<div id="MainBlock">
+				<div id="MenuBlock">
+					<div id="MenuVerticalLeft" class="IconBarVertical">
+						<div class="closeBox" id="mainCloseControl"
+						onclick="closeMenu();"
+						onmouseover="document.images['menuClose'].src='pics/close-22-hover.png'"
+						onmouseout="document.images['menuClose'].src='pics/close-22-light.png'">
+						<img name="menuClose"  src="pics/close-22-light.png"></div>
+						<br class="clear" />
+					</div>
+					
+					<div id="MenuVerticalRight" class="">
 <!--
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);"  onclick="window.open('http://forum.opensnowmap.org')">
-					<script>document.write(_('forum'))</script>
-					</a>
+						<br class="clear" />
 -->
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_settings();return false;">
-					<script>document.write(_('settings'))</script>
-					</a>
-					
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_legend();return false;">
-					<script>document.write(_('map_key'))</script>
-					</a>
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="window.open('http://blog.opensnowmap.org')">
-					<script>document.write(_('BLOG'))</script>
-					</a>
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;">
-					<script>document.write(_('edit'))</script>
-					</a>
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="window.open('/iframes/data.html')">
-					<script>document.write(_('DATA'))</script>
-					</a>
-					<hr class="hrmenu">
-					
-					<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_about();return false;">
-						<script>document.write(_('about'))</script>
-					</a>
-					
-					<hr class="hrmenu">
-					<div id="langs"></div>
-					<hr class="hrmenu">
-					<div id="print">
-						<a onclick="show_printSettings();"
-						onmouseover="document.images['printPic'].src='pics/print_hover.png'"
-						onmouseout="document.images['printPic'].src='pics/print.png'">
-						 <img name="printPic" src="pics/print.png"></a>
-					</div>
-					<hr class="hrmenu">
-					<div id="links">
-						<a id="permalink.marker" href="javascript:void(0);" 
-						onmouseover="document.images['linkPic2'].src='pics/marker_hover.png'"
-						onmouseout="document.images['linkPic2'].src='pics/marker.png'">
-						<img name="linkPic2" src="pics/marker.png" align="center">
-						</a>
-						<a id="permalink.simple" href="javascript:void(0);" 
-						onmouseover="document.images['linkPic1'].src='pics/link_hover.png'"
-						onmouseout="document.images['linkPic1'].src='pics/link.png'" align="center">
-						<img name="linkPic1" src="pics/link.png">
-						</a>
-					</div>
-					<div>
-						<a id="mobileswitch"  href="javascript:void(0);"
+	<!--				Menu buttons-->
+						<div id="MenuTextButtons">
+							<div class="Button textButton float-left" onclick="close_sideBar();show_settings();return false;"
+							id="settingsMenuButton">
+								<script>document.write(_('SETTINGS'))</script></div>
+							<div class="Button textButton float-left" onclick="close_sideBar();show_legend();return false;"
+							id="mapkeyMenuButton">
+								<script>document.write(_('MAP_KEY'))</script></div>
+							<div class="Button textButton float-left" onclick="close_sideBar();show_edit();return false;"
+							id="editMenuButton">
+								<script>document.write(_('EDIT'))</script></div>
+							<div class="Button textButton float-left" onclick="close_sideBar();show_about();return false;"
+							id="aboutMenuButton">
+								<script>document.write(_('ABOUT'))</script></div>
+							<div class="Button textButton float-left" onclick="window.open('http://blog.opensnowmap.org');"
+							id="blogMenuButton">
+								<script>document.write(_('BLOG'))</script>&nbsp;&raquo;</div>
+							<div class="Button textButton float-left"  onclick="window.open('/iframes/data.html');"
+							id="dataMenuButton">
+								<script>document.write(_('DATA'))</script>&nbsp;&raquo;</div>
+						</div>
+						<br class="clear" />
+	<!--				MenuIcons-->
+						<div id="MenuIcons">
+							<div id="langs" onclick="show_languages();"
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:10px">
+							</div>
+							
+							<div onclick="show_printSettings();"
+							id="printMenuButton"
+							onmouseover="document.images['printPic'].src='pics/print-22-hover.png'"
+							onmouseout="document.images['printPic'].src='pics/print-22.png'"
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+								<img name="printPic" src="pics/print-22.png"></div>
+								
+							<div id="permalink.marker" href="javascript:void(0);"
+							onmouseover="document.images['markerPic'].src='pics/marker-22-hover.png'"
+							onmouseout="document.images['markerPic'].src='pics/marker-22.png'"
+							onclick="location.href=document.getElementById('permalink').href+'&marker=true';"
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+								<img name="markerPic" src="pics/marker-22.png"></div>
+								
+							<div id="permalink.simple" href="javascript:void(0);" 
+							onmouseover="document.images['linkPic'].src='pics/link-22-hover.png'"
+							onmouseout="document.images['linkPic'].src='pics/link-22.png'"
+							onclick="location.href=document.getElementById('permalink').href;"
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+								<img name="linkPic" src="pics/link-22.png"></div>
+								
+							<div id="desktopswitch" href="javascript:void(0);"
+							onmouseover="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
+							onmouseout="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
+							onclick="document.cookie='version=desktop';" 
+							class="Button iconButton float-right" style="margin-left:-1px;margin-right:25px;background-color:#DBDBDB;">
+								<img name="desktopPic" src="pics/desktop-22-hover.png"></div>
+								
+							<div id="mobileswitch"  href="javascript:void(0);"
+							onmouseover="document.images['mobilePic'].src='pics/mobile-22-hover.png'"
+							onmouseout="document.images['mobilePic'].src='pics/mobile-22.png'"
 							onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
 									document.cookie='version=mobile';"
-							style="border: solid 1px #EEE;margin: 2px -1px 2px 2px;background-color:#DDD;" >
-							<img class="button-img" style="border:1px sold #EEE;" src="pics/mobile.png">
-						</a>
-						<a id="desktopswitch" href="javascript:void(0);"
-							onclick="document.cookie='version=desktop';" 
-							style="border: solid 1px #EEE;margin: 2px 2px 2px 0px;" >
-							<img class="button-img" style="border:1px sold #EEE;" src="pics/desktop.png">
-						</a>
-					</div>
-					</br>
-				</div>
-			</div>
-			<div class="clear"></div>
-			<div id="slide" > 
-				<a class="amenu" onclick="toggleMenu();" 
-					onmouseover="document.images['menuPic'].src='pics/menu-hover.png'"
-					onmouseout="document.images['menuPic'].src='pics/menu.png'">&nbsp;menu&nbsp;</a>
-				<a style="margin-bottom: 2px;margin-right: 2px; text-align:right;" onclick="toggleMenu();"
-					onmouseover="document.images['menuPic'].src='pics/menu-hover.png'"
-					onmouseout="document.images['menuPic'].src='pics/menu.png'">
-					<img name="menuPic" align="absmiddle" src="pics/menu.png"></a>
-			</div>
-			<div class="clear"></div>
-			<div id="menu" class="float-right">
-				<div id="title">
-					<div class="float-right">
-						<img src="pics/58x1.png" 
-						style="margin: 1px 5px 2px 5px;opacity:0.2;" ALT="align box" ALIGN="left">
-						<img src="pics/opensnowmap-191x45.png" alt="OpenSnowMap.org"
-						style="margin: 10px 5px 10px 5px;opacity:1;" ALT="align box" ALIGN="left">
-					</div>
-					<div class="float-right">
-						<div>
-						<form name="search">
-							<input id="search_input" type="text" name="nom_search"/>
-							<a style="margin-bottom: 0px;" onclick="SearchByName(document.search.nom_search.value);"
-							onmouseover="document.images['zoomPic'].src='pics/zoom_hover.png'"
-							onmouseout="document.images['zoomPic'].src='pics/zoom.png'">
-							<img name="zoomPic" align="absmiddle" src="pics/zoom.png"></a>
-						</form>
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:0px">
+								<img name="mobilePic" src="pics/mobile-22.png"></div>
 						</div>
-						<div class="clear"></div>
-						<div id="status">
-							<a href="http://blog.opensnowmap.org/post/2012/01/26/Pistes-nordiques.org-in-your-own-language"
-								target="blank">
-								Translation needed!</a></div>
-					</div>
-					<div class="float-right">
-						<img src="pics/58x1.png" 
-						style="margin: 1px 2px 2px 8px;opacity:0.2;" ALT="align box" ALIGN="right">
-						<a onclick="infoMode()"
-						onmouseover="document.images['pointPic'].src='pics/pistes-pointer-hover.png'"
-						onmouseout="if (mode == 'vector') {document.images['pointPic'].src='pics/pistes-pointer-on.png';}
-									else {document.images['pointPic'].src='pics/pistes-pointer.png'}">
-						<img style="margin: 8px 2px 2px 5px;" name="pointPic" src="pics/pistes-pointer.png"></a>
 					</div>
 				</div>
+<!--
+				TITLE
+-->
+				<div id="TitleBlock">
+					<div id="TitleVerticalLeft" class="IconBarVertical">
+						<div class="closeBox" id="MainExtendControl"
+						onclick="showMenu();"
+						onmouseover="document.images['menuExt'].src='pics/menu-22-hover.png'"
+						onmouseout="document.images['menuExt'].src='pics/menu-22-light.png'">
+						<img name="menuExt" id="menuExt" src="pics/menu-22-light.png"></div>
+						<br class="clear" />
+						<div id="selectButton" class="Button iconButton" onclick="infoMode()"
+						onmouseover="document.images['selectPic'].src='pics/select-22-hover.png'"
+						onmouseout="document.images['selectPic'].src='pics/select-22.png'">
+							<img name="selectPic" src="pics/select-22.png"></div>
+						<div class="Button iconButton" onclick="SearchByName(document.search.nom_search.value);"
+						id="searchMenuButton"
+						onmouseover="document.images['searchPic'].src='pics/search-22-hover.png'"
+						onmouseout="document.images['searchPic'].src='pics/search-22.png'">
+							<img name="searchPic" src="pics/search-22.png"></div>
+					</div>
+					<div id="TitleVerticalRight" class="">
+						<img style="margin: 8px 15px 8px 15px;" src="pics/opensnowmap-320x62_W.png" alt="OpenSnowMap.org">
+					</div>
+				</div>
+				
 			</div>
 
 		</div> <!-- end right-container-->
-		
+
+		<div id="searchDiv">
+			<form name="search">
+				<input id="search_input" type="text" name="nom_search"/>
+			</form>
+		</div>
+
 		<div id="attributions">
 			&#169;<a href="http://www.openstreetmap.org" target="blank">
 			Openstreetmap.org</a> &amp; contributors - 

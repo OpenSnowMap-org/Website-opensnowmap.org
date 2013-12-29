@@ -33,8 +33,8 @@ var EXT_MENU=true;
 var EDIT_SHOWED=false;
 var CATCHER;
 var MARKER = false;
-var permalink_potlatch2;
 var permalink_id;
+var permalink_ofsetter;
 var zoomBar;
 var PRINT_TYPE= 'small';
 var ONCE=false;
@@ -104,6 +104,10 @@ function infoMode(){
 			map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
 			map.div.style.cursor='pointer';
 			//~ document.images['pointPic'].src='pics/pistes-pointer-on.png';
+			document.getElementById('selectButton').style.backgroundColor="#E65B3F";
+			document.images['selectPic'].src='pics/select-22-hover.png';
+			document.getElementById('selectButton').onmouseout = function() { document.images['selectPic'].src='pics/select-22-hover.png'; };
+			
 		}
 		else {m="raster";}
 	}
@@ -123,6 +127,9 @@ function infoMode(){
 		close_helper();
 		//~ document.images['pointPic'].src='pics/pistes-pointer.png';
 		map.div.style.cursor='default';
+		document.getElementById('selectButton').style.backgroundColor="#FDFDFD";
+		document.images['selectPic'].src='pics/select-22.png';
+		document.getElementById('selectButton').onmouseout = function() { document.images['selectPic'].src='pics/select-22.png'; };
 	}
 	mode=m;
 }
@@ -189,6 +196,7 @@ function close_helper(){
 	close_sideBar();
 }
 function show_catcher(){
+	document.getElementById('sideBar').style.display='inline';
 	CATCHER=true;
 	SIDEBARSIZE=200;
 	resize_sideBar();
@@ -208,7 +216,7 @@ function show_catcher(){
 	html+='</p>';
 	html+='<p>';
 	html+='<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;">';
-	html+=_('edit');
+	html+=_('EDIT');
 	html+='</a>';
 	html+='</p>';
 	html+='</div>';
@@ -236,6 +244,7 @@ function show_catcher(){
 	document.getElementById('sideBarContent').innerHTML=html;
 }
 function show_helper(){
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE=300;
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
@@ -251,6 +260,7 @@ function show_helper(){
 	}
 }
 function show_about() {
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
@@ -266,32 +276,35 @@ function show_about() {
 	.replace('**snowshoeing**',lengthes.snowshoeing);
 	document.getElementById('sideBarContent').innerHTML = content;
 	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('about');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
 }
 function show_edit() {
+	
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('edit').replace('<br/>',' ');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('EDIT').replace('<br/>',' ');
 	
 	
 	
-	html = '<div style="font-size:1.5em; font-weight:800;" id="edit_zoom_in"></div>'
+	html = ''
 	 +'<p>&nbsp;'+_('edit_the_map_using')+'</p>'
 
 	 +'<p>&nbsp;'+_('edit_the_map_explain')+'</p>'
-	 
+	 +'<div style="font-size:1.1em; font-weight:800;" id="edit_zoom_in"></div>'
+	 +'<br/>'
 	 
 	 +'<table style="width:300px;text-align:center;"><tr><td>'
 	 +'<b>ID</b><br/>'
-	 +'<a id="permalink.id" target="blank" href=""><img src="pics/id-48.png"></a>'
+	 +'<a id="permalink.id" target="blank" href=""><img id="id_pic" src="pics/id-48.png"></a>'
 	 +'</td><td>'
 	 
 	 +'<b>JOSM (remote)</b><br/>'
-	 +'<a onclick="josmRemote();return false;" href=""><img src="pics/josm-48.png"></a>'
+	 +'<a onclick="josmRemote();return false;" href=""><img id="josm_pic" src="pics/josm-48.png"></a>'
 	 +'</td></tr></table>'
 	 +'<hr class="hrmenu">'
-	 
-	 +'<a id="permalink.offseter" target="blank" href=""><img class="float-left" src="pics/offseter-48.png"></a>'
+	
+	 +'<a id="permalink.offseter" target="blank" href=""><img id="offseter_pic" class="float-left" src="pics/offseter-48.png"></a>'
 	 
 	  +'&nbsp;'+_('offseter_explain')+'</p>'
 	 +'<br class="clear" />'
@@ -304,10 +317,7 @@ function show_edit() {
 	permalink_id = new OpenLayers.Control.Permalink("permalink.id",
 	"http://www.openstreetmap.org/edit",{'createParams': permalink1Args});
 	map.addControl(permalink_id);
-	permalink_potlatch2 = new OpenLayers.Control.Permalink("permalink.potlatch2",
-	"http://www.openstreetmap.org/edit",{'createParams': permalink2Args});
-	map.addControl(permalink_potlatch2);
-	var permalink_ofsetter = new OpenLayers.Control.Permalink("permalink.offseter",
+	permalink_ofsetter = new OpenLayers.Control.Permalink("permalink.offseter",
 		"offseter");
 	map.addControl(permalink_ofsetter);
 	
@@ -315,15 +325,17 @@ function show_edit() {
 		document.getElementById('edit_zoom_in').innerHTML='&nbsp;'+_('zoom_in');
 		document.getElementById('permalink.id').href = "javascript:void(0)";  
 		document.getElementById('permalink.id').target="";
-		document.getElementById('id_pic').src="pics/id_logo.png";
-		document.getElementById('permalink.potlatch2').href = "javascript:void(0)";
-		document.getElementById('permalink.potlatch2').target="";
-		document.getElementById('potlatch2_pic').src="pics/potlatch2-disabled.png";
+		document.getElementById('permalink.offseter').href = "javascript:void(0)";  
+		document.getElementById('permalink.offseter').target="";
+		document.getElementById('id_pic').src="pics/id-grey-48.png";
+		document.getElementById('josm_pic').src="pics/josm-grey-48.png";
+		document.getElementById('offseter_pic').src="pics/offseter-grey-48.png";
 	}else {
 		document.getElementById('edit_zoom_in').innerHTML='';
 	}
 }
 function show_profile() {
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
@@ -337,6 +349,7 @@ function show_profile() {
 	}
 }
 function show_profile_small() {
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE=150;
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
@@ -347,11 +360,12 @@ function show_profile_small() {
 	}
 }
 function show_legend() {
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('map_key').replace('<br/>',' ');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('MAP_KEY').replace('<br/>',' ');
 	html =  '<p><img style="position: relative; left: 20px;" src="pics/mapkey.png"></p>'
 	+'<p>'+_('key-color')
 	+ '<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.</p>'
@@ -363,35 +377,44 @@ function show_legend() {
 	resize_sideBar();
 }
 function show_settings() {
-	SIDEBARSIZE=250;
+	document.getElementById('sideBar').style.display='inline';
+	SIDEBARSIZE='full';
 	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('settings').replace('<br/>',' ');
-	html = '';
-	html +=' <input type="radio" id="mode_radio2" class="radio"';
-	html +=' name="basemap" value="mapnik"  onClick="toggleBaseLayer()" />';
-	html +=' <label>Openstreetmap&nbsp;'+_('base_map')+'</label>';
-	html +=' <br/>';
-	html +=' <input type="radio" id="mode_radio1" class="radio" checked="yes"';
-	html +=' name="basemap" value="Mapquest" onClick="toggleBaseLayer()"   />';
-	html +=' <label>OpenMapquest&nbsp;'+_('base_map')+'</label>';
-	html +=' <br/>';
-	
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('SETTINGS').replace('<br/>',' ');
+	html = '<b>'+_('base_map')+'</b>';
+	html +='<table style="width:300px;text-align:left;"><tr><td>'
+	html +='<div class="Button float-left" style="width:86px;height:66px;" ';
+	html +='onClick="toggleBaseLayer();" id="mode_radio2" value="mapnik">';
+	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/osm-bg.png"></img>';
+	html +='</div>OpenStreetMap&nbsp;';
+	html +='</td><td>';
+	html +='<div class="Button float-left" style="width:86px;height:66px;"';
+	html +='onClick="toggleBaseLayer();" id="mode_radio1" value="Mapquest">';
+	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/mq-bg.png"></img>';
+	html +='</div>OpenMapquest&nbsp;';
+	html +='</td></tr></table>';
 	html +=' <hr class="hrmenu">';
-	html +=' <p>'+_('last_edits')+'</p>';
+	html +=' <b>'+_('last_edits')+'</b>';
+	html +='<table style="width:300px;text-align:left;"><tr><td>'
+	html +='<div class="float-left" style="width:86px;height:66px;background-color:#FDFDFD;	border-style:solid;	border-width:1px;	border-color: #ccc;	padding: 1px;	margin: 2px;	-moz-border-radius:5px;	border-radius:5px;">';
+	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/additions.png"></img>';
+	html +='</div>';
+	html +='</td><td>';
 	html +=' <input type="checkbox" id="check1" class="radio" "';
 	html +=' name="live" value="daily" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label style="margin-top: 10px;">'+_('yesterday')+'</label>';
+	html +=' <label style="margin-top: 10px;">'+_('yesterday')+'</label><br/>';
 	
 	html +=' <input type="checkbox" id="check2" class="radio" "';
 	html +=' name="live" value="weekly" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label>'+_('weekly')+'</label>';
+	html +=' <label>'+_('weekly')+'</label><br/>';
 	
 	html +=' <input type="checkbox" id="check2" class="radio" ';
 	html +=' name="live" value="monthly" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label>'+_('monthly')+'</label>';
-	html +=' <br/>';
+	html +=' <label>'+_('monthly')+'</label><br/>';
+	html +='</td></tr></table>';
 	
 	html +=' <hr class="hrmenu">';
+	html +=' <b>'+_('Interactive map')+'</b>';
 	html +=' <div >';
 	html +='	<div class="Button iconButton float-left" onclick="infoMode()"><img src="pics/select-22.png"></div>';
 	html += 	_('vector_help');
@@ -416,17 +439,19 @@ function getWinHeight(){
 	return parseInt(myHeight);
 }
 function resize_sideBar() {
-	document.getElementById('sideBar').style.bottom = 10+document.getElementById("MainBlock").clientHeight+'px';
-	if (SIDEBARSIZE=='full'){
-		document.getElementById('sideBar').style.height= (getWinHeight() - document.getElementById("MainBlock").clientHeight -35)+"px";
-		document.getElementById('sideBar').style.display='inline';
-		document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
-		document.getElementById('sideBarContent').style.display='inline';
-	} else {
-		document.getElementById('sideBar').style.display='inline';
-		document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-		document.getElementById('sideBarContent').style.display='inline';
-		document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	if (document.getElementById('sideBar').style.display !== 'none') {
+		document.getElementById('sideBar').style.bottom = 10+document.getElementById("MainBlock").clientHeight+'px';
+		if (SIDEBARSIZE=='full'){
+			document.getElementById('sideBar').style.height= (getWinHeight() - document.getElementById("MainBlock").clientHeight -35)+"px";
+			document.getElementById('sideBar').style.display='inline';
+			document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
+			document.getElementById('sideBarContent').style.display='inline';
+		} else {
+			document.getElementById('sideBar').style.display='inline';
+			document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
+			document.getElementById('sideBarContent').style.display='inline';
+			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+		}
 	}
 	return true
 }
@@ -488,6 +513,7 @@ function show_live_edits(when,display) {
 	}
 }
 function show_languages() {
+	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE=150;
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
@@ -571,8 +597,10 @@ function page_init(){
 		initFlags();
 		resize_sideBar();
 		window.onresize = function(){resize_sideBar();}
+		
 }
 function loadend(){
+	updateTooltips();
 	if (EXT_MENU) {showMenu();}
 	else {closeMenu();}
 	
@@ -743,7 +771,8 @@ function SearchByName(name) {
 	}
 	
 	SIDEBARSIZE=100;
-	show_profile();
+	document.getElementById('sideBar').style.display='inline';
+	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
 	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p></div>';
 	document.getElementById("sideBarContent").innerHTML +='<div id="nominatim_results"></div>';
@@ -875,15 +904,23 @@ function onZoomEnd(){
 	}
 	if (EDIT_SHOWED){
 		if (map.getZoom() < 13) {
-			document.getElementById('edit_zoom_in').innerHTML='&nbsp;'+_('zoom_in');
-			document.getElementById('permalink.potlatch2').href = "javascript:void(0)";
-			document.getElementById('permalink.potlatch2').target="";
-			document.getElementById('potlatch2_pic').src="pics/potlatch2-disabled.png";
+		document.getElementById('edit_zoom_in').innerHTML='&nbsp;'+_('zoom_in');
+		document.getElementById('permalink.id').href = "javascript:void(0)";  
+		document.getElementById('permalink.id').target="";
+		document.getElementById('id_pic').src="pics/id-grey-48.png";
+		document.getElementById('josm_pic').src="pics/josm-grey-48.png";
+		document.getElementById('offseter_pic').src="pics/offseter-grey-48.png";
 		}else {
-			document.getElementById('edit_zoom_in').innerHTML='';
-			permalink_potlatch2.updateLink();
-			document.getElementById('permalink.potlatch2').target="blank";
-			document.getElementById('potlatch2_pic').src="pics/potlatch2.png";
+		document.getElementById('edit_zoom_in').innerHTML='';
+		document.getElementById('permalink.id').href = "";  
+		document.getElementById('permalink.id').target="blank";
+		permalink_id.updateLink();
+		document.getElementById('permalink.offseter').href = "";  
+		document.getElementById('permalink.offseter').target="blank";
+		permalink_ofsetter.updateLink();
+		document.getElementById('id_pic').src="pics/id-48.png";
+		document.getElementById('josm_pic').src="pics/josm-48.png";
+		document.getElementById('offseter_pic').src="pics/offseter-48.png";
 		}
 	}
 }
@@ -1140,25 +1177,27 @@ function show_printSettings(){
 	// close map controls
 	if(mode =="vector") {infoMode();}
 	SIDEBARSIZE=150;
+	
+	document.getElementById('sideBar').style.display='inline';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	html='';
 	
 	html+='\n'
 	html+='<div onclick="setPrint(\'hb\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
 	html+='<img src="pics/ps_hb.png"></div>'
 	html+='\n'
 	html+='<div onclick="setPrint(\'vb\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
 	html+='<img src="pics/ps_vb.png"></div>'
 	html+='\n'
 	html+='<div onclick="setPrint(\'hs\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
 	html+='<img src="pics/ps_hs.png"></div>'
 	html+='\n'
 	html+='<div onclick="setPrint(\'vs\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
 	html+='<img src="pics/ps_vs.png"></div>'
 	html+='\n'
 	html+='<div onclick="print();"'
@@ -1789,4 +1828,23 @@ function initFlags(){
 	document.getElementById('langs').innerHTML = html;
 }
 
+function updateTooltips(){
+
+	document.getElementById("settingsMenuButton").setAttribute('title',_('settings-tooltip'));
+	document.getElementById("mapkeyMenuButton").setAttribute('title',_('MAP_KEY'));
+	document.getElementById("editMenuButton").setAttribute('title',_('edit_the_map_using'));
+	document.getElementById("aboutMenuButton").setAttribute('title',_('ABOUT'));
+	document.getElementById("blogMenuButton").setAttribute('title',_('blog.opensnowmap.org'));
+	document.getElementById("dataMenuButton").setAttribute('title',_('data-tooltip'));
+	
+	document.getElementById("langs").setAttribute('title',_('lang-tooltip'));
+	document.getElementById("printMenuButton").setAttribute('title',_('print-tooltip'));
+	document.getElementById("permalink.marker").setAttribute('title',_('marker-tooltip'));
+	document.getElementById("permalink.simple").setAttribute('title',_('link-tooltip'));
+	document.getElementById("desktopswitch").setAttribute('title',_('desktop-tooltip'));
+	document.getElementById("mobileswitch").setAttribute('title',_('mobile-tooltip'));
+	
+	document.getElementById("selectButton").setAttribute('title',_('interactive-tooltip'));
+	document.getElementById("searchMenuButton").setAttribute('title',_('search-tooltip'));
+}
 
