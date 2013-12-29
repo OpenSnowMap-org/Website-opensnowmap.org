@@ -25,9 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Why aeriaways are at the topo's end ?
 
 var server="http://"+window.location.host+"/";
-
+if (! window.location.host) {
+	server=window.location.pathname.replace("index.html",'');
+}
 var mode="raster";
-var EXT_MENU=false;
+var EXT_MENU=true;
 var EDIT_SHOWED=false;
 var CATCHER;
 var MARKER = false;
@@ -101,7 +103,7 @@ function infoMode(){
 			m="vector";
 			map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
 			map.div.style.cursor='pointer';
-			document.images['pointPic'].src='pics/pistes-pointer-on.png';
+			//~ document.images['pointPic'].src='pics/pistes-pointer-on.png';
 		}
 		else {m="raster";}
 	}
@@ -119,7 +121,7 @@ function infoMode(){
 		m="raster";
 		map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
 		close_helper();
-		document.images['pointPic'].src='pics/pistes-pointer.png';
+		//~ document.images['pointPic'].src='pics/pistes-pointer.png';
 		map.div.style.cursor='default';
 	}
 	mode=m;
@@ -157,31 +159,18 @@ function get_page(url){
 	response = response.replace("../","");
 	return response;
 }
-function toggleMenu() {
-	var em = document.getElementById('extendedmenu');
-	// At loadtime, m.style.display=""
-	if (em.style.display == "none" || em.style.display == "") {
-		em.style.display ='inline';
-		EXT_MENU=true;
-		}
-	else if (em.style.display == "inline") {
-		em.style.display = 'none';
-		EXT_MENU=false;
-		}
-	map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
-	return true;
-	
-}
 function showMenu() {
-	var em = document.getElementById('extendedmenu');
-	em.style.display ='inline';
+	document.getElementById('MenuBlock').style.display='block';
+	document.getElementById('menuExt').style.display='none';
 	EXT_MENU=true;
+	resize_sideBar();
 	return true;
 }
 function closeMenu() {
-	var em = document.getElementById('extendedmenu');
-	em.style.display ='none';
+	document.getElementById('MenuBlock').style.display='none';
+	document.getElementById('menuExt').style.display='block';
 	EXT_MENU=false;
+	resize_sideBar();
 	return true;
 }
 function close_sideBar() {
@@ -201,11 +190,8 @@ function close_helper(){
 }
 function show_catcher(){
 	CATCHER=true;
-	SIDEBARSIZE=180;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	SIDEBARSIZE=200;
+	resize_sideBar();
 	
 	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
 	
@@ -251,10 +237,7 @@ function show_catcher(){
 }
 function show_helper(){
 	SIDEBARSIZE=300;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	
 	var html='<div id="zoomin-helper" style="font-size: 1.2em;font-weight:600;">'+_('zoom_in')+'</div>';
@@ -288,26 +271,32 @@ function show_about() {
 function show_edit() {
 	SIDEBARSIZE='full';
 	resize_sideBar();
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('edit').replace('<br/>',' ');
+	
+	
 	
 	html = '<div style="font-size:1.5em; font-weight:800;" id="edit_zoom_in"></div>'
 	 +'<p>&nbsp;'+_('edit_the_map_using')+'</p>'
+
 	 +'<p>&nbsp;'+_('edit_the_map_explain')+'</p>'
+	 
+	 
+	 +'<table style="width:300px;text-align:center;"><tr><td>'
+	 +'<b>ID</b><br/>'
+	 +'<a id="permalink.id" target="blank" href=""><img src="pics/id-48.png"></a>'
+	 +'</td><td>'
+	 
+	 +'<b>JOSM (remote)</b><br/>'
+	 +'<a onclick="josmRemote();return false;" href=""><img src="pics/josm-48.png"></a>'
+	 +'</td></tr></table>'
+	 +'<hr class="hrmenu">'
+	 
+	 +'<a id="permalink.offseter" target="blank" href=""><img class="float-left" src="pics/offseter-48.png"></a>'
+	 
+	  +'&nbsp;'+_('offseter_explain')+'</p>'
+	 +'<br class="clear" />'
 	 +'<hr class="hrmenu">'
 	 +'<p><a href="iframes/how-to-'+iframelocale+'.html" target="blank">'+_('how_to')+'</a></p>'
-	 +'<hr class="hrmenu">'
-	 +'<p style="text-align:center;">'
-	 +'<a id="permalink.id" href="" target="blank"><img src="pics/id_logo.png" id="id_pic"></a>'
-	 +'</p><p style="text-align:center;">'
-	 +'<a id="permalink.potlatch2" href="" target="blank"><img src="pics/potlatch2.png" id="potlatch2_pic"></a>'
-	 +'</p>'
-	 +'<hr class="hrmenu">'
-	 +'<p>&nbsp;'+_('offseter_explain')+'</p>'
-	 +'</p><p style="text-align:center;">'
-	 +'<a id="permalink.ofsetter" href="" target="blank"><img src="pics/offseter-fuzzy.png" ></a>'
-	 +'</p>'
 	 +'<hr class="hrmenu">';
 	EDIT_SHOWED = true;
 	
@@ -318,7 +307,7 @@ function show_edit() {
 	permalink_potlatch2 = new OpenLayers.Control.Permalink("permalink.potlatch2",
 	"http://www.openstreetmap.org/edit",{'createParams': permalink2Args});
 	map.addControl(permalink_potlatch2);
-	var permalink_ofsetter = new OpenLayers.Control.Permalink("permalink.ofsetter",
+	var permalink_ofsetter = new OpenLayers.Control.Permalink("permalink.offseter",
 		"offseter");
 	map.addControl(permalink_ofsetter);
 	
@@ -349,10 +338,7 @@ function show_profile() {
 }
 function show_profile_small() {
 	SIDEBARSIZE=150;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	if (map.getZoom() > 10) {
 		document.getElementById('sideBarContent').innerHTML='<div id="topo_profile" style="display:inline"></div><div id="topo_list" style="display:inline"></div>';
@@ -362,6 +348,7 @@ function show_profile_small() {
 }
 function show_legend() {
 	SIDEBARSIZE='full';
+	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('map_key').replace('<br/>',' ');
@@ -376,11 +363,8 @@ function show_legend() {
 	resize_sideBar();
 }
 function show_settings() {
-	SIDEBARSIZE=210;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	SIDEBARSIZE=250;
+	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('settings').replace('<br/>',' ');
 	html = '';
 	html +=' <input type="radio" id="mode_radio2" class="radio"';
@@ -391,29 +375,27 @@ function show_settings() {
 	html +=' name="basemap" value="Mapquest" onClick="toggleBaseLayer()"   />';
 	html +=' <label>OpenMapquest&nbsp;'+_('base_map')+'</label>';
 	html +=' <br/>';
-					
+	
 	html +=' <hr class="hrmenu">';
 	html +=' <p>'+_('last_edits')+'</p>';
 	html +=' <input type="checkbox" id="check1" class="radio" "';
 	html +=' name="live" value="daily" onClick="show_live_edits(value,checked)"   />';
 	html +=' <label style="margin-top: 10px;">'+_('yesterday')+'</label>';
+	
 	html +=' <input type="checkbox" id="check2" class="radio" "';
 	html +=' name="live" value="weekly" onClick="show_live_edits(value,checked)"   />';
 	html +=' <label>'+_('weekly')+'</label>';
-	html +=' <br/>';
+	
 	html +=' <input type="checkbox" id="check2" class="radio" ';
 	html +=' name="live" value="monthly" onClick="show_live_edits(value,checked)"   />';
 	html +=' <label>'+_('monthly')+'</label>';
 	html +=' <br/>';
+	
 	html +=' <hr class="hrmenu">';
-	html +=' <div id="vector-help">';
-	html +='	<table style="border:0px;"><tr><td><a onclick="infoMode()"';
-	html +='	onmouseover="document.images[\'pointPic\'].src=\'pics/pistes-pointer-hover.png\'"';
-	html +='	onmouseout="if (mode == \'vector\') {document.images[\'pointPic\'].src=\'pics/pistes-pointer-on.png\';}';
-	html +='				else {document.images[\'pointPic\'].src=\'pics/pistes-pointer.png\'}">';
-	html +='	<img style="margin: 2px 2px 2px 2px;display: block;" name="pointPic" src="pics/pistes-pointer.png"></a></td><td>';
-	html +=_('vector_help');
-	html +=' </td></table></div>';
+	html +=' <div >';
+	html +='	<div class="Button iconButton float-left" onclick="infoMode()"><img src="pics/select-22.png"></div>';
+	html += 	_('vector_help');
+	html +='</div>';
 	document.getElementById('sideBarContent').innerHTML=html;
 }
 function getWinHeight(){
@@ -434,9 +416,12 @@ function getWinHeight(){
 	return parseInt(myHeight);
 }
 function resize_sideBar() {
+	document.getElementById('sideBar').style.bottom = 10+document.getElementById("MainBlock").clientHeight+'px';
 	if (SIDEBARSIZE=='full'){
-		document.getElementById('sideBar').style.height= (getWinHeight() - 80)+"px";
-		document.getElementById('sideBarContent').style.height= (getWinHeight() - 103-5)+"px";
+		document.getElementById('sideBar').style.height= (getWinHeight() - document.getElementById("MainBlock").clientHeight -35)+"px";
+		document.getElementById('sideBar').style.display='inline';
+		document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
+		document.getElementById('sideBarContent').style.display='inline';
 	} else {
 		document.getElementById('sideBar').style.display='inline';
 		document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
@@ -502,6 +487,18 @@ function show_live_edits(when,display) {
 		if (when == "monthly") {map.getLayersByName("Monthly")[0].destroy();}
 	}
 }
+function show_languages() {
+	SIDEBARSIZE=150;
+	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
+	html = ''
+	for (l=0; l<locs.length; l++ ){
+		html += '<a id="" onclick="setlanguage(\''+locs[l]+'\');">'
+			 +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
+	}
+	document.getElementById('sideBarContent').innerHTML=html;
+}
+
 //======================================================================
 // INIT
 
@@ -531,10 +528,10 @@ function echap() {
 		close_sideBar();
 		close_printSettings();
 		// close extendedmenu
-		var em = document.getElementById('extendedmenu');
-		if (em.style.display == "inline") {
-		em.style.display = 'none';
-		}
+		//~ var em = document.getElementById('extendedmenu');
+		//~ if (em.style.display == "inline") {
+		//~ em.style.display = 'none';
+		//~ }
 		clearRoute();
 }
 function get_stats(){
@@ -735,13 +732,18 @@ function nominatimSearch(name) {
 }
 
 function SearchByName(name) {
-	if (name == '') {return false;};
-	close_sideBar();
-	SIDEBARSIZE=70;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+	if (document.getElementById('searchDiv').style.display=='none' || document.getElementById('searchDiv').style.display=='') {
+		document.getElementById('searchDiv').style.display='block';
+		document.getElementById("search_input").focus();
+		return false;
+	}
+	if (name == '') {
+		document.getElementById('searchDiv').style.display='none';
+		return false;
+	}
+	
+	SIDEBARSIZE=100;
+	show_profile();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
 	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p></div>';
 	document.getElementById("sideBarContent").innerHTML +='<div id="nominatim_results"></div>';
@@ -755,7 +757,7 @@ function SearchByName(name) {
 
 function getTopoById(ids) {
 	LIVE=false;
-	document.getElementById("topo_list").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
+	document.getElementById('topo_list').innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
@@ -1036,7 +1038,16 @@ function permalink0Args() {
 	args['marker'] = 'false';
 	return args;
 }
-
+function josmRemote(){
+	var bb= map.getExtent().transform(
+		new OpenLayers.Projection("EPSG:900913"),
+		new OpenLayers.Projection("EPSG:4326"));
+	var q = 'http://127.0.0.1:8111/load_and_zoom?left='+bb.left+'&top='+bb.top+'&right='+bb.right+'&bottom='+bb.bottom;
+	var XMLHttp = new XMLHttpRequest();
+	XMLHttp.open("GET", q, true);
+	XMLHttp.send();
+	
+}
 function map_init(){
 	map = new OpenLayers.Map ("map", {
 	zoomMethod: null,
@@ -1125,22 +1136,39 @@ function print() {
 	XMLHttp.send();
 	document.getElementById('print_result').innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p>';
 }
-function close_printSettings(){
-	document.getElementById('print-settings').style.display='none';
-	document.getElementById('print_result').innerHTML='';
-	var printLayer= map.getLayersByName("Print layer")[0];
-	if (printLayer != null) {
-		printLayer.destroyFeatures(printLayer.features);
-		printLayer.destroy;
-		map.removeLayer(printLayer);
-	}
-}
 function show_printSettings(){
 	// close map controls
-	mode ="vector";
-	infoMode();
+	if(mode =="vector") {infoMode();}
+	SIDEBARSIZE=150;
+	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML='';
+	html='';
 	
-	document.getElementById('print-settings').style.display='block';
+	html+='\n'
+	html+='<div onclick="setPrint(\'hb\');"'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/ps_hb.png"></div>'
+	html+='\n'
+	html+='<div onclick="setPrint(\'vb\');"'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/ps_vb.png"></div>'
+	html+='\n'
+	html+='<div onclick="setPrint(\'hs\');"'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/ps_hs.png"></div>'
+	html+='\n'
+	html+='<div onclick="setPrint(\'vs\');"'
+	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/ps_vs.png"></div>'
+	html+='\n'
+	html+='<div onclick="print();"'
+	html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/print-22.png"></div>'
+	html+='<br class="clear" />'
+	html+='<div id="print_result"></div>';
+	
+	document.getElementById('sideBarContent').innerHTML=html;
+	document.getElementById('sideBarContent').style.display='block';
 	var styleMap = new OpenLayers.StyleMap({
 		'fillColor': '#ffffff',
 		'fillOpacity' : 0.4,
@@ -1177,7 +1205,14 @@ function setPrint(type) {
 	printLayer.destroyFeatures(printLayer.features);
 	printLayer.addFeatures([pf]);
 }
-
+function close_printSettings(){
+	var printLayer= map.getLayersByName("Print layer")[0];
+	if (printLayer != null) {
+		printLayer.destroyFeatures(printLayer.features);
+		printLayer.destroy;
+		map.removeLayer(printLayer);
+	}
+}
 //======================================================================
 // MAP
 
@@ -1221,13 +1256,13 @@ var tmpStyle = new OpenLayers.Style({display: "none"});
 var myStyleMap = new OpenLayers.StyleMap({"default": routeStyle, "temporary": tmpStyle});
 
 function loadWait() {
-	document.getElementById("status").innerHTML = '<b style="color:#FFFFFF;">'+_('loading...')+'</b>'; 
-	document.getElementById("status").style.backgroundColor = '#FF7800';
+	//~ document.getElementById("status").innerHTML = '<b style="color:#FFFFFF;">'+_('loading...')+'</b>'; 
+	//~ document.getElementById("status").style.backgroundColor = '#FF7800';
 	document.getElementById("waiter").style.display = 'block';
 }
 function endWait() {
-	 document.getElementById("status").innerHTML = '';
-	 document.getElementById("status").style.backgroundColor = '#FFFFFF';
+	 //~ document.getElementById("status").innerHTML = '';
+	 //~ document.getElementById("status").style.backgroundColor = '#FFFFFF';
 	 //redrawRoute();
 	document.getElementById("waiter").style.display = 'none';
 }
@@ -1272,6 +1307,7 @@ function removeLastPoint(){
 function clearRoute() {
 	if (pointsLayer) {pointsLayer.destroyFeatures();}
 	if (linesLayer) {linesLayer.destroyFeatures();}
+	return true;
 }
 function clearRouteButLast(){
 	for (f in pointsLayer.features) {
@@ -1282,7 +1318,10 @@ function clearRouteButLast(){
 		}
 	}
 	clearRoute();
-	addPoint(tokeep);
+	addPoint(tokeep.transform(
+					new OpenLayers.Projection("EPSG:900913"),
+					new OpenLayers.Projection("EPSG:4326")));
+	return true;
 }
 function route(){
 	var lls={};
@@ -1518,10 +1557,14 @@ function makeHTMLPistesList() {
 	var html='\n<div style="font-size:0.7em;">\n';
 	html+='\n<div class="clear"></div>'
 	html+='\n'
-			+'<a onclick="new_window()"'
-			+' onmouseover="document.images[\'printPic\'].src=\'pics/print_hover.png\'"\n'
-			+' onmouseout="document.images[\'printPic\'].src=\'pics/print.png\'">\n'
-			+'<img name="printPic" src="pics/print.png"></a><br/>';
+	html+='<div onclick="new_window();"'
+	html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
+	html+='<img src="pics/print-22.png"></div>'
+	//~ html+='\n'
+			//~ +'<a onclick="new_window()"'
+			//~ +' onmouseover="document.images[\'printPic\'].src=\'pics/print_hover.png\'"\n'
+			//~ +' onmouseout="document.images[\'printPic\'].src=\'pics/print.png\'">\n'
+			//~ +'<img name="printPic" src="pics/print.png"></a><br/>';
 	
 	html+='\n'
 	if (jsonPisteList['sites'] != null) {
@@ -1742,25 +1785,8 @@ function setlanguage(what){
 function initFlags(){
 	var max=4;
 	var html='';
-	html+= '<a id="" onclick="show_languages();">'
-		+'<img style="margin: 0 4px 0 4px;" src="pics/flags/'+locale+'.png"></a>';
-	html+='<a onclick="show_languages();" '
-		+ 'style="margin: 0 2px 0 2px;font-size:1.5em;font-weight:200;">&#187;</a>';
+	html+= '<img style="margin-top: 5px; margin-left: 2px;" src="pics/flags/'+locale+'.png">';
 	document.getElementById('langs').innerHTML = html;
 }
 
-function show_languages() {
-	SIDEBARSIZE=150;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
-	html = ''
-	for (l=0; l<locs.length; l++ ){
-		html += '<a id="" onclick="setlanguage(\''+locs[l]+'\');">'
-			 +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
-	}
-	document.getElementById('sideBarContent').innerHTML=html;
-}
 

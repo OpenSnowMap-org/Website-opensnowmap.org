@@ -2,8 +2,8 @@ body{
     margin:0px;
     overflow:hidden;
     padding:0px;
-    font-family:sans-serif;
-    font-size: 0.8em;
+    font-family:'Open Sans', sans-serif;
+    font-size: 1em;
     font-weight: 400;
     width: 100%; height:100%;
     color: #202020
@@ -79,6 +79,12 @@ label {
 .clear { clear: both}
 /*use to place divs side by side*/
 
+.float-right{
+    float:right
+}
+.float-left{
+    float:left
+}
 #map {
         position: fixed;    width: 100%; height:100%;
         top: 0px;
@@ -104,7 +110,7 @@ label {
 }
 .attributions{
             position: relative;
-            font-size: 0.75em;
+            font-size: 0.6em;
             color: #888888;
             text-align:right;
             margin-top: 5px;
@@ -144,159 +150,146 @@ label {
     right: 16px;
     width: 50px;
 }
-#menu{
-    position: relative;
-    bottom:0px;
-    right: 0px;
-    height: 62px;
-    width: 420px;
-    }
 
-#title{
-    float:right;
+	#sideBar{
+	    position: absolute;
+	    right: 0px;
+	    height: 200px;
+	    width: 400px;
+	    bottom: 60px;
+	    background-color:#EEE; /*fallback*/
+	    background-color: rgba(245,245,245,0.5);
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+	    border: 1px solid #aaaaaa;
+	    display: none;
+	    overflow: auto;
+	}
+		#sideBarContent{
+			font-size: 0.8em;
+			color: #444;
+			background-color:#FDFDFD;
+			opacity:1;
+			height:160px;
+			width: 370px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			margin-left: 5px;
+			margin-right:5px;
+			padding-left:10px;
+			padding-right:10px;
+			overflow: auto;
+			position: absolute
+		}
+	.sideBarHeader{
+		top:0px;left:0px;right:0px;height:24px;position:relative;
+		margin-left: 5px;
+		background-color:#EEE; /*fallback*/
+		background-color: rgba(245,245,245,0.2);
+		color: #444444;
+		font-weight: 600;
+		font-size: 0.82em;
+		line-height: 14px
+	}
+	        #sideBarTitle{
+	                float: left;
+	                position:relative;
+	                top:0px
+	        }
+	#MainBlock{
+	    position: absolute;
+	    right: 0px;
+/*
+	    height: 175px;
+*/
+	    width: 400px;
+	    bottom: 0px;
+	    background-color:#EEE; /*fallback*/
+	    background-color: rgba(245,245,245,0.4);
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+	    border: 1px solid #aaaaaa;
+	    overflow: none;
+	}
+		#MenuBlock{
+		        opacity:1;
+		        height:86px;
+				width: 390px;
+		        margin-top: 2px;
+		        margin-bottom: 0px;
+		        margin-left: 2px;
+		        margin-right:5px;
+		        overflow: auto;
+		        position: relative
+		}
+		#MenuVerticalRight{
+			position: absolute;
+			left: 35px;
+			top: 0px;
+			width:355px;
+			margin-top: 2px;
+		}
+		#MenuIcons{
+		background-color:#FDFDFD;
+		height: 30px;
+		width:355px;
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+	    margin-top:2px;
+	    margin-bottom:5px;
+		}
+		.IconBarVertical{
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			width: 30px;
+		}
+		#TitleBlock{
+		        opacity:1;
+		        height:86px;
+				width: 390px;
+		        margin-top: 0px;
+		        margin-bottom: 5px;
+		        margin-left: 2px;
+		        margin-right:5px;
+		        overflow: auto;
+		        position: relative
+		}
+		#TitleVerticalRight{
+		width:355px;
+		height:80px;
+	    background-color:#FDFDFD;
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+		position: absolute;
+		left: 35px;
+		top: 0px;
+		margin-top: 5px;
+		}
+
+#searchDiv{
+	display: none;
+	position: absolute;
+	bottom: 30px;
+	right: 410px;
+	width: 92px;
+    background-color:#EEE; /*fallback*/
+    background-color: rgba(245,245,245,0.4);
     -moz-border-radius:6px;
     border-radius:6px;
-    border: 1px solid #AAAAAA;
-    font-size: 0.75em;
-    color: #050505;
-    height: 62px;
-    text-align: center;
-    vertical-align: center;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245);
-    z-index: 990;
+    border: 1px solid #aaaaaa;
 }
-#slide{
-    position: relative;
-    top: 5px;
-    float:right;
-    overflow: none;
-    height: 18px;
-    width: 75px;
-    margin-top: -15px;
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #AAAAAA;
-    font-size: 0.95em;
-    color: #888888;
-    text-align: right;
-    vertical-align: middle;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245);
-    z-index: 1000;
-}
-.float-right{
-    float:right;
-}
+
 #search_input{
-        border: 1px solid #CCCCCC;
-        font-size: 1.1em;
-        width: 80px;
-        margin-left: 5px;
-        margin-top: 10px;
-        margin-bottom: 0px
-}
-#status {
-        font-size: 0.9em;
-        margin: 5px;
-        padding: 2px;
-        width: 88px;
-        line-height:100%;
-        text-align: center;
-        background-color: #FFFFFF;
-        opacity:0.8;
-        -moz-border-radius:5px; /* Firefox */
-        border-radius:5px;
-        border: 1px solid #CCCCCC;
-}
-#extendedmenu{
-display: none;
-    position: relative;
-    right: 0px;
-    width: 75px;
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #aaaaaa;
-    font-size: 0.75em;
-    color: #444444;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245);
-}
-#menubar{
-    top:2px;
-    text-align: center;
-    font-weight: 600;
-    color: #444444;
-    font-size: 0.82em;
-    line-height: 14px;
-    width: 70px;
-    margin: 3px;
-}
-#vector-help{
-    max-width: 150px;
-    margin: 5px;
-    font-size: 0.85em;
-    font-weight: 400;
-    font-style:italic;
+	border: 1px solid #CCCCCC;
+	font-size: 0.8em;
+	width: 80px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 2px;
+	margin-bottom: 2px;
 }
 
-#sideBar{
-    position: absolute;
-    right: 0px;
-    height: 200px;
-    width: 362px;
-    bottom: 60px;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.5);
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #aaaaaa;
-    display: none;
-    overflow: auto;
-}
-#sideBarContent{
-        font-size: 0.8em;
-        background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245);
-        opacity:1;
-        height:160px;
-		width: 270px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        margin-left: 5px;
-        margin-right:5px;
-        overflow: auto;
-        position: absolute
-        
-}
-.sideBarHeader{
-                top:0px;left:0px;right:0px;height:17px;position:relative;
-                background-color:#EEE; /*fallback*/
-                background-color: rgba(245,245,245,0.2);
-                color: #444444;
-                font-weight: 600;
-                font-size: 0.82em;
-                line-height: 14px
-}
-        #closeBox{
-            position: relative;
-                top:0px;
-                text-align: center;
-                font-weight: 600;
-                color: #FFFFFF;
-                width: 16px;
-                margin: 0px;
-                padding:0px;
-                background-color:#EEE; /*fallback*/
-                background-color:rgba(245,245,245,0.2);
-                float:left;
-                z-index: 1000;
-        }
-        #sideBarTitle{
-                float: left;
-                position:relative;
-                top:0px
-        }
 #attributions{
     position: absolute;
 /*
@@ -306,10 +299,11 @@ display: none;
     border-radius:6px;
     bottom:0px;
     left: 0px;
-    font-size: 0.65em;
+    font-size: 0.5em;
     background-color:#EEE; /*fallback*/
     background-color: rgba(245,245,245,0.3);
 }
+
 #helper-centering{
     position: absolute;
     top: 5px;
@@ -373,11 +367,12 @@ display: none;
 #routing{
         padding-top: 10px;
 }
+
 #permalink{
     position: absolute;
     bottom: 0px;
     font-size: 0.8em;
-    right: 100px;
+    right: 200px;
 }
 .box {
         position: relative;
@@ -424,4 +419,54 @@ display: none;
 .inSiteElement{
   font-size: 1.1em;
   font-style:oblique;
+}
+
+.Button {
+    background-color:#FDFDFD;
+	border-style:solid;
+	border-width:1px;
+	border-color: #ccc;
+	padding: 1px;
+	margin: 2px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.Button:hover{
+    background-color:#DBDBDB;
+}
+.Button:active{
+    background-color:#E65B3F;
+}
+.iconButton{
+	width:22px;
+	height:22px
+}
+.textButton{
+	font-weight: 700;
+	color: #444444;
+	font-size: 0.75em;
+	text-decoration: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top:2px;
+	padding-bottom:2px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 1px;
+	
+}
+
+.closeBox{
+	position: relative;
+		top:0px;
+		left:0px;
+		width: 22px;
+		height:22px;
+/*
+		margin: 0px 0px 5px -3px ;
+*/
+		padding:0px;
+		float:left;
+		z-index: 1000;
 }
