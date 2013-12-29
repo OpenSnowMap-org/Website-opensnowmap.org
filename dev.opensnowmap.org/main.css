@@ -212,15 +212,15 @@ label {
 	    overflow: none;
 	}
 		#MenuBlock{
-		        opacity:1;
-		        height:86px;
-				width: 390px;
-		        margin-top: 2px;
-		        margin-bottom: 0px;
-		        margin-left: 2px;
-		        margin-right:5px;
-		        overflow: auto;
-		        position: relative
+			opacity:1;
+			height:88px;
+			width: 390px;
+			margin-top: 2px;
+			margin-bottom: 0px;
+			margin-left: 2px;
+			margin-right:5px;
+			overflow: hidden;
+			position: relative
 		}
 		#MenuVerticalRight{
 			position: absolute;
@@ -236,7 +236,6 @@ label {
 	    -moz-border-radius:6px;
 	    border-radius:6px;
 	    margin-top:2px;
-	    margin-bottom:5px;
 		}
 		.IconBarVertical{
 			position: absolute;
@@ -252,7 +251,7 @@ label {
 		        margin-bottom: 5px;
 		        margin-left: 2px;
 		        margin-right:5px;
-		        overflow: auto;
+		        overflow: hidden;
 		        position: relative
 		}
 		#TitleVerticalRight{
