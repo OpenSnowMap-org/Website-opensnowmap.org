@@ -1439,8 +1439,8 @@ function getProfile(wktroute) {
 	XMLHttp.open("POST", server+"demrequest?");
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
-			// cut when cgi is not able to work
-			document.getElementById('topo_profile').innerHTML=XMLHttp.responseText;
+			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
+			document.getElementById('topo_profile').innerHTML=html;
 		}
 	}
 	XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
