@@ -52,7 +52,7 @@ def application(environ,start_response):
 
 def genTile(xtile, ytile, zoom, ext, cache):
 	base_zoom = 11
-	base_dir = '/home/website/tiles/hillshading/'
+	base_dir = '/home/admin/hillshade-data/'
 	db = sqlite3.connect(base_dir+'SRTM_V41_CGIAR_ASTER_hillshade.sqlitedb')
 	#db = sqlite3.connect(base_dir+'SRTM_V41_CGIAR_ASTER_hillshade-compressed.sqlitedb')
 	cur = db.cursor()

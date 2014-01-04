@@ -25,6 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Why aeriaways are at the topo's end ?
 
 var server="http://"+window.location.host+"/";
+if (! window.location.host) {
+	server=window.location.pathname.replace("index.html",'');
+}
+
+var hillshade_URL="http://www3.opensnowmap.org/hillshading/"
+var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
+var pistes_overlay_URL="http://www3.opensnowmap.org/tiles-pistes/"
+var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
+
 var MARKER=false;
 var LOC=false;
 var LOC_ONCE=false;
@@ -864,7 +873,7 @@ function baseLayers() {
 	//map.addLayer(mapnik);
 // Layer 0
 	var snowCover = new OpenLayers.Layer.TMS( "Snow Cover",
-					"http://tiles2.pistes-nordiques.org/snow-cover/",
+					snow_cover_URL,
 					{   
 					getURL: get_osm_url,
 					isBaseLayer: false, visibility: true, maxScale: 6000000,
@@ -886,10 +895,29 @@ function baseLayers() {
 				//~ isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
 			//~ });
 	//~ map.addLayer(layerGTOPO30);
-
+// layer 4
+	var layerContours = new OpenLayers.Layer.XYZ("Contour",
+	contours_URL,{
+			getURL: get_osm_url,
+			numZoomLevels: 18, isBaseLayer: false,
+			transparent: true, buffer: 1,opacity: 0.9,
+			minScale: 200000, visibility: true ,
+				transitionEffect: null
+		});
+	map.addLayer(layerContours);
+// layer 3
+	var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade",
+	 hillshade_URL,{ 
+				type: 'png', getURL: get_tms_url, alpha: true, 
+				buffer: 1,
+				isBaseLayer: false, 
+				opacity: 0.4,minScale: 3000000, visibility: true,
+				transitionEffect: null
+			});
+	map.addLayer(layerHillshade);
 // Layer 5
 	var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-	"http://tiles.opensnowmap.org/tiles-pistes/",{
+	pistes_overlay_URL,{
 			getURL: get_osm_url, 
 			isBaseLayer: false, numZoomLevels: 19,
 			visibility: true, opacity: 0.8,
@@ -899,7 +927,7 @@ function baseLayers() {
 	map.addLayer(PistesTilesLowZoom);
 // Layer 6
 	var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-	"http://tiles.opensnowmap.org/tiles-pistes/",{
+	pistes_overlay_URL,{
 			getURL: get_osm_url, 
 			isBaseLayer: false, numZoomLevels: 19,
 			visibility: true, opacity: 0.95,
@@ -907,25 +935,7 @@ function baseLayers() {
 				transitionEffect: null
 		});
 	map.addLayer(PistesTiles);
-// layer 4
-	var layerContours = new OpenLayers.Layer.XYZ("Contour",
-	"http://www2.opensnowmap.org/tiles-contours/",{
-			getURL: get_osm_url,
-			numZoomLevels: 18, isBaseLayer: false,
-			transparent: true, buffer: 1,opacity: 0.9,
-			minScale: 200000, visibility: true ,
-				transitionEffect: null
-		});
-	map.addLayer(layerContours);
-// layer 3
-	var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade", "http://www2.opensnowmap.org/hillshading/",{ 
-				type: 'png', getURL: get_tms_url, alpha: true, 
-				buffer: 1,
-				isBaseLayer: false, 
-				opacity: 0.4,minScale: 3000000, visibility: true,
-				transitionEffect: null
-			});
-	map.addLayer(layerHillshade);
+
 }
 function permalink3Args() {
 	var args = 

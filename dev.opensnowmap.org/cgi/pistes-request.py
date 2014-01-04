@@ -301,7 +301,7 @@ def application(environ,start_response):
 #==================================================
 def queryMembersById(ids):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	cur = con.cursor()
 	
 	cur.execute("""
@@ -321,7 +321,7 @@ def queryMembersById(ids):
 	
 def queryByIds(ids):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	cur = con.cursor()
 	
 	cur.execute("""
@@ -360,7 +360,7 @@ def queryByIds(ids):
 
 def queryByName(name):
 	LIMIT_REACHED = False
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	cur = con.cursor()
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
@@ -415,7 +415,7 @@ def queryByName(name):
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def queryClosest(center):
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	
 	cur = con.cursor()
 	
@@ -437,7 +437,7 @@ def queryClosest(center):
 
 def snapToWay(ID, center):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	
 	cur = con.cursor()
 	
@@ -467,7 +467,7 @@ def snapToWay(ID, center):
 
 def queryByBbox(bbox):
 	LIMIT_REACHED = False
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	cur = con.cursor()
 	site_ids=[]
 	route_ids=[]
@@ -522,7 +522,7 @@ def queryByBbox(bbox):
 def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	
 	if CONCAT:
-		con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+		con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 		cur = con.cursor()
 		if len(way_ids):
 			# remove duplicates: way member of a route #of same piste:type
@@ -616,7 +616,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	return IDS
 
 def makeList(IDS, GEO):
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=website")
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	
 	if GEO: geomS=',ST_AsText(ST_buffer(geom,0.01))'
 	else: geomR=''

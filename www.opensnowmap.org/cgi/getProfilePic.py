@@ -16,7 +16,7 @@ import os, os.path
 import random
 import atexit
 
-SRTMFilesDir='/home/website/SRTM-filled/'
+SRTMFilesDir='/home/admin/DEM/tiles/'
 PIL_images_dir = '/var/www/tmp/' 
 #TODO:
 # Clean and master the elevation code
@@ -219,7 +219,7 @@ def createPics(tracks):
     
     outname=PIL_images_dir + profile_filename
     im.save(outname, "PNG")
-    return '<img src="http://www.pistes-nordiques.org/tmp/'+profile_filename+'">'
+    return profile_filename
     
 #
 def gen_html(profile):
@@ -426,10 +426,13 @@ class SrtmLayer(object):
         ilon = abs(floor(lon))
         ilat = abs(floor(lat))
         
-        if lon > 0 and lat > 0 :return 'N%02dE%03d.tif' % (ilat, ilon)
-        if lon < 0 and lat > 0 :return 'N%02dW%03d.tif' % (ilat, ilon)
+        if lon > 0 and lat > 0 and lat <60 :return 'N%02dE%03d.tif' % (ilat, ilon)
+        if lon < 0 and lat > 0 and lat <60:return 'N%02dW%03d.tif' % (ilat, ilon)
         if lon > 0 and lat < 0 :return 'S%02dE%03d.tif' % (ilat, ilon)
         if lon < 0 and lat < 0 :return 'S%02dW%03d.tif' % (ilat, ilon)
+        if lon > 0 and lat > 0 and lat >=60 :return 'as_N%02dE%01d.tif' % (ilat, ilon)
+        if lon < 0 and lat > 0 and lat >=60:return 'as_N%02dE-%01d.tif' % (ilat, ilon)
+        
     def get_elevation(self, lat, lon):
         """
         Returns the elevation in metres of point (lat, lon).
