@@ -77,6 +77,7 @@ var icon = {
 "station":'pics/station.png',
 "playground":'pics/playground.png',
 "sled":'pics/sled.png',
+"sleigh":'pics/sleigh.png',
 "snow_park":'pics/snow_park.png',
 "ski_jump":'pics/jump.png'
 
