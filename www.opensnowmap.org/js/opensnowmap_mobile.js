@@ -29,9 +29,9 @@ if (! window.location.host) {
 	server=window.location.pathname.replace("index.html",'');
 }
 
-var hillshade_URL="http://www3.opensnowmap.org/hillshading/"
+var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www3.opensnowmap.org/tiles-pistes/"
+var pistes_overlay_URL="http://www.opensnowmap.org/tiles-pistes/"
 var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var MARKER=false;
