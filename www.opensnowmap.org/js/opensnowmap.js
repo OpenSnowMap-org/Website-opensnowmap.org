@@ -788,7 +788,7 @@ function SearchByName(name) {
 	resize_sideBar();
 }
 
-function getTopoById(ids) {
+function getTopoById(ids,routeLength) {
 	LIVE=false;
 	document.getElementById('topo_list').innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
 	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
@@ -800,7 +800,7 @@ function getTopoById(ids) {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
-			document.getElementById('topo_list').innerHTML=makeHTMLPistesList();
+			document.getElementById('topo_list').innerHTML=makeHTMLPistesList(routeLength);
 		}
 	}
 	XMLHttp.send();
@@ -1416,7 +1416,7 @@ function route(){
 				show_profile();
 				var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
 				var routeLength = getNodeText(responseXML.getElementsByTagName('length')[0]);
-				getTopoById(routeIds);
+				getTopoById(routeIds,routeLength);
 				
 				// show route
 				var routeT = new OpenLayers.Geometry.fromWKT(routeWKT);
@@ -1597,7 +1597,8 @@ deleteHandler.activate();
 map.events.register("click", map, onMapClick);
 }
 
-function makeHTMLPistesList() {
+function makeHTMLPistesList(length) {
+	
 	var html='\n<div style="font-size:0.7em;">\n';
 	html+='\n<div class="clear"></div>'
 	html+='\n'
@@ -1611,6 +1612,9 @@ function makeHTMLPistesList() {
 			//~ +'<img name="printPic" src="pics/print.png"></a><br/>';
 	
 	html+='\n'
+	if(typeof(length)!=='undefined') {
+		html +='<div><b style="font-size:1.5em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
+		}
 	if (jsonPisteList['sites'] != null) {
 		
 		for (p in jsonPisteList['sites']) {
