@@ -373,8 +373,10 @@ class SrtmTiff(object):
         #if row==5999: row=5998
         #if col==5999: col=5998
         if row==1200: row=1199
+        if row==1199: row=1198
         if col==1200: col=1199
-
+        if col==1199: col=1198
+        print row, col
         htarr = gdalnumeric.DatasetReadAsArray(self.tile['dataset'], col, row, 2, 2)
 
         height = bilinear_interpolation(htarr[0][0], htarr[0][1], htarr[1][0], htarr[1][1],
