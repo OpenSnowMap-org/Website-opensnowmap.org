@@ -365,7 +365,7 @@ def queryByName(name):
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
 	# set limit for pg_trgm
-	cur.execute("""select set_limit(0.3);""")
+	cur.execute("""select set_limit(0.31);""")
 	con.commit()
 	
 	cur.execute("""
@@ -393,7 +393,7 @@ def queryByName(name):
 	cur.execute("""
 	SELECT id FROM ways 
 	WHERE name_trgm %% '%s'
-	ORDER by similarity(name_trgm,'%s');
+	ORDER by similarity(name_trgm,'%s'), tags->'name', tags->'piste:name';
 	"""
 	% (name,name))
 	way_ids = cur.fetchall()
@@ -635,7 +635,7 @@ def makeList(IDS, GEO):
 		cur.execute("""
 		SELECT 
 			id,
-			tags->'name',
+			COALESCE(tags->'piste:name',tags->'name',''),
 			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
@@ -700,7 +700,7 @@ def makeList(IDS, GEO):
 		cur.execute("""
 		SELECT
 			id,
-			tags->'name',
+			COALESCE(tags->'piste:name',tags->'name',''),
 			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
@@ -718,6 +718,7 @@ def makeList(IDS, GEO):
 		sites=cur.fetchall()
 		con.commit()
 		if sites:
+			s['in_sites']=[]
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
@@ -786,7 +787,7 @@ def makeList(IDS, GEO):
 		cur.execute("""
 		SELECT
 			id,
-			tags->'name',
+			COALESCE(tags->'piste:name',tags->'name',''),
 			COALESCE(tags->'color',tags->'colour',''),
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
@@ -806,6 +807,7 @@ def makeList(IDS, GEO):
 		
 		route_ids=[]
 		if routes:
+			s['in_routes']=[]
 			for route in routes:
 				tmp={}
 				tmp['id']=route[0]
@@ -824,7 +826,7 @@ def makeList(IDS, GEO):
 		cur.execute("""
 		SELECT
 			id,
-			tags->'name',
+			COALESCE(tags->'piste:name',tags->'name',''),
 			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
@@ -843,6 +845,7 @@ def makeList(IDS, GEO):
 		con.commit()
 		
 		if sites:
+			s['in_sites']=[]
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
