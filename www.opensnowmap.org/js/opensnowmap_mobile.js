@@ -29,10 +29,10 @@ if (! window.location.host) {
 	server=window.location.pathname.replace("index.html",'');
 }
 
-var hillshade_URL="http://www.opensnowmap.org/hillshading/"
-var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/tiles-pistes/"
-var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
+//~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
+//~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
+var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
+//~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var MARKER=false;
 var LOC=false;
@@ -872,15 +872,6 @@ function baseLayers() {
 // Layer 1.5
 	var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
 	//map.addLayer(mapnik);
-// Layer 0
-	var snowCover = new OpenLayers.Layer.TMS( "Snow Cover",
-					snow_cover_URL,
-					{   
-					getURL: get_osm_url,
-					isBaseLayer: false, visibility: true, maxScale: 6000000,
-				transitionEffect: null
-					});
-	map.addLayer(snowCover);
 // Layer 1
 	var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
 		"http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
@@ -890,49 +881,12 @@ function baseLayers() {
 				arrayMapQuest,
 				{transitionEffect: null});
 	map.addLayer(mapquest);
-//~ // Layer 2
-	//~ var layerGTOPO30 = new OpenLayers.Layer.TMS( "GTOPO30", "http://tiles2.pistes-nordiques.org/gtopo30/",{   
-				//~ type: 'png', getURL: get_tms_url, alpha: true, opacity: 0.3,
-				//~ isBaseLayer: false, visibility: true, maxScale: 3000000, minScale: 8000000
-			//~ });
-	//~ map.addLayer(layerGTOPO30);
-// layer 4
-	var layerContours = new OpenLayers.Layer.XYZ("Contour",
-	contours_URL,{
-			getURL: get_osm_url,
-			numZoomLevels: 18, isBaseLayer: false,
-			transparent: true, buffer: 1,opacity: 0.9,
-			minScale: 200000, visibility: true ,
-				transitionEffect: null
-		});
-	map.addLayer(layerContours);
-// layer 3
-	var layerHillshade = new OpenLayers.Layer.TMS( "Hillshade",
-	 hillshade_URL,{ 
-				type: 'png', getURL: get_tms_url, alpha: true, 
-				buffer: 1,
-				isBaseLayer: false, 
-				opacity: 0.4,minScale: 3000000, visibility: true,
-				transitionEffect: null
-			});
-	map.addLayer(layerHillshade);
 // Layer 5
-	var PistesTilesLowZoom = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
+	var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
 	pistes_overlay_URL,{
 			getURL: get_osm_url, 
 			isBaseLayer: false, numZoomLevels: 19,
-			visibility: true, opacity: 0.8,
-			maxScale: 250000,
-				transitionEffect: null
-		});
-	map.addLayer(PistesTilesLowZoom);
-// Layer 6
-	var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles",
-	pistes_overlay_URL,{
-			getURL: get_osm_url, 
-			isBaseLayer: false, numZoomLevels: 19,
-			visibility: true, opacity: 0.95,
-			minScale: 250000,
+			visibility: true, opacity: 1,
 				transitionEffect: null
 		});
 	map.addLayer(PistesTiles);
