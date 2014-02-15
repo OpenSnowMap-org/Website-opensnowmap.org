@@ -44,7 +44,14 @@
 						onmouseout="document.images['sideBarClose'].src='pics/close-22-light.png'">
 						<img name="sideBarClose"  src="pics/close-22-light.png">
 					</div>
-					<div id="sideBarTitle"></div><br class="clear" />
+					<div id="sideBarTitle"></div>
+					<div id="sideBarControls">
+						<div id="next" class="Button textButton float-right"  onclick="nextResult();"
+						style="font-size:1.5em;">&nbsp;&raquo;&nbsp;</div>
+						<div id="prev" class="Button textButton float-right"  onclick="prevResult();"
+						style="font-size:1.5em;">&nbsp;&laquo;&nbsp;</div>
+					</div>
+					<br class="clear" />
 				</div>
 				
 				<!-- The content-->
@@ -129,6 +136,13 @@
 									document.cookie='version=mobile';"
 							class="Button iconButton float-right" style="margin-left:5px;margin-right:0px">
 								<img name="mobilePic" src="pics/mobile-22.png"></div>
+								
+							<div onclick="getTopoByViewport();"
+							id="listPistesMenuButton"
+							onmouseover="document.images['listPic'].src='pics/list-22-hover.png'"
+							onmouseout="document.images['listPic'].src='pics/list-22.png'"
+							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+								<img name="listPic" src="pics/list-22.png"></div>
 						</div>
 					</div>
 				</div>

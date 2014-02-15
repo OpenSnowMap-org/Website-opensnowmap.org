@@ -436,6 +436,10 @@ label {
 .Button:active{
     background-color:#E65B3F;
 }
+.Button:disabled{
+    background-color:#E65B3F;
+    color: #AAA;
+}
 .iconButton{
 	width:22px;
 	height:22px
