@@ -33,7 +33,7 @@ if (! window.location.host) {
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/dev/"
+var pistes_overlay_URL="http://www.opensnowmap.org/single-overlay/"
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode="raster";
@@ -269,11 +269,11 @@ function show_helper(){
 	document.getElementById('sideBarContent').innerHTML=html;
 	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 	
-	if (map.getZoom()<11){
-		document.getElementById('zoomin-helper').style.display = 'inline';
-	} else {
-		document.getElementById('zoomin-helper').style.display = 'none';
-	}
+	//~ if (map.getZoom()<11){
+		//~ document.getElementById('zoomin-helper').style.display = 'inline';
+	//~ } else {
+		//~ document.getElementById('zoomin-helper').style.display = 'none';
+	//~ }
 }
 function show_about() {
 	document.getElementById('sideBar').style.display='inline';
@@ -1082,13 +1082,13 @@ function onZoomEnd(){
 	
 	ONCE=true;
 	if(CATCHER && ONCE){close_sideBar();CATCHER=false;}
-	if (map.getZoom()<11){
-		if (document.getElementById('zoomin-helper')) {
-		document.getElementById('zoomin-helper').style.display = 'inline';}
-	} else {
-		if (document.getElementById('zoomin-helper')) {
-		document.getElementById('zoomin-helper').style.display = 'none';}
-	}
+	//~ if (map.getZoom()<11){
+		//~ if (document.getElementById('zoomin-helper')) {
+		//~ document.getElementById('zoomin-helper').style.display = 'inline';}
+	//~ } else {
+		//~ if (document.getElementById('zoomin-helper')) {
+		//~ document.getElementById('zoomin-helper').style.display = 'none';}
+	//~ }
 	if (EDIT_SHOWED){
 		if (map.getZoom() < 13) {
 		document.getElementById('edit_zoom_in').innerHTML='&nbsp;'+_('zoom_in');
