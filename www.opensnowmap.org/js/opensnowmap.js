@@ -33,7 +33,7 @@ if (! window.location.host) {
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
+var pistes_overlay_URL="http://www.opensnowmap.org/dev/"
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode="raster";
@@ -57,8 +57,13 @@ var lengthes;
 var today=new Date();
 var update;
 
+var searchResultsArray=[];
+var searchComplete=0;
+var currentResult=-1;
+
 var GetProfileXHR=[]; // to abort
 var PisteAPIXHR=[]; // to abort
+var jsonPisteLists=[];
 var jsonPisteList={};
 
 // a dummy proxy script is located in the directory to allow use of wfs
@@ -200,6 +205,7 @@ function close_sideBar() {
 	document.getElementById('sideBar').style.display='none';
 	EDIT_SHOWED = false;
 	CATCHER=false;
+	
 }
 function close_helper(){
 	close_sideBar();
@@ -251,16 +257,17 @@ function show_catcher(){
 	html+='</table>';
 	
 	document.getElementById('sideBarContent').innerHTML=html;
+	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 }
 function show_helper(){
 	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE=300;
+	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	
-	var html='<div id="zoomin-helper" style="font-size: 1.2em;font-weight:600;">'+_('zoom_in')+'</div>';
-	html+='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
+	var html='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
 	document.getElementById('sideBarContent').innerHTML=html;
+	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 	
 	if (map.getZoom()<11){
 		document.getElementById('zoomin-helper').style.display = 'inline';
@@ -349,16 +356,11 @@ function show_profile() {
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
-	document.getElementById('sideBarContent').innerHTML='<div id="topo_profile" style="display:inline"></div><div id="topo_list" style="display:inline"></div>';
+	html='<b>'+_('PROFILE')+'<b/><br/><div id="topo_profile" style="display:inline"></div><br/>';
+	html+='<b>'+_('routing_title')+'<b/><br/><div id="topo_list" style="display:inline"></div>';
+	document.getElementById('sideBarContent').innerHTML=html
 }
-function show_profile_small() {
-	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE=150;
-	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
-	document.getElementById('sideBarContent').innerHTML='<div id="topo_profile" style="display:inline"></div><div id="topo_list" style="display:inline"></div>';
-	
-}
+
 function show_legend() {
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
@@ -525,6 +527,63 @@ function show_languages() {
 	document.getElementById('sideBarContent').innerHTML=html;
 }
 
+function resultArrayAdd(html) {
+	searchResultsArray.push(html);
+	jsonPisteLists.push(jsonPisteList);
+	currentResult+=1;
+	if (searchResultsArray.length > 5 ) {
+		searchResultsArray.splice(0,1);
+		jsonPisteLists.splice(0,1);
+		currentResult -= 1;
+	}
+	if (currentResult == searchResultsArray.length -1 ) {
+		document.getElementById("next").style.color='#AAA';
+	}else {
+		document.getElementById("next").style.color='#444444';
+	}
+	if (currentResult <= 0 ) {
+		document.getElementById("prev").style.color='#AAA';
+	}else {
+		document.getElementById("prev").style.color='#444444';
+	}
+	return true;
+}
+function prevResult(){
+	if (searchResultsArray.length >= currentResult-1 && currentResult > 0) {
+		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult-1];
+		jsonPisteList = jsonPisteLists[currentResult-1];
+		currentResult -= 1;
+	}
+	if (currentResult == searchResultsArray.length -1 ) {
+		document.getElementById("next").style.color='#AAA';
+	}else {
+		document.getElementById("next").style.color='#444444';
+	}
+	if (currentResult <= 0 ) {
+		document.getElementById("prev").style.color='#AAA';
+	}else {
+		document.getElementById("prev").style.color='#444444';
+	}
+	return true;
+}
+function nextResult(){
+	if (currentResult < searchResultsArray.length -1 ) {
+		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult+1];
+		jsonPisteList = jsonPisteLists[currentResult+1];
+		currentResult += 1;
+	}
+	if (currentResult == searchResultsArray.length -1 ) {
+		document.getElementById("next").style.color='#AAA';
+	}else {
+		document.getElementById("next").style.color='#444444';
+	}
+	if (currentResult <= 0 ) {
+		document.getElementById("prev").style.color='#AAA';
+	}else {
+		document.getElementById("prev").style.color='#444444';
+	}
+	return true;
+}
 //======================================================================
 // INIT
 
@@ -630,6 +689,11 @@ function getByName(name) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
 		}
 	}
 	XMLHttp.send();
@@ -658,6 +722,11 @@ function nominatimSearch(name) {
 			htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
 			
 			document.getElementById('nominatim_results').innerHTML=htmlResponse;
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
 		}
 	}
 	XMLHttp.send();
@@ -678,6 +747,7 @@ function SearchByName(name) {
 	
 	abortXHR('PisteAPI'); // abort another request if any
 	abortXHR('GetProfile'); // abort another request if any
+	searchComplete=0;
 	
 	SIDEBARSIZE=100;
 	document.getElementById('sideBar').style.display='inline';
@@ -693,8 +763,41 @@ function SearchByName(name) {
 	resize_sideBar();
 	return true;
 }
-
-function getTopoByWayId(ids,routeLength) {
+function getTopoByViewport() {
+	
+	abortXHR('PisteAPI'); // abort another request if any
+	abortXHR('GetProfile'); // abort another request if any
+	SIDEBARSIZE=100;
+	document.getElementById('sideBar').style.display='inline';
+	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
+	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p></div>';
+	
+	var bb= map.getExtent().transform(
+		new OpenLayers.Projection("EPSG:900913"),
+		new OpenLayers.Projection("EPSG:4326"));
+	var q = server+"request?group=true&geo=true&list=true&sort_alpha=true&bbox="+bb.left+','+bb.top+','+bb.right+','+bb.bottom;
+	var XMLHttp = new XMLHttpRequest();
+	
+	PisteAPIXHR.push(XMLHttp);
+	
+	XMLHttp.open("GET", q);
+	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+	
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			var resp=XMLHttp.responseText;
+			jsonPisteList = JSON.parse(resp);
+			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			SIDEBARSIZE='full';
+			resize_sideBar();
+			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+		}
+	}
+	XMLHttp.send();
+	return true;
+}
+function getRouteTopoByWaysId(ids,routeLength) {
 	
 	abortXHR('PisteAPI'); // abort another request if any
 	document.getElementById('topo_list').innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
@@ -711,9 +814,15 @@ function getTopoByWayId(ids,routeLength) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('topo_list').innerHTML=makeHTMLPistesList(routeLength);
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
 		}
 	}
 	XMLHttp.send();
+	return true;
 }
 function getTopoById(ids,routeLength) {
 	
@@ -729,9 +838,15 @@ function getTopoById(ids,routeLength) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('topo_list').innerHTML=makeHTMLPistesList(routeLength);
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
 		}
 	}
 	XMLHttp.send();
+	return true;
 }
 function getMembersById(id) {
 	
@@ -757,6 +872,7 @@ function getMembersById(id) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 			SIDEBARSIZE='full';
 			resize_sideBar();
 		}
@@ -808,6 +924,11 @@ function getProfile(wktroute) {
 		if (XMLHttp.readyState == 4) {
 			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
 			document.getElementById('topo_profile').innerHTML=html;
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
 		}
 	}
 	XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -820,6 +941,7 @@ function getProfile(wktroute) {
 function route(){
 	
 	abortXHR('PisteAPI'); // abort another request if any
+	searchComplete=0;
 	
 	var lls={};
 	var lonlats=[];
@@ -868,7 +990,7 @@ function route(){
 				var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
 				var routeLength = getNodeText(responseXML.getElementsByTagName('length')[0]);
 				
-				getTopoByWayId(routeIds,routeLength);
+				getRouteTopoByWaysId(routeIds,routeLength);
 				
 				// show route
 				var routeT = new OpenLayers.Geometry.fromWKT(routeWKT);
@@ -1583,9 +1705,7 @@ function encpolArray2WKT(encpol) {
 	if (encpol.length == 1) {
 		var feature = encPol.read(encpol[0]);
 		wktGeom = wkt.write(feature);
-		l+=feature.geometry.transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:900913")).getLength()/1000;
+		l+=feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326"))/1000;
 	} 
 	else if (encpol.length > 1) {
 		wktGeom='MULTILINESTRING(';
@@ -1593,9 +1713,7 @@ function encpolArray2WKT(encpol) {
 			var feature = encPol.read(encpol[i]);
 			var linestring = wkt.write(feature);
 			wktGeom += linestring.replace('LINESTRING','')+',';
-			l+=feature.geometry.transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:900913")).getLength()/1000;
+			l+=feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326"))/1000;
 		}
 		wktGeom =wktGeom.substring(0,wktGeom.length-1)+')';
 	}
@@ -1624,6 +1742,7 @@ function showProfileFromGeometryParentRoute(osm_id,r) {
 	var wkt = encpolArray2WKT(parent.geometry)
 	
 	show_profile();
+	searchComplete=0;
 	getTopoById(parent.id,wkt.length_km);
 	getProfile(wkt.geom);
 	return true;
@@ -1647,6 +1766,7 @@ function showProfileFromGeometry(osm_id, type) {
 	var wkt = encpolArray2WKT(element.geometry)
 	
 	show_profile();
+	searchComplete=0;
 	getTopoById(osm_id.replace('_',','),wkt.length_km);
 	getProfile(wkt.geom);
 	return true;
@@ -1667,7 +1787,6 @@ function addPoint(lonlat){
 	if (pointsLayer.features.length == 0){pt.attributes['start']=true;}
 	else {pointsLayer.features[pointsLayer.features.length-1].attributes['end']=false;}
 	
-	// here we could request server to snap the point to a piste
 	pointsLayer.addFeatures([pt]);
 	pointsLayer.redraw();
 	point_id=point_id+1;
@@ -1675,6 +1794,7 @@ function addPoint(lonlat){
 	if (pointsLayer.features.length >1){route();}
 	else {
 		document.getElementById('topo_list').innerHTML = makeHTMLPistesList();
+		resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 	}
 	return true;
 }
@@ -1736,7 +1856,7 @@ function onMapClick(e) {
 				]));
 			if (Math.abs(fx.x - px.x) + Math.abs(fx.y - px.y) <10){return false;}
 		}
-		show_profile_small();
+		show_profile();
 		getClosestPistes(lonlat);
 	} else {
 		show_helper();
@@ -2060,6 +2180,7 @@ function updateTooltips(){
 	document.getElementById("permalink.simple").setAttribute('title',_('link-tooltip'));
 	document.getElementById("desktopswitch").setAttribute('title',_('desktop-tooltip'));
 	document.getElementById("mobileswitch").setAttribute('title',_('mobile-tooltip'));
+	document.getElementById("listPistesMenuButton").setAttribute('title',_('list_pistes-tooltip'));
 	
 	document.getElementById("selectButton").setAttribute('title',_('interactive-tooltip'));
 	document.getElementById("searchMenuButton").setAttribute('title',_('search-tooltip'));

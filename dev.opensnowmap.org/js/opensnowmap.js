@@ -265,8 +265,7 @@ function show_helper(){
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	
-	var html='<div id="zoomin-helper" style="font-size: 1.2em;font-weight:600;">'+_('zoom_in')+'</div>';
-	html+='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
+	var html='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
 	document.getElementById('sideBarContent').innerHTML=html;
 	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 	
@@ -538,14 +537,14 @@ function resultArrayAdd(html) {
 		currentResult -= 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
-		document.getElementById("next").style.display='none';
+		document.getElementById("next").style.color='#AAA';
 	}else {
-		document.getElementById("next").style.display='inline';
+		document.getElementById("next").style.color='#444444';
 	}
 	if (currentResult <= 0 ) {
-		document.getElementById("prev").style.display='none';
+		document.getElementById("prev").style.color='#AAA';
 	}else {
-		document.getElementById("prev").style.display='inline';
+		document.getElementById("prev").style.color='#444444';
 	}
 	return true;
 }
@@ -556,14 +555,14 @@ function prevResult(){
 		currentResult -= 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
-		document.getElementById("next").style.display='none';
+		document.getElementById("next").style.color='#AAA';
 	}else {
-		document.getElementById("next").style.display='inline';
+		document.getElementById("next").style.color='#444444';
 	}
 	if (currentResult <= 0 ) {
-		document.getElementById("prev").style.display='none';
+		document.getElementById("prev").style.color='#AAA';
 	}else {
-		document.getElementById("prev").style.display='inline';
+		document.getElementById("prev").style.color='#444444';
 	}
 	return true;
 }
@@ -574,14 +573,14 @@ function nextResult(){
 		currentResult += 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
-		document.getElementById("next").style.display='none';
+		document.getElementById("next").style.color='#AAA';
 	}else {
-		document.getElementById("next").style.display='inline';
+		document.getElementById("next").style.color='#444444';
 	}
 	if (currentResult <= 0 ) {
-		document.getElementById("prev").style.display='none';
+		document.getElementById("prev").style.color='#AAA';
 	}else {
-		document.getElementById("prev").style.display='inline';
+		document.getElementById("prev").style.color='#444444';
 	}
 	return true;
 }

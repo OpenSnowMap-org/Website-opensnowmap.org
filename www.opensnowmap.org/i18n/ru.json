@@ -57,6 +57,7 @@
 "print-tooltip": 'Print a map in pdf',
 "edit-tooltip": 'Access tools to add or modify a piste in the map',
 "data-tooltip": 'Download ski pistes data',
+"list_pistes-tooltip": 'List the ski pistes currently in the viewport',
 "offseter_explain": 'Вы так же можете поправить отображение нескольких трасс.',
 "MAP_KEY": 'ЛЕГЕНДА',
 "ABOUT": 'О КАРТЕ',

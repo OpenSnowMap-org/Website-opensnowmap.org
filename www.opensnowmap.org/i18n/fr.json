@@ -56,6 +56,7 @@
 "print-tooltip": 'Imprimer la carte en pdf',
 "edit-tooltip": 'Outils pour modifier ou ajouter des pistes dans la carte',
 "data-tooltip": 'Données des pistes de ski en téléchargement',
+"list_pistes-tooltip": 'Faire une liste des pistes présentes sur la carte',
 "offseter_explain":'Vous pouvez également modifier la visibilité des pistes sur www.opensnowmap.org',
 "MAP_KEY": 'LEGENDE',
 "ABOUT": 'A PROPOS',

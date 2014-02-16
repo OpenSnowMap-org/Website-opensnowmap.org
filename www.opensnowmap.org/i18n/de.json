@@ -56,6 +56,7 @@
 "print-tooltip": 'Print a map in pdf',
 "edit-tooltip": 'Access tools to add or modify a piste in the map',
 "data-tooltip": 'Download ski pistes data',
+"list_pistes-tooltip": 'List the ski pistes currently in the viewport',
 "offseter_explain":'Die farbige Darstellung der Pisten auf www.opensnowmap.org kann verändert werden.',
 "MAP_KEY": 'LEGENDE',
 "ABOUT": 'IMPRESSUM',

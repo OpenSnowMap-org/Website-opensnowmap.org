@@ -56,6 +56,7 @@
 "print-tooltip": 'Print a map in pdf',
 "edit-tooltip": 'Access tools to add or modify a piste in the map',
 "data-tooltip": 'Download ski pistes data',
+"list_pistes-tooltip": 'List the ski pistes currently in the viewport',
 "offseter_explain": 'You can also adjust the visibility of the colored pistes on this www.opensnowmap.org',
 "MAP_KEY": '凡例',
 "ABOUT": 'ABOUT',
