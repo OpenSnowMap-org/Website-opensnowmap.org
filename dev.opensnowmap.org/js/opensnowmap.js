@@ -63,6 +63,7 @@ var currentResult=-1;
 
 var GetProfileXHR=[]; // to abort
 var PisteAPIXHR=[]; // to abort
+var jsonPisteLists=[];
 var jsonPisteList={};
 
 // a dummy proxy script is located in the directory to allow use of wfs
@@ -529,9 +530,11 @@ function show_languages() {
 
 function resultArrayAdd(html) {
 	searchResultsArray.push(html);
+	jsonPisteLists.push(jsonPisteList);
 	currentResult+=1;
 	if (searchResultsArray.length > 5 ) {
 		searchResultsArray.splice(0,1);
+		jsonPisteLists.splice(0,1);
 		currentResult -= 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
@@ -549,6 +552,7 @@ function resultArrayAdd(html) {
 function prevResult(){
 	if (searchResultsArray.length >= currentResult-1 && currentResult > 0) {
 		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult-1];
+		jsonPisteList = jsonPisteLists[currentResult-1];
 		currentResult -= 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
@@ -566,6 +570,7 @@ function prevResult(){
 function nextResult(){
 	if (currentResult < searchResultsArray.length -1 ) {
 		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult+1];
+		jsonPisteList = jsonPisteLists[currentResult+1];
 		currentResult += 1;
 	}
 	if (currentResult == searchResultsArray.length -1 ) {
