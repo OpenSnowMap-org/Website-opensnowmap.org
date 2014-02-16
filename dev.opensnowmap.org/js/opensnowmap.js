@@ -204,6 +204,7 @@ function close_sideBar() {
 	document.getElementById('sideBar').style.display='none';
 	EDIT_SHOWED = false;
 	CATCHER=false;
+	
 }
 function close_helper(){
 	close_sideBar();
@@ -259,7 +260,7 @@ function show_catcher(){
 }
 function show_helper(){
 	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE=300;
+	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	
@@ -355,16 +356,11 @@ function show_profile() {
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
-	document.getElementById('sideBarContent').innerHTML='<div id="topo_profile" style="display:inline"></div><div id="topo_list" style="display:inline"></div>';
+	html='<b>'+_('PROFILE')+'<b/><br/><div id="topo_profile" style="display:inline"></div><br/>';
+	html+='<b>'+_('routing_title')+'<b/><br/><div id="topo_list" style="display:inline"></div>';
+	document.getElementById('sideBarContent').innerHTML=html
 }
-function show_profile_small() {
-	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE=150;
-	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
-	document.getElementById('sideBarContent').innerHTML='<div id="topo_profile" style="display:inline"></div><div id="topo_list" style="display:inline"></div>';
-	
-}
+
 function show_legend() {
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
@@ -1705,9 +1701,7 @@ function encpolArray2WKT(encpol) {
 	if (encpol.length == 1) {
 		var feature = encPol.read(encpol[0]);
 		wktGeom = wkt.write(feature);
-		l+=feature.geometry.transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:900913")).getLength()/1000;
+		l+=feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326"))/1000;
 	} 
 	else if (encpol.length > 1) {
 		wktGeom='MULTILINESTRING(';
@@ -1715,9 +1709,7 @@ function encpolArray2WKT(encpol) {
 			var feature = encPol.read(encpol[i]);
 			var linestring = wkt.write(feature);
 			wktGeom += linestring.replace('LINESTRING','')+',';
-			l+=feature.geometry.transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:900913")).getLength()/1000;
+			l+=feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326"))/1000;
 		}
 		wktGeom =wktGeom.substring(0,wktGeom.length-1)+')';
 	}
@@ -1860,7 +1852,7 @@ function onMapClick(e) {
 				]));
 			if (Math.abs(fx.x - px.x) + Math.abs(fx.y - px.y) <10){return false;}
 		}
-		show_profile_small();
+		show_profile();
 		getClosestPistes(lonlat);
 	} else {
 		show_helper();

@@ -39,10 +39,10 @@
 			<div id="sideBar" class="float-right">
 				<div id="sideBarHeader" class="sideBarHeader">
 					<div class="closeBox" id="sideBarCloseControl"
-						onclick="close_sideBar();"
+						onclick="close_sideBar();echap();"
 						onmouseover="document.images['sideBarClose'].src='pics/close-22-hover.png'"
-						onmouseout="document.images['sideBarClose'].src='pics/close-22-light.png'">
-						<img name="sideBarClose"  src="pics/close-22-light.png">
+						onmouseout="document.images['sideBarClose'].src='pics/close-22.png'">
+						<img name="sideBarClose"  src="pics/close-22.png">
 					</div>
 					<div id="sideBarTitle"></div>
 					<div id="sideBarControls">
@@ -50,6 +50,8 @@
 						style="font-size:1.5em;">&nbsp;&raquo;&nbsp;</div>
 						<div id="prev" class="Button textButton float-right"  onclick="prevResult();"
 						style="font-size:1.5em;">&nbsp;&laquo;&nbsp;</div>
+						<div id="prev" class="Button textButton float-right"  onclick="show_helper();"
+						style="font-size:1em;"><script>document.write(_('HELP'))</script></div>
 					</div>
 					<br class="clear" />
 				</div>
@@ -64,8 +66,8 @@
 						<div class="closeBox" id="mainCloseControl"
 						onclick="closeMenu();"
 						onmouseover="document.images['menuClose'].src='pics/close-22-hover.png'"
-						onmouseout="document.images['menuClose'].src='pics/close-22-light.png'">
-						<img name="menuClose"  src="pics/close-22-light.png"></div>
+						onmouseout="document.images['menuClose'].src='pics/close-22.png'">
+						<img name="menuClose"  src="pics/close-22.png"></div>
 						<br class="clear" />
 					</div>
 					
@@ -87,6 +89,9 @@
 							<div class="Button textButton float-left" onclick="close_sideBar();show_about();return false;"
 							id="aboutMenuButton">
 								<script>document.write(_('ABOUT'))</script></div>
+							<div class="Button textButton float-left" onclick="show_helper();return false;"
+							id="aboutMenuButton">
+								<script>document.write(_('HELP'))</script></div>
 							<div class="Button textButton float-left" onclick="window.open('http://blog.opensnowmap.org');"
 							id="blogMenuButton">
 								<script>document.write(_('BLOG'))</script>&nbsp;&raquo;</div>
@@ -154,8 +159,8 @@
 						<div class="closeBox" id="MainExtendControl"
 						onclick="showMenu();"
 						onmouseover="document.images['menuExt'].src='pics/menu-22-hover.png'"
-						onmouseout="document.images['menuExt'].src='pics/menu-22-light.png'">
-						<img name="menuExt" id="menuExt" src="pics/menu-22-light.png"></div>
+						onmouseout="document.images['menuExt'].src='pics/menu-22.png'">
+						<img name="menuExt" id="menuExt" src="pics/menu-22.png"></div>
 						<br class="clear" />
 						<div id="selectButton" class="Button iconButton" onclick="infoMode()"
 						onmouseover="document.images['selectPic'].src='pics/select-22-hover.png'"

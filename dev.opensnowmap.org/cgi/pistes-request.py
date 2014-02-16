@@ -200,6 +200,7 @@ def application(environ,start_response):
 		IDS['ways']=way_ids
 	else:
 		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
+		
 	
 	# Whatever the query was, we must now have an object like this:
 	"""
@@ -266,6 +267,7 @@ def application(environ,start_response):
 		topo=makeList(IDS,GEO)
 		
 		topo=concatWaysByAttributes(topo)
+		print topo
 		
 		# number the results
 		i=0
@@ -867,7 +869,7 @@ def concatWaysByAttributes(topo):
 	concatTopo={}
 	concatTopo['sites']=topo['sites']
 	concatTopo['pistes']=[topo['pistes'][0]]
-	for p in topo['pistes'][1:-1]:
+	for p in topo['pistes'][1:]:
 		if compareAttributes(p, concatTopo['pistes'][-1]):
 			concatTopo['pistes'][-1]['geometry'].extend(p['geometry'])
 			concatTopo['pistes'][-1]['ids'].extend(p['ids'])
