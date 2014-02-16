@@ -267,7 +267,6 @@ def application(environ,start_response):
 		topo=makeList(IDS,GEO)
 		
 		topo=concatWaysByAttributes(topo)
-		print topo
 		
 		# number the results
 		i=0
