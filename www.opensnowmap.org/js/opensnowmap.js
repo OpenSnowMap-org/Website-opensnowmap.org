@@ -33,7 +33,7 @@ if (! window.location.host) {
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/single-overlay/"
+var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode="raster";
