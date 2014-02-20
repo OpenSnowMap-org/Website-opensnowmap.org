@@ -715,7 +715,7 @@ def makeList(IDS, GEO):
 		AND
 			tags->'type'='site';
 		"""
-		% (geomR,osm_id))
+		% (geomS,osm_id))
 		sites=cur.fetchall()
 		con.commit()
 		if sites:
@@ -841,7 +841,7 @@ def makeList(IDS, GEO):
 		AND
 			tags->'type'='site';
 		"""
-		% (geomR,ids))
+		% (geomS,ids))
 		sites=cur.fetchall()
 		con.commit()
 		
