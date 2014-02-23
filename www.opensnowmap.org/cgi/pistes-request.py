@@ -79,6 +79,7 @@ def application(environ,start_response):
 	MEMBERS_REQUEST=False
 	LIST=False
 	TOPO_REQUEST=False
+	SITE_STATS_REQUEST=False
 	GEO=False
 	IDS_ONLY=False
 	SORT_ALPHA=False
@@ -128,7 +129,14 @@ def application(environ,start_response):
 		# query: ...members=id1...
 		ids=request.split('members=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
-		
+	
+	if request.find('site-stats=') !=-1:
+		SITE_STATS_REQUEST = True
+		# query: ...members=id1...
+		ids=request.split('site-stats=')[1]
+		if ids.find('&'): ids=ids.split('&')[0]
+	
+	
 	if request.find('bbox=') !=-1:
 		BBOX = True
 		# query: ...bbox=left, bottom, right, top&... 
@@ -183,6 +191,8 @@ def application(environ,start_response):
 		snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
 	elif NAME:
 		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByName(name)
+	elif SITE_STATS_REQUEST:
+		stats=getSiteStats(ids)
 	else:
 		
 		response_body=json.dumps({request:environ['QUERY_STRING']}, sort_keys=True, indent=4)
@@ -198,6 +208,7 @@ def application(environ,start_response):
 		IDS['sites']=site_ids
 		IDS['routes']=route_ids
 		IDS['ways']=way_ids
+	elif SITE_STATS_REQUEST: pass
 	else:
 		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
 		
@@ -263,6 +274,16 @@ def application(environ,start_response):
 		
 		return [response_body]
 	
+	elif SITE_STATS_REQUEST:
+		stats['generator']="Opensnowmap.org piste search API"
+		stats['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+		
+		response_body=json.dumps(stats, sort_keys=True, indent=4)
+		status = '200 OK'
+		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
+		start_response(status, response_headers)
+		return [response_body]
+		
 	elif TOPO_REQUEST :
 		topo=makeList(IDS,GEO)
 		
@@ -651,6 +672,7 @@ def makeList(IDS, GEO):
 		s={}
 		if site:
 			s['ids']=[site[0]]
+			s['type']='relation'
 			s['name']=site[1]
 			s['pistetype']=site[2]
 			s['center']=[site[3],site[4]]
@@ -685,6 +707,7 @@ def makeList(IDS, GEO):
 		s={}
 		if piste:
 			s['ids']=[piste[0]]
+			s['type']='relation'
 			s['name']=piste[1]
 			s['pistetype']=piste[2]
 			s['color']=piste[3]
@@ -723,6 +746,7 @@ def makeList(IDS, GEO):
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
+				tmp['type']='relation'
 				tmp['name']=site[1]
 				tmp['pistetype']=site[2]
 				tmp['center']=[site[3],site[4]]
@@ -757,6 +781,7 @@ def makeList(IDS, GEO):
 		s={}
 		if piste:
 			s['ids']=osm_ids
+			s['type']='way'
 			s['name']=piste[1]
 			s['pistetype']=piste[2]
 			s['color']=''
@@ -812,6 +837,7 @@ def makeList(IDS, GEO):
 			for route in routes:
 				tmp={}
 				tmp['id']=route[0]
+				tmp['type']='relation'
 				route_ids.append(tmp['id'])
 				tmp['name']=route[1]
 				tmp['color']=route[2]
@@ -850,6 +876,7 @@ def makeList(IDS, GEO):
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
+				tmp['type']='relation'
 				tmp['name']=site[1]
 				tmp['pistetype']=site[2]
 				tmp['center']=[site[3],site[4]]
@@ -923,7 +950,84 @@ def concatPistes(ways_ids):
 		#~ if f not in seen:
 			#~ seen.add(f)
 			#~ yield list(f)
-
+def getSiteStats(ID):
+	
+	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
+	cur = con.cursor()
+	
+	stats={}
+	stats['site']=ID
+	
+	sql="""select sum(St_Length_Spheroid(linestring,'SPHEROID["GRS_1980",6378137,298.257222101]'))
+	from (
+		SELECT DISTINCT linestring FROM ways 
+		WHERE id in (
+			SELECT member_id FROM relation_members 
+			WHERE relation_id in (
+				SELECT member_id FROM relation_members 
+				WHERE relation_id in (%s)
+				)
+			)
+		and tags->%s 
+		UNION ALL
+		
+		SELECT DISTINCT linestring FROM ways 
+		WHERE id in (
+			SELECT member_id FROM relation_members 
+			WHERE relation_id in (%s)
+			)
+		and tags->%s
+		) as linestring;"""
+	
+	cur.execute(sql% (ID,"'piste:type'='nordic'",ID,"'piste:type'='nordic'"))
+	stats['nordic']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='downhill'",ID,"'piste:type'='downhill'"))
+	stats['downhill']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='skitour'",ID,"'piste:type'='skitour'"))
+	stats['skitour']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='hike'",ID,"'piste:type'='hike'"))
+	stats['hike']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='sled'",ID,"'piste:type'='sled'"))
+	stats['sled']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'aerialway'<>''",ID,"'aerialway'<>''"))
+	stats['lifts']=cur.fetchone()[0]
+	
+	sql=""" select count(*)
+	from (
+		SELECT DISTINCT * FROM ways 
+		WHERE id in (
+			SELECT member_id FROM relation_members 
+			WHERE relation_id in (
+				SELECT member_id FROM relation_members 
+				WHERE relation_id in (%s)
+				)
+			)
+		and tags->%s 
+		UNION ALL
+		
+		SELECT DISTINCT * FROM ways 
+		WHERE id in (
+			SELECT member_id FROM relation_members 
+			WHERE relation_id in (%s)
+			)
+		and tags->%s
+		) as linestring;"""
+	
+	cur.execute(sql% (ID,"'piste:type'='snow_park'",ID,"'piste:type'='snow_park'"))
+	stats['snow_park']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='playground'",ID,"'piste:type'='playground'"))
+	stats['playground']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'piste:type'='sleigh'",ID,"'piste:type'='sleigh'"))
+	stats['sleigh']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'sport'='ski_jump'",ID,"'sport'='ski_jump'"))
+	stats['jump']=cur.fetchone()[0]
+	cur.execute(sql% (ID,"'sport'='skating'",ID,"'sport'='skating'"))
+	stats['ice_skate']=cur.fetchone()[0]
+	
+	for  p in stats:
+		if not stats[p]:stats[p]=0
+	return stats
+	
 def encodeWKT(wkt):
 	if (wkt):
 		encoder = GPolyEncoder(threshold=0.00001)
