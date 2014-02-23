@@ -110,6 +110,15 @@ var diffcolorUS = {
 "expert":'black',
 "freeride":'#E9C900'
 }
+// IE fix
+if(!document.getElementsByClassName) {
+    document.getElementsByClassName = function(className) {
+        return this.querySelectorAll("." + className);
+    };
+    Element.prototype.getElementsByClassName = document.getElementsByClassName;
+}
+
+
 function infoMode(){
 	var m=''
 	if (mode == "raster") {
@@ -1941,7 +1950,7 @@ function makeHTMLPistesList(length) {
 			
 				// ---- info button-----
 				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showMore(this);">'
+				html+='onClick="showMore(this,'+osm_id+',\'site\');">'
 				html+='<img src="pics/info-flat22.png"></div>\n';
 				// ---- list button-----
 				html+='<div class="Button" style="float:right;" '
@@ -1970,18 +1979,21 @@ function makeHTMLPistesList(length) {
 				html+='\n</div>'// pisteListButton
 				
 				// more infos
-				if (site.pistetype) {
+				html+='<div class="more pisteListButtonStatic" style="display:none;">';
+				html+='<div class="stats"></div>';
+				
+				if (site.type) {
 					var id_type=site.type;
-					html+='<div class="more pisteListButtonStatic" style="display:none;">';
-					html+='<p>';
+					html+='<p style="margin-left:20px;">';
 					html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/relation/'+osm_id+'">';
 					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
 					html+='</a>';
 					html+='</p>';
-					html+='\n</div>'
 				}
+				html+='\n</div>'
 				
 			html+='\n</div>' //pisteListElement
+			html+='<hr class="light">';
 		}
 	}
 	html+='\n<hr>'
@@ -2032,7 +2044,7 @@ function makeHTMLPistesList(length) {
 				html+='<img src="pics/profile-flat22.png"></div>\n';
 				// ---- info button-----
 				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showMore(this);">'
+				html+='onClick="showMore(this,0,0);">'
 				html+='<img src="pics/info-flat22.png"></div>\n';
 			
 				html+='<div class="pisteListButton" '
@@ -2102,7 +2114,8 @@ function makeHTMLPistesList(length) {
 			html+='\n<div class="clear"></div>\n';
 			// more infos
 			html+='<div class="more pisteListButtonStatic" style="display:none;">';
-			html+='<p>';
+			html+='<div class="stats"></div>';
+			html+='<p style="margin-left:20px;">';
 			var id_type=piste.type;
 			for (i in piste.ids) {
 				osm_id=piste.ids[i];
@@ -2131,11 +2144,89 @@ function makeHTMLPistesList(length) {
 	
 	return html
 }
-function showMore(div) {
+function showMore(div,id, type) {
 	if (div.parentElement.getElementsByClassName('more')[0].style.display=='none')
-	{div.parentElement.getElementsByClassName('more')[0].style.display='inline';}
+		{
+			var Infodiv=div.parentElement.getElementsByClassName('more')[0];
+			Infodiv.style.display='inline';
+			if (type== 'site') {
+				var statsdiv = Infodiv.getElementsByClassName('stats')[0];
+				statsdiv.innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+				
+				abortXHR('PisteAPI'); // abort another request if any
+				
+				var q = server+"request?site-stats="+id;
+				var XMLHttp = new XMLHttpRequest();
+				
+				PisteAPIXHR.push(XMLHttp);
+				
+				XMLHttp.open("GET", q);
+				XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+				
+				XMLHttp.onreadystatechange= function () {
+					if (XMLHttp.readyState == 4) {
+						var resp=XMLHttp.responseText;
+						var jsonStats = JSON.parse(resp);
+						statsdiv.innerHTML=makeHTMLStats(jsonStats);
+					}
+				}
+				XMLHttp.send();
+			}
+		}
 	else
 	{div.parentElement.getElementsByClassName('more')[0].style.display='none';}
+}
+function makeHTMLStats(jsonStats) {
+	html='';
+	if (jsonStats['site'] != null) {
+		html+='<table>';
+		
+		html+='<tr><td>';
+		html+='<img src="../pics/alpine-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['downhill'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/skitour-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['skitour'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/snowpark-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		if (jsonStats['snow_park'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		else {html+='<font color="red">&nbsp;x<font/>';}
+		html+='</td><td>';
+		html+='<img src="../pics/jump-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		if (jsonStats['jump'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		else {html+='<font color="red">&nbsp;x<font/>';}
+		html+='</td></tr>';
+		
+		html+='<tr><td>';
+		html+='<img src="../pics/nordic-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['nordic'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/sled-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['sled'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/playground-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		if (jsonStats['playground'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		else {html+='<font color="red">&nbsp;x<font/>';}
+		html+='</td><td>';
+		html+='<img src="../pics/sleigh-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		if (jsonStats['sleigh'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		else {html+='<font color="red">&nbsp;x<font/>';}
+		html+='</td></tr>';
+		
+		html+='<tr><td>';
+		html+='<img src="../pics/drag_lift-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['lifts'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/snowshoe-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		html+=(parseFloat(jsonStats['hike'])/1000).toFixed(1)+'&nbsp;km<br/>';
+		html+='</td><td>';
+		html+='<img src="../pics/iceskate-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
+		if (jsonStats['ice_skate'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		else {html+='<font color="red">&nbsp;x<font/>';}
+		html+='</td></tr>';
+		html+='</table>';
+	}
+	return html;
 }
 //======================================================================
 // I18N
