@@ -33,7 +33,7 @@ if (! window.location.host) {
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/single-overlay/"
+var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode="raster";
@@ -1919,6 +1919,7 @@ function makeHTMLPistesList(length) {
 	html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
 	html+='<img src="pics/print-22.png"></div>'
 	
+	html+='\n<div class="clear"></div>'
 	html+='\n'
 	if(typeof(length)!=='undefined') {
 		html +='<div><b style="font-size:1.5em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
@@ -1936,22 +1937,51 @@ function makeHTMLPistesList(length) {
 			
 			var name = site.name;
 			if (name==' '){name=' x ';}
-			html+='<div class="sitesListElement pisteListButton" onClick="zoomToElement(\''+osm_id+'\',\'sites\');getMembersById('+osm_id+');deHighlight();" onmouseover="highlightElement(\''+osm_id+'\',\'sites\');" onmouseout="deHighlight();">\n';
-			var pic;
-			if (site.pistetype) {
-				var types=site.pistetype.split(';');
-				for (t in types) {
-					pic =icon[types[t]];
-					if (pic) {
-						html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
+			html+='<div class="pisteListElement">\n ';
+			
+				// ---- info button-----
+				html+='<div class="Button" style="float:right;" '
+				html+='onClick="showMore(this);">'
+				html+='<img src="pics/info-flat22.png"></div>\n';
+				// ---- list button-----
+				html+='<div class="Button" style="float:right;" '
+				html+='onClick="getMembersById('+osm_id+');deHighlight();">'
+				html+='<img src="pics/list-flat22.png"></div>\n';
+			
+				html+='<div class="pisteListButton"';
+				html+='onClick="zoomToElement(\''+osm_id+'\',\'sites\')" ';
+				html+='onmouseover="highlightElement(\''+osm_id+'\',\'sites\');" ';
+				html+='onmouseout="deHighlight();">\n';
+				
+				var pic;
+				if (site.pistetype) {
+					var types=site.pistetype.split(';');
+					for (t in types) {
+						pic =icon[types[t]];
+						if (pic) {
+							html+='<img src="../'+pic+'" style="vertical-align: middle;">&nbsp;\n';
+						}
 					}
 				}
-			}
-			
-			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">'+name+'</b></div>\n';
-			
-		html+='\n<div class="clear"></div>'
-		html+='\n</div>'
+				
+				html+='	&nbsp;<b >'+name+'</b>\n';
+				
+				html+='\n<div class="clear"></div>'
+				html+='\n</div>'// pisteListButton
+				
+				// more infos
+				if (site.pistetype) {
+					var id_type=site.type;
+					html+='<div class="more pisteListButtonStatic" style="display:none;">';
+					html+='<p>';
+					html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/relation/'+osm_id+'">';
+					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
+					html+='</a>';
+					html+='</p>';
+					html+='\n</div>'
+				}
+				
+			html+='\n</div>' //pisteListElement
 		}
 	}
 	html+='\n<hr>'
@@ -1994,28 +2024,31 @@ function makeHTMLPistesList(length) {
 			var name = piste.name;
 			if (name==' '){name=' - ';}
 			
-			html+='<div class="pisteListElement">\n'
-			
-			html+='<div class="pisteElement pisteListButton" '
-			html+='onClick="zoomToElement(\''+osm_ids+'\',\'pistes\'); '
-			html+='deHighlight();" '
-			html+='onmouseover="highlightElement(\''+osm_ids+'\',\'pistes\');" '
-			html+='onmouseout="deHighlight();">\n'
-			
-				if (pic) {
-					html+='	<div style="float:left; ">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-				}
-				
-				html+='	<div style="float:left;">&nbsp;'+color+name+difficulty+'</div>\n';
-				
+			html+='<div class="pisteListElement">\n';
 				// ---- profile button-----
 				html+='<div class="Button" style="float:right;" '
 				html+='onClick="zoomToElement(\''+osm_ids+'\',\'pistes\');'
 				html+='showProfileFromGeometry(\''+osm_ids+'\',\'pistes\');">'
 				html+='<img src="pics/profile-flat22.png"></div>\n';
+				// ---- info button-----
+				html+='<div class="Button" style="float:right;" '
+				html+='onClick="showMore(this);">'
+				html+='<img src="pics/info-flat22.png"></div>\n';
+			
+				html+='<div class="pisteListButton" '
+				html+='onClick="zoomToElement(\''+osm_ids+'\',\'pistes\'); '
+				html+='deHighlight();" '
+				html+='onmouseover="highlightElement(\''+osm_ids+'\',\'pistes\');" '
+				html+='onmouseout="deHighlight();">\n'
+				
+				if (pic) {
+					html+='&nbsp;<img src="../'+pic+'" style="float:left;vertical-align: middle;">&nbsp;\n';
+				}
+				
+				html+='	<div style="float:left;">&nbsp;'+color+name+difficulty+'</div>\n';
 				
 				html+='\n<div class="clear"></div>\n'
-			html+='\n</div>'; //pisteElement
+				html+='\n</div>'; //pisteListButton
 			
 			
 			html+='\n<div class="clear"></div>\n'
@@ -2035,8 +2068,10 @@ function makeHTMLPistesList(length) {
 					if (name==' '){name=' ? ';}
 					if (color){
 					html+='	&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'&nbsp;\n';
+					html+='	<img src="pics/profile-flat22.png" style="vertical-align:middle;">';
 					} else {
 					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
+					html+='	<img src="pics/profile-flat22.png" style="vertical-align:middle;">';
 					}
 					
 					
@@ -2058,12 +2093,34 @@ function makeHTMLPistesList(length) {
 					html+='onmouseout="deHighlight();">\n'
 					var name = piste.in_sites[r].name;
 					if (name==' '){name=' ? ';}
-					html+='<b>'+name+'&nbsp;</b>\n';
+					html+='<b>'+name+'</b>\n';
+					html+='	<img src="pics/list-flat22.png" style="vertical-align:middle;">';
 					html+='</div>\n' // inSiteElement
 				}
 			}
-		html+='\n<div class="clear"></div>\n';
+			
+			html+='\n<div class="clear"></div>\n';
+			// more infos
+			html+='<div class="more pisteListButtonStatic" style="display:none;">';
+			html+='<p>';
+			var id_type=piste.type;
+			for (i in piste.ids) {
+				osm_id=piste.ids[i];
+				html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+id_type+'/'+osm_id+'">';
+				html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
+				html+='</a><br/>';
+				if (id_type == 'relation'){
+					html+='analyse &nbsp;<a target="blank" href="http://ra.osmsurround.org/analyzeRelation?relationId=+'+osm_id+'&_noCache=on">';
+					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
+					html+='</a><br/>';
+				}
+			}
+			
+			html+='</p>';
+			html+='\n</div>';
+			
 		html+='\n</div>\n'; // pisteListElement
+		html+='<hr class="light">';
 		}
 	}
 	
@@ -2074,7 +2131,12 @@ function makeHTMLPistesList(length) {
 	
 	return html
 }
-
+function showMore(div) {
+	if (div.parentElement.getElementsByClassName('more')[0].style.display=='none')
+	{div.parentElement.getElementsByClassName('more')[0].style.display='inline';}
+	else
+	{div.parentElement.getElementsByClassName('more')[0].style.display='none';}
+}
 //======================================================================
 // I18N
 var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","jp","nl","no","ru","se"];

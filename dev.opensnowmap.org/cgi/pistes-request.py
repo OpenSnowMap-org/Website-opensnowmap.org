@@ -651,6 +651,7 @@ def makeList(IDS, GEO):
 		s={}
 		if site:
 			s['ids']=[site[0]]
+			s['type']='relation'
 			s['name']=site[1]
 			s['pistetype']=site[2]
 			s['center']=[site[3],site[4]]
@@ -685,6 +686,7 @@ def makeList(IDS, GEO):
 		s={}
 		if piste:
 			s['ids']=[piste[0]]
+			s['type']='relation'
 			s['name']=piste[1]
 			s['pistetype']=piste[2]
 			s['color']=piste[3]
@@ -723,6 +725,7 @@ def makeList(IDS, GEO):
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
+				tmp['type']='relation'
 				tmp['name']=site[1]
 				tmp['pistetype']=site[2]
 				tmp['center']=[site[3],site[4]]
@@ -757,6 +760,7 @@ def makeList(IDS, GEO):
 		s={}
 		if piste:
 			s['ids']=osm_ids
+			s['type']='way'
 			s['name']=piste[1]
 			s['pistetype']=piste[2]
 			s['color']=''
@@ -812,6 +816,7 @@ def makeList(IDS, GEO):
 			for route in routes:
 				tmp={}
 				tmp['id']=route[0]
+				tmp['type']='relation'
 				route_ids.append(tmp['id'])
 				tmp['name']=route[1]
 				tmp['color']=route[2]
@@ -850,6 +855,7 @@ def makeList(IDS, GEO):
 			for site in sites:
 				tmp={}
 				tmp['id']=site[0]
+				tmp['type']='relation'
 				tmp['name']=site[1]
 				tmp['pistetype']=site[2]
 				tmp['center']=[site[3],site[4]]
