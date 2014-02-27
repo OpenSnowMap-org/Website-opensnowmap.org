@@ -149,27 +149,27 @@ def application(environ,start_response):
 	enhancer =  ImageEnhance.Contrast(bg)
 	bg = enhancer.enhance(0.8)
 	
-	contours = getImage('http://www2.opensnowmap.org/tiles-contours/', left, right, top, bottom, zoom,'osm',ext)
-	r, g, b, a = contours.split()
-	mask = Image.merge("L", (a,))
+	#~ contours = getImage('http://www2.opensnowmap.org/tiles-contours/', left, right, top, bottom, zoom,'osm',ext)
+	#~ r, g, b, a = contours.split()
+	#~ mask = Image.merge("L", (a,))
+	#~ 
+	#~ v=numpy.asarray(mask)*0.5
+	#~ v=numpy.uint8(v)
+	#~ value=Image.fromarray(v)
+	#~ bg.paste(contours.convert('RGB'),None,value)
+	#~ 
+	#~ 
+	#~ hs = getImage('http://www2.opensnowmap.org/hillshading/', left, right, top, bottom, zoom,'tms',ext)
+	#~ r, g, b, a = hs.split()
+	#~ mask = Image.merge("L", (a,))
+	#~ 
+	#~ v=numpy.asarray(mask)*0.5
+	#~ v=numpy.uint8(v)
+	#~ value=Image.fromarray(v)
+	#~ 
+	#~ bg.paste(hs.convert('RGB'),None,value)
 	
-	v=numpy.asarray(mask)*0.5
-	v=numpy.uint8(v)
-	value=Image.fromarray(v)
-	bg.paste(contours.convert('RGB'),None,value)
-	
-	
-	hs = getImage('http://www2.opensnowmap.org/hillshading/', left, right, top, bottom, zoom,'tms',ext)
-	r, g, b, a = hs.split()
-	mask = Image.merge("L", (a,))
-	
-	v=numpy.asarray(mask)*0.5
-	v=numpy.uint8(v)
-	value=Image.fromarray(v)
-	
-	bg.paste(hs.convert('RGB'),None,value)
-	
-	pistes = getImage('http://tiles.opensnowmap.org/tiles-pistes/', left, right, top, bottom, zoom,'osm',ext)
+	pistes = getImage('http://www.opensnowmap.org/opensnowmap-overlay/', left, right, top, bottom, zoom,'osm',ext)
 	r, g, b, a = pistes.split()
 	mask = Image.merge("L", (a,))
 	
