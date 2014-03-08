@@ -596,6 +596,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 				(COALESCE(a.tags->'name','')||' '|| COALESCE(a.tags->'piste:name','')),
 				ST_touches(a.linestring,b.linestring),
 				a.tags->'piste:difficulty',
+				a.tags->'piste:grooming',
 				a.tags->'aerialway',
 				a.tags->'railway'
 			HAVING
@@ -693,14 +694,27 @@ def makeList(IDS, GEO):
 			COALESCE(tags->'name','')||' '||COALESCE(tags->'piste:name',''),
 			tags->'piste:type',
 			COALESCE(tags->'color',tags->'colour',''),
-			tags->'piste:difficulty',
+			COALESCE( 
+				array_to_string(array(SELECT distinct tags->'piste:difficulty' from ways
+				WHERE id in (
+					SELECT member_id FROM relation_members 
+					WHERE relation_id =%s )
+					),',')
+				,tags->'piste:difficulty'),
+			COALESCE( 
+				array_to_string(array(SELECT distinct tags->'piste:grooming' from ways
+				WHERE id in (
+					SELECT member_id FROM relation_members 
+					WHERE relation_id =%s )
+					),',')
+				,tags->'piste:grooming'),
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
 		FROM relations 
 		WHERE id=%s;
 		"""
-		% (geomR,osm_id))
+		% (osm_id,osm_id,geomR,osm_id))
 		piste=cur.fetchone()
 		con.commit()
 		
@@ -712,10 +726,11 @@ def makeList(IDS, GEO):
 			s['pistetype']=piste[2]
 			s['color']=piste[3]
 			s['difficulty']=piste[4]
+			s['grooming']=piste[5]
 			s['aerialway']=None
-			s['center']=[piste[5],piste[6]]
-			s['bbox']=piste[7]
-			if GEO: s['geometry']=encodeWKT(piste[8])
+			s['center']=[piste[6],piste[7]]
+			s['bbox']=piste[8]
+			if GEO: s['geometry']=encodeWKT(piste[9])
 			s['in_sites']=[]
 			s['in_routes']=[]
 			
@@ -770,7 +785,8 @@ def makeList(IDS, GEO):
 			tags->'piste:type',
 			tags->'piste:difficulty',
 			tags->'aerialway',
-			tags->'railway'
+			tags->'railway',
+			tags->'piste:grooming'
 		FROM ways 
 		WHERE id=%s;
 		"""
@@ -788,6 +804,7 @@ def makeList(IDS, GEO):
 			s['difficulty']=piste[3]
 			if (piste[4]): s['aerialway']=piste[4]
 			else: s['aerialway']=piste[5]
+			s['grooming']=piste[6]
 			s['in_sites']=[]
 			s['in_routes']=[]
 		
@@ -976,7 +993,7 @@ def getSiteStats(ID):
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (%s)
 			)
-		and tags->%s
+		and tags->%s and (tags->'area'<>'yes' or not tags ? 'area')
 		) as linestring;"""
 	
 	cur.execute(sql% (ID,"'piste:type'='nordic'",ID,"'piste:type'='nordic'"))

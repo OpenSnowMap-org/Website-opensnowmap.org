@@ -993,7 +993,7 @@ def getSiteStats(ID):
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (%s)
 			)
-		and tags->%s
+		and tags->%s and (tags->'area'<>'yes' or not tags ? 'area')
 		) as linestring;"""
 	
 	cur.execute(sql% (ID,"'piste:type'='nordic'",ID,"'piste:type'='nordic'"))
