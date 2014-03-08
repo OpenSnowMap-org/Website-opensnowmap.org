@@ -868,7 +868,8 @@ function getMembersById(id) {
 	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p></div>';
 	document.getElementById("sideBarContent").innerHTML +='<div id="nominatim_results"></div>';
 	
-	var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
+	
+	var q = server+"request?parent=true&geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
 	
 	PisteAPIXHR.push(XMLHttp);
@@ -2189,11 +2190,11 @@ function makeHTMLStats(jsonStats) {
 		html+=(parseFloat(jsonStats['skitour'])/1000).toFixed(1)+'&nbsp;km<br/>';
 		html+='</td><td>';
 		html+='<img src="../pics/snowpark-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['snow_park'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		if (jsonStats['snow_park'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
 		else {html+='<font color="red">&nbsp;x<font/>';}
 		html+='</td><td>';
 		html+='<img src="../pics/jump-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['jump'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		if (jsonStats['jump'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
 		else {html+='<font color="red">&nbsp;x<font/>';}
 		html+='</td></tr>';
 		
@@ -2205,11 +2206,11 @@ function makeHTMLStats(jsonStats) {
 		html+=(parseFloat(jsonStats['sled'])/1000).toFixed(1)+'&nbsp;km<br/>';
 		html+='</td><td>';
 		html+='<img src="../pics/playground-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['playground'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		if (jsonStats['playground'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
 		else {html+='<font color="red">&nbsp;x<font/>';}
 		html+='</td><td>';
 		html+='<img src="../pics/sleigh-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['sleigh'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		if (jsonStats['sleigh'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
 		else {html+='<font color="red">&nbsp;x<font/>';}
 		html+='</td></tr>';
 		
@@ -2221,7 +2222,7 @@ function makeHTMLStats(jsonStats) {
 		html+=(parseFloat(jsonStats['hike'])/1000).toFixed(1)+'&nbsp;km<br/>';
 		html+='</td><td>';
 		html+='<img src="../pics/iceskate-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['ice_skate'] != 0) {html+='<font color="green">&nbsp;o<font/>';}
+		if (jsonStats['ice_skate'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
 		else {html+='<font color="red">&nbsp;x<font/>';}
 		html+='</td></tr>';
 		html+='</table>';

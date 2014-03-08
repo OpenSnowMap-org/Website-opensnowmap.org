@@ -44,6 +44,8 @@ Request modifiers
 		This add complexity and response time.
 	* geo=true
 		Return the results geometry as an arrray of encoded-polyline.
+	* parent=true
+		if 'members' request type, return the parent as first result.
 	
 """
 
@@ -77,6 +79,7 @@ def application(environ,start_response):
 	BBOX=False
 	ID_REQUEST=False
 	MEMBERS_REQUEST=False
+	PARENT_ID=False
 	LIST=False
 	TOPO_REQUEST=False
 	SITE_STATS_REQUEST=False
@@ -129,13 +132,14 @@ def application(environ,start_response):
 		# query: ...members=id1...
 		ids=request.split('members=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
+		if request.find('parent=true') !=-1:
+			PARENT_ID = ids
 	
 	if request.find('site-stats=') !=-1:
 		SITE_STATS_REQUEST = True
 		# query: ...members=id1...
 		ids=request.split('site-stats=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
-	
 	
 	if request.find('bbox=') !=-1:
 		BBOX = True
@@ -182,7 +186,7 @@ def application(environ,start_response):
 		route_ids=[]
 		way_ids = ids.split(',')
 	elif MEMBERS_REQUEST: 
-		site_ids, route_ids, way_ids = queryMembersById(ids)
+		site_ids, route_ids, way_ids = queryMembersById(ids, PARENT_ID)
 	elif BBOX:
 		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox)
 	elif CLOSEST:
@@ -321,7 +325,7 @@ def application(environ,start_response):
 		return [response_body]
 
 #==================================================
-def queryMembersById(ids):
+def queryMembersById(ids, PARENT_ID):
 	
 	con = psycopg2.connect("dbname=pistes-pgsnapshot user=admin")
 	cur = con.cursor()
@@ -337,6 +341,9 @@ def queryMembersById(ids):
 	con.commit()
 	cur.close()
 	con.close()
+	if PARENT_ID:
+		print PARENT_ID
+		ids=PARENT_ID+','+ids #insert the parent id in the list
 	site_ids, route_ids, way_ids=queryByIds(ids)
 	
 	return site_ids, route_ids, way_ids
