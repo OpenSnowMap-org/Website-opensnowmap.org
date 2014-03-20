@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<!--
+To use, put something like this on your webpage, and chnage the zoom, lat and lon paramters :
+		<iframe style="width:350px; height:380px;border:0px;margin:0px"
+		src="http://beta.opensnowmap.org/embed.html?zoom=10&lat=46.4&lon=6.05"></iframe>
+		
+Attribution must be preserved.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title>OpenSnowMap.org</title>
+	<style type="text/css">
+		html, body, #map {
+		width: 350px;
+		height: 350px;
+		margin: 0;
+		}
+		#attribution {
+			font-size: xx-small;
+		    font-family:'Open Sans', sans-serif;
+			width: 350px;
+		}
+	</style>
+	
+	<script src="js/OpenLayers-opt.js" type="text/javascript"></script> 
+		
+	<script>
+		var map;
+		
+		var zoom		   = 3; 
+		var lon			   = 0; 
+		var lat			   = 45; 
+		// look fro permalink
+		if (location.search != "") {
+			var x = location.search.substr(1).split("&")
+			for (var i=0; i<x.length; i++)
+			{
+				if (x[i].split("=")[0] == 'zoom') {zoom=x[i].split("=")[1];}
+				if (x[i].split("=")[0] == 'lon') {lon=x[i].split("=")[1];}
+				if (x[i].split("=")[0] == 'lat') {lat=x[i].split("=")[1];}
+			}
+		}
+		// define projections
+		var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+		var toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+		var position	   = new OpenLayers.LonLat(lon,lat).transform( fromProjection, toProjection);
+		
+		// gettiles for opensnowmap
+		function get_osm_url(bounds) {
+			var res = this.map.getResolution();
+			var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+			var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+			var z = this.map.getZoom();
+			var limit = Math.pow(2, z);
+		
+			if (y < 0 || y >= limit) {
+				return OpenLayers.Util.getImagesLocation() + "404.png";
+			} else {
+				x = ((x % limit) + limit) % limit;
+				return this.url + z + "/" + x + "/" + y + ".png";
+			}
+		}
+		
+		function init() {
+			map = new OpenLayers.Map("map",
+				{projection: new OpenLayers.Projection("EPSG:900913")
+				});
+				
+			var mapnik		 = new OpenLayers.Layer.OSM();
+			mapnik.attribution="";
+			var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
+			var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
+			pistes_overlay_URL,{
+					getURL: get_osm_url, 
+					isBaseLayer: false,
+					numZoomLevels: 19,
+					visibility: true,
+					opacity: 0.9,
+					transitionEffect: null
+				});
+			map.addLayer(mapnik);
+			map.addLayer(PistesTiles);
+			map.setCenter(position, zoom );
+		}
+	</script>
+  </head>
+  <body onload="init();">
+	<div id="map"></div>
+	<div id="attribution">
+		&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors 
+		- Ski pistes CC-BY-SA <a href='http://www.opensnowmap.org/'>OpenSnowMap</a>
+	</div>
+  </body>
+</html>
