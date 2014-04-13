@@ -19,11 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 //TODO
-// Implement abort on xmlhttprequests, via a variable array - DONE
 // add geometry_length to pite API
-// change route style for grey circle at the start and black one at the end, - DONE
-//   maybe an arrow ? externalGraphic or triangle, rotation, geometry.getVertices() ouch ! - DONE
-// draw route on pistes when request a profile - DONE
 // 
 
 var server="http://"+window.location.host+"/";
@@ -395,12 +391,12 @@ function show_settings() {
 	html = '<b>'+_('base_map')+'</b>';
 	html +='<table style="width:300px;text-align:left;"><tr><td>'
 	html +='<div class="Button float-left" style="width:86px;height:66px;" ';
-	html +='onClick="toggleBaseLayer();" id="mode_radio2" value="mapnik">';
+	html +='onClick="setBaseLayer(\'osm\');" id="setOSMLayer" value="mapnik">';
 	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/osm-bg.png"></img>';
 	html +='</div>OpenStreetMap&nbsp;';
 	html +='</td><td>';
 	html +='<div class="Button float-left" style="width:86px;height:66px;"';
-	html +='onClick="toggleBaseLayer();" id="mode_radio1" value="Mapquest">';
+	html +='onClick="setBaseLayer(\'mapquest\');" id="setMQLayer" value="Mapquest">';
 	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/mq-bg.png"></img>';
 	html +='</div>OpenMapquest&nbsp;';
 	html +='</td></tr></table>';
@@ -411,17 +407,18 @@ function show_settings() {
 	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/additions.png"></img>';
 	html +='</div>';
 	html +='</td><td>';
-	html +=' <input type="checkbox" id="check1" class="radio" "';
+	html +=' <input type="checkbox" id="checkD" class="radio" "';
 	html +=' name="live" value="daily" onClick="show_live_edits(value,checked)"   />';
 	html +=' <label style="margin-top: 10px;">'+_('yesterday')+'</label><br/>';
 	
-	html +=' <input type="checkbox" id="check2" class="radio" "';
+	html +=' <input type="checkbox" id="checkW" class="radio" "';
 	html +=' name="live" value="weekly" onClick="show_live_edits(value,checked)"   />';
 	html +=' <label>'+_('weekly')+'</label><br/>';
 	
-	html +=' <input type="checkbox" id="check2" class="radio" ';
-	html +=' name="live" value="monthly" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label>'+_('monthly')+'</label><br/>';
+	//~ html +=' <input type="checkbox" id="checkM" class="radio" ';
+	//~ html +=' name="live" value="monthly" onClick="show_live_edits(value,checked)"   />';
+	//~ html +=' <label>'+_('monthly')+'</label><br/>';
+	
 	html +='</td></tr></table>';
 	
 	html +=' <hr class="hrmenu">';
@@ -431,6 +428,31 @@ function show_settings() {
 	html += 	_('vector_help');
 	html +='</div>';
 	document.getElementById('sideBarContent').innerHTML=html;
+	
+	// highlight current base layer
+	var mq=map.getLayersByName("MapQuest")[0];
+	var osm=map.getLayersByName("OSM")[0];
+	if (osm) {
+		document.getElementById('setOSMLayer').style.border="solid #AAA 2px";
+		document.getElementById('setMQLayer').style.border="solid #CCCCCC 1px";
+	}
+	if (mq) {
+		document.getElementById('setMQLayer').style.border="solid #AAA 2px";
+		document.getElementById('setOSMLayer').style.border="solid #CCCCCC 1px";
+	}
+	// check for currently displayed layers
+	var d=map.getLayersByName("Daily")[0];
+	var w=map.getLayersByName("Weekly")[0];
+	//~ var m=map.getLayersByName("Monthly")[0];
+	if (d) {
+		document.getElementById('checkD').checked=true;
+	}
+	if (w) {
+		document.getElementById('checkW').checked=true;
+	}
+	//~ if (m) {
+		//~ document.getElementById('checkM').checked=true;
+	//~ }
 }
 function getWinHeight(){
 	  var myWidth = 0, myHeight = 0;
@@ -1151,22 +1173,27 @@ function get_tms_url(bounds) {
 		  return this.url + z + "/" + x + "/" + y + ".png"; 
 		}
 	} 
-function toggleBaseLayer(){
+function setBaseLayer(baseLayer){
 	var mq=map.getLayersByName("MapQuest")[0];
 	var osm=map.getLayersByName("OSM")[0];
-	if (mq) {
+	if (baseLayer == "osm" && mq ) {
 		map.removeLayer(mq);
 		var mapnik = new OpenLayers.Layer.OSM("OSM");
 		map.addLayer(mapnik);
-
-	} else {
+		document.getElementById('setOSMLayer').style.border="solid #AAA 2px";
+		document.getElementById('setMQLayer').style.border="solid #CCCCCC 1px";
+	}
+	if (baseLayer == "mapquest" && osm) {
 		map.removeLayer(osm);
 		var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
 			"http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
 			"http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
 			"http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
 		var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
-		map.addLayer(mapquest);	}
+		map.addLayer(mapquest);
+		document.getElementById('setMQLayer').style.border="solid #AAA 2px";
+		document.getElementById('setOSMLayer').style.border="solid #CCCCCC 1px";
+	}
 }
 function baseLayers() {
 
