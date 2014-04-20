@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+	<title>Site=piste QA</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style type="text/css">
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	font-family:sans-serif;
+}
+
+.float-right{
+    float:right
+}
+.float-left{
+    float:left
+}
+.clear { clear: both}
+#container{
+	height: 100%;
+	background-color:#fff;
+	overflow:hidden;
+	margin:0 10px;
+	padding-right:300px; /* The width of the rail */
+}
+#menu {
+	text-align:center;
+	height: 100%;
+	background-color:#fff;
+	width:300px;
+	float:left;
+	margin-right:-300px;
+	font-family:sans-serif;
+	font-size: 0.8em;
+	overflow:auto;
+}
+#basicMap {
+	background-color:#fff;
+	width:100%;
+	height: 100%;
+	margin-right:-300px;
+	float:left;
+	font-family:sans-serif;
+	font-size: 0.7em;
+}
+#form {
+	background-color:#eee;
+}
+.way_controls {
+	font-size: 0.7em;
+}
+.site {
+    background-color:#888;
+	border-style:solid;
+	border-width:1px;
+	border-color: #ccc;
+	padding: 1px;
+	margin: 2px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.way {
+    background-color:#FFF;
+	border-style:solid;
+	border-width:1px;
+	border-color: #ccc;
+	padding: 1px;
+	margin: 2px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.Button {
+    background-color:#FDFDFD;
+	border-style:solid;
+	border-width:1px;
+	border-color: #ccc;
+	padding: 1px;
+	margin: 2px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.Button:hover{
+    background-color:#DBDBDB;
+}
+.Button:active{
+    background-color:#E65B3F;
+}
+.Button:disabled{
+    background-color:#E65B3F;
+    color: #AAA;
+}
+	</style>
+	<script src="../js/OpenLayers-opt.js" type="text/javascript"></script> 
+	<script src="qa.js" type="text/javascript"></script>
+  </head>
+<body onload="init();">
+	<div id="container">
+		<div id="basicMap"></div>
+		<div id="menu">
+			<p><b>This tool is a proof of concept and is NOT WORKING yet !</b></p>
+			Please check the following relations. Some ways are located within the site. Do they belong to the site=piste relation ?
+			<div id="content">
+			</div>
+		</div>
+</div>
+</body>
+</html>
+
