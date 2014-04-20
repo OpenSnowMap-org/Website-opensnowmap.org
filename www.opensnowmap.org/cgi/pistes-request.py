@@ -356,7 +356,7 @@ def queryByIds(ids):
 	cur.execute("""
 	SELECT id FROM relations 
 	WHERE id in (%s)
-		and (tags->'type' = 'site');
+		and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports');
 	"""
 	% (ids,))
 	site_ids = cur.fetchall()
@@ -400,7 +400,7 @@ def queryByName(name):
 	cur.execute("""
 	SELECT id FROM relations 
 	WHERE name_trgm %% '%s'
-		and (tags->'type' = 'site')
+		and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports')
 	ORDER by similarity(name_trgm,'%s');
 	"""
 	% (name,name))
@@ -505,7 +505,7 @@ def queryByBbox(bbox):
 	cur.execute("""
 	SELECT id FROM relations 
 	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	and (tags->'type' = 'site');
+	and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports');
 	"""
 	% (bbox[0],bbox[1],bbox[2],bbox[3]))
 	site_ids = cur.fetchall()
