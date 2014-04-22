@@ -2013,7 +2013,7 @@ function makeHTMLPistesList(length) {
 				if (site.type) {
 					var id_type=site.type;
 					html+='<p style="margin-left:20px;">';
-					html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/relation/'+osm_id+'">';
+					html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+id_type+'/'+osm_id+'">';
 					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
 					html+='</a>';
 					html+='</p>';

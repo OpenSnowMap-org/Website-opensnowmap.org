@@ -668,6 +668,7 @@ def makeList(IDS, GEO):
 			COALESCE(tags->'piste:name',tags->'name',''),
 			tags->'piste:type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
+			tags->'was_way',
 			box2d(geom)
 			%s
 		FROM relations 
@@ -680,12 +681,13 @@ def makeList(IDS, GEO):
 		s={}
 		if site:
 			s['ids']=[site[0]]
-			s['type']='relation'
 			s['name']=site[1]
 			s['pistetype']=site[2]
 			s['center']=[site[3],site[4]]
-			s['bbox']=site[5]
-			if GEO: s['geometry']=encodeWKT(site[6])
+			if site[5] == 'yes': s['type']='way'
+			else: s['type']='relation'
+			s['bbox']=site[6]
+			if GEO: s['geometry']=encodeWKT(site[7])
 			
 		topo['sites'].append(s)
 	cur.close()
