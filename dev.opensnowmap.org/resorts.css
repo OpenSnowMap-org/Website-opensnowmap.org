@@ -1,0 +1,116 @@
+body{
+    margin:0px;
+    overflow:hidden;
+    padding:0px;
+    font-family:sans-serif;
+    font-size: 1em;
+    font-weight: 400;
+    width: 100%; height:100%;
+    color: #303030;
+   }
+h1{
+       font-family:sans-serif;
+       font-size: 1.4em;
+       font-weight: 800;
+       letter-spacing: 0.1ex;
+       border:0;
+       padding: 0px;
+       margin:0;
+		color: #9A9A9A;
+   }
+a:link, a:visited {
+        color: #4E4E4E;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
+    
+a:hover {
+        color: #FF7800;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
+.tableList{
+width:100%;
+font-size: 0.9em;
+}
+.tdList{
+width:30%;
+vertical-align:top;
+background-color:#F8F8F8;
+padding: 10px;
+border: 5px solid #FFF;
+}
+.tableStats{
+width:70%;
+font-size: 0.9em;
+}
+.tdStats{
+width:25%;
+vertical-align:top;
+background-color:#F8F8F8;
+padding: 5px;
+border: 5px solid #FFF;
+}
+.clear { clear: both}
+/*use to place divs side by side*/
+
+#centering{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color:#EEEEEE;
+}
+#center{
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 00px;
+    width:750px;
+
+    }
+#title {
+height: 30px;
+/*
+border: 1px solid grey;
+*/
+background-color:#FFF;
+-moz-border-radius:6px;
+border-radius:6px;
+padding: 10px;
+background-color:#F8F8F8;
+}
+#content{
+    padding: 20px;
+    background-color:#FFFFFF;
+    }
+.Button {
+    background-color:#FDFDFD;
+	border-style:solid;
+	border-width:1px;
+	border-color: #ccc;
+	padding: 1px;
+	margin: 2px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+.Button:hover{
+    background-color:#DBDBDB;
+}
+.Button:active{
+    background-color:#E65B3F;
+}
+.Button:disabled{
+    background-color:#E65B3F;
+    color: #AAA;
+}
+
+hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #EEE; background-color: #EEE}
+
+.pisteListElement{
+	background-color:#FFF;
+	margin: 5px;
+	padding:0px;
+}
