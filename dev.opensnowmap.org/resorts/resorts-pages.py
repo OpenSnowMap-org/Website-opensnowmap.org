@@ -128,12 +128,14 @@ def resortPage(resortName):
 			osm_id=r
 	
 	
-	html='<h2 title="ski '+resortName+'">'+resortName+'</h2>\n'
-	
-	html+= '<div id="stats"></div>'
+	html='<h2 itemprop="name" title="ski '+resortName+'">'+resortName+'</h2>\n'
 	
 	lon= str(resort['lon'])
 	lat= str(resort['lat'])
+	html+='<span itemprop="map" content="http://www.opensnowmap.org/embed.html?zoom=12&lat='+lat+'&lon='+lon+'"></span>'
+	
+	html+= '<div id="stats"></div>'
+	
 	
 	html+="""
 		<iframe id="map" width="710" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
@@ -149,6 +151,10 @@ def resortPage(resortName):
 	html+= '<div id="pisteList"></div>'
 	
 	html+= '<div><script>on_load('+osm_id+');</script></div>'
+	
+	html+= '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
+	html+= '<meta itemprop="addressCountry" content="'+resort['country']+'">'
+	html+= '<meta itemprop="addressRegion" content="'+resort['state']+'"></span>'
 	
 	tpl=open(template)
 	page=tpl.read()
