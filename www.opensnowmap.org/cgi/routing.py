@@ -63,7 +63,7 @@ def getOsm(coords):
 	
 	nd_ref=10000000
 	
-	db='pistes-xapi'
+	db='pistes-pgsnapshot'
 	conn = psycopg2.connect("dbname="+db+" user=xapi")
 	cur = conn.cursor()
 	

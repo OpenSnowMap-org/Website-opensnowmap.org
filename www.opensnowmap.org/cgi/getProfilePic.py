@@ -16,7 +16,10 @@ import os, os.path
 import random
 import atexit
 
-SRTMFilesDir='/home/admin/DEM/tiles/'
+if os.path.isdir("/home/website"):
+	SRTMFilesDir='/home/website/DEM/tiles/'
+else:
+	SRTMFilesDir='/home/admin/DEM/tiles/'
 PIL_images_dir = '/var/www/tmp/' 
 #TODO:
 # Clean and master the elevation code

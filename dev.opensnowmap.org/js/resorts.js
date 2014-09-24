@@ -164,10 +164,12 @@ function makeHTMLStats(jsonStats) {
 
 function makeHTMLPistesList(jsonPisteList) {
 	var html='';
+	var box = '';
 	if (jsonPisteList['sites'] != null) {
 		for (p in jsonPisteList['sites']) {
 			var site=jsonPisteList['sites'][p];
 			var name = site.name;
+			box= site.bbox;
 			if (name==' '){name=' x ';}
 			html+='<hr class="light">';
 			html+='<div class="pisteListElement">\n ';
@@ -229,6 +231,7 @@ function makeHTMLPistesList(jsonPisteList) {
 	if (jsonPisteList['limit_reached']) {
 		html+='<p>'+jsonPisteList['info']+'</p>\n'
 	}
+	html += '<font style="font-size: 0.5em;" >'+box+'</font>';
 	html+='\n</div>'
 	return html
 }
