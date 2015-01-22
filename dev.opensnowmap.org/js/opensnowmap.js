@@ -2258,7 +2258,7 @@ function makeHTMLStats(jsonStats) {
 }
 //======================================================================
 // I18N
-var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","jp","nl","no","ru","se","ukr"];
+var locs = [ "cz","de","en","es","cat","fi","fr","hu","it","jp","nl","nn","ru","se","ukr"];
 var iloc= 0;
 var locale;
 var iframelocale;
