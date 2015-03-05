@@ -62,6 +62,8 @@ var PisteAPIXHR=[]; // to abort
 var jsonPisteLists=[];
 var jsonPisteList={};
 
+var wktGPX;
+
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
@@ -364,6 +366,27 @@ function show_profile() {
 	html='<b>'+_('PROFILE')+'<b/><br/><div id="topo_profile" style="display:inline"></div><br/>';
 	html+='<b>'+_('routing_title')+'<b/><br/><div id="topo_list" style="display:inline"></div>';
 	document.getElementById('sideBarContent').innerHTML=html
+}
+function show_GPX_upload() {
+	
+	document.getElementById('sideBar').style.display='inline';
+	SIDEBARSIZE='full';
+	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('GPX_upload').replace('<br/>',' ');
+
+	html = ''
+	 +'<br/>'
+	 +'<div  id="fileDropOuter"><br/>'
+	 + '<div id="fileDrop"><p><b>'+_('drop_your_gpx_file_here')+'</b></p>'
+	 +'</div><br/></div>';
+	document.getElementById('sideBarContent').innerHTML=html;
+	
+		dropbox = document.getElementById("fileDrop");
+		dropbox.addEventListener("dragenter", dragenter, false);
+		dropbox.addEventListener("dragleave", dragleave, false);
+		dropbox.addEventListener("dragover", dragover, false);
+		dropbox.addEventListener("drop", drop, false);
+
 }
 
 function show_legend() {
@@ -690,6 +713,12 @@ function page_init(){
 		initFlags();
 		resize_sideBar();
 		window.onresize = function(){resize_sideBar();}
+		
+		smalldropbox = document.getElementById("GPXMenuButton");
+		smalldropbox.addEventListener("dragenter", dragenter, false);
+		smalldropbox.addEventListener("dragleave", dragleave, false);
+		smalldropbox.addEventListener("dragover", dragover, false);
+		smalldropbox.addEventListener("drop", drop, false);
 		
 }
 function loadend(){
@@ -1515,6 +1544,15 @@ var HLStyle = new OpenLayers.Style({
 	}
 });
 var HLStyleMap = new OpenLayers.StyleMap({"default": HLStyle});
+
+var GPXStyle = new OpenLayers.Style({
+	strokeColor: "#5556D0",
+	strokeWidth: 5,
+	strokeOpacity:0.5,
+	fillOpacity:0.3
+	});
+var GPXStyleMap = new OpenLayers.StyleMap({"default": GPXStyle});
+
 
 function getNodeText(node) {
 	//workaround for browser limit to 4096 char in xml nodeValue
@@ -2366,4 +2404,135 @@ function updateTooltips(){
 	document.getElementById("selectButton").setAttribute('title',_('interactive-tooltip'));
 	document.getElementById("searchMenuButton").setAttribute('title',_('search-tooltip'));
 }
+//======================================================================
+// GPX upload stuff
+function dragenter(e) {
 
+	if (document.getElementById("fileDrop"))
+	{document.getElementById("fileDrop").style.color="#FFF";}
+ document.getElementById("GPXMenuButton").style.bgcolor="#FFF";
+  e.stopPropagation();
+  e.preventDefault();
+}
+
+function dragleave(e) {
+	if (document.getElementById("fileDrop"))
+	{document.getElementById("fileDrop").style.color="#202020";}
+ document.getElementById("GPXMenuButton").style.bgcolor="#202020";
+  e.stopPropagation();
+  e.preventDefault();
+}
+function dragover(e) {
+ //important !
+  e.stopPropagation();
+  e.preventDefault();
+	if (document.getElementById("fileDrop"))
+	{document.getElementById("fileDrop").style.color="#FFF";}
+ document.getElementById("GPXMenuButton").style.bgcolor="#FFF";
+}
+
+function drop(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	if (document.getElementById("fileDrop"))
+	{document.getElementById("fileDrop").style.color="#202020";}
+	document.getElementById("GPXMenuButton").style.bgcolor="#202020";
+	var files = e.dataTransfer.files;
+	var file = files[0];
+	var reader = new FileReader();
+	
+	
+	reader.onload = function(){
+      show(reader.result);
+    };
+    reader.readAsText(file);
+}
+function handleFiles(fileList){
+	
+	var file = fileList[0];
+	var reader = new FileReader();
+	
+	
+	reader.onload = function(){
+      show(reader.result);
+    };
+    reader.readAsText(file);
+ }
+function show(fileContent){
+	
+	var parser=new DOMParser();
+	var gpxDOM=parser.parseFromString(fileContent,"text/xml");
+	
+	var gpxOL= new OpenLayers.Format.GPX();
+	var features = gpxOL.read(gpxDOM);
+	
+	for (f in features) {
+		features[f].geometry=features[f].geometry.simplify(0.00002);
+	}
+	// transform in wkt while in lat lon
+	var wktFormat = new OpenLayers.Format.WKT();
+	wktGPX=wktFormat.write(features[0]);
+	
+	for (f in features) {
+		features[f].geometry.transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913"));
+	}
+	
+	var linesLayer = new OpenLayers.Layer.Vector("GPX", {styleMap: GPXStyleMap});
+	var v =features[0].geometry.getVertices();
+	
+	var center = features[0].geometry.getCentroid();
+	var lonlat = new OpenLayers.LonLat(center.x,center.y);
+	map.addLayer(linesLayer);
+	linesLayer.addFeatures(features);
+	map.setCenter(lonlat, 14 );
+	
+	document.getElementById('sideBar').style.display='inline';
+	SIDEBARSIZE='full';
+	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('GPX_upload').replace('<br/>',' ');
+
+	html = ''
+	 +'<br/>'
+	 +'<div  id="fileDropOuter"><br/>'
+	 + '<div id="fileDrop">'
+	 +' <p><input type="checkbox" id="checkD" class="radio" "'
+	 +' name="live" value="gpx_copyright_agree" onClick="upload_GPX(value,checked)"   />'
+	 +' <label style="margin-top: 10px">&nbsp;'+_('gpx_share')+'&nbsp;<a target="blank" href="http://www.openstreetmap.org">Openstreetmap</a>.</label><br/>'
+	 + '<p style="font-style: italic; font-size: 0.8em;">'+_('gpx_copyright_agree')+'&nbsp;'
+	 +'</p><br/>'
+	 +' <input type="checkbox" id="checkW" class="radio" "'
+	 +' name="live" value="gpx_no_thanks" onClick="upload_GPX(value,checked)"   />'
+	 +' <label>&nbsp;'+_('gpx_no_thanks')+'</label><br/>'
+	 + '</p></div><br/></div>';
+	document.getElementById('sideBarContent').innerHTML=html;
+
+}
+function upload_GPX(value, checked) {
+	abortXHR('GetProfile'); // abort another request if any
+	
+	// request the elevation profile
+	document.getElementById('fileDrop').innerHTML='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+	
+	var XMLHttp = new XMLHttpRequest();
+	
+	GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+	
+	XMLHttp.open("POST", server+"demrequest?");
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
+			document.getElementById('fileDropOuter').innerHTML=html;
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				searchComplete=0;
+			}
+		}
+	}
+	XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	XMLHttp.setRequestHeader("Content-length", wktGPX.length);
+	XMLHttp.setRequestHeader("Connection", "close");
+	
+	XMLHttp.send(wktGPX);
+	return true;
+}

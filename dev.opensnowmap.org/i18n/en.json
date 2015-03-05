@@ -66,5 +66,11 @@
 "SETTINGS": 'SETTINGS',
 "FORUM":'FORUM',
 "BLOG" : 'BLOG',
-"DATA": 'DATA'
+"DATA": 'DATA',
+"GPX_upload": 'GPX file upload',
+"drop_your_gpx_file_here": ' Drag and drop your .gpx file here',
+"gpx_share": 'I want to make my .gpx file freely available to improve',
+"gpx_copyright_agree": 'I hereby certify that this file is my own, and is not copied or derived from otherwise copyrighted sources (topographic maps, Google Maps, ...), and I want to make it freely available to improve Openstreetmap (and Opensnowmap !).',
+"gpx_no_thanks": 'No thanks, I just want to see my track on the map.'
+
 }

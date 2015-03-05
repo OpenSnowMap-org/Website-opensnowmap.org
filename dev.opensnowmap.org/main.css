@@ -479,3 +479,17 @@ label {
 		float:left;
 		z-index: 1000;
 }
+#fileDrop {
+	background-color: #EFEFEF;
+	border: 2px dashed #BBB;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	text-align: center;
+	margin:10px 10px 10px 10px;
+	color: #202020
+}
+#fileDropOuter {
+	-moz-border-radius:15px;
+	border-radius:15px;
+	background-color: #EFEFEF
+}
