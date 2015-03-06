@@ -1,0 +1,142 @@
+{
+   "data_format": 1,
+   "data_url": "http://www.opensnowmap.org/opensnowmap_taginfo.json",
+   "project": {
+	   "name": "www.OpenSnowMap.org",
+	   "description": "Winter sports dedicated map",
+	   "project_url": "http://www.opensnowmap.org",
+	   "icon_url": "http://www.opensnowmap.org/pics/opensnowmap-16.png",
+	   "contact_name": "Yves",
+	   "contact_email": "webmaster@opensnowmap.org"
+   },
+   "tags": [
+   {
+       "key": "route",
+       "value": "piste",
+       "object_types": ["relation"],
+       "description": "Winter sports route relations rendered and searchable. In particular, crosscountry ski routes are rendered according to the color=... tag."
+   },
+   {
+       "key": "route",
+       "value": "ski",
+       "object_types": ["relation"],
+       "description": "Should be handled as route=piste, see route=piste."
+   },
+   {
+       "key": "piste:type",
+       "object_types": ["relation","way"],
+       "description": "Renderedand searchable. Value supported are 'downhill', 'nordic', 'hike', 'snow_park', 'playground', 'sled', 'ice_skate', 'sleigh', 'ski_jump', 'jump', 'ski_jump_landing'."
+   },
+   {
+       "key": "piste:difficulty",
+       "object_types": ["way"],
+       "description": "Only three level of rendering for crosscountry: 'novice' and 'easy', then 'intermediate' then 'advanced' and beyond. For downhill, 'novice', 'easy', 'intermediate', 'advanced', 'expert', 'freeride'."
+   },
+   {
+       "key": "piste:grooming",
+       "value": "mogul",
+       "object_types": ["way"],
+       "description": "Rendered for downhill ('mogul')."
+   },
+   {
+       "key": "piste:grooming",
+       "value": "backcountry",
+       "object_types": ["way"],
+       "description": "Rendered for downhill, crosscountry (dashed), and hike ('backcountry' means snowshoes, 'classic' means groomed for winterhiking)."
+   },
+   {
+       "key": "piste:grooming",
+       "value": "classic",
+       "object_types": ["way"],
+       "description": "Rendered for crosscountry (normal), and hike ('backcountry' means snowshoes, 'classic' means groomed for winterhiking)."
+   },
+   {
+       "key": "piste:grooming",
+       "value": "skating",
+       "object_types": ["way"],
+       "description": "Rendered for crosscountry (normal). Thin lines for values other than 'classic', 'skating', 'classic;skating'."
+   },
+   {
+       "key": "piste:grooming",
+       "value": "classic;skating",
+       "object_types": ["way"],
+       "description": "Rendered for crosscountry (normal). Thin lines for values other than 'classic', 'skating', 'classic;skating'."
+   },
+   {
+       "key": "aerialway",
+       "value": "cable_car",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "gondola",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "chair_lift",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "mixed_lift",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "t-bar",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "j-bar",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "platter",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "rope-tow",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "drag_lift",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "aerialway",
+       "value": "magic_carpet",
+       "object_types": ["way"],
+       "description": "Rendered and searchable for 'cable_car', 'gondola', 'chair_lift', 'mixed_lift', 't-bar', 'j-bar', 'platter', 'rope-tow', 'drag_lift', 'magic_carpet'."
+   },
+   {
+       "key": "railway",
+       "value": "funicular",
+       "object_types": ["way"],
+       "description": "Rendered and searchable."
+   },
+   {
+       "key": "gladed",
+       "object_types": ["way"],
+       "description": "Rendered for downhill piste if 'gladed'='yes'."
+   },
+   {
+       "key": "color",
+       "object_types": ["relation"],
+       "description": "Crosscountry ski routes are rendered according to their 'color'='..' tag, not by 'piste:difficulty'."
+   }     
+   ]
+}
