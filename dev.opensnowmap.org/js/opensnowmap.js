@@ -2509,7 +2509,11 @@ function show(fileContent, filename, filesize){
 	features[0].geometry.calculateBounds();
 	map.zoomToExtent(features[0].geometry.getBounds());
 	//~ map.setCenter(lonlat, 14 );
-	
+	//offset 500px
+	var c = map.getCenter();
+	var newLon = c.lon + map.getResolution()*300;
+	var newc = new OpenLayers.LonLat(newLon, c.lat);
+	map.setCenter(newc, map.getZoom()-1);
 	
 	
 	document.getElementById('sideBar').style.display='inline';
