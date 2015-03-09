@@ -63,7 +63,7 @@ var jsonPisteLists=[];
 var jsonPisteList={};
 
 var wktGPX;
-
+var gpxFileContent;
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
@@ -2451,7 +2451,8 @@ function drop(e) {
 	
 	
 	reader.onload = function(){
-      show(reader.result, filename, filesize);
+	  gpxFileContent=reader.result;
+      show(gpxFileContent, filename, filesize);
     };
     reader.readAsText(file);
 }
@@ -2463,7 +2464,8 @@ function handleFiles(fileList){
 	var filesize =file.size/1024;
 	
 	reader.onload = function(){
-      show(reader.result, filename, filesize);
+	  gpxFileContent=reader.result;
+      show(gpxFileContent, filename, filesize);
     };
     reader.readAsText(file);
  }
@@ -2509,11 +2511,7 @@ function show(fileContent, filename, filesize){
 	features[0].geometry.calculateBounds();
 	map.zoomToExtent(features[0].geometry.getBounds());
 	//~ map.setCenter(lonlat, 14 );
-	//offset 500px
-	var c = map.getCenter();
-	var newLon = c.lon + map.getResolution()*300;
-	var newc = new OpenLayers.LonLat(newLon, c.lat);
-	map.setCenter(newc, map.getZoom()-1);
+	
 	
 	
 	document.getElementById('sideBar').style.display='inline';
@@ -2539,7 +2537,7 @@ function show(fileContent, filename, filesize){
 	 + '</div></div>'
 	 +'<br/>'
 	 +'<div  id="gpx_upload"><br/>'
-	 + '<div id="fileDrop">'
+	 + '<div id="gpx_yes_no">'
 	 +' <p><input type="checkbox" id="checkD" class="radio" "'
 	 +' name="live" value="gpx_copyright_agree" onClick="upload_GPX(value,checked)"   />'
 	 +' <label style="margin-top: 10px">&nbsp;'+_('gpx_share')+'&nbsp;<a target="blank" href="http://www.openstreetmap.org">Openstreetmap</a>.</label><br/>'
@@ -2587,7 +2585,36 @@ function show_GPX_profile() {
 }
 function upload_GPX(value, checked) {
 	if(value == 'gpx_copyright_agree') {
-		document.getElementById('gpx_upload').style.display='none';
+		
+	
+		abortXHR('GetProfile'); // abort another request if any
+		
+		// request the elevation profile
+		document.getElementById('gpx_yes_no').innerHTML='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+		
+		var XMLHttp = new XMLHttpRequest();
+		
+		GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+		
+		XMLHttp.open("POST", server+"gpx?");
+		
+		XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		XMLHttp.setRequestHeader("Content-length", gpxFileContent.length);
+		XMLHttp.setRequestHeader("Connection", "close");
+		
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+
+			searchComplete+=1;
+			if (searchComplete == 2) {
+				document.getElementById('gpx_yes_no').innerHTML='';
+				document.getElementById('gpx_upload').style.display='none';
+			}
+		}
+	}
+		XMLHttp.send(gpxFileContent);
+		return true;
+
 	} else {
 		document.getElementById('gpx_upload').style.display='none';
 	}
