@@ -479,7 +479,7 @@ label {
 		float:left;
 		z-index: 1000;
 }
-#fileDrop {
+.fileDrop {
 	background-color: #EFEFEF;
 	border: 2px dashed #BBB;
 	-moz-border-radius:3px;
@@ -488,8 +488,9 @@ label {
 	margin:10px 10px 10px 10px;
 	color: #202020
 }
-#fileDropOuter {
+.fileDropOuter {
 	-moz-border-radius:15px;
 	border-radius:15px;
-	background-color: #EFEFEF
+	background-color: #EFEFEF;
+	margin-bottom: 10 px
 }

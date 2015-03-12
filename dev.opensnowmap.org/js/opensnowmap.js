@@ -62,8 +62,8 @@ var PisteAPIXHR=[]; // to abort
 var jsonPisteLists=[];
 var jsonPisteList={};
 
-var wktGPX;
-var gpxFileContent;
+var GPXs = [];
+
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
@@ -378,13 +378,13 @@ function show_GPX_upload() {
 
 	html = ''
 	 +'<br/>'
-	 +'<div  id="fileDropOuter"><br/>'
-	 + '<div id="fileDrop"><p><b>'+_('drop_your_gpx_file_here')+'</b></p>'
+	 +'<div  id="fileDropOuter" class="fileDropOuter"><br/>'
+	 + '<div id="fileDrop" class="fileDrop"><p><b>'+_('drop_your_gpx_file_here')+'</b></p>'
 	 +'</div><br/></div>';
 	document.getElementById('sideBarContent').innerHTML=html;
 	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 	
-		dropbox = document.getElementById("fileDrop");
+		var dropbox = document.getElementById("fileDrop");
 		dropbox.addEventListener("dragenter", dragenter, false);
 		dropbox.addEventListener("dragleave", dragleave, false);
 		dropbox.addEventListener("dragover", dragover, false);
@@ -2416,6 +2416,8 @@ function dragenter(e) {
 
 	if (document.getElementById("fileDrop"))
 	{document.getElementById("fileDrop").style.color="#FFF";}
+	if (document.getElementById("fileDrop2"))
+	{document.getElementById("fileDrop2").style.color="#FFF";}
  document.getElementById("GPXMenuButton").style.bgcolor="#FFF";
   e.stopPropagation();
   e.preventDefault();
@@ -2424,6 +2426,8 @@ function dragenter(e) {
 function dragleave(e) {
 	if (document.getElementById("fileDrop"))
 	{document.getElementById("fileDrop").style.color="#202020";}
+	if (document.getElementById("fileDrop2"))
+	{document.getElementById("fileDrop2").style.color="#202020";}
  document.getElementById("GPXMenuButton").style.bgcolor="#202020";
   e.stopPropagation();
   e.preventDefault();
@@ -2434,6 +2438,8 @@ function dragover(e) {
   e.preventDefault();
 	if (document.getElementById("fileDrop"))
 	{document.getElementById("fileDrop").style.color="#FFF";}
+	if (document.getElementById("fileDrop2"))
+	{document.getElementById("fileDrop2").style.color="#FFF";}
  document.getElementById("GPXMenuButton").style.bgcolor="#FFF";
 }
 
@@ -2442,19 +2448,59 @@ function drop(e) {
 	e.preventDefault();
 	if (document.getElementById("fileDrop"))
 	{document.getElementById("fileDrop").style.color="#202020";}
+	if (document.getElementById("fileDrop2"))
+	{document.getElementById("fileDrop2").style.color="#202020";}
 	document.getElementById("GPXMenuButton").style.bgcolor="#202020";
-	var files = e.dataTransfer.files;
-	var file = files[0];
-	var reader = new FileReader();
-	var filename =file.name;
-	var filesize =file.size/1024;
 	
+	var files = e.dataTransfer.files;
+	var fileContent;
+	for (var i = 0; i < files.length; i++) {
+		gpx_reader(files[i]);
+	}
+	
+    
+}
+function gpx_reader(file) {
+	var reader = new FileReader();
+	var parser=new DOMParser();
+	var gpxOL= new OpenLayers.Format.GPX();
 	
 	reader.onload = function(){
-	  gpxFileContent=reader.result;
-      show(gpxFileContent, filename, filesize);
-    };
-    reader.readAsText(file);
+		fileContent=reader.result;
+		try {
+			var gpxDOM=parser.parseFromString(fileContent,"text/xml");
+			var features = gpxOL.read(gpxDOM);
+			var gpx = {}
+			
+			gpx['index']=(GPXs).length+1;
+			gpx['filename']=file.name;
+			gpx['filesize']=file.size/1024;
+			gpx['center']=features[0].geometry.getCentroid();
+			
+			for (f in features) {
+				features[f].geometry=features[f].geometry.simplify(0.00002);
+				features[f].geometry.calculateBounds();
+			}
+			// transform in wkt while in lat lon
+			var wktFormat = new OpenLayers.Format.WKT();
+			gpx['wkt']=wktFormat.write(features[0]);
+			
+			for (f in features) {
+				features[f].geometry.transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913"));
+				features[f].geometry.calculateBounds();
+			}
+			gpx['features']=features;
+			gpx['fileContent']=fileContent;
+			gpx['bounds']=features[0].geometry.getBounds();
+			
+			GPXs.push(gpx);
+			if  (GPXs.length != 0 ){show_gpx_list();}
+			
+		} catch (err) {
+			null;
+		}
+	};
+	reader.readAsText(file);
 }
 function handleFiles(fileList){
 	
@@ -2469,73 +2515,59 @@ function handleFiles(fileList){
     };
     reader.readAsText(file);
  }
-function show(fileContent, filename, filesize){
-	
-	var parser=new DOMParser();
-	var gpxDOM=parser.parseFromString(fileContent,"text/xml");
-	var gpxOL= new OpenLayers.Format.GPX();
-	var features = gpxOL.read(gpxDOM);
-	
-	for (f in features) {
-		features[f].geometry=features[f].geometry.simplify(0.00002);
-	}
-	// transform in wkt while in lat lon
-	var wktFormat = new OpenLayers.Format.WKT();
-	wktGPX=wktFormat.write(features[0]);
-	
-	for (f in features) {
-		features[f].geometry.transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913"));
-	}
-	
-	
-	if (GPXLayer){
-		GPXLayer.destroyFeatures();
-		map.removeLayer(GPXLayer);
-	} 
 
-	GPXLayer = new OpenLayers.Layer.Vector("GPX", {styleMap: GPXStyleMap});
-	map.addLayer(GPXLayer);
+function show_gpx_list(){
+	if (!GPXLayer){
+		GPXLayer = new OpenLayers.Layer.Vector("GPX", {styleMap: GPXStyleMap});
+		map.addLayer(GPXLayer);
+	} 
 	
-	var v =features[0].geometry.getVertices();
-	
-	var center = features[0].geometry.getCentroid();
-	var lonlat = new OpenLayers.LonLat(center.x,center.y);
-	
-	
-	
-	abortXHR('GetProfile');
-	
-	
-	GPXLayer.addFeatures(features);
-	
-	features[0].geometry.calculateBounds();
-	map.zoomToExtent(features[0].geometry.getBounds());
-	//~ map.setCenter(lonlat, 14 );
-	
-	
-	
+	CATCHER = false;
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('GPX_upload').replace('<br/>',' ');
-	
+
 	html = ''
 	 +'<br/>'
-	 +'<div id="GPX_profile"></div>'
-	 +'<div class="pisteListElement">\n'
-		// ---- profile button-----
-		+'<div class="Button" style="float:right;" '
-		+'onClick="show_GPX_profile();">'
-		+'<img src="pics/profile-flat22.png"></div>\n'
-		// delete button
-		+'<div class="Button" style="float:right;" '
-		+'onClick="GPX_remove();">'
-		+'&nbsp;X&nbsp;</div>\n'
+	 +'<div  id="fileDropOuter" class="fileDropOuter"><br/>'
+	 + '<div id="fileDrop2" class="fileDrop"><p><b>'+_('drop_your_gpx_file_here')+'</b></p>'
+	 +'</div><br/></div>'
+	 +'<div id="GPX_list"></div>';
+	document.getElementById('sideBarContent').innerHTML=html;
+	
+	
+	for (var i = 0; i < GPXs.length; i++){
 		
-		// text
-		+'<div style="float:left;">&nbsp;'+filename+'&nbsp;-&nbsp;'+filesize.toFixed(1)+' kB</div>\n'
-	 + '</div></div>'
-	 +'<br/>'
+		html +='<div class="pisteListElement">\n'
+			 +'<div id="GPX_profile_'+GPXs[i]['index']+'"></div>'
+			// ---- profile button-----
+			+'<div class="Button" style="float:left;" '
+			+'onClick="show_GPX_profile('+GPXs[i]['index']+');">'
+			+'<img src="pics/profile-flat22.png"></div>\n'
+			// delete button
+			+'<div class="Button" style="float:left;" '
+			+'onClick="GPX_remove('+GPXs[i]['index']+');">'
+			+'&nbsp;x&nbsp;</div>\n'
+			// center button
+			+'<div class="Button" style="float:left;" '
+			+'onClick="map.zoomToExtent(['+GPXs[i]['bounds']+']);">'
+			+'(&nbsp;&#8226;&nbsp;)</div>\n'
+			// text
+			+'<div style="float:left;">&nbsp;'+GPXs[i]['filename']
+			+'&nbsp;-&nbsp;'+GPXs[i]['filesize'].toFixed(1)+' kB</div>\n'
+			+ '</div></div>\n';
+		html+='\n<div class="clear"></div>';
+		
+		GPXLayer.addFeatures(GPXs[i]['features']);
+		map.zoomToExtent(GPXs[i]['bounds']);
+		
+	} 
+	
+	 html+='<div class="Button" style="float:left;" '
+		+'onClick="GPX_remove("all");">'
+		+'&nbsp;X&nbsp;</div>\n'
+		+'\n<div class="clear"></div><br/>'
 	 +'<div  id="gpx_upload"><br/>'
 	 + '<div id="gpx_yes_no">'
 	 +' <p><input type="checkbox" id="checkD" class="radio" "'
@@ -2550,15 +2582,22 @@ function show(fileContent, filename, filesize){
 	document.getElementById('sideBarContent').innerHTML=html;
 	
 	
+	var dropbox2 = document.getElementById("fileDrop2");
+	dropbox2.addEventListener("dragenter", dragenter, false);
+	dropbox2.addEventListener("dragleave", dragleave, false);
+	dropbox2.addEventListener("dragover", dragover, false);
+	dropbox2.addEventListener("drop", drop, false);
+	
 	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
-
+	
+	
 }
 
-function show_GPX_profile() {
-	abortXHR('GetProfile'); // abort another request if any
+function show_GPX_profile(i) {
+	//abortXHR('GetProfile'); // abort another request if any
 	
 	// request the elevation profile
-	document.getElementById('GPX_profile').innerHTML='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+	document.getElementById('GPX_profile_'+i).innerHTML='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
 	
 	var XMLHttp = new XMLHttpRequest();
 	
@@ -2567,20 +2606,20 @@ function show_GPX_profile() {
 	XMLHttp.open("POST", server+"demrequest?");
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
-			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
-			document.getElementById('GPX_profile').innerHTML=html;
+			html = '<br/>&nbsp;&nbsp;&nbsp;<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
+			document.getElementById('GPX_profile_'+i).innerHTML=html;
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				//~ resultArrayAdd(document.getElementById('GPX_profile_'+i).innerHTML);
 				searchComplete=0;
 			}
 		}
 	}
 	XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	XMLHttp.setRequestHeader("Content-length", wktGPX.length);
+	XMLHttp.setRequestHeader("Content-length", GPXs[i-1]['wkt'].length);
 	XMLHttp.setRequestHeader("Connection", "close");
 	
-	XMLHttp.send(wktGPX);
+	XMLHttp.send(GPXs[i-1]['wkt']);
 	return true;
 }
 function upload_GPX(value, checked) {
@@ -2619,7 +2658,7 @@ function upload_GPX(value, checked) {
 		document.getElementById('gpx_upload').style.display='none';
 	}
 }
-function GPX_remove() {
+function GPX_remove(i) {
 	if (GPXLayer){
 		GPXLayer.destroyFeatures();
 		}
