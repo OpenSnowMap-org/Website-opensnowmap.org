@@ -66,5 +66,10 @@
 "SETTINGS": 'PARAMETRES',
 "FORUM":'FORUM',
 "BLOG" : 'BLOG',
-"DATA": 'DATA'
+"DATA": 'DATA',
+"GPX_upload": 'Chargement traces GPX',
+"drop_your_gpx_file_here": ' Glissez votre fichier .gpx ici.',
+"gpx_share": 'Je souhaite que mon fichier soit utilisé librement pour améliorer',
+"gpx_copyright_agree": 'Je certifie que ce fichier à été réalisé par moi-même, et qu\'il n\'est pas copié ni dérivé d\'une carte soumise à un droit d\'auteur (carte topo, Google Maps, ...), et je souhaite qu\'il soit mis à la disposition de la communauté pour améliorer OpenStreetMap (et Opensnowmap !).',
+"gpx_no_thanks": 'Non merci, je veux juste voir ma trace sur la carte.'
 }
