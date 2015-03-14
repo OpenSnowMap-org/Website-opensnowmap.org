@@ -2537,6 +2537,11 @@ function show_gpx_list(){
 	 +'<div id="GPX_list"></div>';
 	document.getElementById('sideBarContent').innerHTML=html;
 	
+	html+='&nbsp;&nbsp;<div class="Button" style="float:left;" '
+		+'onClick="GPX_remove();">'
+		+'<b>&nbsp;X&nbsp;</b></div>\n'
+		+'\n<div class="clear"></div>'
+	
 	
 	for (var i = 0; i < GPXs.length; i++){
 		
@@ -2547,13 +2552,13 @@ function show_gpx_list(){
 			+'onClick="show_GPX_profile('+GPXs[i]['index']+');">'
 			+'<img src="pics/profile-flat22.png"></div>\n'
 			// delete button
-			+'<div class="Button" style="float:left;" '
-			+'onClick="GPX_remove('+GPXs[i]['index']+');">'
-			+'&nbsp;x&nbsp;</div>\n'
+			//~ +'<div class="Button" style="float:left;" '
+			//~ +'onClick="GPX_remove();">'
+			//~ +'&nbsp;x&nbsp;</div>\n'
 			// center button
 			+'<div class="Button" style="float:left;" '
 			+'onClick="map.zoomToExtent(['+GPXs[i]['bounds']+']);">'
-			+'(&nbsp;&#8226;&nbsp;)</div>\n'
+			+'[&nbsp;&#8226;&nbsp;]</div>\n'
 			// text
 			+'<div style="float:left;">&nbsp;'+GPXs[i]['filename']
 			+'&nbsp;-&nbsp;'+GPXs[i]['filesize'].toFixed(1)+' kB</div>\n'
@@ -2565,10 +2570,7 @@ function show_gpx_list(){
 		
 	} 
 	
-	 html+='<div class="Button" style="float:left;" '
-		+'onClick="GPX_remove("all");">'
-		+'&nbsp;X&nbsp;</div>\n'
-		+'\n<div class="clear"></div><br/>'
+	 html+='\n<div class="clear"></div><br/>'
 	 +'<div  id="gpx_upload"><br/>'
 	 + '<div id="gpx_yes_no">'
 	 +' <p><input type="checkbox" id="checkD" class="radio" "'
@@ -2659,10 +2661,12 @@ function upload_GPX(GPXsi, togo) {
 	XMLHttp.send(GPXsi['fileContent']);
 	GPXsi['uploaded']=1;
 }
-function GPX_remove(i) {
+function GPX_remove() {
+	GPXs.length =0;
 	if (GPXLayer){
 		GPXLayer.destroyFeatures();
-		}
+	}
+	
 	abortXHR('GetProfile');
 	show_GPX_upload();
 }
