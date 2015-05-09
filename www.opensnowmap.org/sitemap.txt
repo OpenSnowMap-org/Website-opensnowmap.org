@@ -1,4 +1,5 @@
 http://www.opensnowmap.org/
+http://www.opensnowmap.org/mobile.html
 http://www.opensnowmap.org/resorts
 http://www.opensnowmap.org/iframes/about.fr.html
 http://www.opensnowmap.org/iframes/about.en.html
