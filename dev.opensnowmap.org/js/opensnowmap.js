@@ -1359,84 +1359,13 @@ function print() {
 	document.getElementById('print_result').innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
 }
 function show_printSettings(){
-	// close map controls
-	if(mode =="vector") {infoMode();}
-	SIDEBARSIZE=150;
-	
-	document.getElementById('sideBar').style.display='inline';
-	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='';
-	html='';
-	
-	html+='\n'
-	html+='<div onclick="setPrint(\'hb\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
-	html+='<img src="pics/ps_hb.png"></div>'
-	html+='\n'
-	html+='<div onclick="setPrint(\'vb\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
-	html+='<img src="pics/ps_vb.png"></div>'
-	html+='\n'
-	html+='<div onclick="setPrint(\'hs\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
-	html+='<img src="pics/ps_hs.png"></div>'
-	html+='\n'
-	html+='<div onclick="setPrint(\'vs\');"'
-	html+='class="Button iconButton float-left" style="margin-left:5px;margin-right:5px;width:36px;height:36px;">'
-	html+='<img src="pics/ps_vs.png"></div>'
-	html+='\n'
-	html+='<div onclick="print();"'
-	html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
-	html+='<img src="pics/print-22.png"></div>'
-	html+='<br class="clear" />'
-	html+='<div id="print_result"></div>';
-	
-	document.getElementById('sideBarContent').innerHTML=html;
-	document.getElementById('sideBarContent').style.display='block';
-	var styleMap = new OpenLayers.StyleMap({
-		'fillColor': '#ffffff',
-		'fillOpacity' : 0.4,
-		'strokeWidth': 5,
-		'strokeColor': '#000000'
-		});
-	var printLayer = new OpenLayers.Layer.Vector("Print layer",{styleMap: styleMap});
-	map.addLayers([printLayer]);
-	var drag=new OpenLayers.Control.DragFeature(printLayer);
-	map.addControls([drag]);
-	drag.activate();
-}
-function setPrint(type) {
+	var z=map.getZoom();
 	var center = map.getCenter();
-	var h;
-	var v;
-	if (type == 'vs') {h=5000;v=7000;PRINT_TYPE= 'small';}
-	if (type == 'hs') {h=7000;v=5000;PRINT_TYPE= 'small';}
-	//zoom 15
-	if (type == 'vb') {h=14000;v=20000;PRINT_TYPE= 'big';}
-	if (type == 'hb') {h=20000;v=14000;PRINT_TYPE= 'big';}
-	// zoom 14
-	var p1 = new OpenLayers.Geometry.Point(center.lon-h/2, center.lat-v/2);
-	var p2 = new OpenLayers.Geometry.Point(center.lon-h/2, center.lat+v/2);
-	var p3 = new OpenLayers.Geometry.Point(center.lon+h/2, center.lat+v/2);
-	var p4 = new OpenLayers.Geometry.Point(center.lon+h/2, center.lat-v/2);
-	var p5 = new OpenLayers.Geometry.Point(center.lon-h/2, center.lat-v/2);
-	
-	var pnt= [];
-	pnt.push(p1,p2,p3,p4,p5);
-	var ln = new OpenLayers.Geometry.LinearRing(pnt);
-	var pf = new OpenLayers.Feature.Vector(ln);
-	var printLayer= map.getLayersByName("Print layer")[0];
-	printLayer.destroyFeatures(printLayer.features);
-	printLayer.addFeatures([pf]);
+	//#map=4/6/42/0
+	var hash="#map="+z+'/'+center.lon+'/'+center.lat+'/0';
+	window.open("print.html"+hash,"_blank","height=480,width=685");
 }
-function close_printSettings(){
-	var printLayer= map.getLayersByName("Print layer")[0];
-	if (printLayer != null) {
-		printLayer.destroyFeatures(printLayer.features);
-		printLayer.destroy;
-		map.removeLayer(printLayer);
-	}
-}
+
 //======================================================================
 // MAP
 
