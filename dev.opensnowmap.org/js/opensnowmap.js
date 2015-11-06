@@ -642,7 +642,7 @@ function checkKey(e) {
 }
 function echap() {
 		close_sideBar();
-		close_printSettings();
+		
 		// close extendedmenu
 		//~ var em = document.getElementById('extendedmenu');
 		//~ if (em.style.display == "inline") {
@@ -1326,41 +1326,9 @@ function map_init(){
 
 //======================================================================
 // PRINT
-function print() {
-	// start print request
-	var mq=map.getLayersByName("MapQuest")[0];
-	var osm=map.getLayersByName("OSM")[0];
-	if (mq) {var bg='mq';}
-	else {var bg='osm';}
-	
-	var printLayer= map.getLayersByName("Print layer")[0];
-	var b = printLayer.features[0].geometry.bounds;
-	
-	
-	var b4326 = b.transform(
-		new OpenLayers.Projection("EPSG:900913"),
-		new OpenLayers.Projection("EPSG:4326"));
-	var args=b4326.left+';'+b4326.right+';'+b4326.top+';'+b4326.bottom+';'+bg+';'+PRINT_TYPE;
-	
-	var XMLHttp = new XMLHttpRequest();
-	
-	PisteAPIXHR.push(XMLHttp);
-	
-	XMLHttp.open("GET", server+"print?"+args);
-	XMLHttp.onreadystatechange= function () {
-		if (XMLHttp.readyState == 4) {
-			// cut when cgi is not able to work
-			document.getElementById('print_result').innerHTML='<p>&nbsp;&nbsp;<a style="text-align: center;" href="'+XMLHttp.responseText+'" target="blank">'+XMLHttp.responseText+'</a></p>';
-		}
-	}
-	XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	
-	XMLHttp.send();
-	document.getElementById('print_result').innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
-}
 function show_printSettings(){
 	var z=map.getZoom();
-	var center = map.getCenter();
+	var center = map.getCenter().transform(new OpenLayers.Projection('EPSG:900913'),new OpenLayers.Projection('EPSG:4326'));
 	//#map=4/6/42/0
 	var hash="#map="+z+'/'+center.lon+'/'+center.lat+'/0';
 	window.open("print.html"+hash,"_blank","height=480,width=685");
