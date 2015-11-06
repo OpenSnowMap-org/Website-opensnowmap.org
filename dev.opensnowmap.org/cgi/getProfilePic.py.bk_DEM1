@@ -19,7 +19,7 @@ import atexit
 if os.path.isdir("/home/website"):
 	SRTMFilesDir='/home/website/DEM/tiles/'
 else:
-	SRTMFilesDir='/home/admin/DEM2/tiles/'
+	SRTMFilesDir='/home/admin/DEM/tiles/'
 PIL_images_dir = '/var/www/tmp/' 
 #TODO:
 # Clean and master the elevation code
@@ -104,7 +104,7 @@ def createPics(tracks):
     minEleValue=" %.fm" % minEle
     maxEleValue=" %.fm" % maxEle
     
-    
+    #print maxDistValue, minEleValue, maxEleValue
     
     minLat=track[0]['lat']
     maxLat=track[0]['lat']
@@ -312,7 +312,7 @@ class SrtmTiff(object):
         lat_origin = geotransform[3]
         lon_pixel = geotransform[1]
         lat_pixel = geotransform[5]
-        self.geotransform=geotransform
+        
         retdict = {
             'xsize': xsize,
             'ysize': ysize,
@@ -320,14 +320,46 @@ class SrtmTiff(object):
             'lon_origin': lon_origin,
             'lon_pixel': lon_pixel,
             'lat_pixel': lat_pixel,
-            'N': lat_origin - lat_pixel*ysize,
-            'S': lat_origin,
-            'W': lon_origin + lon_pixel*xsize,
-            'E': lon_origin,
+            'N': lat_origin,
+            'S': lat_origin + lat_pixel*ysize,
+            'E': lon_origin + lon_pixel*xsize,
+            'W': lon_origin,
             'dataset': dataset,
             }
         
         return retdict  
+
+    def pos_from_lat_lon(self, lat, lon):
+        """
+        Converts coordinates (lat,lon) into the appropriate (row,column)
+        position in the GeoTIFF tile data stored in td.
+        """
+        td = self.tile
+        N = td['N']
+        S = td['S']
+        E = td['E']
+        W = td['W']
+        lat_pixel = td['lat_pixel']
+        lon_pixel = td['lon_pixel']
+        xsize = td['xsize']
+        ysize = td['ysize']
+        
+        rowno_f = (lat-N)/lat_pixel
+        colno_f = (lon-W)/lon_pixel
+        rowno = int(floor(rowno_f))
+        colno = int(floor(colno_f))
+
+        # Error checking to correct any rounding errors.
+        if (rowno<0):
+            rowno = 0
+        if (rowno>(xsize-1)):
+            rowno = xsize-1
+        if (colno<0):
+            colno = 0
+        if (colno>(ysize-1)):
+            colno = xsize-1
+            
+        return (rowno, colno, rowno_f, colno_f)
     
     def get_elevation(self, lat, lon):
         """
@@ -336,23 +368,18 @@ class SrtmTiff(object):
         Uses bilinar interpolation to interpolate the SRTM data to the
         required point.
         """
-        
-        
-        col_f, row_f = gdal.ApplyGeoTransform(gdal.InvGeoTransform(self.geotransform)[1], lon, lat)
-        
-        col = int(col_f)
-        row=int(row_f)
-        
+        row, col, row_f, col_f = self.pos_from_lat_lon(lat, lon)
+
         # NOTE - THIS IS A FIDDLE TO STOP ERRORS AT THE EDGE OF
         # TILES - IT IS NO CORRECT - WE SHOULD GET TWO POINTS 
         # FROM THE NEXT TILE.
         #if row==5999: row=5998
         #if col==5999: col=5998
-        if row==3602: row=3601
-        if row==3602: row=3601
-        if col==3602: col=3601
-        if col==3602: col=3601
-        
+        if row==1200: row=1199
+        if row==1199: row=1198
+        if col==1200: col=1199
+        if col==1199: col=1198
+        #~ print row, col
         htarr = gdalnumeric.DatasetReadAsArray(self.tile['dataset'], col, row, 2, 2)
 
         height = bilinear_interpolation(htarr[0][0], htarr[0][1], htarr[1][0], htarr[1][1],
@@ -402,17 +429,14 @@ class SrtmLayer(object):
         ilon = ceil(colmin / 6000.0)
         ilat = ceil(rowmin / 6000.0)"""
         ilon = abs(floor(lon))
-        ilat = abs(floor(lat+1))
+        ilat = abs(floor(lat))
         
-        #~ if lon > 0 and lat > 0 and lat <60 :return 'N%02dE%03d.tif' % (ilat, ilon)
-        #~ if lon < 0 and lat > 0 and lat <60:return 'N%02dW%03d.tif' % (ilat, ilon)
-        #~ if lon > 0 and lat < 0 :return 'S%02dE%03d.tif' % (ilat, ilon)
-        #~ if lon < 0 and lat < 0 :return 'S%02dW%03d.tif' % (ilat, ilon)
-        #~ if lon > 0 and lat > 0 and lat >=60 :return 'as_N%02dE%01d.tif' % (ilat, ilon)
-        #~ if lon < 0 and lat > 0 and lat >=60:return 'as_N%02dE-%01d.tif' % (ilat, ilon)
-        filename = 'out_dem/out_%01d-%01d.tif' % (ilat, ilon)
-        
-        return filename
+        if lon > 0 and lat > 0 and lat <60 :return 'N%02dE%03d.tif' % (ilat, ilon)
+        if lon < 0 and lat > 0 and lat <60:return 'N%02dW%03d.tif' % (ilat, ilon)
+        if lon > 0 and lat < 0 :return 'S%02dE%03d.tif' % (ilat, ilon)
+        if lon < 0 and lat < 0 :return 'S%02dW%03d.tif' % (ilat, ilon)
+        if lon > 0 and lat > 0 and lat >=60 :return 'as_N%02dE%01d.tif' % (ilat, ilon)
+        if lon < 0 and lat > 0 and lat >=60:return 'as_N%02dE-%01d.tif' % (ilat, ilon)
         
     def get_elevation(self, lat, lon):
         """
@@ -421,7 +445,6 @@ class SrtmLayer(object):
         srtm_filename = self.get_srtm_filename(lat, lon)
         
         srtm_path = os.path.join(SRTMFilesDir, srtm_filename)
-        
         if not os.path.isfile(srtm_path):
             self._unzip_srtm_tiff(srtm_path)
         
@@ -498,7 +521,7 @@ def listTracks(data):
             else:
                 # add a point every 0.002deg at least
                 n = int(segLength/lim)
-                
+                print n
                 lon1=track[-1]['lon']
                 lat1=track[-1]['lat']
                 lon2=t['lon']
@@ -525,7 +548,6 @@ def processData(tracks):
             if pt['lat'] == 0 and pt['lon'] ==0 : pt['ele']= 0
             else:
                 pt['ele']=_srtm.get_elevation(float(pt['lat']),float(pt['lon']))
-                
             
         track[0]['dist']=dist
     
@@ -574,7 +596,7 @@ if __name__ == "__main__":
     data=f.read()
     tracks=listTracks(data)
     tracks=processData(tracks)
-    
+    print data
     for track in tracks:
         for d in track:
             if d['lat'] > 71.9999:
