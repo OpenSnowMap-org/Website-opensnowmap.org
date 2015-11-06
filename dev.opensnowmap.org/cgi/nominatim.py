@@ -17,7 +17,7 @@ def application(environ,start_response):
 	place=request.split('place=')[1]
 	if place.find('&'): place=place.split('&')[0]
 	
-	baseUrl = 'http://open.mapquestapi.com/nominatim/v1/search?format=json&q='
+	baseUrl = ' http://nominatim.openstreetmap.org/search?format=json&q='
 	place = str(place).replace(' ','+').replace('%20','+')
 	url= baseUrl+str(place)
 	y = urllib2.urlopen(url)
