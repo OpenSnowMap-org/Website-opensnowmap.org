@@ -145,6 +145,45 @@ label {
     background-color: #F5F5F5;
     opacity: 0.5;
 }
+#donate-centering{
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    z-index: 1000;
+    height:2px;
+}
+#donate-content{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+	    background-color:#EEE; /*fallback*/
+	    background-color: rgba(245,245,245,0.5);
+	    -moz-border-radius:6px;
+	    border-radius:6px;
+	    border: 1px solid #aaaaaa;
+	    width: 290px;
+	    text-align:center;
+	    }
+#donateCloseControl {
+			margin: 3px 3px 3px 3px;
+			float: left;
+}
+#donate{
+			font-size: 0.8em;
+			color: #444;
+/*
+			background-color:#FDFDFD;
+*/
+			opacity:1;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			margin-left: 5px;
+			margin-right:5px;
+			overflow: auto;
+			position: relative;
+			width: 240px;
+			}
+
 #right-container{
     position: absolute;
     bottom:16px;
@@ -172,7 +211,7 @@ label {
 			background-color:#FDFDFD;
 			opacity:1;
 			height:160px;
-			width: 370px;
+			width: 360px;
 			margin-top: 5px;
 			margin-bottom: 5px;
 			margin-left: 5px;
@@ -214,7 +253,7 @@ label {
 	}
 		#MenuBlock{
 			opacity:1;
-			height:88px;
+			height:95px;
 			width: 390px;
 			margin-top: 2px;
 			margin-bottom: 0px;
@@ -304,25 +343,7 @@ label {
     background-color: rgba(245,245,245,0.3);
 }
 
-#helper-centering{
-    position: absolute;
-    top: 5px;
-    width: 100%;
-    z-index: 1000;
-    height:2px;
-}
-#helper{
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    /*text-align: center;*/
-    padding-top: 3px;
-    width: 220px;
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #aaaaaa;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);}
+
 #waiter{
     position: relative;
     margin-left: auto;

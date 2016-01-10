@@ -95,9 +95,12 @@
 							<div class="Button textButton float-left" onclick="window.open('http://blog.opensnowmap.org');"
 							id="blogMenuButton">
 								<script>document.write(_('BLOG'))</script>&nbsp;&raquo;</div>
-							<div class="Button textButton float-left"  onclick="window.open('/iframes/data.html');"
+							<div class="Button textButton float-left"  onclick="window.open('iframes/data.html');"
 							id="dataMenuButton">
 								<script>document.write(_('DATA'))</script>&nbsp;&raquo;</div>
+							<div class="Button textButton float-left" onclick="window.open('iframes/donate.html');"
+							id="settingsMenuButton">
+								<script>document.write(_('menu-donate'))</script></div>
 						</div>
 						<br class="clear" />
 	<!--				MenuIcons-->
@@ -186,7 +189,25 @@
 				<input id="search_input" type="text" name="nom_search"/>
 			</form>
 		</div>
+		
+		<div id="donate-centering" >
+			<div id="donate-content">
 
+					<div id="donateCloseControl"
+						onclick="close_donate();"
+						onmouseover="document.images['helperClose'].src='pics/close-22-hover.png'"
+						onmouseout="document.images['helperClose'].src='pics/close-22.png'">
+						<img name="helperClose"  src="pics/close-22.png">
+					</div>
+			     
+					 <div class="Button textButton" id="donate">
+					    <a style="color: #000;font-weight: 600;" href="iframes/donate.html" target="blank"><script>document.write(_('Donate'))</script></a>
+					 </div>
+
+		    </div>
+	     </div>
+			
+			
 		<div id="attributions">
 			&#169;<a href="http://www.openstreetmap.org" target="blank">
 			Openstreetmap.org</a> &amp; contributors - 
