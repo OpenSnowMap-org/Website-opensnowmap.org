@@ -179,7 +179,7 @@ function removejscssfile(filename, filetype){
 function get_page(url){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",url,false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	response = oRequest.responseText;
 	response = response.replace("../","");
@@ -221,7 +221,7 @@ function close_donate(){
 function show_catcher(){
 	document.getElementById('sideBar').style.display='inline';
 	CATCHER=true;
-	SIDEBARSIZE=200;
+	SIDEBARSIZE=210;
 	resize_sideBar();
 	
 	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
@@ -486,7 +486,7 @@ function resize_sideBar() {
 			document.getElementById('sideBar').style.display='inline';
 			document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
 			document.getElementById('sideBarContent').style.display='inline';
-			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-35+'px';
 		}
 	}
 	return true
@@ -660,14 +660,14 @@ function echap() {
 function get_stats(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	lengthes = JSON.parse(oRequest.responseText);
 }
 function get_update(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	var stats = JSON.parse(oRequest.responseText);
 	update=stats.date;
@@ -675,7 +675,7 @@ function get_update(){
 function get_modisupdate(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/modis-update.txt',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 	oRequest.send();
 	var period=oRequest.responseText.split(' ')[5];
 	return period;
@@ -2282,13 +2282,13 @@ else { iframelocale = locale;}
 // Load the localized strings
 var oRequest = new XMLHttpRequest();
 oRequest.open("GET",'i18n/'+locale+'.json',false);
-oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 oRequest.send();
 var i18n = eval('('+oRequest.responseText+')');
 // Load the default strings
 var oRequest = new XMLHttpRequest();
 oRequest.open("GET",'i18n/en.json',false);
-oRequest.setRequestHeader("User-Agent",navigator.userAgent);
+//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 oRequest.send();
 var i18nDefault = eval('('+oRequest.responseText+')');
 
@@ -2296,6 +2296,9 @@ var i18nDefault = eval('('+oRequest.responseText+')');
 function _(s) {
 	if (typeof(i18n)!='undefined' && i18n[s] && i18n[s]!='') {
 		return i18n[s];
+	}
+	if (typeof(i18n)=='undefined' && typeof(i18nDefault)=='undefined') {
+		return s;
 	}
 	return i18nDefault[s];
 }
