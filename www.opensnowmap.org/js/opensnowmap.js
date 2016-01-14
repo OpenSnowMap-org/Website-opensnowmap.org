@@ -37,6 +37,7 @@ var EXT_MENU=true;
 var EDIT_SHOWED=false;
 var CATCHER;
 var MARKER = false;
+var BASELAYER = 'mapquest';
 var permalink_id;
 var permalink_ofsetter;
 var zoomBar;
@@ -1078,6 +1079,7 @@ function readPermalink(link) {
 		if (x[i].split("=")[0] == 'zoom') {zoom=x[i].split("=")[1];}
 		if (x[i].split("=")[0] == 'lon') {lon=x[i].split("=")[1];}
 		if (x[i].split("=")[0] == 'lat') {lat=x[i].split("=")[1];}
+		if (x[i].split("=")[0] == 'layers') {BASELAYER=x[i].split("=")[1];}
 		if (x[i].split("=")[0] == 'marker' && x[i].split("=")[1] == 'true') { MARKER = true;}
 		if (x[i].split("=")[0] == 'e') {
 			var ext=x[i].split("=")[1];
@@ -1184,8 +1186,11 @@ function setBaseLayer(baseLayer){
 		map.removeLayer(mq);
 		var mapnik = new OpenLayers.Layer.OSM("OSM");
 		map.addLayer(mapnik);
-		document.getElementById('setOSMLayer').style.border="solid #AAA 2px";
-		document.getElementById('setMQLayer').style.border="solid #CCCCCC 1px";
+		if (document.getElementById('setOSMLayer')) {
+			document.getElementById('setOSMLayer').style.border="solid #AAA 2px";
+			document.getElementById('setMQLayer').style.border="solid #CCCCCC 1px";
+		}
+		BASELAYER='osm';
 	}
 	if (baseLayer == "mapquest" && osm) {
 		map.removeLayer(osm);
@@ -1195,8 +1200,16 @@ function setBaseLayer(baseLayer){
 			"http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
 		var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
 		map.addLayer(mapquest);
-		document.getElementById('setMQLayer').style.border="solid #AAA 2px";
-		document.getElementById('setOSMLayer').style.border="solid #CCCCCC 1px";
+		if (document.getElementById('setOSMLayer')) {
+			document.getElementById('setMQLayer').style.border="solid #AAA 2px";
+			document.getElementById('setOSMLayer').style.border="solid #CCCCCC 1px";
+		}
+		BASELAYER='mapquest';
+	}
+	
+	var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
+	for (p = 0; p< permalinks.length; p++){
+		permalinks[p].updateLink();
 	}
 }
 function baseLayers() {
@@ -1232,6 +1245,7 @@ function permalink3Args() {
 		OpenLayers.Control.Permalink.prototype.createParams.apply(
 			this, arguments
 		);
+	args['layers']=BASELAYER;
 	args['marker'] = 'true';
 	return args;
 }
@@ -1256,7 +1270,8 @@ function permalink0Args() {
 		OpenLayers.Control.Permalink.prototype.createParams.apply(
 			this, arguments
 		);
-	args['layers']='';
+	args['layers']=BASELAYER;
+	
 	//args['e'] = EXT_MENU;
 	args['marker'] = 'false';
 	return args;
@@ -1303,6 +1318,7 @@ function map_init(){
 	map.addControl(permalink_simple);
 	
 	baseLayers();
+	setBaseLayer(BASELAYER);
 // Switch base layer
 	map.events.on({ "zoomend": function (e) {
 		updateZoom();
