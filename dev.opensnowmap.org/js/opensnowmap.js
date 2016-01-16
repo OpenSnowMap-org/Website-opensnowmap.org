@@ -2179,13 +2179,14 @@ var locs = [ "ast","cz","de","en","es","cat","fi","fr","hu","it","jp","nl","nn",
 var iloc= 0;
 var locale;
 var iframelocale;
+locale="en"; //set default
 //localization
 
-// Get the locale first: from cookie if set
-if (getCookie("l10n")!="") {
-	locale = getCookie("l10n");
+// Get the locale first: from localstorage if set
+if (localStorage.l10n) {
+	locale = localStorage.l10n;
 }
-// No cookie, check for browser locale
+// No localstorage, check for browser locale
 else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
 
 // only a few iframe content pages are translated:
@@ -2243,24 +2244,9 @@ function get_locale() {
 	else {return 'en';}
 }
 
-function getCookie(c_name){
-	if (document.cookie.length>0)
-	  {
-	  var c_start=document.cookie.indexOf(c_name + "=");
-	  if (c_start!=-1)
-		{
-		c_start=c_start + c_name.length+1;
-		var c_end=document.cookie.indexOf(";",c_start);
-		if (c_end==-1) c_end=document.cookie.length;
-		return unescape(document.cookie.substring(c_start,c_end));
-		}
-	  }
-	return "";
-}
-
-//set the language in a cookie, then reload
+//set the language in a localstorage, then reload
 function setlanguage(what){
-	document.cookie="l10n="+what;
+	localStorage.l10n=what
 	var linkto = document.getElementById('permalink').href;
 	window.location.href = linkto;
 }
