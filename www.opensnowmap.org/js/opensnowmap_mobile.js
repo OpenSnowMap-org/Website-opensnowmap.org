@@ -301,7 +301,25 @@ function errorLocation(error) {
 
 //======================================================================
 // INIT
+document.onkeydown = checkKey;
 
+// register 'enter' and 'esc' keyboard hit
+function checkKey(e) {
+	var keynum;
+	if (window.event) keynum = window.event.keyCode; //IE
+	else if (e) {
+		keynum = e.which;
+		if (keynum == undefined)
+		{
+		e.preventDefault();
+		keynum = e.keyCode
+		}
+	}
+	if(keynum == 13) {
+		// fires nominatim search
+		SearchByName(document.search.nom_search.value);
+		}
+}
 function get_stats(){
 	var oRequest = new XMLHttpRequest();
 	oRequest.open("GET",server+'data/stats.json',false);
