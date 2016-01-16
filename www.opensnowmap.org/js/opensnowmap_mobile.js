@@ -303,6 +303,7 @@ function errorLocation(error) {
 //======================================================================
 // INIT
 document.onkeydown = checkKey;
+document.onkeypress = stopRKey; 
 
 // register 'enter' and 'esc' keyboard hit
 function checkKey(e) {
@@ -313,13 +314,20 @@ function checkKey(e) {
 		if (keynum == undefined)
 		{
 		e.preventDefault();
-		keynum = e.keyCode
+		keynum = e.keyCode;
 		}
 	}
 	if(keynum == 13) {
 		// fires nominatim search
 		SearchByName(document.search.nom_search.value);
 		}
+}
+
+function stopRKey(evt) {
+	// disable the enter key action in a form.
+  var evt = (evt) ? evt : ((event) ? event : null);
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
 }
 function get_stats(){
 	var oRequest = new XMLHttpRequest();
