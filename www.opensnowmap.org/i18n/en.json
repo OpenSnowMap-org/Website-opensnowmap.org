@@ -14,6 +14,7 @@
 "novice":'novice',
 "easy": 'easy',
 "intermediate": 'intermediate',
+"advanced": 'advanced',
 "expert": 'expert',
 "lit": 'Lit',
 "member_of": 'Follow the piste',
@@ -68,5 +69,6 @@
 "SETTINGS": 'SETTINGS',
 "FORUM":'FORUM',
 "BLOG" : 'BLOG',
-"DATA": 'DATA'
+"DATA": 'DATA',
+"TOPO": 'TOPO'
 }

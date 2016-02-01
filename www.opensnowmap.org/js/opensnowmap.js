@@ -1967,8 +1967,8 @@ function makeHTMLPistesList(length) {
 			if (piste.difficulty) {
 				var marker = '&#9679;'
 				if (lat>0 && lon <-40) {
-					if (piste.difficulty =='expert') {marker = '&diams;';}
-					if (piste.difficulty =='advanced') {marker = '&diams;&diams;';}
+					if (piste.difficulty =='advanced') {marker = '&diams;';}
+					if (piste.difficulty =='expert') {marker = '&diams;&diams;';}
 					if (piste.difficulty =='freeride') {marker = '!!';}
 					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolorUS[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
 				}
