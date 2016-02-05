@@ -2193,6 +2193,7 @@ else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
 if (locale != 'en' && locale !='fr') { iframelocale = 'en';}
 else { iframelocale = locale;}
 
+/*
 // Load the localized strings
 var oRequest = new XMLHttpRequest();
 oRequest.open("GET",'i18n/'+locale+'.json',false);
@@ -2205,6 +2206,9 @@ oRequest.open("GET",'i18n/en.json',false);
 //~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 oRequest.send();
 var i18nDefault = eval('('+oRequest.responseText+')');
+* */
+var i18n = eval(locale);
+var i18nDefault = en;
 
 // Translating function
 function _(s) {
