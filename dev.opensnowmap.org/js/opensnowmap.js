@@ -50,7 +50,7 @@ var zoom=2;//2
 var modifyControl;
 var highlightCtrl, selectCtrl;
 var SIDEBARSIZE='full'; //persistent sidebar
-var lengthes;
+var data={};
 var today=new Date();
 var update;
 
@@ -228,44 +228,14 @@ function show_catcher(){
 	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
 	
 	document.getElementById('sideBarTitle').innerHTML=title;
+	catcherDiv = document.getElementById('catcher');
+	catcherDiv.className= catcherDiv.className.replace('hidden','shown');
 	
-	var html=''
-	html+='<div style="float: left;margin: 5px;font-size:0.8em;" itemscope itemtype="http://data-vocabulary.org/Event">';
-	html+='<a href="http://wiki.openstreetmap.org" target="blank"><img src="pics/osm-pistes-nordiques_logo-80px.png"></img></a>';
-	html+='</div>'
-	html+='<p>';
-	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
-	html+='<span itemprop="summary">'+full_length+' '+_('piste_length')+'</span>';
-	html+=_('you');
-	html+='</p>';
-	html+='<p>';
-	html+='<a class="amenu" href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;">';
-	html+=_('EDIT');
-	html+='</a>';
-	html+='</p>';
-	html+='</div>';
-	html+='<table border="0">';
-	html+='<tr>';
-	html+='<td><img src="'+icon['nordic']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.nordic)+'&nbsp;km<td>';
-	html+='<td><img src="'+icon['downhill']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.downhill)+'&nbsp;km<td>';
-	html+='</tr>';
-	html+='<tr>';
-	html+='<td><img src="'+icon['sled']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.sled)+'&nbsp;km<td>';
-	html+='<td><img src="'+icon['skitour']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.skitour)+'&nbsp;km<td>';
-	html+='</tr>';
-	html+='<tr>';
-	html+='<td><img src="'+icon['hike']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.snowshoeing)+'&nbsp;km<td>';
-	html+='<td><img src="'+icon['drag_lift']+'">&nbsp;<td>';
-	html+='<td>'+(lengthes.aerialway)+'&nbsp;km<td>';
-	html+='</tr>';
-	html+='</table>';
+	var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
+	document.getElementById('full_length').innerHTML = full_length;
 	
-	document.getElementById('sideBarContent').innerHTML=html;
+	translateDiv('catcher');
+	fillData('catcher');
 	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 }
 function show_helper(){
@@ -290,18 +260,19 @@ function show_about() {
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	url = server+'iframes/about.'+iframelocale+'.html';
-	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
+	var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
 	
-	var content = get_page(url).replace('**update**',update)
-	.replace('**nordic**',lengthes.nordic)
-	.replace('**downhill**',lengthes.downhill)
-	.replace('**aerialway**',lengthes.aerialway)
-	.replace('**skitour**',lengthes.skitour)
-	.replace('**sled**',lengthes.sled)
-	.replace('**snowshoeing**',lengthes.snowshoeing);
+	var content = get_page(url).replace('**update**',data.date)
+	.replace('**nordic**',data.nordic)
+	.replace('**downhill**',data.downhill)
+	.replace('**aerialway**',data.aerialway)
+	.replace('**skitour**',data.skitour)
+	.replace('**sled**',data.sled)
+	.replace('**snowshoeing**',data.snowshoeing);
 	document.getElementById('sideBarContent').innerHTML = content;
 	document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
+	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
 }
 function show_edit() {
 	
@@ -659,27 +630,22 @@ function echap() {
 		abortXHR('PisteAPI'); // abort another request if any
 }
 function get_stats(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	lengthes = JSON.parse(oRequest.responseText);
-}
-function get_update(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var stats = JSON.parse(oRequest.responseText);
-	update=stats.date;
-}
-function get_modisupdate(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/modis-update.txt',false);
-	//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var period=oRequest.responseText.split(' ')[5];
-	return period;
+	var XMLHttp = new XMLHttpRequest();
+	XMLHttp.open("GET",server+'data/stats.json');
+	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+	
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			var lengthes = JSON.parse(XMLHttp.responseText);
+			for (k=0; k< Object.keys(lengthes).length; k++) {
+				data[Object.keys(lengthes)[k]]=lengthes[Object.keys(lengthes)[k]];
+			}
+			show_catcher();
+		}
+	}
+	XMLHttp.send();
+	return true;
+	
 }
 function stopRKey(evt) {
 	// disable the enter key action in a form.
@@ -690,7 +656,6 @@ function stopRKey(evt) {
 function page_init(){
 		document.onkeypress = stopRKey; 
 		get_stats();
-		get_update();
 		updateZoom();
 		initFlags();
 		resize_sideBar();
@@ -2221,6 +2186,20 @@ function _(s) {
 	return i18nDefault[s];
 }
 
+function translateDiv(divID) {
+	var div = document.getElementById(divID);
+	var elements = div.getElementsByClassName('i18n');
+	for (i =0; i< elements.length; i++) {
+		elements[i].innerHTML=_(elements[i].getAttribute('i18nText'));
+	}
+}
+function fillData(divID) {
+	var div = document.getElementById(divID);
+	var elements = div.getElementsByClassName('data');
+	for (i =0; i< elements.length; i++) {
+		elements[i].innerHTML=data[elements[i].getAttribute('dataText')];
+	}
+}
 // this get the browser install language, not the one set in preference
 function get_locale() {
 	var loc="en";
