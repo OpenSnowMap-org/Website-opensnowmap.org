@@ -259,20 +259,32 @@ function show_about() {
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
+
+	var XMLHttp = new XMLHttpRequest();
 	url = server+'iframes/about.'+iframelocale+'.html';
-	var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
+	XMLHttp.open("GET",url);
+	XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
 	
-	var content = get_page(url).replace('**update**',data.date)
-	.replace('**nordic**',data.nordic)
-	.replace('**downhill**',data.downhill)
-	.replace('**aerialway**',data.aerialway)
-	.replace('**skitour**',data.skitour)
-	.replace('**sled**',data.sled)
-	.replace('**snowshoeing**',data.snowshoeing);
-	document.getElementById('sideBarContent').innerHTML = content;
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
-	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+	XMLHttp.onreadystatechange= function () {
+		if (XMLHttp.readyState == 4) {
+			var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
+			
+			var content = XMLHttp.responseText;
+			content = content.replace('**update**',data.date)
+			.replace('**nordic**',data.nordic)
+			.replace('**downhill**',data.downhill)
+			.replace('**aerialway**',data.aerialway)
+			.replace('**skitour**',data.skitour)
+			.replace('**sled**',data.sled)
+			.replace('**snowshoeing**',data.snowshoeing);
+			document.getElementById('sideBarContent').innerHTML = content;
+			document.getElementById('sideBarContent').style.display='inline';
+			document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
+			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+		}
+	}
+	XMLHttp.send();
+	return true;
 }
 function show_edit() {
 	
