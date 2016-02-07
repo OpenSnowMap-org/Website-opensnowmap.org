@@ -211,7 +211,23 @@ label {
 	    display: none;
 	    overflow: auto;
 	}
-		#sideBarContent{
+		/*#sideBarContent{ 
+			font-size: 0.8em;
+			color: #444;
+			background-color:#FDFDFD;
+			opacity:1;
+			height:160px;
+			width: 360px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			margin-left: 5px;
+			margin-right:5px;
+			padding-left:10px;
+			padding-right:10px;
+			overflow: auto;
+			position: absolute
+		}*/
+		.sideBarContent{
 			font-size: 0.8em;
 			color: #444;
 			background-color:#FDFDFD;

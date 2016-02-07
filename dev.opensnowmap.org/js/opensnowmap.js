@@ -54,9 +54,9 @@ var data={};
 var today=new Date();
 var update;
 
-var searchResultsArray=[];
+var sideBarHistoryArray=[]; // store sidebar content for History
+var currentResult=-1; // index in history
 var searchComplete=0;
-var currentResult=-1;
 
 var GetProfileXHR=[]; // to abort
 var PisteAPIXHR=[]; // to abort
@@ -204,10 +204,17 @@ function close_sideBar() {
 	SIDEBARSIZE=0;
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
+	/*document.getElementById('sideBarContent').style.display='inline';
 	document.getElementById('sideBarContent').style.height=SIDEBARSIZE+'px';
 	
-	document.getElementById('sideBarContent').style.display='none';
+	document.getElementById('sideBarContent').style.display='none';*/
+	
+	document.getElementById('sideBarContent').className = document.getElementById('sideBarContent').className.replace('shown','hidden');
+	document.getElementById('sideBarHistory').className = document.getElementById('sideBarHistory').className.replace('shown','hidden');
+	document.getElementById('catcher').className = document.getElementById('catcher').className.replace('shown','hidden');
+	document.getElementById('helper').className = document.getElementById('helper').className.replace('shown','hidden');
+	document.getElementById('about').className = document.getElementById('about').className.replace('shown','hidden');
+	
 	document.getElementById('sideBar').style.display='none';
 	EDIT_SHOWED = false;
 	CATCHER=false;
@@ -220,6 +227,7 @@ function close_donate(){
 	document.getElementById('donate-centering').style.display='none'
 }
 function show_catcher(){
+	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	CATCHER=true;
 	SIDEBARSIZE=210;
@@ -228,7 +236,7 @@ function show_catcher(){
 	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
 	
 	document.getElementById('sideBarTitle').innerHTML=title;
-	catcherDiv = document.getElementById('catcher');
+	var catcherDiv = document.getElementById('catcher');
 	catcherDiv.className= catcherDiv.className.replace('hidden','shown');
 	
 	var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
@@ -236,17 +244,18 @@ function show_catcher(){
 	
 	translateDiv('catcher');
 	fillData('catcher');
-	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+	cacheInHistory(catcherDiv.innerHTML);
 }
 function show_helper(){
+	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='';
 	
-	var html='<img style="margin-left: 3px;"src="pics/interactive-help.png"/><br/>'
-	document.getElementById('sideBarContent').innerHTML=html;
-	resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+	var helperDiv = document.getElementById('helper');
+	helperDiv.className= helperDiv.className.replace('hidden','shown');
+	cacheInHistory(helperDiv.innerHTML);
 	
 	//~ if (map.getZoom()<11){
 		//~ document.getElementById('zoomin-helper').style.display = 'inline';
@@ -255,10 +264,15 @@ function show_helper(){
 	//~ }
 }
 function show_about() {
+	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBar').style.display='inline';
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
+	
+	var aboutDiv = document.getElementById('about');
+	aboutDiv.className= aboutDiv.className.replace('hidden','shown');
 
 	var XMLHttp = new XMLHttpRequest();
 	url = server+'iframes/about.'+iframelocale+'.html';
@@ -277,10 +291,9 @@ function show_about() {
 			.replace('**skitour**',data.skitour)
 			.replace('**sled**',data.sled)
 			.replace('**snowshoeing**',data.snowshoeing);
-			document.getElementById('sideBarContent').innerHTML = content;
-			document.getElementById('sideBarContent').style.display='inline';
-			document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('ABOUT');
-			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+			aboutDiv.innerHTML = content;
+			//aboutDiv.style.display='inline';
+			cacheInHistory(aboutDiv.innerHTML);
 		}
 	}
 	XMLHttp.send();
@@ -464,13 +477,24 @@ function resize_sideBar() {
 		if (SIDEBARSIZE=='full'){
 			document.getElementById('sideBar').style.height= (getWinHeight() - document.getElementById("MainBlock").clientHeight -35)+"px";
 			document.getElementById('sideBar').style.display='inline';
-			document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
-			document.getElementById('sideBarContent').style.display='inline';
+			var sidebars = document.getElementsByClassName('sideBarContent');
+			for (i =0; i< sidebars.length; i++) {
+				sidebars[i].style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
+				
+			}
+			/*document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
+			document.getElementById('sideBarContent').style.display='inline';*/
 		} else {
 			document.getElementById('sideBar').style.display='inline';
 			document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-			document.getElementById('sideBarContent').style.display='inline';
-			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-35+'px';
+			
+			var sidebars = document.getElementsByClassName('sideBarContent');
+			for (i =0; i< sidebars.length; i++) {
+				sidebars[i].style.height= SIDEBARSIZE-35+'px';
+				
+			}
+			/*document.getElementById('sideBarContent').style.display='inline';
+			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-35+'px';*/
 		}
 	}
 	return true
@@ -545,16 +569,16 @@ function show_languages() {
 	document.getElementById('sideBarContent').innerHTML=html;
 }
 
-function resultArrayAdd(html) {
-	searchResultsArray.push(html);
+function cacheInHistory(html) {
+	sideBarHistoryArray.push(html);
 	jsonPisteLists.push(jsonPisteList);
 	currentResult+=1;
-	if (searchResultsArray.length > 5 ) {
-		searchResultsArray.splice(0,1);
+	if (sideBarHistoryArray.length > 5 ) {
+		sideBarHistoryArray.splice(0,1);
 		jsonPisteLists.splice(0,1);
 		currentResult -= 1;
 	}
-	if (currentResult == searchResultsArray.length -1 ) {
+	if (currentResult == sideBarHistoryArray.length -1 ) {
 		document.getElementById("next").style.color='#AAA';
 	}else {
 		document.getElementById("next").style.color='#444444';
@@ -567,12 +591,21 @@ function resultArrayAdd(html) {
 	return true;
 }
 function prevResult(){
-	if (searchResultsArray.length >= currentResult-1 && currentResult > 0) {
-		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult-1];
+	if (sideBarHistoryArray.length >= currentResult-1 && currentResult > 0) {
+		close_sideBar();
+		document.getElementById('sideBar').style.display='inline';
+		SIDEBARSIZE='full';
+		resize_sideBar();
+		document.getElementById('sideBar').style.display='inline';
+		document.getElementById('sideBarTitle').innerHTML='';
+		
+		var historyDiv = document.getElementById('sideBarHistory');
+		historyDiv.innerHTML=sideBarHistoryArray[currentResult-1];
+		historyDiv.className= historyDiv.className.replace('hidden','shown');
 		jsonPisteList = jsonPisteLists[currentResult-1];
 		currentResult -= 1;
 	}
-	if (currentResult == searchResultsArray.length -1 ) {
+	if (currentResult == sideBarHistoryArray.length -1 ) {
 		document.getElementById("next").style.color='#AAA';
 	}else {
 		document.getElementById("next").style.color='#444444';
@@ -585,12 +618,21 @@ function prevResult(){
 	return true;
 }
 function nextResult(){
-	if (currentResult < searchResultsArray.length -1 ) {
-		document.getElementById('sideBarContent').innerHTML=searchResultsArray[currentResult+1];
+	if (currentResult < sideBarHistoryArray.length -1 ) {
+		close_sideBar();
+		document.getElementById('sideBar').style.display='inline';
+		SIDEBARSIZE='full';
+		resize_sideBar();
+		document.getElementById('sideBar').style.display='inline';
+		document.getElementById('sideBarTitle').innerHTML='';
+		
+		var historyDiv = document.getElementById('sideBarHistory');
+		historyDiv.innerHTML=sideBarHistoryArray[currentResult+1];
+		historyDiv.className= historyDiv.className.replace('hidden','shown');
 		jsonPisteList = jsonPisteLists[currentResult+1];
 		currentResult += 1;
 	}
-	if (currentResult == searchResultsArray.length -1 ) {
+	if (currentResult == sideBarHistoryArray.length -1 ) {
 		document.getElementById("next").style.color='#AAA';
 	}else {
 		document.getElementById("next").style.color='#444444';
@@ -704,7 +746,7 @@ function getByName(name) {
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -737,7 +779,7 @@ function nominatimSearch(name) {
 			document.getElementById('nominatim_results').innerHTML=htmlResponse;
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -804,7 +846,7 @@ function getTopoByViewport() {
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
-			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+			cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 		}
 	}
 	XMLHttp.send();
@@ -829,7 +871,7 @@ function getRouteTopoByWaysId(ids,routeLength) {
 			document.getElementById('topo_list').innerHTML=makeHTMLPistesList(routeLength);
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -853,7 +895,7 @@ function getTopoById(ids,routeLength) {
 			document.getElementById('topo_list').innerHTML=makeHTMLPistesList(routeLength);
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -886,7 +928,7 @@ function getMembersById(id) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
-			resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+			cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 			SIDEBARSIZE='full';
 			resize_sideBar();
 		}
@@ -940,7 +982,7 @@ function getProfile(wktroute) {
 			document.getElementById('topo_profile').innerHTML=html;
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -1725,7 +1767,7 @@ function addPoint(lonlat){
 	if (pointsLayer.features.length >1){route();}
 	else {
 		document.getElementById('topo_list').innerHTML = makeHTMLPistesList();
-		resultArrayAdd(document.getElementById('sideBarContent').innerHTML);
+		cacheInHistory(document.getElementById('sideBarContent').innerHTML);
 	}
 	return true;
 }
@@ -2204,6 +2246,7 @@ function translateDiv(divID) {
 	for (i =0; i< elements.length; i++) {
 		elements[i].innerHTML=_(elements[i].getAttribute('i18nText'));
 	}
+	return true
 }
 function fillData(divID) {
 	var div = document.getElementById(divID);
@@ -2211,6 +2254,7 @@ function fillData(divID) {
 	for (i =0; i< elements.length; i++) {
 		elements[i].innerHTML=data[elements[i].getAttribute('dataText')];
 	}
+	return true
 }
 // this get the browser install language, not the one set in preference
 function get_locale() {
