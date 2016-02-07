@@ -60,8 +60,8 @@
 				<!-- The content-->
 				<div id="sideBarContent" class="hidden sideBarContent"></div>
 				<div id="sideBarHistory" class="hidden sideBarContent"></div>
+				<div id="languages" class="hidden sideBarContent"></div>
 				<div id="catcher" class="hidden sideBarContent">
-				
 					<div style="float: left;margin: 5px;" itemscope itemtype="http://data-vocabulary.org/Event">
 						<a href="http://wiki.openstreetmap.org" target="blank">
 							<img src="pics/osm-pistes-nordiques_logo-80px.png"></img>
@@ -105,13 +105,115 @@
 						</tr>
 					</table>
 				</div>
-			
 				<div id="helper" class="hidden sideBarContent">
 					<img style="margin-left: 3px;" src="pics/interactive-help.png"/><br/>
 				</div>
-				<div id="about" class="hidden sideBarContent"></div>
+				<div id="legend" class="hidden sideBarContent">
+					<p><img style="position: relative; left: 20px;" src="pics/mapkey.png"></p>
+					<p>
+					<span class="i18n" i18nText="key-color">xxxx</span>
+					<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.</p>
+					<p>
+					<span class="i18n" i18nText="learn-difficulties">xxxx</span>
+					<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#Difficulty"> (2)</a>.
+					</p>
+					<hr class="hrmenu">
+					<p><a href="iframes/how-to-en.html" target="blank">
+					<span class="i18n" i18nText="how_to">xxxx</span>
+					</a> (english)</p>
+					<hr class="hrmenu">
+				</div>
+				<div id="settings" class="hidden sideBarContent">
 				
+					<b><span class="i18n" i18nText="base_map">xxxx</span></b>
+					<table style="width:300px;text-align:left;">
+						<tr><td>
+							
+						<div class="Button float-left" style="width:86px;height:66px;" 
+						onClick="setBaseLayer('osm');" id="setOSMLayer" value="mapnik">
+						<img style="margin: 2px 2px 2px 2px;" src="pics/osm-bg.png"></img>
+						</div>OpenStreetMap&nbsp;
+						
+						</td><td>
+						
+						<div class="Button float-left" style="width:86px;height:66px;"
+						onClick="setBaseLayer('mapquest');" id="setMQLayer" value="Mapquest">
+						<img style="margin: 2px 2px 2px 2px;" src="pics/mq-bg.png"></img>
+						</div>OpenMapquest&nbsp;
+						
+						</td></tr>
+					</table>
+					
+					 <hr class="hrmenu">
+					 
+					 <b><span class="i18n" i18nText="last_edits">xxxx</span></b>
+					<table style="width:300px;text-align:left;">
+						<tr><td>
+						<div class="float-left" 
+						style="width:86px;height:66px;background-color:#FDFDFD;	border-style:solid;	border-width:1px;	border-color: #ccc;	padding: 1px;	margin: 2px;	-moz-border-radius:5px;	border-radius:5px;">
+						<img style="margin: 2px 2px 2px 2px;" src="pics/additions.png"></img>
+						</div>
+						</td><td>
+						 <input type="checkbox" id="checkD" class="radio"
+						 name="live" value="daily" 
+						 onClick="show_live_edits(value,checked)"   />
+						 <label style="margin-top: 10px;"><span class="i18n" i18nText="yesterday">xxxx</span></label><br/>
+						
+						 <input type="checkbox" id="checkW" class="radio"
+						 name="live" value="weekly" 
+						 onClick="show_live_edits(value,checked)"   />
+						 <label><span class="i18n" i18nText="weekly">xxxx</span></label><br/>
+						</td></tr>
+					</table>
+						
+					 <hr class="hrmenu">
+					 
+					 <b><span class="i18n" i18nText="Interactive map">xxxx</span></b>
+					 <div >
+						<div class="Button iconButton float-left" onclick="infoMode()"><img src="pics/select-22.png"></div>
+						<span class="i18n" i18nText="vector_help">xxxx</span>
+					</div>
+				
+				</div>
+				<div id="edit" class="hidden sideBarContent">
+					<p><b><span class="i18n" i18nText="edit_the_map_using">xxxx</span></b></p>
+					
+					<p><span class="i18n" i18nText="edit_the_map_explain">xxxx</span></p>
+					<div style="font-size:1.1em; font-weight:800;" id="edit_zoom_in"></div>
+					<br/>
+						 
+					<table style="width:300px;text-align:center;">
+						<tr><td>
+						<b>ID</b><br/>
+						<a id="permalink.id" target="blank" href="">
+							<img id="id_pic" src="pics/id-48.png"></a>
+							
+						</td><td>
+							 
+						<b>JOSM (remote)</b><br/>
+						<a onclick="josmRemote();return false;" href="">
+							<img id="josm_pic" src="pics/josm-48.png"></a>
+						</td></tr>
+					</table>
+					
+					<hr class="hrmenu">
+					
+					<p><a id="permalink.offseter" target="blank" href="">
+						<img id="offseter_pic" class="float-left" src="pics/offseter-48.png"></a>
+					<span class="i18n" i18nText="offseter_explain">xxxx</span></p>
+					<br class="clear" />
+					<hr class="hrmenu">
+					<p><a href="iframes/how-to-'+iframelocale+'.html" target="blank">
+						<span class="i18n" i18nText="how_to">xxxx</span></a></p>
+					<hr class="hrmenu">
+
+				</div>
+				<div id="about" class="hidden sideBarContent"></div>
 			</div>
+			
+			
+			
+			
 			<br class="clear" />
 			<div id="MainBlock">
 				<div id="MenuBlock">

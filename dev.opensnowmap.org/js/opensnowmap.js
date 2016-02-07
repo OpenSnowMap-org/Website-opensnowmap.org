@@ -26,7 +26,7 @@ var server="http://"+window.location.host+"/";
 if (! window.location.host) {
 	server=window.location.pathname.replace("index.html",'');
 }
-
+if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";} 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
 var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
@@ -204,16 +204,16 @@ function close_sideBar() {
 	SIDEBARSIZE=0;
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	/*document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE+'px';
-	
-	document.getElementById('sideBarContent').style.display='none';*/
 	
 	document.getElementById('sideBarContent').className = document.getElementById('sideBarContent').className.replace('shown','hidden');
 	document.getElementById('sideBarHistory').className = document.getElementById('sideBarHistory').className.replace('shown','hidden');
 	document.getElementById('catcher').className = document.getElementById('catcher').className.replace('shown','hidden');
 	document.getElementById('helper').className = document.getElementById('helper').className.replace('shown','hidden');
 	document.getElementById('about').className = document.getElementById('about').className.replace('shown','hidden');
+	document.getElementById('legend').className = document.getElementById('legend').className.replace('shown','hidden');
+	document.getElementById('languages').className = document.getElementById('languages').className.replace('shown','hidden');
+	document.getElementById('settings').className = document.getElementById('settings').className.replace('shown','hidden');
+	document.getElementById('edit').className = document.getElementById('edit').className.replace('shown','hidden');
 	
 	document.getElementById('sideBar').style.display='none';
 	EDIT_SHOWED = false;
@@ -306,35 +306,11 @@ function show_edit() {
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('EDIT').replace('<br/>',' ');
 	
+	var editDiv = document.getElementById('edit');
+	editDiv.className= editDiv.className.replace('hidden','shown');
+	translateDiv('edit');
+	cacheInHistory(editDiv.innerHTML);
 	
-	
-	html = ''
-	 +'<p>&nbsp;'+_('edit_the_map_using')+'</p>'
-
-	 +'<p>&nbsp;'+_('edit_the_map_explain')+'</p>'
-	 +'<div style="font-size:1.1em; font-weight:800;" id="edit_zoom_in"></div>'
-	 +'<br/>'
-	 
-	 +'<table style="width:300px;text-align:center;"><tr><td>'
-	 +'<b>ID</b><br/>'
-	 +'<a id="permalink.id" target="blank" href=""><img id="id_pic" src="pics/id-48.png"></a>'
-	 +'</td><td>'
-	 
-	 +'<b>JOSM (remote)</b><br/>'
-	 +'<a onclick="josmRemote();return false;" href=""><img id="josm_pic" src="pics/josm-48.png"></a>'
-	 +'</td></tr></table>'
-	 +'<hr class="hrmenu">'
-	
-	 +'<a id="permalink.offseter" target="blank" href=""><img id="offseter_pic" class="float-left" src="pics/offseter-48.png"></a>'
-	 
-	  +'&nbsp;'+_('offseter_explain')+'</p>'
-	 +'<br class="clear" />'
-	 +'<hr class="hrmenu">'
-	 +'<p><a href="iframes/how-to-'+iframelocale+'.html" target="blank">'+_('how_to')+'</a></p>'
-	 +'<hr class="hrmenu">';
-	EDIT_SHOWED = true;
-	
-	document.getElementById('sideBarContent').innerHTML=html;
 	permalink_id = new OpenLayers.Control.Permalink("permalink.id",
 	"http://www.openstreetmap.org/edit",{'createParams': permalink1Args});
 	map.addControl(permalink_id);
@@ -354,6 +330,7 @@ function show_edit() {
 	}else {
 		document.getElementById('edit_zoom_in').innerHTML='';
 	}
+		EDIT_SHOWED = true;
 }
 function show_profile() {
 	document.getElementById('sideBar').style.display='inline';
@@ -367,67 +344,25 @@ function show_profile() {
 }
 
 function show_legend() {
+	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('MAP_KEY').replace('<br/>',' ');
-	html =  '<p><img style="position: relative; left: 20px;" src="pics/mapkey.png"></p>'
-	+'<p>'+_('key-color')
-	+ '<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.</p>'
-	+'<p>'+_('learn-difficulties')
-	+'<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#Difficulty"> (2)</a>.</p>'		 +'<hr class="hrmenu">'
-		 +'<p><a href="iframes/how-to-en.html" target="blank">'+_('how_to')+'</a></p>'
-		 +'<hr class="hrmenu">';
-	document.getElementById('sideBarContent').innerHTML=html;
-	resize_sideBar();
+	document.getElementById('sideBarTitle').innerHTML=='&nbsp;'+_('MAP_KEY').replace('<br/>',' ');
+	
+	var legendDiv = document.getElementById('legend');
+	legendDiv.className= legendDiv.className.replace('hidden','shown');
+	translateDiv('legend');
+	cacheInHistory(legendDiv.innerHTML);
 }
 function show_settings() {
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE='full';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('SETTINGS').replace('<br/>',' ');
-	html = '<b>'+_('base_map')+'</b>';
-	html +='<table style="width:300px;text-align:left;"><tr><td>'
-	html +='<div class="Button float-left" style="width:86px;height:66px;" ';
-	html +='onClick="setBaseLayer(\'osm\');" id="setOSMLayer" value="mapnik">';
-	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/osm-bg.png"></img>';
-	html +='</div>OpenStreetMap&nbsp;';
-	html +='</td><td>';
-	html +='<div class="Button float-left" style="width:86px;height:66px;"';
-	html +='onClick="setBaseLayer(\'mapquest\');" id="setMQLayer" value="Mapquest">';
-	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/mq-bg.png"></img>';
-	html +='</div>OpenMapquest&nbsp;';
-	html +='</td></tr></table>';
-	html +=' <hr class="hrmenu">';
-	html +=' <b>'+_('last_edits')+'</b>';
-	html +='<table style="width:300px;text-align:left;"><tr><td>'
-	html +='<div class="float-left" style="width:86px;height:66px;background-color:#FDFDFD;	border-style:solid;	border-width:1px;	border-color: #ccc;	padding: 1px;	margin: 2px;	-moz-border-radius:5px;	border-radius:5px;">';
-	html +='<img style="margin: 2px 2px 2px 2px;" src="pics/additions.png"></img>';
-	html +='</div>';
-	html +='</td><td>';
-	html +=' <input type="checkbox" id="checkD" class="radio" "';
-	html +=' name="live" value="daily" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label style="margin-top: 10px;">'+_('yesterday')+'</label><br/>';
 	
-	html +=' <input type="checkbox" id="checkW" class="radio" "';
-	html +=' name="live" value="weekly" onClick="show_live_edits(value,checked)"   />';
-	html +=' <label>'+_('weekly')+'</label><br/>';
-	
-	//~ html +=' <input type="checkbox" id="checkM" class="radio" ';
-	//~ html +=' name="live" value="monthly" onClick="show_live_edits(value,checked)"   />';
-	//~ html +=' <label>'+_('monthly')+'</label><br/>';
-	
-	html +='</td></tr></table>';
-	
-	html +=' <hr class="hrmenu">';
-	html +=' <b>'+_('Interactive map')+'</b>';
-	html +=' <div >';
-	html +='	<div class="Button iconButton float-left" onclick="infoMode()"><img src="pics/select-22.png"></div>';
-	html += 	_('vector_help');
-	html +='</div>';
-	document.getElementById('sideBarContent').innerHTML=html;
+	var settingDiv = document.getElementById('settings');
+	settingDiv.className= settingDiv.className.replace('hidden','shown');
 	
 	// highlight current base layer
 	var mq=map.getLayersByName("MapQuest")[0];
@@ -450,6 +385,7 @@ function show_settings() {
 	if (w) {
 		document.getElementById('checkW').checked=true;
 	}
+	translateDiv('settings');
 	//~ if (m) {
 		//~ document.getElementById('checkM').checked=true;
 	//~ }
@@ -482,8 +418,6 @@ function resize_sideBar() {
 				sidebars[i].style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
 				
 			}
-			/*document.getElementById('sideBarContent').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
-			document.getElementById('sideBarContent').style.display='inline';*/
 		} else {
 			document.getElementById('sideBar').style.display='inline';
 			document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
@@ -493,8 +427,6 @@ function resize_sideBar() {
 				sidebars[i].style.height= SIDEBARSIZE-35+'px';
 				
 			}
-			/*document.getElementById('sideBarContent').style.display='inline';
-			document.getElementById('sideBarContent').style.height=SIDEBARSIZE-35+'px';*/
 		}
 	}
 	return true
@@ -557,16 +489,21 @@ function show_live_edits(when,display) {
 	}
 }
 function show_languages() {
+	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE=150;
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
+	
+	var languageDiv = document.getElementById('languages');
+	languageDiv.className= languageDiv.className.replace('hidden','shown');
 	html = ''
 	for (l=0; l<locs.length; l++ ){
 		html += '<a id="" onclick="setlanguage(\''+locs[l]+'\');">'
 			 +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
 	}
-	document.getElementById('sideBarContent').innerHTML=html;
+	languageDiv.innerHTML=html;
+	cacheInHistory(languageDiv.innerHTML);
 }
 
 function cacheInHistory(html) {
@@ -672,7 +609,6 @@ function checkKey(e) {
 function echap() {
 	    close_donate()
 		close_sideBar();
-		close_printSettings();
 		// close extendedmenu
 		//~ var em = document.getElementById('extendedmenu');
 		//~ if (em.style.display == "inline") {
@@ -819,7 +755,7 @@ function SearchByName(name) {
 	return true;
 }
 function getTopoByViewport() {
-	
+	close_sideBar();
 	abortXHR('PisteAPI'); // abort another request if any
 	abortXHR('GetProfile'); // abort another request if any
 	SIDEBARSIZE=100;
@@ -827,6 +763,7 @@ function getTopoByViewport() {
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
 	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p></div>';
+	document.getElementById('sideBarContent').className = document.getElementById('sideBarContent').className.replace('hidden','shown');
 	
 	var bb= map.getExtent().transform(
 		new OpenLayers.Projection("EPSG:900913"),
