@@ -1,3 +1,9 @@
+/*
+ * to show hidden content for styling see at the end or use
+ * 
+ * */
+
+
 body{
     margin:0px;
     overflow:hidden;
@@ -31,16 +37,16 @@ a:hover {
         margin: 0px
     }
 a.amenu:link, a.amenu:visited {
-		font-weight: 600;
-		color: #444444;
-		font-size: 1em;
+        font-weight: 600;
+        color: #444444;
+        font-size: 1em;
         text-decoration: none;
         margin: 0px
     }
     
 a.amenu:hover {
         color: #FF7800;
-		font-size: 1em;
+        font-size: 1em;
         text-decoration: none;
         font-weight: 600;
         margin: 0px
@@ -162,33 +168,33 @@ label {
     position: relative;
     margin-left: auto;
     margin-right: auto;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.5);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    width: 290px;
-	    text-align:center;
-	    }
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.5);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        width: 290px;
+        text-align:center;
+        }
 #donateCloseControl {
-			margin: 3px 3px 3px 3px;
-			float: left;
+            margin: 3px 3px 3px 3px;
+            float: left;
 }
 #donate{
-			font-size: 0.8em;
-			color: #444;
+            font-size: 0.8em;
+            color: #444;
 /*
-			background-color:#FDFDFD;
+            background-color:#FDFDFD;
 */
-			opacity:1;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			margin-left: 5px;
-			margin-right:5px;
-			overflow: auto;
-			position: relative;
-			width: 240px;
-			}
+            opacity:1;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right:5px;
+            overflow: auto;
+            position: relative;
+            width: 240px;
+            }
 
 #right-container{
     position: absolute;
@@ -197,143 +203,136 @@ label {
     width: 50px;
 }
 
-	#sideBar{
-	    position: absolute;
-	    right: 0px;
-	    height: 200px;
-	    width: 400px;
-	    bottom: 60px;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.5);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    display: none;
-	    overflow: auto;
-	}
-		/*#sideBarContent{ 
-			font-size: 0.8em;
-			color: #444;
-			background-color:#FDFDFD;
-			opacity:1;
-			height:160px;
-			width: 360px;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			margin-left: 5px;
-			margin-right:5px;
-			padding-left:10px;
-			padding-right:10px;
-			overflow: auto;
-			position: absolute
-		}*/
-		.sideBarContent{
-			font-size: 0.8em;
-			color: #444;
-			background-color:#FDFDFD;
-			opacity:1;
-			height:160px;
-			width: 360px;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			margin-left: 5px;
-			margin-right:5px;
-			padding-left:10px;
-			padding-right:10px;
-			overflow: auto;
-			position: absolute
-		}
-	.sideBarHeader{
-		top:0px;left:0px;right:0px;height:24px;position:relative;
-		margin-left: 5px;
-		background-color:#EEE; /*fallback*/
-		background-color: rgba(245,245,245,0.2);
-		color: #444444;
-		font-weight: 600;
-		font-size: 0.82em;
-		line-height: 14px
-	}
-	        #sideBarTitle{
-	                float: left;
-	                position:relative;
-	                top:0px
-	        }
-	#MainBlock{
-	    position: absolute;
-	    right: 0px;
+    #sideBar{
+        position: absolute;
+        right: 0px;
+        height: 200px;
+        width: 400px;
+        bottom: 60px;
+        background-color:#EEE;
+        background-color: rgba(245,245,245,0.5);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        display: none;
+        overflow: none;
+    }
+    #sideBarInBox{
+        position: absolute;
+            background-color:#FDFDFD;
 /*
-	    height: 175px;
+            height:100%; // set by resize_sideBar()
 */
-	    width: 400px;
-	    bottom: 0px;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.4);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    overflow: none;
-	}
-		#MenuBlock{
-			opacity:1;
-			height:95px;
-			width: 390px;
-			margin-top: 2px;
-			margin-bottom: 0px;
-			margin-left: 2px;
-			margin-right:5px;
-			overflow: hidden;
-			position: relative
-		}
-		#MenuVerticalRight{
-			position: absolute;
-			left: 35px;
-			top: 0px;
-			width:355px;
-			margin-top: 2px;
-		}
-		#MenuIcons{
-		background-color:#FDFDFD;
-		height: 30px;
-		width:355px;
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    margin-top:2px;
-		}
-		.IconBarVertical{
-			position: absolute;
-			left: 0px;
-			top: 0px;
-			width: 30px;
-		}
-		#TitleBlock{
-		        opacity:1;
-		        height:86px;
-				width: 390px;
-		        margin-top: 0px;
-		        margin-bottom: 5px;
-		        margin-left: 2px;
-		        margin-right:5px;
-		        overflow: hidden;
-		        position: relative
-		}
-		#TitleVerticalRight{
-		width:355px;
-		height:80px;
-	    background-color:#FDFDFD;
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-		position: absolute;
-		left: 35px;
-		top: 0px;
-		margin-top: 5px;
-		}
+            width: 360px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right:5px;
+            padding-left:10px;
+            padding-right:10px;
+            overflow: auto
+    }
+        .sideBarContent{
+            font-size: 0.8em;
+            color: #444;
+            background-color:#FDFDFD;
+            opacity:1;
+            height:160px;
+            width: 355px;
+            overflow: none;
+            position: absolute
+        }
+    .sideBarHeader{
+        top:0px;left:0px;right:0px;height:24px;position:relative;
+        margin-left: 5px;
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.2);
+        color: #444444;
+        font-weight: 600;
+        font-size: 0.82em;
+        line-height: 14px
+    }
+            #sideBarTitle{
+                    float: left;
+                    position:relative;
+                    top:0px
+            }
+    #MainBlock{
+        position: absolute;
+        right: 0px;
+/*
+        height: 175px;
+*/
+        width: 400px;
+        bottom: 0px;
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.4);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        overflow: none;
+    }
+        #MenuBlock{
+            opacity:1;
+            height:95px;
+            width: 390px;
+            margin-top: 2px;
+            margin-bottom: 0px;
+            margin-left: 2px;
+            margin-right:5px;
+            overflow: hidden;
+            position: relative
+        }
+        #MenuVerticalRight{
+            position: absolute;
+            left: 35px;
+            top: 0px;
+            width:355px;
+            margin-top: 2px;
+        }
+        #MenuIcons{
+        background-color:#FDFDFD;
+        height: 30px;
+        width:355px;
+        -moz-border-radius:6px;
+        border-radius:6px;
+        margin-top:2px;
+        }
+        .IconBarVertical{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 30px;
+        }
+        #TitleBlock{
+                opacity:1;
+                height:86px;
+                width: 390px;
+                margin-top: 0px;
+                margin-bottom: 5px;
+                margin-left: 2px;
+                margin-right:5px;
+                overflow: hidden;
+                position: relative
+        }
+        #TitleVerticalRight{
+        width:355px;
+        height:80px;
+        background-color:#FDFDFD;
+        -moz-border-radius:6px;
+        border-radius:6px;
+        position: absolute;
+        left: 35px;
+        top: 0px;
+        margin-top: 5px;
+        }
 
 #searchDiv{
-	display: none;
-	position: absolute;
-	bottom: 30px;
-	right: 410px;
-	width: 92px;
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    right: 410px;
+    width: 92px;
     background-color:#EEE; /*fallback*/
     background-color: rgba(245,245,245,0.4);
     -moz-border-radius:6px;
@@ -342,13 +341,13 @@ label {
 }
 
 #search_input{
-	border: 1px solid #CCCCCC;
-	font-size: 0.8em;
-	width: 80px;
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-top: 2px;
-	margin-bottom: 2px;
+    border: 1px solid #CCCCCC;
+    font-size: 0.8em;
+    width: 80px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 #attributions{
@@ -416,35 +415,35 @@ label {
         border-radius:5px;
         border: 1px solid #888888;
 }
-/*					Piste list						 */
+/*                  Piste list                       */
 .pisteListElement{
-	background-color:#FFF;
-	margin: 0px;
-	padding:0px;
+    background-color:#FFF;
+    margin: 0px;
+    padding:0px;
 }
 .pisteListButton{
     font-size: 1.3em;
-	background-color:#FFFFFF;
-	border: 0px solid grey;
-	padding: 2px;
-	margin: 0px;
-	-moz-border-radius:4px;
-	border-radius:4px;
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
 }
 .pisteListButtonStatic{
     font-size: 1.3em;
-	background-color:#FFFFFF;
-	border: 0px solid grey;
-	padding: 2px;
-	margin: 0px;
-	-moz-border-radius:4px;
-	border-radius:4px;
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
 }
 .pisteListButton:hover{
-	background-color:#DDDDDD;
+    background-color:#DDDDDD;
 }
 .pisteListButton:active{
-	background-color:#CCCCCC;
+    background-color:#CCCCCC;
 }
 .inRouteElement{
   font-size: 1.1em;
@@ -457,13 +456,13 @@ label {
 
 .Button {
     background-color:#FDFDFD;
-	border-style:solid;
-	border-width:1px;
-	border-color: #ccc;
-	padding: 1px;
-	margin: 2px;
-	-moz-border-radius:5px;
-	border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
 .Button:hover{
     background-color:#DBDBDB;
@@ -476,35 +475,55 @@ label {
     color: #AAA;
 }
 .iconButton{
-	width:22px;
-	height:22px
+    width:22px;
+    height:22px
 }
 .textButton{
-	font-weight: 700;
-	color: #444444;
-	font-size: 0.65em;
-	text-decoration: none;
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top:2px;
-	padding-bottom:2px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-	margin-bottom: 1px;
-	
+    font-weight: 700;
+    color: #444444;
+    font-size: 0.65em;
+    text-decoration: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 1px;
+    
 }
 
 .closeBox{
-	position: relative;
-		top:0px;
-		left:0px;
-		width: 22px;
-		height:22px;
+    position: relative;
+        top:0px;
+        left:0px;
+        width: 22px;
+        height:22px;
 /*
-		margin: 0px 0px 5px -3px ;
+        margin: 0px 0px 5px -3px ;
 */
-		padding:0px;
-		float:left;
-		z-index: 1000;
+        padding:0px;
+        float:left;
+        z-index: 1000;
 }
+
+/*
+ * Un comment end of file to show hidden content for styling
+ * 
+ * */
+
+/*
+.hidden {
+display: inline
+}
+
+.sideBarContent{
+position: static
+}
+
+#sideBarInBox{
+height:6000px;
+position: relative
+}
+*/

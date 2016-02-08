@@ -428,8 +428,8 @@ function resize_sideBar() {
 			var sidebars = document.getElementsByClassName('sideBarContent');
 			for (i =0; i< sidebars.length; i++) {
 				sidebars[i].style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
-				
 			}
+			document.getElementById('sideBarInBox').style.height= (document.getElementById("sideBar").clientHeight - 33)+"px";
 		} else {
 			document.getElementById('sideBar').style.display='inline';
 			document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
@@ -437,8 +437,8 @@ function resize_sideBar() {
 			var sidebars = document.getElementsByClassName('sideBarContent');
 			for (i =0; i< sidebars.length; i++) {
 				sidebars[i].style.height= SIDEBARSIZE-35+'px';
-				
 			}
+			document.getElementById('sideBarInBox').style.height= SIDEBARSIZE-35+'px';
 		}
 	}
 	return true
