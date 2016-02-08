@@ -119,7 +119,7 @@ if(!document.getElementsByClassName) {
 function infoMode(){
 	var m=''
 	if (mode == "raster") {
-		show_helper();
+		/*show_helper();*/
 		vectorLayers();
 		m="vector";
 		map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
@@ -209,10 +209,11 @@ function close_sideBar() {
 	document.getElementById('sideBarHistory').className = document.getElementById('sideBarHistory').className.replace('shown','hidden');
 	document.getElementById('sideBarHistory').innerHTML=''; // Must prevent duplicate IDs
 	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
-	document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('shown','hidden');
-	document.getElementById('search_results').innerHTML='';
+	document.getElementById('search_results').className = document.getElementById('search_results').className.replace('shown','hidden');
+	document.getElementById('topo').className = document.getElementById('topo').className.replace('shown','hidden');
+	/*document.getElementById('search_results').innerHTML='';
 	document.getElementById('route_profile').innerHTML='';
-	document.getElementById('route_list').innerHTML='';
+	document.getElementById('route_list').innerHTML='';*/
 	document.getElementById('catcher').className = document.getElementById('catcher').className.replace('shown','hidden');
 	document.getElementById('helper').className = document.getElementById('helper').className.replace('shown','hidden');
 	document.getElementById('about').className = document.getElementById('about').className.replace('shown','hidden');
@@ -792,11 +793,11 @@ function getTopoByViewport() { //DONE in pisteList
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
-			document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('hidden','shown');
+			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
-			cacheInHistory(document.getElementById('pisteList').innerHTML);
+			cacheInHistory(document.getElementById('search_results').innerHTML);
 		}
 	}
 	XMLHttp.send();
@@ -825,11 +826,11 @@ function getMembersById(id) { //DONE in pisteList
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
-			document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('hidden','shown');
+			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
-			cacheInHistory(document.getElementById('pisteList').innerHTML);
+			cacheInHistory(document.getElementById('search_results').innerHTML);
 			resize_sideBar();
 		}
 	}
@@ -840,10 +841,12 @@ function getMembersById(id) { //DONE in pisteList
 function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checked
 	close_sideBar();
 	abortXHR('PisteAPI'); // abort another request if any
-	SIDEBARSIZE=100;
+	SIDEBARSIZE=150;
 	document.getElementById('sideBar').style.display='inline';
 	resize_sideBar();
-	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
+	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
+	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
+	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
 	
 	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -858,14 +861,14 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checke
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			SIDEBARSIZE = 'full';
-			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
+			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
 			//document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
-			document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('hidden','shown');
+			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('pisteList').innerHTML);
+				cacheInHistory(document.getElementById('topo').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -876,10 +879,12 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checke
 function getTopoById(ids,routeLength) {//DONE in pisteList
 	close_sideBar();
 	abortXHR('PisteAPI'); // abort another request if any
-	SIDEBARSIZE=100;
+	SIDEBARSIZE=150;
 	document.getElementById('sideBar').style.display='inline';
 	resize_sideBar();
-	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
+	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
+	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
+	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
 	
 	var q = server+"request?geo=true&topo=true&ids="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -891,14 +896,14 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
 			SIDEBARSIZE = 'full';
-			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
+			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
 			//document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
-			document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('hidden','shown');
+			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('pisteList').innerHTML);
+				cacheInHistory(document.getElementById('topo').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -935,9 +940,12 @@ function getClosestPistes(lonlat){
 }
 
 function getProfile(wktroute) {//DONE in pisteList
-	
+	SIDEBARSIZE=150;
 	abortXHR('GetProfile'); // abort another request if any
-	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
+	resize_sideBar();
+	document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('hidden','shown');
+	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
+	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
 	
 	// request the elevation profile
 	
@@ -950,14 +958,14 @@ function getProfile(wktroute) {//DONE in pisteList
 		if (XMLHttp.readyState == 4) {
 			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
 			SIDEBARSIZE = 'full';
-			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
+			document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown','hidden');
 			//document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
-			document.getElementById('pisteList').className = document.getElementById('pisteList').className.replace('hidden','shown');
+			document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
 			document.getElementById('route_profile').innerHTML=html;
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('pisteList').innerHTML);
+				cacheInHistory(document.getElementById('topo').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -1806,9 +1814,9 @@ function onMapClick(e) {
 		}
 		show_profile();
 		getClosestPistes(lonlat);
-	} else {
+	} /*else {
 		show_helper();
-	}
+	}*/
 }
 function vectorLayers() {
 
