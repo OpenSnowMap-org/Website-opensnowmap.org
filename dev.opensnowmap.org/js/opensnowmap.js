@@ -131,8 +131,7 @@ function infoMode(){
 	}
 	if (mode == "vector") {
 		// first destroy the select and highlight controls
-		document.getElementById('sideBarContent').innerHTML='';
-		document.getElementById('sideBar').style.display='none';
+		close_sideBar();
 		
 		map.events.unregister("click", map, onMapClick);
 		map.removeControl(modifyControl);
@@ -205,15 +204,11 @@ function close_sideBar() {
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
 	
-	document.getElementById('sideBarContent').className = document.getElementById('sideBarContent').className.replace('shown','hidden');
 	document.getElementById('sideBarHistory').className = document.getElementById('sideBarHistory').className.replace('shown','hidden');
 	document.getElementById('sideBarHistory').innerHTML=''; // Must prevent duplicate IDs
 	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 	document.getElementById('search_results').className = document.getElementById('search_results').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('shown','hidden');
-	/*document.getElementById('search_results').innerHTML='';
-	document.getElementById('route_profile').innerHTML='';
-	document.getElementById('route_list').innerHTML='';*/
 	document.getElementById('catcher').className = document.getElementById('catcher').className.replace('shown','hidden');
 	document.getElementById('helper').className = document.getElementById('helper').className.replace('shown','hidden');
 	document.getElementById('about').className = document.getElementById('about').className.replace('shown','hidden');
@@ -339,22 +334,6 @@ function show_edit() {
 	}
 		EDIT_SHOWED = true;
 }
-function show_profile() { // should be removed
-	close_sideBar();
-	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE='full';
-	resize_sideBar();
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
-	
-	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
-	//document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');Display when request is OK
-	
-	/*html='<b>'+_('PROFILE')+'<b/><br/><div id="topo_profile" style="display:inline"></div><br/>';
-	html+='<b>'+_('routing_title')+'<b/><br/><div id="topo_list" style="display:inline"></div>';
-	document.getElementById('sideBarContent').innerHTML=html*/
-}
-
 function show_legend() {
 	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
@@ -680,6 +659,7 @@ function setCenterMap(nlon, nlat, zoom) {
 }
 
 function getByName(name) {
+	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
 	var q = server+"request?group=true&geo=true&list=true&name="+name;
 	var XMLHttp = new XMLHttpRequest();
 	
@@ -692,10 +672,15 @@ function getByName(name) {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
-			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
+			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
+			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
+			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
+			SIDEBARSIZE='full';
+			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('search_results').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -704,6 +689,7 @@ function getByName(name) {
 	return true;
 }
 function nominatimSearch(name) {
+	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
 	var q = server+'nominatim?format=json&place='+name;
 	var XMLHttp = new XMLHttpRequest();
 	
@@ -725,10 +711,16 @@ function nominatimSearch(name) {
 			}
 			htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
 			
+			
+			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
+			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
+			document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('hidden','shown');
 			document.getElementById('nominatim_results').innerHTML=htmlResponse;
+			SIDEBARSIZE='full';
+			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('sideBarContent').innerHTML);
+				cacheInHistory(document.getElementById('search_results').innerHTML);
 				searchComplete=0;
 			}
 		}
@@ -749,6 +741,7 @@ function SearchByName(name) {
 		return false;
 	}
 	
+	close_sideBar();
 	abortXHR('PisteAPI'); // abort another request if any
 	abortXHR('GetProfile'); // abort another request if any
 	searchComplete=0;
@@ -757,14 +750,11 @@ function SearchByName(name) {
 	document.getElementById('sideBar').style.display='inline';
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
-	document.getElementById("sideBarContent").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p></div>';
-	document.getElementById("sideBarContent").innerHTML +='<div id="nominatim_results"></div>';
-	
+	document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('shown','hidden');
+	document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('shown','hidden');
 	document.search.nom_search.value='';
 	getByName(name);
 	nominatimSearch(name);
-	SIDEBARSIZE='full';
-	resize_sideBar();
 	return true;
 }
 function getTopoByViewport() { //DONE in pisteList
@@ -776,6 +766,8 @@ function getTopoByViewport() { //DONE in pisteList
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
 	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
+	document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('shown','hidden');
+	document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('shown','hidden');
 	
 	var bb= map.getExtent().transform(
 		new OpenLayers.Projection("EPSG:900913"),
@@ -794,7 +786,8 @@ function getTopoByViewport() { //DONE in pisteList
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
-			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
+			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			cacheInHistory(document.getElementById('search_results').innerHTML);
@@ -812,6 +805,8 @@ function getMembersById(id) { //DONE in pisteList
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
 	document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('hidden','shown');
+	document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('shown','hidden');
+	document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('shown','hidden');
 	
 	var q = server+"request?parent=true&geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
@@ -827,7 +822,8 @@ function getMembersById(id) { //DONE in pisteList
 			jsonPisteList = JSON.parse(resp);
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
-			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
+			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			cacheInHistory(document.getElementById('search_results').innerHTML);
@@ -838,7 +834,7 @@ function getMembersById(id) { //DONE in pisteList
 
 }
 
-function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checked
+function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList
 	close_sideBar();
 	abortXHR('PisteAPI'); // abort another request if any
 	SIDEBARSIZE=150;
@@ -847,6 +843,7 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checke
 	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
 	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -862,7 +859,6 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList to be checke
 			jsonPisteList = JSON.parse(resp);
 			SIDEBARSIZE = 'full';
 			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
-			//document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
 			resize_sideBar();
@@ -885,6 +881,7 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
 	var q = server+"request?geo=true&topo=true&ids="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -897,7 +894,6 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 			jsonPisteList = JSON.parse(resp);
 			SIDEBARSIZE = 'full';
 			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
-			//document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
 			resize_sideBar();
@@ -912,11 +908,19 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 	return true;
 }
 
-function getClosestPistes(lonlat){
+function getClosestPistes(lonlat){//DONE in pisteList
+	close_sideBar();
 	
 	abortXHR('PisteAPI'); // abort another request if any
+	SIDEBARSIZE=150;
+	document.getElementById('sideBar').style.display='inline';
+	resize_sideBar();
+	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
+	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
+	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
+	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
-	document.getElementById("topo_list").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
 	lonlat.transform(
 		new OpenLayers.Projection("EPSG:900913"),
 		new OpenLayers.Projection("EPSG:4326"));
@@ -932,6 +936,7 @@ function getClosestPistes(lonlat){
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
+			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
 			addPoint(jsonPisteList.snap);
 		}
 	}
@@ -946,6 +951,7 @@ function getProfile(wktroute) {//DONE in pisteList
 	document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('hidden','shown');
 	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
 	// request the elevation profile
 	
@@ -1025,7 +1031,7 @@ function route(){
 			}
 			if (responseXML.getElementsByTagName('wkt')[0]!=null) {
 				var routeWKT = getNodeText(responseXML.getElementsByTagName('wkt')[0]);
-				show_profile();
+				
 				var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
 				var routeLength = getNodeText(responseXML.getElementsByTagName('length')[0]);
 				
@@ -1697,7 +1703,7 @@ function showProfileFromGeometryParentRoute(osm_id,r) {
 	
 	var wkt = encpolArray2WKT(parent.geometry)
 	
-	//show_profile();
+	
 	searchComplete=0;
 	getTopoById(parent.id,wkt.length_km);
 	getProfile(wkt.geom);
@@ -1721,7 +1727,7 @@ function showProfileFromGeometry(osm_id, type) {
 	
 	var wkt = encpolArray2WKT(element.geometry)
 	
-	//show_profile();
+	
 	searchComplete=0;
 	getTopoById(osm_id.replace('_',','),wkt.length_km);
 	getProfile(wkt.geom);
@@ -1749,8 +1755,9 @@ function addPoint(lonlat){
 	
 	if (pointsLayer.features.length >1){route();}
 	else {
-		document.getElementById('topo_list').innerHTML = makeHTMLPistesList();
-		cacheInHistory(document.getElementById('sideBarContent').innerHTML);
+		document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
+		document.getElementById('route_list').innerHTML=makeHTMLPistesList();
+		cacheInHistory(document.getElementById('topo').innerHTML)
 	}
 	return true;
 }
@@ -1793,7 +1800,7 @@ printWindow.document.write(
 +'</head>\n'
 +'<body>\n');
 
-printWindow.document.write(document.getElementById('sideBarContent').innerHTML);
+printWindow.document.write(document.getElementById('topo').innerHTML);
 //printWindow.document.write(document.getElementById('contextual2').innerHTML);
 printWindow.document.write('<p></p><img src="pics/pistes-nordiques-238-45.png">');
 printWindow.document.write(document.getElementById('attributions').innerHTML);
@@ -1812,7 +1819,7 @@ function onMapClick(e) {
 				]));
 			if (Math.abs(fx.x - px.x) + Math.abs(fx.y - px.y) <10){return false;}
 		}
-		show_profile();
+		
 		getClosestPistes(lonlat);
 	} /*else {
 		show_helper();
