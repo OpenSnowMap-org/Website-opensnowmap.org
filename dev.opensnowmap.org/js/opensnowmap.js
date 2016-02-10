@@ -1729,7 +1729,7 @@ function showProfileFromGeometry(osm_id, type) {
 	
 	
 	searchComplete=0;
-	getTopoById(osm_id.replace('_',','),wkt.length_km);
+	getTopoById(osm_id.split('_').join(','),wkt.length_km);
 	getProfile(wkt.geom);
 	return true;
 }
@@ -1900,11 +1900,16 @@ function makeHTMLPistesList(length) {
 			
 			var name = site.name;
 			if (name==' '){name=' x ';}
+			
+			var element_type='';
+			if (site.type) {element_type=site.type;}
+			
 			html+='<div class="pisteListElement">\n ';
 			
 				// ---- info button-----
 				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showMore(this,'+osm_id+',\'site\');">'
+				html+='onClick="showSiteStats(this,\''+osm_id+'\',\''+element_type+'\');'
+				html+='showExtLink(this,\''+osm_id+'\',\''+element_type+'\');">';
 				html+='<img src="pics/info-flat22.png"></div>\n';
 				// ---- list button-----
 				html+='<div class="Button" style="float:right;" '
@@ -1933,18 +1938,18 @@ function makeHTMLPistesList(length) {
 				html+='\n</div>'// pisteListButton
 				
 				// more infos
-				html+='<div class="more pisteListButtonStatic" style="display:none;">';
-				html+='<div class="stats"></div>';
-				
-				if (site.type) {
-					var id_type=site.type;
-					html+='<p style="margin-left:20px;">';
-					html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+id_type+'/'+osm_id+'">';
-					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
-					html+='</a>';
-					html+='</p>';
-				}
-				html+='\n</div>'
+				html+='<div class="siteStats" style="display:none;"></div>';
+				html+='<div class="elementExtLink" style="display:none;"></div>';
+				//~ html+='<div class="stats"></div>';
+				//~ 
+				//~ if (site.type) {
+					//~ html+='<p style="margin-left:20px;">';
+					//~ html+=element_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+element_type+'/'+osm_id+'">';
+					//~ html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
+					//~ html+='</a>';
+					//~ html+='</p>';
+				//~ }
+				//~ html+='\n</div>'
 				
 			html+='\n</div>' //pisteListElement
 			html+='<hr class="light">';
@@ -1963,7 +1968,7 @@ function makeHTMLPistesList(length) {
 			var pic;
 			if (piste.pistetype) {pic =icon[piste.pistetype];}
 			else {pic =icon[piste.aerialway];}
-			
+			if (piste.type) {element_type=piste.type;}
 			var color='';
 			if (piste.color) {
 				color ='&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
@@ -1998,7 +2003,7 @@ function makeHTMLPistesList(length) {
 				html+='<img src="pics/profile-flat22.png"></div>\n';
 				// ---- info button-----
 				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showMore(this,0,0);">'
+				html+='onClick="showExtLink(this,\''+osm_ids+'\',\''+element_type+'\');">'
 				html+='<img src="pics/info-flat22.png"></div>\n';
 			
 				html+='<div class="pisteListButton" '
@@ -2067,16 +2072,16 @@ function makeHTMLPistesList(length) {
 			
 			html+='\n<div class="clear"></div>\n';
 			// more infos
-			html+='<div class="more pisteListButtonStatic" style="display:none;">';
-			html+='<div class="stats"></div>';
+			html+='<div class="elementExtLink " style="display:none;"></div>';
+			/*html+='<div class="stats"></div>';
 			html+='<p style="margin-left:20px;">';
-			var id_type=piste.type;
+			var element_type=piste.type;
 			for (i in piste.ids) {
 				osm_id=piste.ids[i];
-				html+=id_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+id_type+'/'+osm_id+'">';
+				html+=element_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+element_type+'/'+osm_id+'">';
 				html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
 				html+='</a><br/>';
-				if (id_type == 'relation'){
+				if (element_type == 'relation'){
 					html+='analyse &nbsp;<a target="blank" href="http://ra.osmsurround.org/analyzeRelation?relationId=+'+osm_id+'&_noCache=on">';
 					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
 					html+='</a><br/>';
@@ -2084,7 +2089,7 @@ function makeHTMLPistesList(length) {
 			}
 			
 			html+='</p>';
-			html+='\n</div>';
+			html+='\n</div>';*/
 			
 		html+='\n</div>\n'; // pisteListElement
 		html+='<hr class="light">';
@@ -2098,38 +2103,131 @@ function makeHTMLPistesList(length) {
 	
 	return html
 }
-function showMore(div,id, type) {
-	if (div.parentElement.getElementsByClassName('more')[0].style.display=='none')
+function showSiteStats(div, id, element_type) { // fix for normal ways
+	if (div.parentElement.getElementsByClassName('siteStats')[0].style.display=='none')
 		{
-			var Infodiv=div.parentElement.getElementsByClassName('more')[0];
+			var Infodiv=div.parentElement.getElementsByClassName('siteStats')[0];
+			
+			while (Infodiv.firstChild) {
+			    Infodiv.removeChild(Infodiv.firstChild);
+			} //clear previous stats
+			
 			Infodiv.style.display='inline';
-			if (type== 'site') {
-				var statsdiv = Infodiv.getElementsByClassName('stats')[0];
-				statsdiv.innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
-				
-				abortXHR('PisteAPI'); // abort another request if any
-				
-				var q = server+"request?site-stats="+id;
-				var XMLHttp = new XMLHttpRequest();
-				
-				PisteAPIXHR.push(XMLHttp);
-				
-				XMLHttp.open("GET", q);
-				XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-				
-				XMLHttp.onreadystatechange= function () {
-					if (XMLHttp.readyState == 4) {
-						var resp=XMLHttp.responseText;
-						var jsonStats = JSON.parse(resp);
-						statsdiv.innerHTML=makeHTMLStats(jsonStats);
-					}
+			//var statsdiv = Infodiv.getElementsByClassName('stats')[0];
+			var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
+			statsdiv.removeAttribute("id");
+			Infodiv.appendChild(statsdiv);
+			
+			//statsdiv.innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+			
+			abortXHR('PisteAPI'); // abort another request if any
+			
+			var q = server+"request?site-stats="+id;
+			var XMLHttp = new XMLHttpRequest();
+			
+			PisteAPIXHR.push(XMLHttp);
+			
+			XMLHttp.open("GET", q);
+			XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			
+			XMLHttp.onreadystatechange= function () {
+				if (XMLHttp.readyState == 4) {
+					var resp=XMLHttp.responseText;
+					var jsonStats = JSON.parse(resp);
+					statsdiv.getElementsByClassName('stats')[0].className.replace('hidden','shown');
+					
+					fillHTMLStats(jsonStats, statsdiv, id, element_type)
 				}
-				XMLHttp.send();
 			}
+			XMLHttp.send();
 		}
 	else
-	{div.parentElement.getElementsByClassName('more')[0].style.display='none';}
+	{div.parentElement.getElementsByClassName('siteStats')[0].style.display='none';}
 }
+function fillHTMLStats(jsonStats, div, element_type) {
+	
+	
+	spans = div.getElementsByClassName('data');
+	for (i=0; i< spans.length; i++) {
+		var data = spans[i].getAttribute('dataText')
+		if (jsonStats['site'] != null) {
+			if (['downhill','nordic','skitour','sled','lifts','hike'].indexOf(data)!= -1) {
+				spans[i].innerHTML=(parseFloat(jsonStats[data])/1000).toFixed(1);
+			} 
+			if (['snow_park','jump','playground','sleigh','ice_skate'].indexOf(data)!= -1){
+				if (jsonStats[data] != 0) {
+					spans[i].innerHTML='&#9679;';
+					spans[i].style.color='green';
+				}
+				else {
+					spans[i].innerHTML='x';
+					spans[i].style.color='red';
+				}
+			}
+		}
+		if (data == 'siteUrl'){
+			spans[i].href="http://openstreetmap.org/browse/"+element_type+"/"+id;
+		}
+		if (data == 'siteId'){
+			spans[i].innerHTML=id;
+		}
+		if (data == 'siteType'){
+			spans[i].innerHTML=element_type; //way or relation
+		}
+	}
+	
+}
+
+function showExtLink(div, ids, element_type) {
+	if (div.parentElement.getElementsByClassName('elementExtLink')[0].style.display=='none') {
+		var Infodiv=div.parentElement.getElementsByClassName('elementExtLink')[0];
+		
+		while (Infodiv.firstChild) {
+		    Infodiv.removeChild(Infodiv.firstChild);
+		} //clear previous stats
+		Infodiv.style.display='inline';
+		//~ Infodiv.style.display='inline';
+		//~ if (!(ids instanceof Array)) {
+			//~ ids = [id];
+		//~ }
+		ids = ids.split('_');
+		
+		for (k = 0; k< ids.length; k++) {
+			var id= ids[k];
+			var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
+			linkdiv.removeAttribute("id");
+			linkdiv.className.replace('shown','hidden');
+			Infodiv.appendChild(linkdiv);
+			spans = linkdiv.getElementsByClassName('data');
+			if (element_type == 'relation') {
+				linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden','shown');
+			}
+			for (i=0; i< spans.length; i++) {
+				var data = spans[i].getAttribute('dataText')
+				
+				if (data == 'siteUrl'){
+					spans[i].href="http://openstreetmap.org/browse/"+element_type+"/"+id;
+				}
+				if (data == 'siteId'){
+					spans[i].innerHTML=id;
+				}
+				
+				if (data == 'siteType'){
+					spans[i].innerHTML=element_type; //way or relation
+				}
+				if (data == 'analyseUrl'){
+					spans[i].href="http://ra.osmsurround.org/analyzeRelation?relationId=+"+id;
+				}
+			}
+			
+		}
+	}
+	else {
+		div.parentElement.getElementsByClassName('elementExtLink')[0].style.display='none';
+	}
+	
+}
+
 function makeHTMLStats(jsonStats) {
 	html='';
 	if (jsonStats['site'] != null) {

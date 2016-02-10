@@ -217,7 +217,7 @@ label {
         display: none;
         overflow: none;
     }
-    #sideBarInBox{
+    .sideBarInBox{
         position: absolute;
             background-color:#FDFDFD;
 /*
@@ -431,7 +431,7 @@ label {
     border-radius:4px;
 }
 .pisteListButtonStatic{
-    font-size: 1.3em;
+    font-size: 1em;
     background-color:#FFFFFF;
     border: 0px solid grey;
     padding: 2px;
@@ -522,7 +522,7 @@ display: inline
 position: static
 }
 
-#sideBarInBox{
+.sideBarInBox{
 height:6000px;
 position: relative
 }

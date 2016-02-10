@@ -64,13 +64,83 @@
 					</div>
 					<br class="clear" />
 				</div>
-				<div id="sideBarInBox">
+				<div id="sideBarInBox" class="sideBarInBox">
 					<!-- The content-->
-					<div id="sideBarHistory" class="hidden sideBarContent"></div>
-					<div id="requestWaiter" class="hidden sideBarContent">
+					<div id="pisteListElementsProtos" class="hidden sideBarContent"> <!-- div to clone to build pistes lists -->
+						<!--
+						//////////////////////////////////////
+						//////////////////////////////////////
+						//   pisteListElements Prototypes   //
+						//////////////////////////////////////
+						//////////////////////////////////////
+						-->
+						
+						<div class="siteStats pisteListButtonStatic" id="siteStatsProto">
+							<div class="stats" class="hidden">
+								<table><tbody>
+									<tr>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/alpine-nb-20.png">&nbsp;
+										<span class="data" dataText="downhill">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/skitour-nb-20.png">&nbsp;
+										<span class="data" dataText="skitour">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/snowpark-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="snow_park" style="color:red">x</span></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/jump-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="jump" style="color:red">x</span></td>
+									</tr><tr>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/nordic-nb-20.png">&nbsp;
+										<span class="data" dataText="nordic">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/sled-nb-20.png">&nbsp;
+										<span class="data" dataText="sled">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/playground-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="playground" style="color:red">x</span></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/sleigh-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="sleigh" style="color:red">x</span></td>
+									</tr><tr>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/drag_lift-nb-20.png">&nbsp;
+										<span class="data" dataText="lifts">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/snowshoe-nb-20.png">&nbsp;
+										<span class="data" dataText="hike">xx</span>&nbsp;km<br></td>
+										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/iceskate-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="ice_skate" style="color:green">&#9679;</span></td>
+									</tr>
+								</tbody></table>
+							</div>
+						</div>
+						
+						<div class="elementExtLink pisteListButtonStatic" id="elementExtLinkProto">
+							<p style="margin-left:20px;">
+								<span class="data" dataText="siteType">xxxx</span>&nbsp;
+							<a  class="data" dataText="siteUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
+								&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
+								<img src="pics/external-flat22.png">
+							</a>
+							<div class="analyse hidden">
+								<span>Analyse</span>&nbsp;
+								<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
+									&nbsp;<span class="data" dataText="analyseId">xxxx</span>&nbsp;
+									<img src="pics/external-flat22.png">
+								</a>
+							</div>
+							</p>
+						</div>
+						
+						<div class="pisteListElement" id="pisteListElementProto">pisteListElement (to do)</div>
+						<!--
+						//////////////////////////////////////
+						//////////////////////////////////////
+						//   pisteListElements Prototypes   //
+						//////////////////////////////////////
+						//////////////////////////////////////
+						-->
+					
+					</div>
+
+					<div id="sideBarHistory" class="hidden sideBarContent"></div> <!-- div to display prev and next content -->
+					<div id="requestWaiter" class="hidden sideBarContent"> <!-- rolling snake  -->
 						<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 					</div>
-					<div id="search_results" class="hidden sideBarContent">
+					<div id="search_results" class="hidden sideBarContent"> <!-- divs to display search results -->
 						<div id="piste_search_results" class="hidden">
 														<div style="font-size:0.7em;">
 														
@@ -86,7 +156,8 @@
 															&nbsp;<b>Metabief - Mont d'or</b>
 														
 														<div class="clear"></div>
-														</div><div style="display:none;" class="more pisteListButtonStatic"><div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/3161203" target="blank">&nbsp;3161203&nbsp;<img src="pics/external-flat22.png"></a></p>
+														</div><div style="display:none;" class="more pisteListButtonStatic">
+															<div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/3161203" target="blank">&nbsp;3161203&nbsp;<img src="pics/external-flat22.png"></a></p>
 														</div>
 														</div><hr class="light">
 														<hr>
@@ -158,7 +229,7 @@
 						<div id="nominatim_results" class="hidden"></div>
 					</div>
 					
-					<div id="topo" class="hidden sideBarContent">
+					<div id="topo" class="hidden sideBarContent"> <!-- profile and piste lists -->
 	<!--
 						<b>+_('PROFILE')+</b><br/>
 	-->
@@ -210,8 +281,8 @@
 						</div>
 						
 					</div>
-					<div id="languages" class="hidden sideBarContent"></div>
-					<div id="catcher" class="hidden sideBarContent">
+					<div id="languages" class="hidden sideBarContent"></div> <!-- control to choose languages -->
+					<div id="catcher" class="hidden sideBarContent"> <!-- displayed once whenentering the site -->
 						<div style="float: left;margin: 5px;" itemscope itemtype="http://data-vocabulary.org/Event">
 							<a href="http://wiki.openstreetmap.org" target="blank">
 								<img src="pics/osm-pistes-nordiques_logo-80px.png"></img>
@@ -255,10 +326,10 @@
 							</tr>
 						</table>
 					</div>
-					<div id="helper" class="hidden sideBarContent">
+					<div id="helper" class="hidden sideBarContent">  <!-- help -->
 						<img style="margin-left: 3px;" src="pics/interactive-help.png"/><br/>
 					</div>
-					<div id="legend" class="hidden sideBarContent">
+					<div id="legend" class="hidden sideBarContent"> <!-- map key -->
 						<p><img style="position: relative; left: 20px;" src="pics/mapkey.png"></p>
 						<p>
 						<span class="i18n" i18nText="key-color">xxxx</span>
@@ -273,7 +344,7 @@
 						</a> (english)</p>
 						<hr class="hrmenu">
 					</div>
-					<div id="settings" class="hidden sideBarContent">
+					<div id="settings" class="hidden sideBarContent"> <!-- controls -->
 					
 						<b><span class="i18n" i18nText="base_map">xxxx</span></b>
 						<table style="width:300px;text-align:left;">
@@ -325,7 +396,7 @@
 						</div>
 					
 					</div>
-					<div id="edit" class="hidden sideBarContent">
+					<div id="edit" class="hidden sideBarContent"> <!-- allow user to modify the map -->
 						<p><b><span class="i18n" i18nText="edit_the_map_using">xxxx</span></b></p>
 						
 						<p><span class="i18n" i18nText="edit_the_map_explain">xxxx</span></p>
@@ -358,8 +429,9 @@
 						<hr class="hrmenu">
 						
 					</div>
-					<div id="about" class="hidden sideBarContent"></div>
+					<div id="about" class="hidden sideBarContent"></div> <!-- about -->
 				</div>
+			
 			</div>
 			
 			
