@@ -1875,17 +1875,17 @@ map.events.register("click", map, onMapClick);
 
 function makeHTMLPistesList(length) {
 	
-	var html='\n<div style="font-size:0.7em;">\n';
-	html+='\n<div class="clear"></div>'
+	//var html='\n<div style="font-size:0.7em;">\n';
+	var html ='\n<div class="clear"></div>'
 	html+='\n'
-	html+='<div onclick="new_window();"'
-	html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
-	html+='<img src="pics/print-22.png"></div>'
-	
-	html+='\n<div class="clear"></div>'
-	html+='\n'
+	//~ html+='<div onclick="new_window();"'
+	//~ html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
+	//~ html+='<img src="pics/print-22.png"></div>'
+	//~ 
+	//~ html+='\n<div class="clear"></div>'
+	//~ html+='\n'
 	if(typeof(length)!=='undefined') {
-		html +='<div><b style="font-size:1.5em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
+		html +='<div><b style="font-size:1em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
 		}
 	if (jsonPisteList['sites'] != null) {
 		

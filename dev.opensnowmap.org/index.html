@@ -125,7 +125,50 @@
 							</p>
 						</div>
 						
-						<div class="pisteListElement" id="pisteListElementProto">pisteListElement (to do)</div>
+						<div class="routeLengthElement" id="routeLengthProto">
+							<b><span calss="data" value="overallRouteLength">4.7</span>&nbsp;km</b>
+						</div>
+						
+						<hr class="light" id="hrLightProto">
+						
+						<div class="clear" id="clearProto"></div>
+						
+						<div class="pisteListElement" id="pisteListElementProto">
+						
+
+							<div class="Button moreInfoButton"
+								onclick="zoomToElement('31749123','pistes');showProfileFromGeometry('31749123','pistes');" 
+								style="float:right;" >
+								<img src="pics/profile-flat22.png">
+							</div>
+							<div  class="Button getProfileButton"
+								onclick="showExtLink(this,'31749123','way');" 
+								style="float:right;">
+								<img src="pics/info-flat22.png">
+							</div>
+							<div class="pisteListButton"
+								onmouseout="deHighlight();" 
+								onmouseover="highlightElement('31749123','pistes');" 
+								onclick="zoomToElement('31749123','pistes'); deHighlight();" >
+								&nbsp;
+								<img style="float:left;vertical-align: middle;" src="pics/alpine.png">&nbsp;
+								<div style="float:left;">
+									&nbsp;La Familiale &nbsp;(novice<b style="color:green;font-weight:900;">&nbsp;●&nbsp;</b>)
+								</div>
+							
+							</div>
+							
+							<div class="clear"></div>
+							
+
+							
+							<div style="display:none;" class="inRouteElement "></div>
+							<div style="display:none;" class="inSiteElement "></div>
+							<div class="clear"></div>
+							<div style="display:none;" class="elementExtLink "></div>
+							<div class="clear"></div>
+						
+						</div>
 						<!--
 						//////////////////////////////////////
 						//////////////////////////////////////
@@ -133,99 +176,34 @@
 						//////////////////////////////////////
 						//////////////////////////////////////
 						-->
-					
+						<div class="pisteListElement"> <!-- style display -->
+							<div  class="inRouteElement pisteListButton" id="inRouteElementProto"
+								onmouseout="deHighlight();" 
+								onmouseover="highlightParentRoute('145732500',0);" 
+								onclick="deHighlight();showProfileFromGeometryParentRoute('145732500',0)" 
+								style="float:left;">
+								&nbsp;<b style="color:blue;font-weight:900;">&nbsp;● </b>Le Mont Ramey&nbsp;
+								<img style="vertical-align:middle;" src="pics/profile-flat22.png">
+							</div>
+							
+							<div class="inSiteElement pisteListButton" id="inSiteElementProto"
+								onmouseout="deHighlight();" 
+								onmouseover="highlightParentSite('31749123',0);" 
+								onclick="zoomToParentSite('31749123',0); deHighlight();getMembersById(3161203);" 
+								style="float:right;" >
+								<b>Metabief - Mont d'or</b>
+								<img style="vertical-align:middle;" src="pics/list-flat22.png">
+							</div>
+						</div>
 					</div>
-
+					
+					
 					<div id="sideBarHistory" class="hidden sideBarContent"></div> <!-- div to display prev and next content -->
 					<div id="requestWaiter" class="hidden sideBarContent"> <!-- rolling snake  -->
 						<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 					</div>
 					<div id="search_results" class="hidden sideBarContent"> <!-- divs to display search results -->
-						<div id="piste_search_results" class="hidden">
-														<div style="font-size:0.7em;">
-														
-														<div class="clear"></div>
-														<div style="margin-left:5px;margin-right:5px" class="Button iconButton float-right" onclick="new_window();"><img src="pics/print-22.png"></div>
-														<div class="clear"></div>
-														<div class="pisteListElement">
-														 <div onclick="showMore(this,3161203,'site');" style="float:right;" class="Button"><img src="pics/info-flat22.png"></div>
-														<div onclick="getMembersById(3161203);deHighlight();" style="float:right;" class="Button"><img src="pics/list-flat22.png"></div>
-														<div onmouseout="deHighlight();" onmouseover="highlightElement('3161203','sites');" onclick="zoomToElement('3161203','sites')" class="pisteListButton">
-														<img style="vertical-align: middle;" src="pics/alpine.png">&nbsp;
-														<img style="vertical-align: middle;" src="pics/nordic.png">&nbsp;
-															&nbsp;<b>Metabief - Mont d'or</b>
-														
-														<div class="clear"></div>
-														</div><div style="display:none;" class="more pisteListButtonStatic">
-															<div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/3161203" target="blank">&nbsp;3161203&nbsp;<img src="pics/external-flat22.png"></a></p>
-														</div>
-														</div><hr class="light">
-														<hr>
-														
-														<hr class="light">
-														<div class="pisteListElement">
-														<div onclick="zoomToElement('31749123','pistes');showProfileFromGeometry('31749123','pistes');" style="float:right;" class="Button"><img src="pics/profile-flat22.png"></div>
-														<div onclick="showMore(this,0,0);" style="float:right;" class="Button"><img src="pics/info-flat22.png"></div>
-														<div onmouseout="deHighlight();" onmouseover="highlightElement('31749123','pistes');" onclick="zoomToElement('31749123','pistes'); deHighlight();" class="pisteListButton">
-														&nbsp;<img style="float:left;vertical-align: middle;" src="pics/alpine.png">&nbsp;
-															<div style="float:left;">&nbsp;La Familiale &nbsp;(novice<b style="color:green;font-weight:900;">&nbsp;●&nbsp;</b>)</div>
-														
-														<div class="clear"></div>
-														
-														</div>
-														<div class="clear"></div>
-														
-														<div class="clear"></div>
-														<div onmouseout="deHighlight();" onmouseover="highlightParentSite('31749123',0);" onclick="zoomToParentSite('31749123',0); deHighlight();getMembersById(3161203);" style="float:right;" class="inSiteElement pisteListButton">
-														<b>Metabief - Mont d'or</b>
-															<img style="vertical-align:middle;" src="pics/list-flat22.png"></div>
-														
-														<div class="clear"></div>
-														<div style="display:none;" class="more pisteListButtonStatic"><div class="stats"></div><p style="margin-left:20px;">way&nbsp;<a href="http://openstreetmap.org/browse/way/31749123" target="blank">&nbsp;31749123&nbsp;<img src="pics/external-flat22.png"></a><br></p>
-														</div>
-														</div>
-														<hr class="light">
-														<div class="pisteListElement">
-														<div onclick="zoomToElement('1970150','pistes');showProfileFromGeometry('1970150','pistes');" style="float:right;" class="Button"><img src="pics/profile-flat22.png"></div>
-														<div onclick="showMore(this,0,0);" style="float:right;" class="Button"><img src="pics/info-flat22.png"></div>
-														<div onmouseout="deHighlight();" onmouseover="highlightElement('1970150','pistes');" onclick="zoomToElement('1970150','pistes'); deHighlight();" class="pisteListButton">
-														&nbsp;<img style="float:left;vertical-align: middle;" src="pics/nordic.png">&nbsp;
-															<div style="float:left;">&nbsp;&nbsp;<b style="color:blue;font-weight:900;">&nbsp;● </b>Le Mont Ramey &nbsp;(easy<b style="color:blue;font-weight:900;">&nbsp;●&nbsp;</b>)</div>
-														
-														<div class="clear"></div>
-														
-														</div>
-														<div class="clear"></div>
-														
-														<div class="clear"></div>
-														
-														<div class="clear"></div>
-														<div style="display:none;" class="more pisteListButtonStatic"><div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/1970150" target="blank">&nbsp;1970150&nbsp;<img src="pics/external-flat22.png"></a><br>analyse &nbsp;<a href="http://ra.osmsurround.org/analyzeRelation?relationId=+1970150&amp;_noCache=on" target="blank">&nbsp;1970150&nbsp;<img src="pics/external-flat22.png"></a><br></p>
-														</div>
-														</div>
-														<hr class="light">
-														<div class="pisteListElement">
-														<div onclick="zoomToElement('1970151','pistes');showProfileFromGeometry('1970151','pistes');" style="float:right;" class="Button"><img src="pics/profile-flat22.png"></div>
-														<div onclick="showMore(this,0,0);" style="float:right;" class="Button"><img src="pics/info-flat22.png"></div>
-														<div onmouseout="deHighlight();" onmouseover="highlightElement('1970151','pistes');" onclick="zoomToElement('1970151','pistes'); deHighlight();" class="pisteListButton">
-														&nbsp;<img style="float:left;vertical-align: middle;" src="pics/nordic.png">&nbsp;
-															<div style="float:left;">&nbsp;&nbsp;<b style="color:green;font-weight:900;">&nbsp;● </b>Le Plateau &nbsp;(easy<b style="color:blue;font-weight:900;">&nbsp;●&nbsp;</b>)</div>
-														
-														<div class="clear"></div>
-														
-														</div>
-														<div class="clear"></div>
-														
-														<div class="clear"></div>
-														
-														<div class="clear"></div>
-														<div style="display:none;" class="more pisteListButtonStatic"><div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/1970151" target="blank">&nbsp;1970151&nbsp;<img src="pics/external-flat22.png"></a><br>analyse &nbsp;<a href="http://ra.osmsurround.org/analyzeRelation?relationId=+1970151&amp;_noCache=on" target="blank">&nbsp;1970151&nbsp;<img src="pics/external-flat22.png"></a><br></p>
-														</div>
-														</div>
-														<hr class="light">
-														
-														</div>
-						</div>
+						<div id="piste_search_results" class="hidden"></div>
 						<div id="nominatim_results" class="hidden"></div>
 					</div>
 					
@@ -237,50 +215,20 @@
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
 						<div id="route_profile" class="hidden"><img src="pics/profile54698.png"></div>
+						
+						<div class="Button iconButton float-right" onclick="new_window();" style="margin-left:5px;margin-right:5px">
+							<img src="pics/print-22.png">
+						</div>
+						<div class="clear"></div>
 	<!--
 						<b>'+_('routing_title')+'</b><br/>
 	-->
 						<div id="routeWaiter" class="hidden">
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
-						<div id="route_list" class="hidden">
-						
-						
-						
-						
-						<div style="font-size:0.7em;">
-						
-						<div class="clear"></div>
-						<div style="margin-left:5px;margin-right:5px" class="Button iconButton float-right" onclick="new_window();"><img src="pics/print-22.png"></div>
-						<div class="clear"></div>
-						<div><b style="font-size:1.5em;">4.7 km</b></div>
-						<hr><div class="pisteListElement">
-						<div onclick="zoomToElement('1970150','pistes');showProfileFromGeometry('1970150','pistes');" style="float:right;" class="Button"><img src="pics/profile-flat22.png"></div>
-						<div onclick="showMore(this,0,0);" style="float:right;" class="Button"><img src="pics/info-flat22.png"></div>
-						<div onmouseout="deHighlight();" onmouseover="highlightElement('1970150','pistes');" onclick="zoomToElement('1970150','pistes'); deHighlight();" class="pisteListButton">
-						&nbsp;<img style="float:left;vertical-align: middle;" src="pics/nordic.png">&nbsp;
-							<div style="float:left;">&nbsp;&nbsp;<b style="color:blue;font-weight:900;">&nbsp;● </b>Le Mont Ramey &nbsp;(easy<b style="color:blue;font-weight:900;">&nbsp;●&nbsp;</b>)</div>
-						
-						<div class="clear"></div>
-						
-						</div>
-						<div class="clear"></div>
-						
-						<div class="clear"></div>
-						
-						<div class="clear"></div>
-						<div style="display:none;" class="more pisteListButtonStatic"><div class="stats"></div><p style="margin-left:20px;">relation&nbsp;<a href="http://openstreetmap.org/browse/relation/1970150" target="blank">&nbsp;1970150&nbsp;<img src="pics/external-flat22.png"></a><br>analyse &nbsp;<a href="http://ra.osmsurround.org/analyzeRelation?relationId=+1970150&amp;_noCache=on" target="blank">&nbsp;1970150&nbsp;<img src="pics/external-flat22.png"></a><br></p>
-						</div>
-						</div>
-						<hr class="light">
-						</div>
-	
-						
-						
-						
-						</div>
-						
+						<div id="route_list" class="hidden"></div>
 					</div>
+					
 					<div id="languages" class="hidden sideBarContent"></div> <!-- control to choose languages -->
 					<div id="catcher" class="hidden sideBarContent"> <!-- displayed once whenentering the site -->
 						<div style="float: left;margin: 5px;" itemscope itemtype="http://data-vocabulary.org/Event">

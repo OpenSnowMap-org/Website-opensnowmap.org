@@ -420,6 +420,7 @@ label {
     background-color:#FFF;
     margin: 0px;
     padding:0px;
+    font-size:0.7em;
 }
 .pisteListButton{
     font-size: 1.3em;
@@ -446,12 +447,15 @@ label {
     background-color:#CCCCCC;
 }
 .inRouteElement{
-  font-size: 1.1em;
+  font-size: 1.15em;
   font-style:oblique;
 }
 .inSiteElement{
-  font-size: 1.1em;
+  font-size: 1.15em;
   font-style:oblique;
+}
+.routeLengthElement{
+  font-size: 1.2em;
 }
 
 .Button {
@@ -513,7 +517,6 @@ label {
  * 
  * */
 
-/*
 .hidden {
 display: inline
 }
@@ -526,4 +529,3 @@ position: static
 height:6000px;
 position: relative
 }
-*/
