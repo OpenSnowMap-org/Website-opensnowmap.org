@@ -75,55 +75,6 @@
 						//////////////////////////////////////
 						-->
 						
-						<div class="siteStats pisteListButtonStatic" id="siteStatsProto">
-							<div class="stats" class="hidden">
-								<table><tbody>
-									<tr>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/alpine-nb-20.png">&nbsp;
-										<span class="data" dataText="downhill">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/skitour-nb-20.png">&nbsp;
-										<span class="data" dataText="skitour">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/snowpark-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="snow_park" style="color:red">x</span></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/jump-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="jump" style="color:red">x</span></td>
-									</tr><tr>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/nordic-nb-20.png">&nbsp;
-										<span class="data" dataText="nordic">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/sled-nb-20.png">&nbsp;
-										<span class="data" dataText="sled">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/playground-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="playground" style="color:red">x</span></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/sleigh-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="sleigh" style="color:red">x</span></td>
-									</tr><tr>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/drag_lift-nb-20.png">&nbsp;
-										<span class="data" dataText="lifts">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/snowshoe-nb-20.png">&nbsp;
-										<span class="data" dataText="hike">xx</span>&nbsp;km<br></td>
-										<td><img style="vertical-align: middle;margin-left:20px;" src="pics/iceskate-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="ice_skate" style="color:green">&#9679;</span></td>
-									</tr>
-								</tbody></table>
-							</div>
-						</div>
-						
-						<div class="elementExtLink pisteListButtonStatic" id="elementExtLinkProto">
-							<p style="margin-left:20px;">
-								<span class="data" dataText="siteType">xxxx</span>&nbsp;
-							<a  class="data" dataText="siteUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
-								&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
-								<img src="pics/external-flat22.png">
-							</a>
-							<div class="analyse hidden">
-								<span>Analyse</span>&nbsp;
-								<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
-									&nbsp;<span class="data" dataText="analyseId">xxxx</span>&nbsp;
-									<img src="pics/external-flat22.png">
-								</a>
-							</div>
-							</p>
-						</div>
 						
 						<div class="routeLengthElement" id="routeLengthProto">
 							<b><span calss="data" value="overallRouteLength">4.7</span>&nbsp;km</b>
@@ -134,28 +85,65 @@
 						<div class="clear" id="clearProto"></div>
 						
 						<div class="pisteListElement" id="pisteListElementProto">
-						
-
-							<div class="Button moreInfoButton"
+							<!-- Buttons -->
+							<div class="Button getProfileButton">
+<!--
 								onclick="zoomToElement('31749123','pistes');showProfileFromGeometry('31749123','pistes');" 
-								style="float:right;" >
+-->
+								
 								<img src="pics/profile-flat22.png">
 							</div>
-							<div  class="Button getProfileButton"
-								onclick="showExtLink(this,'31749123','way');" 
-								style="float:right;">
+							
+							<div  class="Button moreInfoButton">
+<!--
+								onclick="showExtLink(this,'31749123','way');"
+-->
+								
 								<img src="pics/info-flat22.png">
 							</div>
-							<div class="pisteListButton"
+							
+							<div  class="Button getMemberListButton">
+<!--
+								onclick="getMembersById(2764548);deHighlight();"
+-->
+								
+								<img src="pics/list-flat22.png">
+							</div>
+							<!-- Buttons -->
+							<div class="pisteListButton">
+<!--
 								onmouseout="deHighlight();" 
 								onmouseover="highlightElement('31749123','pistes');" 
-								onclick="zoomToElement('31749123','pistes'); deHighlight();" >
+								onclick="zoomToElement('31749123','pistes'); deHighlight();" 
+-->
+								
 								&nbsp;
-								<img style="float:left;vertical-align: middle;" src="pics/alpine.png">&nbsp;
-								<div style="float:left;">
-									&nbsp;La Familiale &nbsp;(novice<b style="color:green;font-weight:900;">&nbsp;●&nbsp;</b>)
+								<div class="pisteIconDiv">
+									<img  src="pics/alpine.png">
+									<img  src="pics/nordic.png">
 								</div>
-							
+								&nbsp;
+								<div style="float:left;">
+									&nbsp;
+									<span class="routeColorSpan">
+										<b style="color:orange;">●</b>
+									</span>
+									&nbsp;
+									<span class="pisteNameSpan">
+										<font style="">Piste</font>
+									</span>
+									<b><span class="siteNameSpan">
+										Site
+									</span></b>
+									&nbsp;
+									<span class="difficultySpan">
+										<font style="">( difficulty</font>
+									</span>
+									<span class="difficultyColorSpan">
+										<b style="color:green;">&nbsp;●&nbsp;)</b>
+									</span>
+									&nbsp;
+								</div>
 							</div>
 							
 							<div class="clear"></div>
@@ -165,23 +153,65 @@
 							<div style="display:none;" class="inRouteElement "></div>
 							<div style="display:none;" class="inSiteElement "></div>
 							<div class="clear"></div>
-							<div style="display:none;" class="elementExtLink "></div>
-							<div class="clear"></div>
 						
 						</div>
-						<!--
-						//////////////////////////////////////
-						//////////////////////////////////////
-						//   pisteListElements Prototypes   //
-						//////////////////////////////////////
-						//////////////////////////////////////
-						-->
+						
+
+						<div class="siteStats pisteListButtonStatic" id="siteStatsProto">
+							<div class="stats" class="hidden">
+								<table><tbody>
+									<tr>
+										<td><img class="statsIcon" src="pics/alpine-nb-20.png">&nbsp;
+										<span class="data" dataText="downhill">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/skitour-nb-20.png">&nbsp;
+										<span class="data" dataText="skitour">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/snowpark-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="snow_park" style="color:red">x</span></td>
+										<td><img class="statsIcon" src="pics/jump-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="jump" style="color:red">x</span></td>
+									</tr><tr>
+										<td><img class="statsIcon" src="pics/nordic-nb-20.png">&nbsp;
+										<span class="data" dataText="nordic">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/sled-nb-20.png">&nbsp;
+										<span class="data" dataText="sled">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/playground-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="playground" style="color:red">x</span></td>
+										<td><img class="statsIcon" src="pics/sleigh-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="sleigh" style="color:red">x</span></td>
+									</tr><tr>
+										<td><img class="statsIcon" src="pics/drag_lift-nb-20.png">&nbsp;
+										<span class="data" dataText="lifts">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/snowshoe-nb-20.png">&nbsp;
+										<span class="data" dataText="hike">xx</span>&nbsp;km<br></td>
+										<td><img class="statsIcon" src="pics/iceskate-nb-20.png">&nbsp;&nbsp;
+										<span class="data" dataText="ice_skate" style="color:green">&#9679;</span></td>
+									</tr>
+								</tbody></table>
+							</div>
+						</div>
+						
+						<div class="elementExtLink pisteListButtonStatic" id="elementExtLinkProto">
+							<p>
+								<span class="data" dataText="siteType">xxxx</span>&nbsp;
+								<a  class="data" dataText="siteUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
+									&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
+									<img src="pics/external-flat22.png">
+								</a>
+								<div class="analyse hidden">
+									<span>Analyse</span>&nbsp;
+									<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
+										&nbsp;<span class="data" dataText="analyseId">xxxx</span>&nbsp;
+										<img src="pics/external-flat22.png">
+									</a>
+								</div>
+							</p>
+						</div>
+						
 						<div class="pisteListElement"> <!-- style display -->
 							<div  class="inRouteElement pisteListButton" id="inRouteElementProto"
 								onmouseout="deHighlight();" 
 								onmouseover="highlightParentRoute('145732500',0);" 
-								onclick="deHighlight();showProfileFromGeometryParentRoute('145732500',0)" 
-								style="float:left;">
+								onclick="deHighlight();showProfileFromGeometryParentRoute('145732500',0)">
 								&nbsp;<b style="color:blue;font-weight:900;">&nbsp;● </b>Le Mont Ramey&nbsp;
 								<img style="vertical-align:middle;" src="pics/profile-flat22.png">
 							</div>
@@ -189,12 +219,23 @@
 							<div class="inSiteElement pisteListButton" id="inSiteElementProto"
 								onmouseout="deHighlight();" 
 								onmouseover="highlightParentSite('31749123',0);" 
-								onclick="zoomToParentSite('31749123',0); deHighlight();getMembersById(3161203);" 
-								style="float:right;" >
+								onclick="zoomToParentSite('31749123',0); deHighlight();getMembersById(3161203);" >
 								<b>Metabief - Mont d'or</b>
 								<img style="vertical-align:middle;" src="pics/list-flat22.png">
 							</div>
 						</div>
+						<div class="clear"></div>
+						<hr class="light">
+						<div class="clear"></div>
+
+						<!--
+						//////////////////////////////////////
+						//////////////////////////////////////
+						//   pisteListElements Prototypes   //
+						//////////////////////////////////////
+						//////////////////////////////////////
+						-->
+						
 					</div>
 					
 					

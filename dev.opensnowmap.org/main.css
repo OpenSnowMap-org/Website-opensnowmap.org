@@ -511,12 +511,34 @@ label {
         float:left;
         z-index: 1000;
 }
+.inRouteElement{
+	float:left;
+}
+.inSiteElement{
+	float:right;
+}
+.statsIcon {
+	vertical-align: middle;
+	margin-left:20px;
+}
+.pisteIconDiv {
+	float:left;
+	vertical-align: middle;
+}
+.pisteIcon {
+	margin-left: 3px;
+}
+
+.getProfileButton, .getMemberListButton, .moreInfoButton{
+float:right;
+}
 
 /*
  * Un comment end of file to show hidden content for styling
  * 
  * */
 
+/*
 .hidden {
 display: inline
 }
@@ -529,3 +551,4 @@ position: static
 height:6000px;
 position: relative
 }
+*/

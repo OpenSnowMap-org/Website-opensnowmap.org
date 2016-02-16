@@ -281,7 +281,7 @@ function show_about() {
 	XMLHttp.open("GET",url);
 	XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
 	
-	XMLHttp.onreadystatechange= function () {
+	XMLHttp.onreadystatechange = function (){
 		if (XMLHttp.readyState == 4) {
 			var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
 			
@@ -787,7 +787,8 @@ function getTopoByViewport() { //DONE in pisteList
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
-			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
+			showHTMLPistesList(document.getElementById('piste_search_results'));
+			//document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			cacheInHistory(document.getElementById('search_results').innerHTML);
@@ -1878,12 +1879,6 @@ function makeHTMLPistesList(length) {
 	//var html='\n<div style="font-size:0.7em;">\n';
 	var html ='\n<div class="clear"></div>'
 	html+='\n'
-	//~ html+='<div onclick="new_window();"'
-	//~ html+='class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">'
-	//~ html+='<img src="pics/print-22.png"></div>'
-	//~ 
-	//~ html+='\n<div class="clear"></div>'
-	//~ html+='\n'
 	if(typeof(length)!=='undefined') {
 		html +='<div><b style="font-size:1em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
 		}
@@ -2103,46 +2098,126 @@ function makeHTMLPistesList(length) {
 	
 	return html
 }
-function showSiteStats(div, id, element_type) { // fix for normal ways
-	if (div.parentElement.getElementsByClassName('siteStats')[0].style.display=='none')
-		{
-			var Infodiv=div.parentElement.getElementsByClassName('siteStats')[0];
+function showHTMLPistesList(Div) {
+	
+	
+	//~ if(typeof(length)!=='undefined') {
+		//~ html +='<div><b style="font-size:1em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
+		//~ }
+	
+	while (Div.firstChild) {
+			    Div.removeChild(Div.firstChild);
+	} //clear previous list
+	
+	if (jsonPisteList['sites'] != null) {
+		
+		for (p in jsonPisteList['sites']) {
 			
-			while (Infodiv.firstChild) {
-			    Infodiv.removeChild(Infodiv.firstChild);
-			} //clear previous stats
+			var site=jsonPisteList['sites'][p];
+			var index;
+			index=site.result_index;
 			
-			Infodiv.style.display='inline';
-			//var statsdiv = Infodiv.getElementsByClassName('stats')[0];
-			var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
-			statsdiv.removeAttribute("id");
-			Infodiv.appendChild(statsdiv);
+			var osm_id;
+			osm_id=site.ids.join('_').toString(); // What to do with that '_' for sites ??
 			
-			//statsdiv.innerHTML='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>';
+			var name = site.name;
+			if (name==' '){name=' x ';}
 			
-			abortXHR('PisteAPI'); // abort another request if any
+			var element_type='';
+			if (site.type) {element_type=site.type;}
 			
-			var q = server+"request?site-stats="+id;
-			var XMLHttp = new XMLHttpRequest();
 			
-			PisteAPIXHR.push(XMLHttp);
+			var sitediv = document.getElementById('pisteListElementProto').cloneNode(true);
 			
-			XMLHttp.open("GET", q);
-			XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			sitediv.removeAttribute("id");
+			sitediv.osm_id=osm_id;
+			sitediv.element_type=element_type;
 			
-			XMLHttp.onreadystatechange= function () {
-				if (XMLHttp.readyState == 4) {
-					var resp=XMLHttp.responseText;
-					var jsonStats = JSON.parse(resp);
-					statsdiv.getElementsByClassName('stats')[0].className.replace('hidden','shown');
-					
-					fillHTMLStats(jsonStats, statsdiv, id, element_type)
+			sitediv.getElementsByClassName("getProfileButton")[0].style.display='none';
+			
+			sitediv.getElementsByClassName("moreInfoButton")[0].onclick= function(e){
+				showSiteStats(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
+				showExtLink(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
+				};
+			
+			sitediv.getElementsByClassName("getMemberListButton")[0].onclick= function(e){
+				getMembersById(this.parentNode.osm_id);
+				};
+			
+			sitediv.onmouseout= function(){
+				deHighlight();
+			}
+			
+			sitediv.onmouseover= function(){
+				highlightElement(this.osm_id,'sites');
+			};
+			
+			Div.appendChild(sitediv);
+			
+			spans = sitediv.getElementsByTagName('span');
+			for (i=0; i< spans.length; i++) {
+				var span = spans[i] 
+				if (span.className=="routeColorSpan") {span.style.display='none';}
+				if (span.className=="pisteNameSpan") {span.style.display='none';}
+				if (span.className=="siteNameSpan") {
+					span.innerHTML=name;//+' '+osm_id;
+					}
+				if (span.className=="difficultySpan") {span.style.display='none';}
+				if (span.className=="difficultyColorSpan") {span.style.display='none';}
+			}
+			
+			var pic;
+			var picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
+			picDiv.innerHTML='';
+			if (site.pistetype) {
+				var types=site.pistetype.split(';');
+				for (t in types) {
+					pic =icon[types[t]];
+					if (pic) {
+						var img=document.createElement('img');
+						img.src=pic;
+						img.className='pisteIcon';
+						picDiv.appendChild(img);
+						//html+='<img src="'+pic+'" style="vertical-align: middle;">&nbsp;\n';
+					}
 				}
 			}
-			XMLHttp.send();
 		}
-	else
-	{div.parentElement.getElementsByClassName('siteStats')[0].style.display='none';}
+	}
+	
+}
+function showSiteStats(div, id, element_type) { // fix for normal ways
+	
+	var child = div.getElementsByClassName('siteStats')[0]
+	if (child == null) {
+		var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
+		statsdiv.removeAttribute("id");
+		div.appendChild(statsdiv);
+		
+		
+		abortXHR('PisteAPI'); // abort another request if any
+		
+		var q = server+"request?site-stats="+id;
+		var XMLHttp = new XMLHttpRequest();
+		
+		PisteAPIXHR.push(XMLHttp);
+		
+		XMLHttp.open("GET", q);
+		XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+		
+		XMLHttp.onreadystatechange= function () {
+			if (XMLHttp.readyState == 4) {
+				var resp=XMLHttp.responseText;
+				var jsonStats = JSON.parse(resp);
+				statsdiv.getElementsByClassName('stats')[0].className.replace('hidden','shown');
+				
+				fillHTMLStats(jsonStats, statsdiv, id, element_type)
+			}
+		}
+		XMLHttp.send();
+	} else {
+		child.parentNode.removeChild(child);
+	}
 }
 function fillHTMLStats(jsonStats, div, element_type) {
 	
@@ -2179,17 +2254,10 @@ function fillHTMLStats(jsonStats, div, element_type) {
 }
 
 function showExtLink(div, ids, element_type) {
-	if (div.parentElement.getElementsByClassName('elementExtLink')[0].style.display=='none') {
-		var Infodiv=div.parentElement.getElementsByClassName('elementExtLink')[0];
+	
+	var child = div.getElementsByClassName('elementExtLink')[0]
+	if (child == null) {
 		
-		while (Infodiv.firstChild) {
-		    Infodiv.removeChild(Infodiv.firstChild);
-		} //clear previous stats
-		Infodiv.style.display='inline';
-		//~ Infodiv.style.display='inline';
-		//~ if (!(ids instanceof Array)) {
-			//~ ids = [id];
-		//~ }
 		ids = ids.split('_');
 		
 		for (k = 0; k< ids.length; k++) {
@@ -2197,7 +2265,7 @@ function showExtLink(div, ids, element_type) {
 			var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
 			linkdiv.removeAttribute("id");
 			linkdiv.className.replace('shown','hidden');
-			Infodiv.appendChild(linkdiv);
+			div.appendChild(linkdiv);
 			spans = linkdiv.getElementsByClassName('data');
 			if (element_type == 'relation') {
 				linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden','shown');
@@ -2221,65 +2289,12 @@ function showExtLink(div, ids, element_type) {
 			}
 			
 		}
-	}
-	else {
-		div.parentElement.getElementsByClassName('elementExtLink')[0].style.display='none';
-	}
 	
+	} else {
+		child.parentNode.removeChild(child);
+	}
 }
 
-function makeHTMLStats(jsonStats) {
-	html='';
-	if (jsonStats['site'] != null) {
-		html+='<table>';
-		
-		html+='<tr><td>';
-		html+='<img src="pics/alpine-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['downhill'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/skitour-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['skitour'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/snowpark-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['snow_park'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
-		else {html+='<font color="red">&nbsp;x<font/>';}
-		html+='</td><td>';
-		html+='<img src="pics/jump-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['jump'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
-		else {html+='<font color="red">&nbsp;x<font/>';}
-		html+='</td></tr>';
-		
-		html+='<tr><td>';
-		html+='<img src="pics/nordic-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['nordic'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/sled-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['sled'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/playground-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['playground'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
-		else {html+='<font color="red">&nbsp;x<font/>';}
-		html+='</td><td>';
-		html+='<img src="pics/sleigh-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['sleigh'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
-		else {html+='<font color="red">&nbsp;x<font/>';}
-		html+='</td></tr>';
-		
-		html+='<tr><td>';
-		html+='<img src="pics/drag_lift-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['lifts'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/snowshoe-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		html+=(parseFloat(jsonStats['hike'])/1000).toFixed(1)+'&nbsp;km<br/>';
-		html+='</td><td>';
-		html+='<img src="pics/iceskate-nb-20.png" style="vertical-align: middle;margin-left:20px;">&nbsp;';
-		if (jsonStats['ice_skate'] != 0) {html+='<font color="green">&nbsp;&#9679;<font/>';}
-		else {html+='<font color="red">&nbsp;x<font/>';}
-		html+='</td></tr>';
-		html+='</table>';
-	}
-	return html;
-}
 //======================================================================
 // I18N
 var locs = [ "ast","cz","de","en","es","cat","fi","fr","hu","it","jp","nl","nn","ru","se","ukr"];
