@@ -675,7 +675,7 @@ function getByName(name) {
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
-			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
+			showHTMLPistesList(document.getElementById('piste_search_results'));
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			searchComplete+=1;
@@ -788,7 +788,7 @@ function getTopoByViewport() { //DONE in pisteList
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
 			showHTMLPistesList(document.getElementById('piste_search_results'));
-			//document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
+			//document.getElementById('piste_search_results').innerHTML=showHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			cacheInHistory(document.getElementById('search_results').innerHTML);
@@ -824,7 +824,7 @@ function getMembersById(id) { //DONE in pisteList
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('hidden','shown');
-			document.getElementById('piste_search_results').innerHTML=makeHTMLPistesList();
+			showHTMLPistesList(document.getElementById('piste_search_results'));
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			cacheInHistory(document.getElementById('search_results').innerHTML);
@@ -861,7 +861,7 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList
 			SIDEBARSIZE = 'full';
 			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
 			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
-			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
+			showHTMLPistesList(document.getElementById('route_list'));
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
@@ -896,7 +896,7 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 			SIDEBARSIZE = 'full';
 			document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('shown','hidden');
 			document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
-			document.getElementById('route_list').innerHTML=makeHTMLPistesList(routeLength);
+			showHTMLPistesList(document.getElementById('route_list'));
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
@@ -1757,7 +1757,7 @@ function addPoint(lonlat){
 	if (pointsLayer.features.length >1){route();}
 	else {
 		document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
-		document.getElementById('route_list').innerHTML=makeHTMLPistesList();
+		showHTMLPistesList(document.getElementById('route_list'));
 		cacheInHistory(document.getElementById('topo').innerHTML)
 	}
 	return true;
@@ -1874,7 +1874,7 @@ deleteHandler.activate();
 map.events.register("click", map, onMapClick);
 }
 
-function makeHTMLPistesList(length) {
+function makeWASHTMLPistesList(length) {
 	
 	//var html='\n<div style="font-size:0.7em;">\n';
 	var html ='\n<div class="clear"></div>'
@@ -2124,6 +2124,7 @@ function showHTMLPistesList(Div) {
 			if (name==' '){name=' x ';}
 			
 			var element_type='';
+			
 			if (site.type) {element_type=site.type;}
 			
 			
@@ -2152,6 +2153,10 @@ function showHTMLPistesList(Div) {
 				highlightElement(this.osm_id,'sites');
 			};
 			
+			sitediv.onclick= function(){
+				zoomToElement(this.osm_id,'sites');
+				deHighlight();
+			};
 			Div.appendChild(sitediv);
 			
 			spans = sitediv.getElementsByTagName('span');
@@ -2182,7 +2187,229 @@ function showHTMLPistesList(Div) {
 					}
 				}
 			}
+			
+			sitediv.getElementsByClassName("diffInfos")[0].style.display='none';
+			
+			var hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+			hrDiv.removeAttribute("id");
+			Div.appendChild(hrDiv);
+			
 		}
+	}
+	
+	if (jsonPisteList['pistes'] != null) {
+		
+		for (p in jsonPisteList['pistes']) {
+			var piste=jsonPisteList['pistes'][p];
+			
+			var osm_ids;
+			osm_ids=piste.ids.join('_').toString();
+			
+			//~ var pic;
+			//~ if (piste.pistetype) {pic =icon[piste.pistetype];}
+			//~ else {pic =icon[piste.aerialway];}
+			if (piste.type) {element_type=piste.type;}
+			var color='';
+			if (piste.color) {
+				color = piste.color;//'&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
+			}
+			
+			var lon = piste.center[0];
+			var lat = piste.center[1];
+			
+			var difficulty='';
+			if (piste.difficulty) {difficulty=piste.difficulty;}
+			
+			var name = piste.name;
+			if (name==' '){name=' - ';}
+			
+			var pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
+			
+			pistediv.removeAttribute("id");
+			pistediv.osm_id=osm_ids;
+			pistediv.element_type=element_type;
+			
+			pistediv.getElementsByClassName("getProfileButton")[0].onclick= function(e){
+				zoomToElement(this.parentNode.osm_id,'pistes');
+				showProfileFromGeometry(this.parentNode.osm_id,'pistes');
+				};
+			
+			pistediv.getElementsByClassName("moreInfoButton")[0].onclick= function(e){
+				showExtLink(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
+				};
+			
+			pistediv.getElementsByClassName("getMemberListButton")[0].style.display='none';
+			
+			var buttondiv = pistediv.getElementsByClassName("pisteListButton")[0]
+			buttondiv.onmouseout= function(){
+				deHighlight();
+			}
+			
+			buttondiv.onmouseover= function(){
+				highlightElement(this.parentNode.osm_id,'pistes');
+			};
+			
+			buttondiv.onclick= function(){
+				zoomToElement(this.parentNode.osm_id,'pistes');
+				deHighlight();
+			};
+			Div.appendChild(pistediv);
+			
+			spans = pistediv.getElementsByTagName('span');
+			for (i=0; i< spans.length; i++) {
+				var span = spans[i] 
+				if (span.className=="routeColorSpan") {
+					if (piste.color) {span.style.color=piste.color;}
+					else {span.style.display='none';}
+					}
+				if (span.className=="pisteNameSpan") {
+					span.innerHTML=name;
+					}
+				if (span.className=="siteNameSpan") {span.style.display='none';}
+				if (span.className=="difficultySpan") {
+					span.innerHTML=_(piste.difficulty);
+					}
+				if (span.className=="difficultyColorSpan") {
+					if (piste.difficulty) {
+						var marker = '&#9679;'
+						if (piste.difficulty =='freeride') {marker = '!';}
+						if (lat>0 && lon <-40) {
+							if (piste.difficulty =='expert') {marker = '&diams;';}
+							if (piste.difficulty =='advanced') {marker = '&diams;&diams;';}
+							if (piste.difficulty =='freeride') {marker = '!!';}
+							span.style.color=diffcolorUS[piste.difficulty];
+						} else {
+							span.style.color=diffcolor[piste.difficulty];
+						}
+						span.innerHTML=marker;
+
+					} else {span.style.display='none';}
+				}
+			}
+			
+			var pic;
+			var picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
+			picDiv.innerHTML='';
+			var pic =null;
+			if (piste.pistetype) {
+				var pic =icon[piste.pistetype];
+			} else {
+				var pic =icon[piste.aerialway];
+			}
+			if (pic) {
+				var img=document.createElement('img');
+				img.src=pic;
+				img.className='pisteIcon';
+				picDiv.appendChild(img);
+			}
+			
+			if (! piste.pistetype) {
+				pistediv.getElementsByClassName("diffInfos")[0].style.display='none';
+			}
+			if (piste.difficulty && piste.difficulty.split(',').length > 1) {
+				pistediv.getElementsByClassName("diffInfos")[0].style.display='none';
+			}
+			
+			var cleardiv = document.getElementById('clearProto').cloneNode(true);
+			cleardiv.removeAttribute("id");
+			pistediv.appendChild(cleardiv);
+			// parent routes
+			if (piste.in_routes.length != 0) {
+				
+				for (r in piste.in_routes) {
+					
+					var color='';
+					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
+					else {color =diffcolor[piste.in_routes[r].difficulty];}
+					
+					var routeName = piste.in_routes[r].name;
+					var inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
+					
+					inroutediv.removeAttribute("id");
+					inroutediv.osm_id=osm_ids;
+					inroutediv.element_type=element_type;
+					inroutediv.r=r;
+					
+					inroutediv.onmouseout= function(){
+						deHighlight();
+					}
+					
+					inroutediv.onmouseover= function(){
+						highlightParentRoute(this.osm_id,this.r);
+					};
+					
+					inroutediv.onclick= function(){
+						showProfileFromGeometryParentRoute(this.osm_id,this.r);
+						deHighlight();
+					};
+					pistediv.appendChild(inroutediv);
+					
+					spans = inroutediv.getElementsByTagName('span');
+					for (i=0; i< spans.length; i++) {
+						var span = spans[i] 
+						if (span.className=="routeNameSpan") {
+							span.innerHTML=routeName;
+							}
+						if (span.className=="routeColorSpan") {
+							if (color !='') {span.style.color=color;}
+							else {span.style.display='none';}
+							}
+						}
+						
+					}
+					
+					
+				}
+			
+			
+			// parent sites
+			if (piste.in_sites.length != 0) {
+				
+				for (r in piste.in_sites) {
+					var siteId = piste.in_sites[r].id;
+					var siteName = piste.in_sites[r].name;
+					var insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
+					
+					insitediv.removeAttribute("id");
+					insitediv.osm_id=osm_ids;
+					insitediv.parent_site_id=siteId;
+					insitediv.element_type=element_type;
+					
+					insitediv.onmouseout= function(){
+						deHighlight();
+					}
+					
+					insitediv.onmouseover= function(){
+						highlightParentSite(this.osm_id,r);
+					};
+					
+					insitediv.onclick= function(){
+						zoomToParentSite(this.osm_id,r);
+						deHighlight();
+						getMembersById(this.parent_site_id);
+					};
+					pistediv.appendChild(insitediv);
+					spans = pistediv.getElementsByTagName('span');
+					for (i=0; i< spans.length; i++) {
+						var span = spans[i] 
+						if (span.className=="siteNameSpan") {
+							span.innerHTML=siteName;
+							}
+						}
+					}
+				}
+			
+			
+			var cleardiv = document.getElementById('clearProto').cloneNode(true);
+			cleardiv.removeAttribute("id");
+			Div.appendChild(cleardiv);
+			
+			var hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+			hrDiv.removeAttribute("id");
+			Div.appendChild(hrDiv);
+
+		} // end for
+	
 	}
 	
 }
@@ -2264,12 +2491,13 @@ function showExtLink(div, ids, element_type) {
 			var id= ids[k];
 			var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
 			linkdiv.removeAttribute("id");
-			linkdiv.className.replace('shown','hidden');
 			div.appendChild(linkdiv);
-			spans = linkdiv.getElementsByClassName('data');
+			linkdiv.className.replace('shown','hidden');
 			if (element_type == 'relation') {
 				linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden','shown');
+				linkdiv.getElementsByClassName('analyse')[0].style.display='inline';
 			}
+			spans = linkdiv.getElementsByClassName('data');
 			for (i=0; i< spans.length; i++) {
 				var data = spans[i].getAttribute('dataText')
 				

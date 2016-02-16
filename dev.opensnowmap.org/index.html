@@ -87,35 +87,21 @@
 						<div class="pisteListElement" id="pisteListElementProto">
 							<!-- Buttons -->
 							<div class="Button getProfileButton">
-<!--
-								onclick="zoomToElement('31749123','pistes');showProfileFromGeometry('31749123','pistes');" 
--->
 								
 								<img src="pics/profile-flat22.png">
 							</div>
 							
 							<div  class="Button moreInfoButton">
-<!--
-								onclick="showExtLink(this,'31749123','way');"
--->
 								
 								<img src="pics/info-flat22.png">
 							</div>
 							
 							<div  class="Button getMemberListButton">
-<!--
-								onclick="getMembersById(2764548);deHighlight();"
--->
 								
 								<img src="pics/list-flat22.png">
 							</div>
 							<!-- Buttons -->
 							<div class="pisteListButton">
-<!--
-								onmouseout="deHighlight();" 
-								onmouseover="highlightElement('31749123','pistes');" 
-								onclick="zoomToElement('31749123','pistes'); deHighlight();" 
--->
 								
 								&nbsp;
 								<div class="pisteIconDiv">
@@ -126,7 +112,7 @@
 								<div style="float:left;">
 									&nbsp;
 									<span class="routeColorSpan">
-										<b style="color:orange;">●</b>
+										<b>●</b>
 									</span>
 									&nbsp;
 									<span class="pisteNameSpan">
@@ -136,22 +122,19 @@
 										Site
 									</span></b>
 									&nbsp;
-									<span class="difficultySpan">
-										<font style="">( difficulty</font>
-									</span>
-									<span class="difficultyColorSpan">
-										<b style="color:green;">&nbsp;●&nbsp;)</b>
-									</span>
-									&nbsp;
+									<div class="diffInfos" style="float:right;">
+										(
+										<span class="difficultySpan">
+											<font style="">difficulty</font>
+										</span>
+										<span class="difficultyColorSpan">
+											<b style="color:green;">&nbsp;●&nbsp;</b>
+										</span>
+										)
+									</div>
 								</div>
 							</div>
 							
-							<div class="clear"></div>
-							
-
-							
-							<div style="display:none;" class="inRouteElement "></div>
-							<div style="display:none;" class="inSiteElement "></div>
 							<div class="clear"></div>
 						
 						</div>
@@ -200,7 +183,7 @@
 								<div class="analyse hidden">
 									<span>Analyse</span>&nbsp;
 									<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
-										&nbsp;<span class="data" dataText="analyseId">xxxx</span>&nbsp;
+										&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
 										<img src="pics/external-flat22.png">
 									</a>
 								</div>
@@ -208,19 +191,20 @@
 						</div>
 						
 						<div class="pisteListElement"> <!-- style display -->
-							<div  class="inRouteElement pisteListButton" id="inRouteElementProto"
-								onmouseout="deHighlight();" 
-								onmouseover="highlightParentRoute('145732500',0);" 
-								onclick="deHighlight();showProfileFromGeometryParentRoute('145732500',0)">
-								&nbsp;<b style="color:blue;font-weight:900;">&nbsp;● </b>Le Mont Ramey&nbsp;
+							<div  class="inRouteElement pisteListButton" id="inRouteElementProto">
+									&nbsp;
+									<span class="routeColorSpan">
+										<b>●</b>
+									</span>
+									&nbsp;
+									<span class="routeNameSpan">
+										<font style="">Route</font>
+									</span>
 								<img style="vertical-align:middle;" src="pics/profile-flat22.png">
 							</div>
 							
-							<div class="inSiteElement pisteListButton" id="inSiteElementProto"
-								onmouseout="deHighlight();" 
-								onmouseover="highlightParentSite('31749123',0);" 
-								onclick="zoomToParentSite('31749123',0); deHighlight();getMembersById(3161203);" >
-								<b>Metabief - Mont d'or</b>
+							<div class="inSiteElement pisteListButton" id="inSiteElementProto">
+								<b><span class="siteNameSpan">Metabief - Mont d'or</span></b>
 								<img style="vertical-align:middle;" src="pics/list-flat22.png">
 							</div>
 						</div>
