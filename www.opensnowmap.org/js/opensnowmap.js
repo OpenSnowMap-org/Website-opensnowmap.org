@@ -647,12 +647,7 @@ function checkKey(e) {
 function echap() {
 	    close_donate()
 		close_sideBar();
-		close_printSettings();
-		// close extendedmenu
-		//~ var em = document.getElementById('extendedmenu');
-		//~ if (em.style.display == "inline") {
-		//~ em.style.display = 'none';
-		//~ }
+		
 		clearRoute();
 		deHighlight();
 		abortXHR('GetProfile'); // abort another request if any
