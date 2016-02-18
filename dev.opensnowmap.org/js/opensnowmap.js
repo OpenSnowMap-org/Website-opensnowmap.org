@@ -246,7 +246,7 @@ function show_catcher(){
 	
 	translateDiv('catcher');
 	fillData('catcher');
-	cacheInHistory(catcherDiv.innerHTML);
+	cacheInHistory(catcherDiv);
 }
 function show_helper(){
 	close_sideBar();
@@ -257,7 +257,7 @@ function show_helper(){
 	
 	var helperDiv = document.getElementById('helper');
 	helperDiv.className= helperDiv.className.replace('hidden','shown');
-	cacheInHistory(helperDiv.innerHTML);
+	cacheInHistory(helperDiv);
 	
 	//~ if (map.getZoom()<11){
 		//~ document.getElementById('zoomin-helper').style.display = 'inline';
@@ -295,7 +295,7 @@ function show_about() {
 			.replace('**snowshoeing**',data.snowshoeing);
 			aboutDiv.innerHTML = content;
 			//aboutDiv.style.display='inline';
-			cacheInHistory(aboutDiv.innerHTML);
+			cacheInHistory(aboutDiv);
 		}
 	}
 	XMLHttp.send();
@@ -311,7 +311,7 @@ function show_edit() {
 	var editDiv = document.getElementById('edit');
 	editDiv.className= editDiv.className.replace('hidden','shown');
 	translateDiv('edit');
-	cacheInHistory(editDiv.innerHTML);
+	cacheInHistory(editDiv);
 	
 	permalink_id = new OpenLayers.Control.Permalink("permalink.id",
 	"http://www.openstreetmap.org/edit",{'createParams': permalink1Args});
@@ -344,7 +344,7 @@ function show_legend() {
 	var legendDiv = document.getElementById('legend');
 	legendDiv.className= legendDiv.className.replace('hidden','shown');
 	translateDiv('legend');
-	cacheInHistory(legendDiv.innerHTML);
+	cacheInHistory(legendDiv);
 }
 function show_settings() {
 	document.getElementById('sideBar').style.display='inline';
@@ -494,13 +494,15 @@ function show_languages() {
 			 +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
 	}
 	languageDiv.innerHTML=html;
-	cacheInHistory(languageDiv.innerHTML);
+	cacheInHistory(languageDiv);
 }
-
-function cacheInHistory(html) {
-	sideBarHistoryArray.push(html);
+//======================================================================
+// SideBar history
+function cacheInHistory(div) {
+	
+	sideBarHistoryArray.push(cloneNodeAndEvents(div,true,true));
 	jsonPisteLists.push(jsonPisteList);
-	currentResult+=1;
+	currentResult=sideBarHistoryArray.length-1;
 	if (sideBarHistoryArray.length > 5 ) {
 		sideBarHistoryArray.splice(0,1);
 		jsonPisteLists.splice(0,1);
@@ -518,7 +520,6 @@ function cacheInHistory(html) {
 	}
 	return true;
 }
-
 function prevResult(){
 	if (sideBarHistoryArray.length >= currentResult-1 && currentResult > 0) {
 		close_sideBar();
@@ -529,7 +530,7 @@ function prevResult(){
 		document.getElementById('sideBarTitle').innerHTML='';
 		
 		var historyDiv = document.getElementById('sideBarHistory');
-		historyDiv.innerHTML=sideBarHistoryArray[currentResult-1];
+		historyDiv.appendChild(sideBarHistoryArray[currentResult-1]);
 		historyDiv.className= historyDiv.className.replace('hidden','shown');
 		jsonPisteList = jsonPisteLists[currentResult-1];
 		currentResult -= 1;
@@ -556,7 +557,7 @@ function nextResult(){
 		document.getElementById('sideBarTitle').innerHTML='';
 		
 		var historyDiv = document.getElementById('sideBarHistory');
-		historyDiv.innerHTML=sideBarHistoryArray[currentResult+1];
+		historyDiv.appendChild(sideBarHistoryArray[currentResult+1]);
 		historyDiv.className= historyDiv.className.replace('hidden','shown');
 		jsonPisteList = jsonPisteLists[currentResult+1];
 		currentResult += 1;
@@ -680,7 +681,7 @@ function getByName(name) {
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('search_results').innerHTML);
+				cacheInHistory(document.getElementById('search_results'));
 				searchComplete=0;
 			}
 		}
@@ -720,7 +721,7 @@ function nominatimSearch(name) {
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('search_results').innerHTML);
+				cacheInHistory(document.getElementById('search_results'));
 				searchComplete=0;
 			}
 		}
@@ -791,7 +792,7 @@ function getTopoByViewport() { //DONE in pisteList
 			//document.getElementById('piste_search_results').innerHTML=showHTMLPistesList();
 			SIDEBARSIZE='full';
 			resize_sideBar();
-			cacheInHistory(document.getElementById('search_results').innerHTML);
+			cacheInHistory(document.getElementById('search_results'));
 		}
 	}
 	XMLHttp.send();
@@ -827,7 +828,7 @@ function getMembersById(id) { //DONE in pisteList
 			showHTMLPistesList(document.getElementById('piste_search_results'));
 			SIDEBARSIZE='full';
 			resize_sideBar();
-			cacheInHistory(document.getElementById('search_results').innerHTML);
+			cacheInHistory(document.getElementById('search_results'));
 			resize_sideBar();
 		}
 	}
@@ -844,7 +845,16 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList
 	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
+	
+	spans = document.getElementById('topo').getElementsByClassName('data');
+	for (i=0; i< spans.length; i++) {
+		var data = spans[i].getAttribute('dataText')
+		if (data == 'route_length') {
+			spans[i].innerHTML=parseFloat(routeLength).toFixed(1);
+			}
+	}
 	
 	var q = server+"request?geo=true&topo=true&ids_ways="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -865,7 +875,7 @@ function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('topo').innerHTML);
+				cacheInHistory(document.getElementById('topo'));
 				searchComplete=0;
 			}
 		}
@@ -882,7 +892,16 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
+	
+	spans = document.getElementById('topo').getElementsByClassName('data');
+	for (i=0; i< spans.length; i++) {
+		var data = spans[i].getAttribute('dataText')
+		if (data == 'route_length') {
+			spans[i].innerHTML=parseFloat(routeLength).toFixed(1);
+			}
+	}
 	
 	var q = server+"request?geo=true&topo=true&ids="+ids;
 	var XMLHttp = new XMLHttpRequest();
@@ -900,7 +919,7 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('topo').innerHTML);
+				cacheInHistory(document.getElementById('topo'));
 				searchComplete=0;
 			}
 		}
@@ -920,6 +939,7 @@ function getClosestPistes(lonlat){//DONE in pisteList
 	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
 	lonlat.transform(
@@ -952,6 +972,7 @@ function getProfile(wktroute) {//DONE in pisteList
 	document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('hidden','shown');
 	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
+	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
 	
 	// request the elevation profile
@@ -968,11 +989,11 @@ function getProfile(wktroute) {//DONE in pisteList
 			document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown','hidden');
 			//document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
 			document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
-			document.getElementById('route_profile').innerHTML=html;
+			document.getElementById('route_profile_image').innerHTML=html;
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
-				cacheInHistory(document.getElementById('topo').innerHTML);
+				cacheInHistory(document.getElementById('topo'));
 				searchComplete=0;
 			}
 		}
@@ -1128,7 +1149,8 @@ function updateZoom() {
 function onZoomEnd(){
 	
 	ONCE=true;
-	if(CATCHER && ONCE){close_sideBar();CATCHER=false;close_donate();}
+	close_donate();
+	if(CATCHER && ONCE){close_sideBar();CATCHER=false;}
 	//~ if (map.getZoom()<11){
 		//~ if (document.getElementById('zoomin-helper')) {
 		//~ document.getElementById('zoomin-helper').style.display = 'inline';}
@@ -1758,7 +1780,7 @@ function addPoint(lonlat){
 	else {
 		document.getElementById('route_list').className = document.getElementById('route_list').className.replace('hidden','shown');
 		showHTMLPistesList(document.getElementById('route_list'));
-		cacheInHistory(document.getElementById('topo').innerHTML)
+		cacheInHistory(document.getElementById('topo'));
 	}
 	return true;
 }
@@ -1874,230 +1896,6 @@ deleteHandler.activate();
 map.events.register("click", map, onMapClick);
 }
 
-function makeWASHTMLPistesList(length) {
-	
-	//var html='\n<div style="font-size:0.7em;">\n';
-	var html ='\n<div class="clear"></div>'
-	html+='\n'
-	if(typeof(length)!=='undefined') {
-		html +='<div><b style="font-size:1em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
-		}
-	if (jsonPisteList['sites'] != null) {
-		
-		for (p in jsonPisteList['sites']) {
-			
-			var site=jsonPisteList['sites'][p];
-			var index;
-			index=site.result_index;
-			
-			var osm_id;
-			osm_id=site.ids.join('_').toString(); // What to do with that '_' ?
-			
-			var name = site.name;
-			if (name==' '){name=' x ';}
-			
-			var element_type='';
-			if (site.type) {element_type=site.type;}
-			
-			html+='<div class="pisteListElement">\n ';
-			
-				// ---- info button-----
-				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showSiteStats(this,\''+osm_id+'\',\''+element_type+'\');'
-				html+='showExtLink(this,\''+osm_id+'\',\''+element_type+'\');">';
-				html+='<img src="pics/info-flat22.png"></div>\n';
-				// ---- list button-----
-				html+='<div class="Button" style="float:right;" '
-				html+='onClick="getMembersById('+osm_id+');deHighlight();">'
-				html+='<img src="pics/list-flat22.png"></div>\n';
-			
-				html+='<div class="pisteListButton"';
-				html+='onClick="zoomToElement(\''+osm_id+'\',\'sites\')" ';
-				html+='onmouseover="highlightElement(\''+osm_id+'\',\'sites\');" ';
-				html+='onmouseout="deHighlight();">\n';
-				
-				var pic;
-				if (site.pistetype) {
-					var types=site.pistetype.split(';');
-					for (t in types) {
-						pic =icon[types[t]];
-						if (pic) {
-							html+='<img src="'+pic+'" style="vertical-align: middle;">&nbsp;\n';
-						}
-					}
-				}
-				
-				html+='	&nbsp;<b >'+name+'</b>\n';
-				
-				html+='\n<div class="clear"></div>'
-				html+='\n</div>'// pisteListButton
-				
-				// more infos
-				html+='<div class="siteStats" style="display:none;"></div>';
-				html+='<div class="elementExtLink" style="display:none;"></div>';
-				//~ html+='<div class="stats"></div>';
-				//~ 
-				//~ if (site.type) {
-					//~ html+='<p style="margin-left:20px;">';
-					//~ html+=element_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+element_type+'/'+osm_id+'">';
-					//~ html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
-					//~ html+='</a>';
-					//~ html+='</p>';
-				//~ }
-				//~ html+='\n</div>'
-				
-			html+='\n</div>' //pisteListElement
-			html+='<hr class="light">';
-		}
-	}
-	html+='\n<hr>'
-	if (jsonPisteList['pistes'] != null) {
-		
-		for (p in jsonPisteList['pistes']) {
-			
-			var piste=jsonPisteList['pistes'][p];
-			
-			var osm_ids;
-			osm_ids=piste.ids.join('_').toString();
-			
-			var pic;
-			if (piste.pistetype) {pic =icon[piste.pistetype];}
-			else {pic =icon[piste.aerialway];}
-			if (piste.type) {element_type=piste.type;}
-			var color='';
-			if (piste.color) {
-				color ='&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
-			}
-			
-			var lon = piste.center[0];
-			var lat = piste.center[1];
-			
-			var difficulty='';
-			if (piste.difficulty) {
-				var marker = '&#9679;'
-				if (lat>0 && lon <-40) {
-					if (piste.difficulty =='expert') {marker = '&diams;';}
-					if (piste.difficulty =='advanced') {marker = '&diams;&diams;';}
-					if (piste.difficulty =='freeride') {marker = '!!';}
-					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolorUS[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
-				}
-				else {
-					if (piste.difficulty =='freeride') {marker = '!';}
-					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolor[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
-				}
-			}
-			
-			var name = piste.name;
-			if (name==' '){name=' - ';}
-			
-			html+='<div class="pisteListElement">\n';
-				// ---- profile button-----
-				html+='<div class="Button" style="float:right;" '
-				html+='onClick="zoomToElement(\''+osm_ids+'\',\'pistes\');'
-				html+='showProfileFromGeometry(\''+osm_ids+'\',\'pistes\');">'
-				html+='<img src="pics/profile-flat22.png"></div>\n';
-				// ---- info button-----
-				html+='<div class="Button" style="float:right;" '
-				html+='onClick="showExtLink(this,\''+osm_ids+'\',\''+element_type+'\');">'
-				html+='<img src="pics/info-flat22.png"></div>\n';
-			
-				html+='<div class="pisteListButton" '
-				html+='onClick="zoomToElement(\''+osm_ids+'\',\'pistes\'); '
-				html+='deHighlight();" '
-				html+='onmouseover="highlightElement(\''+osm_ids+'\',\'pistes\');" '
-				html+='onmouseout="deHighlight();">\n'
-				
-				if (pic) {
-					html+='&nbsp;<img src="'+pic+'" style="float:left;vertical-align: middle;">&nbsp;\n';
-				}
-				
-				html+='	<div style="float:left;">&nbsp;'+color+name+difficulty+'</div>\n';
-				
-				html+='\n<div class="clear"></div>\n'
-				html+='\n</div>'; //pisteListButton
-			
-			
-			html+='\n<div class="clear"></div>\n'
-			// parent routes
-			if (piste.in_routes.length != 0) {
-				
-				for (r in piste.in_routes) {
-					html+='<div class="inRouteElement pisteListButton" style="float:left;" '
-					html+='onClick="deHighlight();showProfileFromGeometryParentRoute(\''+osm_ids+'\','+r+')"'
-					html+='onmouseover="highlightParentRoute(\''+osm_ids+'\','+r+');" '
-					html+='onmouseout="deHighlight();">\n';
-					var color;
-					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
-					else {color =diffcolor[piste.in_routes[r].difficulty];}
-					
-					var name = piste.in_routes[r].name;
-					if (name==' '){name=' ? ';}
-					if (color){
-					html+='	&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'&nbsp;\n';
-					html+='	<img src="pics/profile-flat22.png" style="vertical-align:middle;">';
-					} else {
-					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
-					html+='	<img src="pics/profile-flat22.png" style="vertical-align:middle;">';
-					}
-					
-					
-					html+='</div>\n'; //inRouteElement
-				}
-				
-			}
-			html+='\n<div class="clear"></div>\n'
-			// parent sites
-			if (piste.in_sites.length != 0) {
-				
-				for (r in piste.in_sites) {
-					
-					html+='<div class="inSiteElement pisteListButton" style="float:right;"' 
-					html+='onClick="zoomToParentSite(\''+osm_ids+'\','+r+'); '
-					html+='deHighlight();'
-					html+='getMembersById('+piste.in_sites[r].id+');" '
-					html+='onmouseover="highlightParentSite(\''+osm_ids+'\','+r+');" '
-					html+='onmouseout="deHighlight();">\n'
-					var name = piste.in_sites[r].name;
-					if (name==' '){name=' ? ';}
-					html+='<b>'+name+'</b>\n';
-					html+='	<img src="pics/list-flat22.png" style="vertical-align:middle;">';
-					html+='</div>\n' // inSiteElement
-				}
-			}
-			
-			html+='\n<div class="clear"></div>\n';
-			// more infos
-			html+='<div class="elementExtLink " style="display:none;"></div>';
-			/*html+='<div class="stats"></div>';
-			html+='<p style="margin-left:20px;">';
-			var element_type=piste.type;
-			for (i in piste.ids) {
-				osm_id=piste.ids[i];
-				html+=element_type+'&nbsp;<a target="blank" href="http://openstreetmap.org/browse/'+element_type+'/'+osm_id+'">';
-				html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
-				html+='</a><br/>';
-				if (element_type == 'relation'){
-					html+='analyse &nbsp;<a target="blank" href="http://ra.osmsurround.org/analyzeRelation?relationId=+'+osm_id+'&_noCache=on">';
-					html+='&nbsp;'+osm_id+'&nbsp;<img src="pics/external-flat22.png">';
-					html+='</a><br/>';
-				}
-			}
-			
-			html+='</p>';
-			html+='\n</div>';*/
-			
-		html+='\n</div>\n'; // pisteListElement
-		html+='<hr class="light">';
-		}
-	}
-	
-	if (jsonPisteList['limit_reached']) {
-		html+='<p>'+jsonPisteList['info']+'</p>\n'
-	}
-	html+='\n</div>'
-	
-	return html
-}
 function showHTMLPistesList(Div) {
 	
 	
@@ -2131,18 +1929,22 @@ function showHTMLPistesList(Div) {
 			var sitediv = document.getElementById('pisteListElementProto').cloneNode(true);
 			
 			sitediv.removeAttribute("id");
-			sitediv.osm_id=osm_id;
-			sitediv.element_type=element_type;
+			sitediv.setAttribute('osm_id',osm_id);
+			sitediv.setAttribute('element_type',element_type);
 			
 			sitediv.getElementsByClassName("getProfileButton")[0].style.display='none';
 			
 			sitediv.getElementsByClassName("moreInfoButton")[0].onclick= function(e){
-				showSiteStats(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
-				showExtLink(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
+				showSiteStats(this.parentNode,
+					this.parentNode.getAttribute('osm_id'),
+					this.parentNode.getAttribute('element_type'));
+				showExtLink(this.parentNode,
+					this.parentNode.getAttribute('osm_id'),
+					this.parentNode.getAttribute('element_type'));
 				};
 			
 			sitediv.getElementsByClassName("getMemberListButton")[0].onclick= function(e){
-				getMembersById(this.parentNode.osm_id);
+				getMembersById(this.parentNode.getAttribute('osm_id'));
 				};
 			
 			sitediv.onmouseout= function(){
@@ -2150,11 +1952,11 @@ function showHTMLPistesList(Div) {
 			}
 			
 			sitediv.onmouseover= function(){
-				highlightElement(this.osm_id,'sites');
+				highlightElement(this.getAttribute('osm_id'),'sites');
 			};
 			
 			sitediv.onclick= function(){
-				zoomToElement(this.osm_id,'sites');
+				zoomToElement(this.getAttribute('osm_id'),'sites');
 				deHighlight();
 			};
 			Div.appendChild(sitediv);
@@ -2226,16 +2028,17 @@ function showHTMLPistesList(Div) {
 			var pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
 			
 			pistediv.removeAttribute("id");
-			pistediv.osm_id=osm_ids;
-			pistediv.element_type=element_type;
+			pistediv.setAttribute('osm_id',osm_ids);
+			pistediv.setAttribute('element_type',element_type);
 			
 			pistediv.getElementsByClassName("getProfileButton")[0].onclick= function(e){
-				zoomToElement(this.parentNode.osm_id,'pistes');
-				showProfileFromGeometry(this.parentNode.osm_id,'pistes');
+				zoomToElement(this.parentNode.getAttribute('osm_id'),'pistes');
+				showProfileFromGeometry(this.parentNode.getAttribute('osm_id'),'pistes');
 				};
 			
 			pistediv.getElementsByClassName("moreInfoButton")[0].onclick= function(e){
-				showExtLink(this.parentNode,this.parentNode.osm_id,this.parentNode.element_type);
+				showExtLink(this.parentNode,this.parentNode.getAttribute('osm_id')
+					,this.parentNode.getAttribute('element_type'));
 				};
 			
 			pistediv.getElementsByClassName("getMemberListButton")[0].style.display='none';
@@ -2246,11 +2049,11 @@ function showHTMLPistesList(Div) {
 			}
 			
 			buttondiv.onmouseover= function(){
-				highlightElement(this.parentNode.osm_id,'pistes');
+				highlightElement(this.parentNode.getAttribute('osm_id'),'pistes');
 			};
 			
 			buttondiv.onclick= function(){
-				zoomToElement(this.parentNode.osm_id,'pistes');
+				zoomToElement(this.parentNode.getAttribute('osm_id'),'pistes');
 				deHighlight();
 			};
 			Div.appendChild(pistediv);
@@ -2326,20 +2129,20 @@ function showHTMLPistesList(Div) {
 					var inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
 					
 					inroutediv.removeAttribute("id");
-					inroutediv.osm_id=osm_ids;
-					inroutediv.element_type=element_type;
-					inroutediv.r=r;
+					inroutediv.setAttribute('osm_id',osm_ids);
+					inroutediv.setAttribute('element_type',element_type);
+					inroutediv.setAttribute('r',r);
 					
 					inroutediv.onmouseout= function(){
 						deHighlight();
 					}
 					
 					inroutediv.onmouseover= function(){
-						highlightParentRoute(this.osm_id,this.r);
+						highlightParentRoute(this.getAttribute('osm_id'),this.getAttribute('r'));
 					};
 					
 					inroutediv.onclick= function(){
-						showProfileFromGeometryParentRoute(this.osm_id,this.r);
+						showProfileFromGeometryParentRoute(this.getAttribute('osm_id'),this.getAttribute('r'));
 						deHighlight();
 					};
 					pistediv.appendChild(inroutediv);
@@ -2371,22 +2174,23 @@ function showHTMLPistesList(Div) {
 					var insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
 					
 					insitediv.removeAttribute("id");
-					insitediv.osm_id=osm_ids;
-					insitediv.parent_site_id=siteId;
-					insitediv.element_type=element_type;
+					insitediv.setAttribute('osm_id',osm_ids);
+					insitediv.setAttribute('parent_site_id',siteId);
+					insitediv.setAttribute('element_type',element_type);
+					insitediv.setAttribute('r',r);
 					
 					insitediv.onmouseout= function(){
 						deHighlight();
 					}
 					
 					insitediv.onmouseover= function(){
-						highlightParentSite(this.osm_id,r);
+						highlightParentSite(this.getAttribute('osm_id'),this.getAttribute('r'));
 					};
 					
 					insitediv.onclick= function(){
-						zoomToParentSite(this.osm_id,r);
+						zoomToParentSite(this.getAttribute('osm_id'),this.getAttribute('r'));
 						deHighlight();
-						getMembersById(this.parent_site_id);
+						getMembersById(this.getAttribute('parent_site_id'));
 					};
 					pistediv.appendChild(insitediv);
 					spans = pistediv.getElementsByTagName('span');
@@ -2649,3 +2453,45 @@ function updateTooltips(){
 	document.getElementById("searchMenuButton").setAttribute('title',_('search-tooltip'));
 }
 
+function cloneNodeAndEvents(oldNode) {
+	var
+	oldSubElements
+	, newNode
+	, newSubElements
+	, n1, n2
+	
+	,allEvents = ['onabort','onbeforecopy','onbeforecut','onbeforepaste','onblur','onchange','onclick',
+	'oncontextmenu','oncopy','ondblclick','ondrag','ondragend','ondragenter', 'ondragleave' ,
+	'ondragover','ondragstart', 'ondrop','onerror','onfocus','oninput','oninvalid','onkeydown',
+	'onkeypress', 'onkeyup','onload','onmousedown','onmousemove','onmouseout',
+	'onmouseover','onmouseup', 'onmousewheel', 'onpaste','onreset', 'onresize','onscroll','onsearch', 'onselect','onselectstart','onsubmit','onunload']
+	
+	
+	
+	// clone
+	newNode = oldNode.cloneNode( true );
+	
+	// events
+
+	oldSubElements = oldNode.getElementsByTagName('*');
+	newSubElements = newNode.getElementsByTagName('*')
+	
+	// The node root
+	for (n2 = 0; n2 < allEvents.length; n2++) {
+		if (oldNode[allEvents[n2]]) {
+			newNode[allEvents[n2]] = oldNode[allEvents[n2]];
+		}
+	}
+	
+	// Node descendants
+	for (n1 = 0; n1 < oldSubElements.length; n1++) {
+		for (n2 = 0; n2 < allEvents.length; n2++) {
+			if (oldSubElements[n1][allEvents[n2]]) {
+				newSubElements[n1][allEvents[n2]] = oldSubElements[n1][allEvents[n2]];
+			}
+		}
+	}
+	
+	
+	return newNode;
+}

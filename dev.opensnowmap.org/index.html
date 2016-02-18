@@ -223,7 +223,7 @@
 					</div>
 					
 					
-					<div id="sideBarHistory" class="hidden sideBarContent"></div> <!-- div to display prev and next content -->
+					<div id="sideBarHistory" class="hidden"></div> <!-- div to display prev and next content -->
 					<div id="requestWaiter" class="hidden sideBarContent"> <!-- rolling snake  -->
 						<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 					</div>
@@ -236,10 +236,13 @@
 	<!--
 						<b>+_('PROFILE')+</b><br/>
 	-->
+						<b><span class="i18n" i18nText="PROFILE">xxxx</span></b>
 						<div id="profileWaiter" class="hidden">
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
-						<div id="route_profile" class="hidden"><img src="pics/profile54698.png"></div>
+						<div id="route_profile" class="hidden">
+							<div id="route_profile_image"><img src="pics/profile54698.png"></div>
+						</div>
 						
 						<div class="Button iconButton float-right" onclick="new_window();" style="margin-left:5px;margin-right:5px">
 							<img src="pics/print-22.png">
@@ -248,6 +251,10 @@
 	<!--
 						<b>'+_('routing_title')+'</b><br/>
 	-->
+						
+						<b><span class="i18n" i18nText="routing_title">xxxx</span>
+						&nbsp;-&nbsp;
+						<span class="data" dataText="route_length">0</span>&nbsp;km</b>
 						<div id="routeWaiter" class="hidden">
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>

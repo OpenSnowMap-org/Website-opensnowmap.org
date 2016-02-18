@@ -242,6 +242,9 @@ label {
             overflow: none;
             position: absolute
         }
+        .sideBarHistory{
+            font-size: 1.25em
+        }
     .sideBarHeader{
         top:0px;left:0px;right:0px;height:24px;position:relative;
         margin-left: 5px;
