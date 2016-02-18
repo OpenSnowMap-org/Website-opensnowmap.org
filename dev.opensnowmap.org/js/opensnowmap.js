@@ -47,6 +47,7 @@ var map;
 var lat=46.82084;
 var lon=6.39942;
 var zoom=2;//2
+var pointsLayer, linesLayer;
 var modifyControl;
 var highlightCtrl, selectCtrl;
 var SIDEBARSIZE='full'; //persistent sidebar
@@ -108,13 +109,76 @@ var diffcolorUS = {
 "freeride":'#E9C900'
 }
 // IE fix
-if(!document.getElementsByClassName) {
-    document.getElementsByClassName = function(className) {
-        return this.querySelectorAll("." + className);
-    };
-    Element.prototype.getElementsByClassName = document.getElementsByClassName;
+if(!document.getElementsByClassName) { // IE7 & IE8
+	document.getElementsByClassName = function(cl) {
+	  var retnode = [];
+	  var elem = this.getElementsByTagName('*');
+	  for (var i = 0; i < elem.length; i++) {
+		if((' ' + elem[i].className + ' ').indexOf(' ' + cl + ' ') > -1) retnode.push(elem[i]);
+	  }
+	  return retnode;
+	}; 
+	
+
+
+}
+if ( !window.Element ) // IE7 
+{
+    Element = function(){};
+
+    var __createElement = document.createElement;
+    document.createElement = function(tagName)
+    {
+        var element = __createElement(tagName);
+        if (element == null) {return null;}
+        for(var k in Element.prototype.length)
+                element[key] = Element.prototype[key];
+        return element;
+    }
+
+    var __getElementById = document.getElementById;
+    document.getElementById = function(id)
+    {
+        var element = __getElementById(id);
+        if (element == null) {return null;}
+        for(var key in Element.prototype)
+                element[key] = Element.prototype[key];
+        return element;
+    }
+}
+if(!Element.prototype.getElementsByClassName){ //IE7 & IE8
+	Element.prototype.getElementsByClassName = function(cl) {
+	  var retnode = [];
+	  var elem = this.getElementsByTagName('*');
+	  for (var i = 0; i < elem.length; i++) {
+		if((' ' + elem[i].className + ' ').indexOf(' ' + cl + ' ') > -1) retnode.push(elem[i]);
+	  }
+	  return retnode;
+	}; 
 }
 
+if (!Object.keys) {
+  Object.keys = function(obj) {
+	var keys = [];
+
+	for (var i in obj) {
+	  if (obj.hasOwnProperty(i)) {
+		keys.push(i);
+	  }
+	}
+
+	return keys;
+  };
+}
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function(obj, start) {
+	     for (var i = (start || 0), j = this.length; i < j; i++) {
+	         if (this[i] === obj) { return i; }
+	     }
+	     return -1;
+	}
+}
+// end of IE fix
 
 function infoMode(){
 	var m=''
@@ -600,7 +664,7 @@ function checkKey(e) {
 		}
 }
 function echap() {
-	    close_donate()
+		close_donate()
 		close_sideBar();
 		// close extendedmenu
 		//~ var em = document.getElementById('extendedmenu');
@@ -1012,7 +1076,7 @@ function route(){
 	
 	var lls={};
 	var lonlats=[];
-	for (f in pointsLayer.features) {
+	for (f=0; f<pointsLayer.features.length; f++) {
 		if (pointsLayer.features[f].attributes['userpoint']){
 			var wgs84= new OpenLayers.LonLat(
 				pointsLayer.features[f].geometry.x,
@@ -1023,7 +1087,7 @@ function route(){
 		}
 	}
 	// order points in an array
-	for (i=1;i<=point_id;i++) {
+	for (i=1;i<=point_id.length;i++) {
 		var lonlat={};
 		if(lls[i]){
 			lonlat['lon']=lls[i][0];
@@ -1034,7 +1098,7 @@ function route(){
 	linesLayer.destroyFeatures();
 	
 	var q = '';
-	for (pt in lonlats) {
+	for (pt=0; pt< lonlats.length; pt++) {
 		q = q + lonlats[pt].lat + ';' +lonlats[pt].lon + ',';
 	};
 	
@@ -1476,7 +1540,7 @@ function getNodeText(node) {
 function zoomToElement(osm_id, type){
 	//type is either 'pistes' or 'sites'
 	var element=null;
-	for (p in jsonPisteList[type]) {
+	for (p=0; p<jsonPisteList[type].length; p++) {
 		var ids=jsonPisteList[type][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			element=jsonPisteList[type][p];
@@ -1492,7 +1556,7 @@ function zoomToElement(osm_id, type){
 }
 function zoomToParentSite(osm_id,r){
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
+	for (p=0; p<jsonPisteList['pistes'].length; p++) {
 		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
@@ -1527,7 +1591,7 @@ function zoomToParentSite(osm_id,r){
 }
 function zoomToParentRoute(osm_id,r){
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
+	for (p=0; p<jsonPisteList['pistes'].length; p++) {
 		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
@@ -1566,7 +1630,7 @@ function deHighlight() {
 function highlightElement(osm_id, type){
 	//type is either 'pistes' or 'sites'
 	var element=null;
-	for (p in jsonPisteList[type]) {
+	for (p=0; p<jsonPisteList[type].length; p++) {
 		var ids=jsonPisteList[type][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			element=jsonPisteList[type][p];
@@ -1579,7 +1643,7 @@ function highlightElement(osm_id, type){
 }
 function highlightParentSite(osm_id,r){
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
+	for (p=0; p<jsonPisteList['pistes'].length; p++) {
 		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
@@ -1597,7 +1661,7 @@ function highlightParentSite(osm_id,r){
 }
 function highlightParentRoute(osm_id,r){
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
+	for (p=0; p<jsonPisteList['pistes'].length; p++) {
 		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
@@ -1618,7 +1682,7 @@ function highlightGeom(geometry, type) {
 	
 	var encPol= new OpenLayers.Format.EncodedPolyline();
 	var features=[];
-	for (g in geometry) {
+	for (g=0; g<geometry.length; g++) {
 		var escaped=geometry[g];
 		
 		if (type=='sites'){encPol.geometryType='polygon';}
@@ -1641,7 +1705,7 @@ function drawGeomAsRoute(geometry, type) {
 	
 	var encPol= new OpenLayers.Format.EncodedPolyline();
 	var features=[];
-	for (g in geometry) {
+	for (g=0; g<geometry.length; g++) {
 		var escaped=geometry[g];
 		
 		encPol.geometryType='linestring';
@@ -1694,7 +1758,7 @@ function encpolArray2WKT(encpol) {
 	} 
 	else if (encpol.length > 1) {
 		wktGeom='MULTILINESTRING(';
-		for (i in encpol) {
+		for (i=0; i<encpol.length; i++) {
 			var feature = encPol.read(encpol[i]);
 			var linestring = wkt.write(feature);
 			wktGeom += linestring.replace('LINESTRING','')+',';
@@ -1708,7 +1772,7 @@ function encpolArray2WKT(encpol) {
 function showProfileFromGeometryParentRoute(osm_id,r) {
 	if (mode == "raster") {infoMode();}
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
+	for (p=0; p<jsonPisteList['pistes'].length; p++) {
 		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			piste=jsonPisteList['pistes'][p];
@@ -1737,7 +1801,7 @@ function showProfileFromGeometry(osm_id, type) {
 	
 	//type is either 'pistes' or 'sites'
 	var element=null;
-	for (p in jsonPisteList[type]) {
+	for (p=0; p<jsonPisteList[type].length; p++) {
 		var ids=jsonPisteList[type][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			element=jsonPisteList[type][p];
@@ -1797,7 +1861,7 @@ function clearRoute() {
 	return true;
 }
 function clearRouteButLast(){
-	for (f in pointsLayer.features) {
+	for (f=0; f<pointsLayer.features.length; f++) {
 		if(pointsLayer.features[f].attributes['point_id'] == point_id){
 			var tokeep=new OpenLayers.LonLat(
 				pointsLayer.features[f].geometry.x,
@@ -1835,7 +1899,7 @@ function onMapClick(e) {
 		var lonlat = map.getLonLatFromPixel(e.xy);
 		//first check pixel distance with existing features to robustify
 		var px = map.getViewPortPxFromLonLat(lonlat)
-		for(f in pointsLayer.features) {
+		for(f=0; f<pointsLayer.features.length; f++) {
 			var fx=map.getViewPortPxFromLonLat(new OpenLayers.LonLat([
 				pointsLayer.features[f].geometry.x,
 				pointsLayer.features[f].geometry.y
@@ -1904,18 +1968,19 @@ function showHTMLPistesList(Div) {
 		//~ }
 	
 	while (Div.firstChild) {
-			    Div.removeChild(Div.firstChild);
+				Div.removeChild(Div.firstChild);
 	} //clear previous list
 	
 	if (jsonPisteList['sites'] != null) {
 		
-		for (p in jsonPisteList['sites']) {
+		for (p=0 ; p< jsonPisteList['sites'].length; p++) {
 			
 			var site=jsonPisteList['sites'][p];
 			var index;
 			index=site.result_index;
 			
 			var osm_id;
+			console.log('ids: '+site.ids);
 			osm_id=site.ids.join('_').toString(); // What to do with that '_' for sites ??
 			
 			var name = site.name;
@@ -1978,7 +2043,7 @@ function showHTMLPistesList(Div) {
 			picDiv.innerHTML='';
 			if (site.pistetype) {
 				var types=site.pistetype.split(';');
-				for (t in types) {
+				for (t=0; t< types.length; t++) {
 					pic =icon[types[t]];
 					if (pic) {
 						var img=document.createElement('img');
@@ -2001,7 +2066,7 @@ function showHTMLPistesList(Div) {
 	
 	if (jsonPisteList['pistes'] != null) {
 		
-		for (p in jsonPisteList['pistes']) {
+		for (p=0; p< jsonPisteList['pistes'].length; p++) {
 			var piste=jsonPisteList['pistes'][p];
 			
 			var osm_ids;
@@ -2119,7 +2184,7 @@ function showHTMLPistesList(Div) {
 			// parent routes
 			if (piste.in_routes.length != 0) {
 				
-				for (r in piste.in_routes) {
+				for (r=0; r<piste.in_routes.length; r++) {
 					
 					var color='';
 					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
@@ -2168,7 +2233,7 @@ function showHTMLPistesList(Div) {
 			// parent sites
 			if (piste.in_sites.length != 0) {
 				
-				for (r in piste.in_sites) {
+				for (r=0; r<piste.in_sites.length; r++) {
 					var siteId = piste.in_sites[r].id;
 					var siteName = piste.in_sites[r].name;
 					var insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
