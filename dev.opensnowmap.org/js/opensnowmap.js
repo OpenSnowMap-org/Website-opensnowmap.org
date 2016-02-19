@@ -47,7 +47,10 @@ var map;
 var lat=46.82084;
 var lon=6.39942;
 var zoom=2;//2
-var pointsLayer, linesLayer;
+var linesLayer;
+var pointsLayer;
+var highlightLayer;
+var point_id=0;
 var modifyControl;
 var highlightCtrl, selectCtrl;
 var SIDEBARSIZE='full'; //persistent sidebar
@@ -1087,7 +1090,7 @@ function route(){
 		}
 	}
 	// order points in an array
-	for (i=1;i<=point_id.length;i++) {
+	for (i=1;i<=point_id;i++) {
 		var lonlat={};
 		if(lls[i]){
 			lonlat['lon']=lls[i][0];
@@ -1451,11 +1454,6 @@ function show_printSettings(){
 
 //======================================================================
 // MAP
-
-var linesLayer;
-var pointsLayer;
-var highlightLayer;
-var point_id=0;
 
 
 var routeStyle = new OpenLayers.Style(
@@ -1962,11 +1960,6 @@ map.events.register("click", map, onMapClick);
 
 function showHTMLPistesList(Div) {
 	
-	
-	//~ if(typeof(length)!=='undefined') {
-		//~ html +='<div><b style="font-size:1em;">'+parseFloat(length).toFixed(1)+' km</b></div>'
-		//~ }
-	
 	while (Div.firstChild) {
 				Div.removeChild(Div.firstChild);
 	} //clear previous list
@@ -2050,7 +2043,6 @@ function showHTMLPistesList(Div) {
 						img.src=pic;
 						img.className='pisteIcon';
 						picDiv.appendChild(img);
-						//html+='<img src="'+pic+'" style="vertical-align: middle;">&nbsp;\n';
 					}
 				}
 			}
