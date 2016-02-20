@@ -211,7 +211,16 @@
 						<div class="clear"></div>
 						<hr class="light">
 						<div class="clear"></div>
-
+						<li class="nominatim_result_list" id="nominatim_result_list_proto">
+									<a class="Result">
+								Jougne, Pontarlier, Doubs, Bourgogne-Franche-Comté, France métropolitaine, 25370, France
+									</a><br/>
+<!--
+							<a onclick="setCenterMap(6.3883634,46.763023,14);">
+								Jougne, Pontarlier, Doubs, Bourgogne-Franche-Comté, France métropolitaine, 25370, France
+							</a>
+-->
+						</li>
 						<!--
 						//////////////////////////////////////
 						//////////////////////////////////////
@@ -229,14 +238,20 @@
 					</div>
 					<div id="search_results" class="hidden sideBarContent"> <!-- divs to display search results -->
 						<div id="piste_search_results" class="hidden"></div>
-						<div id="nominatim_results" class="hidden"></div>
+						<div id="nominatim_results" class="hidden">
+							<hr/>
+							<ul></ul>
+							<div id="nominatim_results_footer"></div>
+						</div>
 					</div>
 					
 					<div id="topo" class="hidden sideBarContent"> <!-- profile and piste lists -->
-	<!--
-						<b>+_('PROFILE')+</b><br/>
-	-->
-						<b><span class="i18n" i18nText="PROFILE">xxxx</span></b>
+
+						
+						<div id="profile_title" class="hidden">
+							<b><span class="i18n" i18nText="PROFILE">xxxx</span></b>
+						</div>
+						
 						<div id="profileWaiter" class="hidden">
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
@@ -247,14 +262,15 @@
 						<div class="Button iconButton float-right" onclick="new_window();" style="margin-left:5px;margin-right:5px">
 							<img src="pics/print-22.png">
 						</div>
-						<div class="clear"></div>
-	<!--
-						<b>'+_('routing_title')+'</b><br/>
-	-->
 						
-						<b><span class="i18n" i18nText="routing_title">xxxx</span>
-						&nbsp;-&nbsp;
-						<span class="data" dataText="route_length">0</span>&nbsp;km</b>
+						<div class="clear"></div>
+						
+						<div id="routing_title" class="hidden">
+							<b><span class="i18n" i18nText="routing_title">xxxx</span>
+							&nbsp;-&nbsp;
+							<span class="data" dataText="route_length">0</span>&nbsp;km</b>
+						</div>
+						
 						<div id="routeWaiter" class="hidden">
 							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>

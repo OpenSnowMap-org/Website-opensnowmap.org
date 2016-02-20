@@ -769,21 +769,25 @@ function nominatimSearch(name) {
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var nom = JSON.parse(XMLHttp.responseText);
-			htmlResponse = '<hr/><ul>\n'
-			for (var i=0;i<nom.length;i++) {
-				htmlResponse += '<li><a onclick="setCenterMap('
-				+ nom[i].lon +','
-				+ nom[i].lat +','
-				+ 14 +');">'
-				+ nom[i].display_name +'</a></li><br/>\n';
-			}
-			htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
-			
 			
 			document.getElementById('requestWaiter').className = document.getElementById('requestWaiter').className.replace('shown','hidden');
 			document.getElementById('search_results').className = document.getElementById('search_results').className.replace('hidden','shown');
 			document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('hidden','shown');
-			document.getElementById('nominatim_results').innerHTML=htmlResponse;
+			
+			var List= document.getElementsByTagName('ul')[0];
+			for (var i=0;i<nom.length;i++) {
+				var resultli = document.getElementById('nominatim_result_list_proto').cloneNode(true);
+				resultli.removeAttribute("id");
+				resultli.setAttribute('lon',nom[i].lon);
+				resultli.setAttribute('lat',nom[i].lat);
+				resultli.onclick= function(){
+					setCenterMap(this.getAttribute('lon'),this.getAttribute('lat'),14);
+				};
+				resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
+				List.appendChild(resultli);
+			}
+			
+			
 			SIDEBARSIZE='full';
 			resize_sideBar();
 			searchComplete+=1;
@@ -996,18 +1000,29 @@ function getTopoById(ids,routeLength) {//DONE in pisteList
 }
 
 function getClosestPistes(lonlat){//DONE in pisteList
-	close_sideBar();
+	
 	
 	abortXHR('PisteAPI'); // abort another request if any
-	SIDEBARSIZE=150;
+	
+	
+	if (SIDEBARSIZE != 'full') {
+		close_sideBar();
+		SIDEBARSIZE=150;
+	} else {
+		close_sideBar();
+		SIDEBARSIZE='full';
+	}
 	document.getElementById('sideBar').style.display='inline';
 	resize_sideBar();
 	document.getElementById('routeWaiter').className = document.getElementById('routeWaiter').className.replace('hidden','shown');
 	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
 	document.getElementById('route_list').className = document.getElementById('route_list').className.replace('shown','hidden');
+	document.getElementById('routing_title').className = document.getElementById('routing_title').className.replace('shown','hidden');
+	document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('shown','hidden');
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
 	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
+	resize_sideBar();
 	
 	lonlat.transform(
 		new OpenLayers.Projection("EPSG:900913"),
@@ -1033,11 +1048,12 @@ function getClosestPistes(lonlat){//DONE in pisteList
 }
 
 function getProfile(wktroute) {//DONE in pisteList
-	SIDEBARSIZE=150;
+	SIDEBARSIZE = 'full';
 	abortXHR('GetProfile'); // abort another request if any
 	resize_sideBar();
 	document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('hidden','shown');
-	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('shown','hidden');
+	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
+	
 	document.getElementById('topo').className = document.getElementById('topo').className.replace('hidden','shown');
 	translateDiv('topo');
 	document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('TOPO');
@@ -1051,12 +1067,20 @@ function getProfile(wktroute) {//DONE in pisteList
 	XMLHttp.open("POST", server+"demrequest?");
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
-			html = '<img src="http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText+'">';
+			
+			var Div = document.getElementById('route_profile_image');
+			while (Div.firstChild) {
+				Div.removeChild(Div.firstChild);
+			} //clear previous list
+			
+			var img=document.createElement('img');
+			img.src='http://www3.opensnowmap.org/tmp/'+XMLHttp.responseText;
+			
 			SIDEBARSIZE = 'full';
 			document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown','hidden');
 			//document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
 			document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
-			document.getElementById('route_profile_image').innerHTML=html;
+			Div.appendChild(img);
 			resize_sideBar();
 			searchComplete+=1;
 			if (searchComplete == 2) {
@@ -1119,6 +1143,12 @@ function route(){
 				return null;
 			}
 			if (responseXML.getElementsByTagName('wkt')[0]!=null) {
+				
+				SIDEBARSIZE = 'full'
+				resize_sideBar();
+				
+				document.getElementById('routing_title').className = document.getElementById('routing_title').className.replace('hidden','shown');
+				document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('hidden','shown');
 				var routeWKT = getNodeText(responseXML.getElementsByTagName('wkt')[0]);
 				
 				var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
@@ -1135,6 +1165,12 @@ function route(){
 				getProfile(routeWKT);
 			}
 			else {
+				
+				SIDEBARSIZE = 'full'
+				resize_sideBar();
+				
+				document.getElementById('routing_title').className = document.getElementById('routing_title').className.replace('shown','hidden');
+				document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('shown','hidden');
 				clearRouteButLast(); // if no route is found, start a new one
 				}
 			}
