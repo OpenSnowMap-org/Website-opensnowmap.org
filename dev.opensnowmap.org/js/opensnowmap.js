@@ -269,6 +269,7 @@ function closeMenu() {
 function close_sideBar() {
 	
 	SIDEBARSIZE=0;
+	if (ONCE) {close_donate();}
 	document.getElementById('sideBar').style.display='inline';
 	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
 	
@@ -288,6 +289,7 @@ function close_sideBar() {
 	document.getElementById('sideBar').style.display='none';
 	EDIT_SHOWED = false;
 	CATCHER=false;
+	ONCE=true;
 	
 }
 function close_helper(){
@@ -300,12 +302,13 @@ function show_catcher(){
 	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
 	CATCHER=true;
-	SIDEBARSIZE=210;
+	SIDEBARSIZE=220;
 	resize_sideBar();
 	
-	var title='<i>&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp;</i>';
+	var title=document.createElement('i');
+	title.innerHTML='&nbsp;&nbsp;'+today.getDate()+'.'+(today.getMonth()+1)+'.'+today.getFullYear()+'&nbsp';
+	document.getElementById('sideBarTitle').appendChild(title);
 	
-	document.getElementById('sideBarTitle').innerHTML=title;
 	var catcherDiv = document.getElementById('catcher');
 	catcherDiv.className= catcherDiv.className.replace('hidden','shown');
 	
@@ -552,7 +555,16 @@ function show_languages() {
 	document.getElementById('sideBar').style.display='inline';
 	SIDEBARSIZE=250;
 	resize_sideBar();
-	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
+	document.getElementById('sideBarTitle').innerHTML='';
+	
+	var t= document.createTextNode('  '+_('lang').replace('<br/>',' '));
+	document.getElementById('sideBarTitle').appendChild(t);
+	
+	var img=document.createElement('img');
+	img.src='pics/flags/'+locale+'.png';
+	img.className='flagImg';
+	
+	document.getElementById('sideBarTitle').appendChild(img);
 	
 	var languageDiv = document.getElementById('languages');
 	languageDiv.className= languageDiv.className.replace('hidden','shown');
@@ -1077,6 +1089,10 @@ function getProfile(wktroute) {//DONE in pisteList
 	SIDEBARSIZE = 'full';
 	abortXHR('GetProfile'); // abort another request if any
 	resize_sideBar();
+	var Div = document.getElementById('route_profile_image');
+	while (Div.firstChild) {
+		Div.removeChild(Div.firstChild);
+	} //clear previous list
 	document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('hidden','shown');
 	document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
 	
@@ -1278,8 +1294,7 @@ function updateZoom() {
 function onZoomEnd(){
 	
 	ONCE=true;
-	close_donate();
-	if(CATCHER && ONCE){close_sideBar();CATCHER=false;}
+	if(CATCHER && ONCE){close_sideBar();close_donate();CATCHER=false;}
 	//~ if (map.getZoom()<11){
 		//~ if (document.getElementById('zoomin-helper')) {
 		//~ document.getElementById('zoomin-helper').style.display = 'inline';}
@@ -1329,7 +1344,6 @@ function get_tms_url(bounds) {
 		var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
 		var z = this.map.getZoom();
 		var limit = Math.pow(2, z);
-		//if (mapBounds.intersectsBounds( bounds ) && z >= mapMinZoom && z <= mapMaxZoom ) {
 	  if (y < 0 || y >= limit)
 		{
 		  return null;
