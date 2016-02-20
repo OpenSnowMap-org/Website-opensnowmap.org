@@ -535,8 +535,8 @@ label {
 .getProfileButton, .getMemberListButton, .moreInfoButton{
 float:right;
 }
-.flagImg{margin: 10px 2px 10px 20px;vertical-align: middle;float:left;}
-
+.flagImg{margin: 5px 10px 5px 10px;vertical-align: middle;float:left;}
+.flagMenuImg{margin-top: 5px; margin-left: 2px;}
 /*
  * Un comment end of file to show hidden content for styling
  * 

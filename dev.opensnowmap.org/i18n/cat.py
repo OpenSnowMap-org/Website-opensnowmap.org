@@ -11,7 +11,7 @@ path = os.path.abspath(__file__)
 files = [f for f in os.listdir('.') if os.path.isfile(f)]
 
 cat=''
-fil = open('en.json','r')
+fil = open('eng.json','r')
 en = json.load(fil)
 KEYS = en.keys()
 

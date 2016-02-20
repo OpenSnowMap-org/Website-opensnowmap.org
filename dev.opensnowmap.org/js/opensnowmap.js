@@ -550,7 +550,7 @@ function show_live_edits(when,display) {
 function show_languages() {
 	close_sideBar();
 	document.getElementById('sideBar').style.display='inline';
-	SIDEBARSIZE='full';
+	SIDEBARSIZE=250;
 	resize_sideBar();
 	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
 	
@@ -562,28 +562,31 @@ function show_languages() {
 	for (l=0; l<locs.length; l++ ){
 		
 		var flagdiv = document.getElementById('flagsLinksProto').cloneNode(true);
+		while (flagdiv.firstChild) {
+			flagdiv.removeChild(flagdiv.firstChild);
+		} //clear previous list
+		
 		flagdiv.removeAttribute("id");
 		flagdiv.setAttribute('loc',locs[l]);
+		
 		flagdiv.onclick= function(){
 			setlanguage(this.getAttribute('loc'));
 		};
+		
 		var img=document.createElement('img');
 		img.src='pics/flags/'+locs[l]+'.png';
 		img.className=('flagImg');
-		flagdiv.getElementsByClassName('flagPic')[0].appendChild(img);
+		flagdiv.appendChild(img);
 		
-		flagdiv.getElementsByTagName('a')[0].innerHTML = locs[l];
+		var link=document.createElement('a');
+		link.innerHTML = '&nbsp;'+eval(locs[l])['lang'];
+		flagdiv.appendChild(link);
+		
 		languageDiv.appendChild(flagdiv);
 		var cleardiv = document.getElementById('clearProto').cloneNode(true);
 		cleardiv.removeAttribute("id");
 		languageDiv.appendChild(cleardiv);
 	}
-				//~ 
-				//~ 
-		//~ html += '<a id="" onclick="setlanguage(\''+locs[l]+'\');">'
-			 //~ +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
-	
-	//languageDiv.innerHTML=html;
 	cacheInHistory(languageDiv);
 }
 //======================================================================
@@ -2129,7 +2132,7 @@ function showHTMLPistesList(Div) {
 			if (piste.type) {element_type=piste.type;}
 			var color='';
 			if (piste.color) {
-				color = piste.color;//'&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
+				color = piste.color;
 			}
 			
 			var lon = piste.center[0];
@@ -2445,11 +2448,11 @@ function showExtLink(div, ids, element_type) {
 
 //======================================================================
 // I18N
-var locs = [ "ast","cz","de","en","es","cat","fi","fr","hu","it","jp","nl","nn","ru","se","ukr"];
+var locs = [ "ast","cze","deu","eng","spa","cat","fin","fra","hun","ita","jpa","nld","nno","rus","swe","ukr"];
 var iloc= 0;
 var locale;
 var iframelocale;
-locale="en"; //set default
+locale="eng"; //set default
 //localization
 
 // Get the locale first: from localstorage if set
@@ -2457,28 +2460,20 @@ if (localStorage.l10n) {
 	locale = localStorage.l10n;
 }
 // No localstorage, check for browser locale
-else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
+//else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
+
+for (i =0; i< locs.length; i++) {
+	var found = false;
+	if (locale == locs[i]) {found = true; break;}
+}
+if (!found) {locale = 'eng';}
 
 // only a few iframe content pages are translated:
-if (locale != 'en' && locale !='fr') { iframelocale = 'en';}
+if (locale != 'eng' && locale !='fra') { iframelocale = 'eng';}
 else { iframelocale = locale;}
 
-/*
-// Load the localized strings
-var oRequest = new XMLHttpRequest();
-oRequest.open("GET",'i18n/'+locale+'.json',false);
-//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-oRequest.send();
-var i18n = eval('('+oRequest.responseText+')');
-// Load the default strings
-var oRequest = new XMLHttpRequest();
-oRequest.open("GET",'i18n/en.json',false);
-//~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-oRequest.send();
-var i18nDefault = eval('('+oRequest.responseText+')');
-* */
 var i18n = eval(locale);
-var i18nDefault = en;
+var i18nDefault = eng;
 
 // Translating function
 function _(s) {
@@ -2508,7 +2503,7 @@ function fillData(divID) {
 	return true
 }
 // this get the browser install language, not the one set in preference
-function get_locale() {
+/*function get_locale() {
 	var loc="en";
 	if ( navigator ) {
 		if ( navigator.language) {
@@ -2532,7 +2527,7 @@ function get_locale() {
 		return loc;
 	}
 	else {return 'en';}
-}
+}*/
 
 //set the language in a localstorage, then reload
 function setlanguage(what){
@@ -2542,10 +2537,10 @@ function setlanguage(what){
 }
 // Show langage bar
 function initFlags(){
-	var max=4;
-	var html='';
-	html+= '<img style="margin-top: 5px; margin-left: 2px;" src="pics/flags/'+locale+'.png">';
-	document.getElementById('langs').innerHTML = html;
+		var img=document.createElement('img');
+		img.src='pics/flags/'+locale+'.png';
+		img.className=('flagMenuImg');
+		document.getElementById('langs').appendChild(img);
 }
 
 function updateTooltips(){
