@@ -716,11 +716,11 @@ function page_init() {
     updateTooltips();
 
 }
-function loadend() {
-    updateTooltips();
-    if (EXT_MENU) {showMenu();} else {closeMenu();}
-
-}
+//~ function loadend() {
+    //~ 
+    //~ if (EXT_MENU) {showMenu();} else {closeMenu();}
+//~ 
+//~ }
 //======================================================================
 // REQUESTS
 function abortXHR(type) {
