@@ -2552,7 +2552,6 @@ function initFlags() {
 }
 
 function updateTooltips() {
-
     document.getElementById("settingsMenuButton").setAttribute('title', _('settings-tooltip'));
     document.getElementById("mapkeyMenuButton").setAttribute('title', _('MAP_KEY'));
     document.getElementById("editMenuButton").setAttribute('title', _('edit_the_map_using'));
