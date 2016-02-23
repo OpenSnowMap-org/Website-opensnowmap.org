@@ -1838,6 +1838,8 @@ function showProfileFromGeometryParentRoute(osm_id,r) {
 
 
     searchComplete = 0;
+    document.getElementById('routing_title').className = document.getElementById('routing_title').className.replace('hidden', 'shown');
+    document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('hidden', 'shown');
     getTopoById(parent.id, wkt.length_km);
     getProfile(wkt.geom);
     return true;
@@ -1862,6 +1864,10 @@ function showProfileFromGeometry(osm_id, type) {
 
 
     searchComplete = 0;
+    
+    document.getElementById('routing_title').className = document.getElementById('routing_title').className.replace('hidden', 'shown');
+    document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('hidden', 'shown');
+    
     getTopoById(osm_id.split('_').join(','), wkt.length_km);
     getProfile(wkt.geom);
     return true;
@@ -2029,6 +2035,7 @@ function showHTMLPistesList(Div) {
     ,pic
     ,picDiv
     ,hrDiv
+    ,hrsDiv
     ,cleardiv
     ,buttonDiv
     ,inroutediv
@@ -2119,13 +2126,18 @@ function showHTMLPistesList(Div) {
 
             sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
 
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");
+            Div.appendChild(cleardiv);
+            
             hrDiv = document.getElementById('hrLightProto').cloneNode(true);
             hrDiv.removeAttribute("id");
             Div.appendChild(hrDiv);
 
         }
     }
-
+    
+    
     if (jsonPisteList.pistes !== null) {
 
         for (p = 0; p < jsonPisteList.pistes.length; p++) {
@@ -2234,10 +2246,53 @@ function showHTMLPistesList(Div) {
             if (piste.difficulty && piste.difficulty.split(',').length > 1) {
                 pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
             }
-
+            
             cleardiv = document.getElementById('clearProto').cloneNode(true);
             cleardiv.removeAttribute("id");
             pistediv.appendChild(cleardiv);
+            hrsDiv = document.getElementById('hrSuperLightProto').cloneNode(true);
+            hrsDiv.removeAttribute("id");
+            pistediv.appendChild(hrsDiv);
+            
+
+            // parent sites
+            if (piste.in_sites.length !== 0) {
+
+                for (r = 0; r < piste.in_sites.length; r++) {
+                    siteId = piste.in_sites[r].id;
+                    siteName = piste.in_sites[r].name;
+                    insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
+
+                    insitediv.removeAttribute("id");
+                    insitediv.setAttribute('osm_id', osm_ids);
+                    insitediv.setAttribute('parent_site_id', siteId);
+                    insitediv.setAttribute('element_type', element_type);
+                    insitediv.setAttribute('r', r);
+
+                    insitediv.onmouseout = function () {
+                        deHighlight();
+                    };
+
+                    insitediv.onmouseover = function () {
+                        highlightParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+                    };
+
+                    insitediv.onclick = function () {
+                        zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+                        deHighlight();
+                        getMembersById(this.getAttribute('parent_site_id'));
+                    };
+                    pistediv.appendChild(insitediv);
+                    spans = pistediv.getElementsByTagName('span');
+                    for (i = 0; i < spans.length; i++) {
+                        span = spans[i];
+                        if (span.className == "siteNameSpan") {
+                            span.innerHTML = siteName;
+                        }
+                    }
+                }
+            }
+            
             // parent routes
             if (piste.in_routes.length !== 0) {
 
@@ -2284,46 +2339,6 @@ function showHTMLPistesList(Div) {
 
             }
 
-
-            // parent sites
-            if (piste.in_sites.length !== 0) {
-
-                for (r = 0; r < piste.in_sites.length; r++) {
-                    siteId = piste.in_sites[r].id;
-                    siteName = piste.in_sites[r].name;
-                    insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
-
-                    insitediv.removeAttribute("id");
-                    insitediv.setAttribute('osm_id', osm_ids);
-                    insitediv.setAttribute('parent_site_id', siteId);
-                    insitediv.setAttribute('element_type', element_type);
-                    insitediv.setAttribute('r', r);
-
-                    insitediv.onmouseout = function () {
-                        deHighlight();
-                    };
-
-                    insitediv.onmouseover = function () {
-                        highlightParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
-                    };
-
-                    insitediv.onclick = function () {
-                        zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
-                        deHighlight();
-                        getMembersById(this.getAttribute('parent_site_id'));
-                    };
-                    pistediv.appendChild(insitediv);
-                    spans = pistediv.getElementsByTagName('span');
-                    for (i = 0; i < spans.length; i++) {
-                        span = spans[i];
-                        if (span.className == "siteNameSpan") {
-                            span.innerHTML = siteName;
-                        }
-                    }
-                }
-            }
-
-
             cleardiv = document.getElementById('clearProto').cloneNode(true);
             cleardiv.removeAttribute("id");
             Div.appendChild(cleardiv);
@@ -2344,8 +2359,7 @@ function showSiteStats(div, id, element_type) { // fix for normal ways
         var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
         statsdiv.removeAttribute("id");
         div.appendChild(statsdiv);
-
-
+        
         abortXHR('PisteAPI'); // abort another request if any
 
         var q = server + "request?site-stats=" + id;
@@ -2412,10 +2426,12 @@ function showExtLink(div, ids, element_type) {
 
         for (k = 0; k < ids.length; k++) {
             var id = ids[k];
+            
             var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
             linkdiv.removeAttribute("id");
             div.appendChild(linkdiv);
             linkdiv.className.replace('shown', 'hidden');
+            
             if (element_type == 'relation') {
                 linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden', 'shown');
                 linkdiv.getElementsByClassName('analyse')[0].style.display = 'inline';

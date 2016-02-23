@@ -56,7 +56,9 @@ list-style-position:outside;
 list-style-type:disc;
 }
 hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
-hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #EEE; background-color: #EEE}
+hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
+hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
+
 .hrmenu{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 td {
         border:0px solid grey;
@@ -450,12 +452,22 @@ label {
     background-color:#CCCCCC;
 }
 .inRouteElement{
-  font-size: 1.15em;
+  font-size: 1.05em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
 }
 .inSiteElement{
-  font-size: 1.15em;
+  font-size: 1.05em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
+}
+.elementExtLink{
+  font-size: 1.05em;
+  font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
 }
 .routeLengthElement{
   font-size: 1.2em;
@@ -514,12 +526,7 @@ label {
         float:left;
         z-index: 1000;
 }
-.inRouteElement{
-	float:left;
-}
-.inSiteElement{
-	float:right;
-}
+
 .statsIcon {
 	vertical-align: middle;
 	margin-left:20px;
