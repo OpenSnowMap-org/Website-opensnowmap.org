@@ -224,15 +224,6 @@ function infoMode() {
     mode = m;
     return true;
 }
-function get_page(url) {
-    var oRequest = new XMLHttpRequest();
-    oRequest.open("GET", url, false);
-    //~ oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-    oRequest.send();
-    response = oRequest.responseText;
-    response = response.replace("../", "");
-    return response;
-}
 function showMenu() {
     document.getElementById('MenuBlock').style.display = 'block';
     document.getElementById('menuExt').style.display = 'none';
@@ -248,9 +239,8 @@ function closeMenu() {
     return true;
 }
 function close_sideBar() {
-
+    
     SIDEBARSIZE = 0;
-    if (ONCE) {close_donate();}
     document.getElementById('sideBar').style.display = 'inline';
     document.getElementById('sideBar').style.height = SIDEBARSIZE + 'px';
 
@@ -277,7 +267,7 @@ function close_helper() {
     close_sideBar();
 }
 function close_donate() {
-    document.getElementById('donate-centering').style.display = 'none';
+    document.getElementById('donate-centering').style.display='none';
 }
 function show_catcher() {
     close_sideBar();
@@ -533,6 +523,11 @@ function show_live_edits(when,display) {
     }
 }
 function show_languages() {
+    var languageDiv = document.getElementById('languages');
+    if ( (' ' + languageDiv.className + ' ').indexOf('shown') > -1) {
+        languageDiv.innerHTML='';
+        close_sideBar();
+    } else {
     close_sideBar();
     document.getElementById('sideBar').style.display = 'inline';
     SIDEBARSIZE = 250;
@@ -547,8 +542,7 @@ function show_languages() {
     img.className = 'flagImg';
 
     document.getElementById('sideBarTitle').appendChild(img);
-
-    var languageDiv = document.getElementById('languages');
+    
     languageDiv.className = languageDiv.className.replace('hidden', 'shown');
 
 
@@ -570,7 +564,7 @@ function show_languages() {
         var img2 = document.createElement('img');
         img2.src = 'pics/flags/' + locs[l] + '.png';
         img2.className = ('flagImg');
-        flagdiv.appendChild(img);
+        flagdiv.appendChild(img2);
 
         var link = document.createElement('a');
         link.innerHTML = '&nbsp;' + eval(locs[l]).lang;
@@ -580,8 +574,9 @@ function show_languages() {
         var cleardiv = document.getElementById('clearProto').cloneNode(true);
         cleardiv.removeAttribute("id");
         languageDiv.appendChild(cleardiv);
-    }
+        }
     cacheInHistory(languageDiv);
+    }
 }
 //======================================================================
 // SideBar history
@@ -617,7 +612,7 @@ function prevResult() {
         document.getElementById('sideBarTitle').innerHTML = '';
 
         var historyDiv = document.getElementById('sideBarHistory');
-        historyDiv.appendChild(sideBarHistoryArray[currentResult - 1]);
+        historyDiv.appendChild(cloneNodeAndEvents(sideBarHistoryArray[currentResult - 1]));
         historyDiv.className = historyDiv.className.replace('hidden', 'shown');
         jsonPisteList = jsonPisteLists[currentResult - 1];
         currentResult -= 1;
@@ -644,7 +639,7 @@ function nextResult() {
         document.getElementById('sideBarTitle').innerHTML = '';
 
         var historyDiv = document.getElementById('sideBarHistory');
-        historyDiv.appendChild(sideBarHistoryArray[currentResult + 1]);
+        historyDiv.appendChild(cloneNodeAndEvents(sideBarHistoryArray[currentResult + 1]));
         historyDiv.className = historyDiv.className.replace('hidden', 'shown');
         jsonPisteList = jsonPisteLists[currentResult + 1];
         currentResult += 1;
@@ -687,7 +682,7 @@ function checkKey(e) {
     }
 }
 function echap() {
-    close_donate();
+    
     close_sideBar();
     // close extendedmenu
     //~ var em = document.getElementById('extendedmenu');
@@ -698,6 +693,54 @@ function echap() {
     deHighlight();
     abortXHR('GetProfile'); // abort another request if any
     abortXHR('PisteAPI'); // abort another request if any
+}
+function stopRKey(evt) {
+    // disable the enter key action in a form.
+    evt = (evt) ? evt : ((event) ? event : null);
+    var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+    if ((evt.keyCode == 13) && (node.type == "text"))  {return false;}
+}
+function page_init() {
+    document.onkeypress = stopRKey;
+    get_stats();
+    updateZoom();
+    initFlags();
+    resize_sideBar();
+    window.onresize = function () {resize_sideBar();};
+    translateDiv('body');
+    updateTooltips();
+
+}
+function loadend() {
+    updateTooltips();
+    if (EXT_MENU) {showMenu();} else {closeMenu();}
+
+}
+//======================================================================
+// REQUESTS
+function abortXHR(type) {
+    // Abort ongoing requests before sending a new one
+    // Failing this, long requests results would be displayed over newer faster
+    // ones.
+    var i;
+    if (type == 'GetProfile') {
+        for (i = 0; i < GetProfileXHR.length; i++) {
+            GetProfileXHR[i].abort();
+        }
+        GetProfileXHR.length = 0;
+    } else if (type == 'PisteAPI') {
+        for (i = 0; i < PisteAPIXHR.length; i++) {
+            PisteAPIXHR[i].abort();
+        }
+        PisteAPIXHR.length = 0;
+    }
+    return true;
+}
+
+function setCenterMap(nlon, nlat, zoom) {
+    nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+    map.setCenter(nlonLat, zoom);
+    //document.getElementById('sideBar').style.display='inline';
 }
 function get_stats() {
     var XMLHttp = new XMLHttpRequest();
@@ -716,33 +759,6 @@ function get_stats() {
     XMLHttp.send();
     return true;
 
-}
-function stopRKey(evt) {
-    // disable the enter key action in a form.
-    evt = (evt) ? evt : ((event) ? event : null);
-    var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-    if ((evt.keyCode == 13) && (node.type == "text"))  {return false;}
-}
-function page_init() {
-    document.onkeypress = stopRKey;
-    get_stats();
-    updateZoom();
-    initFlags();
-    resize_sideBar();
-    window.onresize = function () {resize_sideBar();};
-
-}
-function loadend() {
-    updateTooltips();
-    if (EXT_MENU) {showMenu();} else {closeMenu();}
-
-}
-//======================================================================
-// REQUESTS
-function setCenterMap(nlon, nlat, zoom) {
-    nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-    map.setCenter(nlonLat, zoom);
-    //document.getElementById('sideBar').style.display='inline';
 }
 
 function getByName(name) {
@@ -819,7 +835,6 @@ function nominatimSearch(name) {
     XMLHttp.send();
     return true;
 }
-
 function SearchByName(name) {
 
     if (document.getElementById('searchDiv').style.display === 'none' || document.getElementById('searchDiv').style.display === '') {
@@ -848,6 +863,7 @@ function SearchByName(name) {
     nominatimSearch(name);
     return true;
 }
+
 function getTopoByViewport() { //DONE in pisteList
     close_sideBar();
     abortXHR('PisteAPI'); // abort another request if any
@@ -925,7 +941,6 @@ function getMembersById(id) { //DONE in pisteList
     XMLHttp.send();
 
 }
-
 function getRouteTopoByWaysId(ids,routeLength) {//DONE in pisteList
     close_sideBar();
     abortXHR('PisteAPI'); // abort another request if any
@@ -1202,25 +1217,6 @@ function route() {
     XMLHttp.send();
     return true;
 }
-function abortXHR(type) {
-    // Abort ongoing requests before sending a new one
-    // Failing this, long requests results would be displayed over newer faster
-    // ones.
-    var i;
-    if (type == 'GetProfile') {
-        for (i = 0; i < GetProfileXHR.length; i++) {
-            GetProfileXHR[i].abort();
-        }
-        GetProfileXHR.length = 0;
-    } else if (type == 'PisteAPI') {
-        for (i = 0; i < PisteAPIXHR.length; i++) {
-            PisteAPIXHR[i].abort();
-        }
-        PisteAPIXHR.length = 0;
-    }
-    return true;
-}
-
 //======================================================================
 // MAP
 
@@ -1274,7 +1270,11 @@ function updateZoom() {
 function onZoomEnd() {
 
     ONCE = true;
-    if (CATCHER && ONCE){close_sideBar();close_donate();CATCHER = false;}
+    if (CATCHER && ONCE){
+        close_sideBar();
+        document.getElementById('donate-centering').style.display='none';
+        CATCHER = false;
+        }
     //~ if (map.getZoom()<11){
     //~ if (document.getElementById('zoomin-helper')) {
     //~ document.getElementById('zoomin-helper').style.display = 'inline';}
@@ -1494,7 +1494,7 @@ function map_init() {
         map.addLayer(markers);
         markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
     }
-    loadend();
+    
 }
 
 //======================================================================
