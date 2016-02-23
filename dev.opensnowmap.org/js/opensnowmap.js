@@ -2530,15 +2530,24 @@ function fillData(divID) {
 
 //set the language in a localstorage, then reload
 function setlanguage(what) {
-    localStorage.l10n = what;
-    var linkto = document.getElementById('permalink').href;
-    window.location.href = linkto;
+    for (i = 0; i < locs.length; i++) {
+        var found = false;
+        if (what == locs[i]) {found = true; locale=what; break;}
+    }
+    if (!found) {locale = 'eng';}
+    localStorage.l10n = locale;
+    i18n = eval(locale);
+    if (locale != 'eng' && locale != 'fra') { iframelocale = 'eng';} else { iframelocale = locale;}
+    translateDiv('body');
+    initFlags();
+    close_sideBar();
 }
-// Show langage bar
+// Set flag button
 function initFlags() {
     var img = document.createElement('img');
     img.src = 'pics/flags/' + locale + '.png';
     img.className = ('flagMenuImg');
+    document.getElementById('langs').innerHTML='';
     document.getElementById('langs').appendChild(img);
 }
 
