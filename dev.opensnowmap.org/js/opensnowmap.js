@@ -35,12 +35,13 @@ var EXT_MENU = true;
 var EDIT_SHOWED = false;
 var CATCHER;
 var MARKER = false;
+var ONCE = false;
+var DONATE_ONCE = true;
 var BASELAYER = 'mapquest';
 var permalink_id;
 var permalink_ofsetter;
 var zoomBar;
 var PRINT_TYPE = 'small';
-var ONCE = false;
 var map;
 var lat = 46.82084;
 var lon = 6.39942;
@@ -259,6 +260,12 @@ function close_sideBar() {
     EDIT_SHOWED = false;
     CATCHER = false;
     ONCE = true;
+    
+    if (DONATE_ONCE) {
+        DONATE_ONCE = false;
+    } else {
+        close_donate();
+    }
 
 }
 function close_helper() {
