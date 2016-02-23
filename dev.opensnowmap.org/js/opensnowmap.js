@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-//TODO
-// add geometry_length to pite API
 //
 
 var server = "http://" + window.location.host + "/";
@@ -480,7 +478,7 @@ function show_live_edits(when,display) {
                             format: new OpenLayers.Format.Text()
                         }),
                         styleMap: new OpenLayers.StyleMap({
-                            default: DiffStyle
+                            'default': DiffStyle
                         }),
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
@@ -495,7 +493,7 @@ function show_live_edits(when,display) {
                             format: new OpenLayers.Format.Text()
                         }),
                         styleMap: new OpenLayers.StyleMap({
-                            default: DiffStyle
+                            'default': DiffStyle
                         }),
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
@@ -510,7 +508,7 @@ function show_live_edits(when,display) {
                             format: new OpenLayers.Format.Text()
                         }),
                         styleMap: new OpenLayers.StyleMap({
-                            default: DiffStyle
+                            'default': DiffStyle
                         }),
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
@@ -1553,7 +1551,7 @@ var routeStyle = new OpenLayers.Style(
 });
 var defStyle = new OpenLayers.Style({strokeColor: "#FF0000", strokeWidth: 2, fillColor: "#FF0000", pointRadius: 5});
 var tmpStyle = new OpenLayers.Style({display: "none"});
-var myStyleMap = new OpenLayers.StyleMap({default: routeStyle, temporary: tmpStyle});
+var myStyleMap = new OpenLayers.StyleMap({'default': routeStyle, temporary: tmpStyle});
 
 var HLStyle = new OpenLayers.Style({
     strokeColor: "#26CDFF",
@@ -1568,7 +1566,7 @@ var HLStyle = new OpenLayers.Style({
         }
     }
 });
-var HLStyleMap = new OpenLayers.StyleMap({default: HLStyle});
+var HLStyleMap = new OpenLayers.StyleMap({'default': HLStyle});
 
 function getNodeText(node) {
     //workaround for browser limit to 4096 char in xml nodeValue
@@ -2038,7 +2036,7 @@ function showHTMLPistesList(Div) {
             index = site.result_index;
 
 
-            console.log('ids: ' + site.ids);
+            //console.log('ids: ' + site.ids);
             osm_id = site.ids.join('_').toString(); // What to do with that '_' for sites ??
 
             name = site.name;
