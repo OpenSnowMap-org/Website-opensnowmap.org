@@ -1128,8 +1128,8 @@ function getProfile(wktroute) {//DONE in pisteList
         }
     };
     XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    XMLHttp.setRequestHeader("Content-length", wktroute.length);
-    XMLHttp.setRequestHeader("Connection", "close");
+    //XMLHttp.setRequestHeader("Content-length", wktroute.length);
+    //XMLHttp.setRequestHeader("Connection", "close");
 
     XMLHttp.send(wktroute);
     return true;
