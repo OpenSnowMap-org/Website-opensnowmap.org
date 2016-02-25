@@ -186,9 +186,6 @@ label {
 #donate{
             font-size: 0.8em;
             color: #444;
-/*
-            background-color:#FDFDFD;
-*/
             opacity:1;
             margin-top: 5px;
             margin-bottom: 5px;
@@ -223,9 +220,6 @@ label {
     .sideBarInBox{
         position: absolute;
             background-color:#FDFDFD;
-/*
-            height:100%; // set by resize_sideBar()
-*/
             width: 360px;
             margin-top: 5px;
             margin-bottom: 5px;
@@ -267,9 +261,6 @@ label {
     #MainBlock{
         position: absolute;
         right: 0px;
-/*
-        height: 175px;
-*/
         width: 400px;
         bottom: 0px;
         background-color:#EEE; /*fallback*/
@@ -359,9 +350,6 @@ label {
 
 #attributions{
     position: absolute;
-/*
-    width: 100%;
-*/
     -moz-border-radius:6px;
     border-radius:6px;
     bottom:0px;
@@ -532,6 +520,8 @@ label {
 padding:3px 3px 3px 3px;
 }
 
+#sideBarControls {margin-right:5px;}
+.sideBarControlsButton{font-size:1.5em;}
 .closeBox{
     position: relative;
         top:0px;
@@ -564,16 +554,8 @@ float:right;
 .flagImg {margin: 5px 10px 5px 10px;vertical-align: middle;float:left;}
 .flagMenuImg {margin-top: 5px; margin-left: 2px;}
 .textImg {vertical-align:middle;}
-#sideBarControls {
-margin-right:5px;
-}
-.sideBarControlsButton{
-font-size:1.5em;
-}
-.waiterImg {
-margin-left: 100px;
-}
-#margin: 8px 15px 8px 15px;{margin: 8px 15px 8px 15px;}
+.waiterImg {margin-left: 100px;}
+#titleImg{margin: 8px 15px 8px 15px;}
 /*
  * Un comment end of file to show hidden content for styling
  * 
