@@ -51,6 +51,7 @@ a.amenu:hover {
         font-weight: 600;
         margin: 0px
     }
+a.black {color: #000;font-weight: 600;}
 li{
 list-style-position:outside;
 list-style-type:disc;
@@ -262,6 +263,7 @@ label {
                     position:relative;
                     top:0px
             }
+    .sideBarTable {width:300px;text-align:left;}
     #MainBlock{
         position: absolute;
         right: 0px;
@@ -403,9 +405,10 @@ label {
 
 #permalink{
     position: absolute;
-    bottom: 0px;
+    bottom: 2px;
     font-size: 0.8em;
-    right: 200px;
+    right: 150px;
+    bottom: 2px;"
 }
 .box {
         position: relative;
@@ -483,6 +486,16 @@ label {
     -moz-border-radius:5px;
     border-radius:5px;
 }
+.ButtonStatic {
+    background-color:#FDFDFD;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+}
 .Button:hover{
     background-color:#DBDBDB;
 }
@@ -495,7 +508,11 @@ label {
 }
 .iconButton{
     width:22px;
-    height:22px
+    height:22px;
+    margin-left: 5px;
+    margin-right:5px;
+    -moz-border-radius:3px;
+    border-radius:3px;
 }
 .textButton{
     font-weight: 700;
@@ -510,7 +527,9 @@ label {
     margin-right: 0px;
     margin-top: 0px;
     margin-bottom: 1px;
-    
+}
+.ButtonMap{
+padding:3px 3px 3px 3px;
 }
 
 .closeBox{
@@ -542,8 +561,19 @@ label {
 .getProfileButton, .getMemberListButton, .moreInfoButton{
 float:right;
 }
-.flagImg{margin: 5px 10px 5px 10px;vertical-align: middle;float:left;}
-.flagMenuImg{margin-top: 5px; margin-left: 2px;}
+.flagImg {margin: 5px 10px 5px 10px;vertical-align: middle;float:left;}
+.flagMenuImg {margin-top: 5px; margin-left: 2px;}
+.textImg {vertical-align:middle;}
+#sideBarControls {
+margin-right:5px;
+}
+.sideBarControlsButton{
+font-size:1.5em;
+}
+.waiterImg {
+margin-left: 100px;
+}
+#margin: 8px 15px 8px 15px;{margin: 8px 15px 8px 15px;}
 /*
  * Un comment end of file to show hidden content for styling
  * 

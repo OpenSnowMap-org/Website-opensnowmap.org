@@ -716,6 +716,7 @@ function page_init() {
     window.onresize = function () {resize_sideBar();};
     translateDiv('body');
     updateTooltips();
+    document.getElementById("desktopswitch").style.backgroundColor='#CCC';
 
 }
 //~ function loadend() {

@@ -29,7 +29,7 @@
 		
 	</head>
 	<body id="body">
-		<div id="summary" style="display:none;">
+		<div id="summary" class="hidden">
 		<H1>www.opensnowmap.org</H1>
 		<H2><b>Worldwide ski map </b></H2>
 		<p>La carte de OpenSnowMap.org présente plus de 60'000km de piste de ski alpin, de ski de fond et de remontées mécaniques.
@@ -67,11 +67,11 @@
 						<img name="sideBarClose"  src="pics/close-22.png">
 					</div>
 					<div id="sideBarTitle"></div>
-					<div id="sideBarControls" style="margin-right:5px;">
-						<div id="next" class="Button textButton float-right"  onclick="nextResult();"
-						style="font-size:1.5em;">&nbsp;&raquo;&nbsp;</div>
-						<div id="prev" class="Button textButton float-right"  onclick="prevResult();"
-						style="font-size:1.5em;">&nbsp;&laquo;&nbsp;</div>
+					<div id="sideBarControls">
+						<div id="next" class="Button textButton float-right sideBarControlsButton"  onclick="nextResult();"
+						>&nbsp;&raquo;&nbsp;</div>
+						<div id="prev" class="Button textButton float-right sideBarControlsButton"  onclick="prevResult();"
+						>&nbsp;&laquo;&nbsp;</div>
 						<div id="prev" class="Button textButton float-right"  onclick="show_helper();"
 						><span class="i18n" i18nText="HELP"></span></div>
 					</div>
@@ -120,23 +120,23 @@
 									<img  src="pics/nordic.png">
 								</div>
 								&nbsp;
-								<div style="float:left;">
+								<div class="float-left">
 									&nbsp;
 									<span class="routeColorSpan">
 										<b>●</b>
 									</span>
 									&nbsp;
 									<span class="pisteNameSpan">
-										<font style="">Piste</font>
+										<font>Piste</font>
 									</span>
 									<b><span class="siteNameSpan">
 										Site
 									</span></b>
 									&nbsp;
-									<div class="diffInfos" style="float:right;">
+									<div class="diffInfos" class="float-right">
 										(
 										<span class="difficultySpan">
-											<font style="">difficulty</font>
+											<font>difficulty</font>
 										</span>
 										<span class="difficultyColorSpan">
 											<b style="color:green;">&nbsp;●&nbsp;</b>
@@ -192,13 +192,13 @@
 								<span class="data" dataText="siteType">xxxx</span>&nbsp;
 								<a  class="data" dataText="siteUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
 									&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
-									<img src="pics/external-flat22.png" style="vertical-align:middle;">
+									<img class="textImg" src="pics/external-flat22.png">
 								</a>
 								<div class="analyse hidden">
 									<span>Analyse</span>&nbsp;
 									<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
 										&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
-										<img src="pics/external-flat22.png" style="vertical-align:middle;">
+										<img src="pics/external-flat22.png" class="textImg">
 									</a>
 								</div>
 							</p>
@@ -214,14 +214,14 @@
 									</span>
 									&nbsp;
 									<span class="routeNameSpan">
-										<font style="">Route</font>
+										<font>Route</font>
 									</span>
-								<img style="vertical-align:middle;" src="pics/profile-flat22.png">
+								<img class="textImg" src="pics/profile-flat22.png">
 							</div>
 							
 							<div class="inSiteElement pisteListButton" id="inSiteElementProto">
 								<b><span class="siteNameSpan">Metabief - Mont d'or</span></b>
-								<img style="vertical-align:middle;" src="pics/list-flat22.png">
+								<img class="textImg" src="pics/list-flat22.png">
 							</div>
 						</div>
 						<div class="clear"></div>
@@ -248,7 +248,7 @@
 					
 					<div id="sideBarHistory" class="hidden"></div> <!-- div to display prev and next content -->
 					<div id="requestWaiter" class="hidden sideBarContent"> <!-- rolling snake  -->
-						<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
+						<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 					</div>
 					<div id="search_results" class="hidden sideBarContent"> <!-- divs to display search results -->
 						<div id="piste_search_results" class="hidden"></div>
@@ -267,13 +267,13 @@
 						</div>
 						
 						<div id="profileWaiter" class="hidden">
-							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
+							<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
 						<div id="route_profile" class="hidden">
 							<div id="route_profile_image"><img src="pics/profile54698.png"></div>
 						</div>
 						
-						<div class="Button iconButton float-right" onclick="new_window();" style="margin-left:5px;margin-right:5px">
+						<div class="Button iconButton float-right" onclick="new_window();">
 							<img src="pics/print-22.png">
 						</div>
 						
@@ -286,14 +286,14 @@
 						</div>
 						
 						<div id="routeWaiter" class="hidden">
-							<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
+							<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
 						</div>
 						<div id="route_list" class="hidden"></div>
 					</div>
 					
 					<div id="languages" class="hidden sideBarContent"></div> <!-- control to choose languages -->
 					<div id="catcher" class="hidden sideBarContent"> <!-- displayed once whenentering the site -->
-						<div style="float: left;margin: 5px;" itemscope itemtype="http://data-vocabulary.org/Event">
+						<div class="float-left" itemscope itemtype="http://data-vocabulary.org/Event">
 							<a href="http://wiki.openstreetmap.org" target="blank">
 								<img src="pics/osm-pistes-nordiques_logo-80px.png"></img>
 							</a>
@@ -337,10 +337,10 @@
 						</table>
 					</div>
 					<div id="helper" class="hidden sideBarContent">  <!-- help -->
-						<img style="margin-left: 3px;" src="pics/interactive-help.png"/><br/>
+						<img src="pics/interactive-help.png"/><br/>
 					</div>
 					<div id="legend" class="hidden sideBarContent"> <!-- map key -->
-						<p><img style="position: relative; left: 20px;" src="pics/mapkey.png"></p>
+						<p><img src="pics/mapkey.png"></p>
 						<p>
 						<span class="i18n" i18nText="key-color">xxxx</span>
 						<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.</p>
@@ -357,19 +357,19 @@
 					<div id="settings" class="hidden sideBarContent"> <!-- controls -->
 					
 						<b><span class="i18n" i18nText="base_map">xxxx</span></b>
-						<table style="width:300px;text-align:left;">
+						<table class="sideBarTable">
 							<tr><td>
 								
-							<div class="Button float-left" style="width:86px;height:66px;" 
+							<div class="Button ButtonMap float-left" 
 							onClick="setBaseLayer('osm');" id="setOSMLayer" value="mapnik">
-							<img style="margin: 2px 2px 2px 2px;" src="pics/osm-bg.png"></img>
+							<img  src="pics/osm-bg.png"></img>
 							</div>OpenStreetMap&nbsp;
 							
 							</td><td>
 							
-							<div class="Button float-left" style="width:86px;height:66px;"
+							<div class="Button ButtonMap float-left" 
 							onClick="setBaseLayer('mapquest');" id="setMQLayer" value="Mapquest">
-							<img style="margin: 2px 2px 2px 2px;" src="pics/mq-bg.png"></img>
+							<img  src="pics/mq-bg.png"></img>
 							</div>OpenMapquest&nbsp;
 							
 							</td></tr>
@@ -378,17 +378,16 @@
 						 <hr class="hrmenu">
 						 
 						 <b><span class="i18n" i18nText="last_edits">xxxx</span></b>
-						<table style="width:300px;text-align:left;">
+						<table class="sideBarTable">
 							<tr><td>
-							<div class="float-left" 
-							style="width:86px;height:66px;background-color:#FDFDFD;	border-style:solid;	border-width:1px;	border-color: #ccc;	padding: 1px;	margin: 2px;	-moz-border-radius:5px;	border-radius:5px;">
-							<img style="margin: 2px 2px 2px 2px;" src="pics/additions.png"></img>
+							<div class="ButtonStatic ButtonMap float-left" >
+							<img src="pics/additions.png"></img>
 							</div>
 							</td><td>
 							 <input type="checkbox" id="checkD" class="radio"
 							 name="live" value="daily" 
 							 onClick="show_live_edits(value,checked)"   />
-							 <label style="margin-top: 10px;"><span class="i18n" i18nText="yesterday">xxxx</span></label><br/>
+							 <label ><span class="i18n" i18nText="yesterday">xxxx</span></label><br/>
 							
 							 <input type="checkbox" id="checkW" class="radio"
 							 name="live" value="weekly" 
@@ -410,10 +409,10 @@
 						<p><b><span class="i18n" i18nText="edit_the_map_using">xxxx</span></b></p>
 						
 						<p><span class="i18n" i18nText="edit_the_map_explain">xxxx</span></p>
-						<div style="font-size:1.1em; font-weight:800;" id="edit_zoom_in"></div>
+						<div id="edit_zoom_in"></div>
 						<br/>
 							 
-						<table style="width:300px;text-align:center;">
+						<table class="sideBarTable">
 							<tr><td>
 							<b>ID</b><br/>
 							<a id="permalink.id" target="blank" href="">
@@ -501,35 +500,35 @@
 	<!--				MenuIcons-->
 						<div id="MenuIcons">
 							<div id="langs" onclick="show_languages();"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:10px">
+							class="Button iconButton float-right" >
 							</div>
 							
 							<div onclick="show_printSettings();"
 							id="printMenuButton"
 							onmouseover="document.images['printPic'].src='pics/print-22-hover.png'"
 							onmouseout="document.images['printPic'].src='pics/print-22.png'"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+							class="Button iconButton float-right" >
 								<img name="printPic" src="pics/print-22.png"></div>
 								
 							<div id="permalink.marker" href="javascript:void(0);"
 							onmouseover="document.images['markerPic'].src='pics/marker-22-hover.png'"
 							onmouseout="document.images['markerPic'].src='pics/marker-22.png'"
 							onclick="location.href=document.getElementById('permalink').href+'&marker=true';"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+							class="Button iconButton float-right" >
 								<img name="markerPic" src="pics/marker-22.png"></div>
 								
 							<div id="permalink.simple" href="javascript:void(0);" 
 							onmouseover="document.images['linkPicMenu'].src='pics/link-22-hover.png'"
 							onmouseout="document.images['linkPicMenu'].src='pics/link-22.png'"
 							onclick="location.href=document.getElementById('permalink').href;"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+							class="Button iconButton float-right" >
 								<img name="linkPicMenu" src="pics/link-22.png"></div>
 								
 							<div id="desktopswitch" href="javascript:void(0);"
 							onmouseover="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
 							onmouseout="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
 							onclick="document.cookie='version=desktop';" 
-							class="Button iconButton float-right" style="margin-left:-1px;margin-right:25px;background-color:#DBDBDB;">
+							class="Button iconButton float-right">
 								<img name="desktopPic" src="pics/desktop-22-hover.png"></div>
 								
 							<div id="mobileswitch"  href="javascript:void(0);"
@@ -537,14 +536,14 @@
 							onmouseout="document.images['mobilePic'].src='pics/mobile-22.png'"
 							onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
 									document.cookie='version=mobile';"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:0px">
+							class="Button iconButton float-right" >
 								<img name="mobilePic" src="pics/mobile-22.png"></div>
 								
 							<div onclick="getTopoByViewport();"
 							id="listPistesMenuButton"
 							onmouseover="document.images['listPic'].src='pics/list-22-hover.png'"
 							onmouseout="document.images['listPic'].src='pics/list-22.png'"
-							class="Button iconButton float-right" style="margin-left:5px;margin-right:5px">
+							class="Button iconButton float-right" >
 								<img name="listPic" src="pics/list-22.png"></div>
 						</div>
 					</div>
@@ -571,7 +570,7 @@
 							<img name="searchPic" src="pics/search-22.png"></div>
 					</div>
 					<div id="TitleVerticalRight" class="">
-						<img style="margin: 8px 15px 8px 15px;" src="pics/opensnowmap-320x62_W.png" alt="OpenSnowMap.org">
+						<img id="titleImg" src="pics/opensnowmap-320x62_W.png" alt="OpenSnowMap.org">
 					</div>
 				</div>
 				
@@ -596,7 +595,7 @@
 					</div>
 			     
 					 <div class="Button textButton" id="donate">
-					    <a style="color: #000;font-weight: 600;" href="iframes/donate.html" target="blank"><span class="i18n" i18nText="Donate"></span></a>
+					    <a class="black" href="iframes/donate.html" target="blank"><span class="i18n" i18nText="Donate"></span></a>
 					 </div>
 
 		    </div>
@@ -618,7 +617,7 @@
 		<a id="permalink" href="" 
 			onmouseover="document.images['linkPic'].src='pics/link_hover.png'"
 			onmouseout="document.images['linkPic'].src='pics/link.png'">
-			<img name="linkPic" src="pics/link.png" style="position: absolute; right:10px; bottom: 2px;">
+			<img name="linkPic" src="pics/link.png" >
 		</a>
 		
 	</body>
