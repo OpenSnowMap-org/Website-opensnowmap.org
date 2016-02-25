@@ -390,6 +390,8 @@ function show_legend() {
 
     var legendDiv = document.getElementById('legend');
     legendDiv.className = legendDiv.className.replace('hidden', 'shown');
+    var link = legendDiv.getElementsByClassName('localizedIframe')[0];
+    link.href='iframes/how-to-' + iframelocale + '.html';
     translateDiv('legend');
     cacheInHistory(legendDiv);
 }
