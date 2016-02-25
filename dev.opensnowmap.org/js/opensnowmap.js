@@ -357,6 +357,8 @@ function show_edit() {
 
     var editDiv = document.getElementById('edit');
     editDiv.className = editDiv.className.replace('hidden', 'shown');
+    var link = editDiv.getElementsByClassName('localizedIframe')[0];
+    link.href='iframes/how-to-' + iframelocale + '.html';
     translateDiv('edit');
     cacheInHistory(editDiv);
 
