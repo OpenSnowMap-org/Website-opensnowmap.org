@@ -2473,6 +2473,7 @@ var locs = ["ast","cze","deu","eng","spa","cat","fin","fra","hun","ita","jpa","n
 var iloc = 0;
 var locale;
 var iframelocale;
+var found = false;
 locale = "eng"; //set default
 //localization
 
@@ -2484,7 +2485,7 @@ if (localStorage.l10n) {
 //else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
 
 for (i = 0; i < locs.length; i++) {
-    var found = false;
+    found = false;
     if (locale == locs[i]) {found = true; break;}
 }
 if (!found) {locale = 'eng';}
@@ -2552,7 +2553,7 @@ function fillData(divID) {
 //set the language in a localstorage, then reload
 function setlanguage(what) {
     for (i = 0; i < locs.length; i++) {
-        var found = false;
+        found = false;
         if (what == locs[i]) {found = true; locale=what; break;}
     }
     if (!found) {locale = 'eng';}
