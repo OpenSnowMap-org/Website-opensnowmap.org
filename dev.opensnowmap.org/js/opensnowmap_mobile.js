@@ -209,8 +209,8 @@ function showabout() {
 	hideexcept('about');
     var aboutDiv = document.getElementById('about');
     aboutDiv.style.display='inline';
-    document.getElementById('content').style.maxWidth="100%";
-    document.getElementById('content').style.width="100%";
+    document.getElementById('content').style.maxWidth="80%";
+    document.getElementById('content').style.width="80%";
 
     var XMLHttp = new XMLHttpRequest();
     url = server + 'iframes/about.' + iframelocale + '.html';
