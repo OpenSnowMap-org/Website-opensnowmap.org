@@ -471,6 +471,9 @@ function page_init(){
 		};
 	document.getElementById('aboutButton').onclick= function() {
 		showabout();
+		}
+	document.getElementById('content').ondragstart= function() {
+		closecontent();
 		};
 		
 	translateDiv('body');
