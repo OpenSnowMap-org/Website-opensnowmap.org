@@ -414,10 +414,10 @@ function page_init(){
 		};
 	
 	document.getElementById('mobileswitch').onclick= function() {
-		
+		document.cookie='version=mobile';
 		};
 	document.getElementById('desktopswitch').onclick= function() {
-		
+		document.cookie='version=desktop';
 		window.open(document.getElementById('permalink').href.replace('mobile','index'));
 		};
 	
