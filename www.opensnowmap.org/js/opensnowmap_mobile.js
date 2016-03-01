@@ -15,24 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
-// MODE
-//TODO
-// "NetworkError: 404 Not Found - http://beta.opensnowmap.org/data/modis-update.txt" X-server request ... bof
-// http://beta.opensnowmap.org/search?name=puit&full=true 2 results ??
-// concatenate piste search results
-// Why aeriaways are at the topo's end ?
 
-var server="http://"+window.location.host+"/";
-if (! window.location.host) {
-	server=window.location.pathname.replace("index.html",'');
+
+var server = "http://" + window.location.host + "/";
+if (!window.location.host) {
+    server = window.location.pathname.replace("index.html", '');
 	server=window.location.pathname.replace("mobile.html",'');
 }
+if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/"
+var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var MARKER=false;
@@ -47,7 +42,8 @@ var zoom=3;//2
 var position;
 var lengthes;
 var today=new Date();
-var update;
+var data = {};
+var BASELAYER = 'mapquest';
 
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
@@ -76,7 +72,7 @@ var icon = {
 "snow_park":'pics/snow_park.png',
 "ski_jump":'pics/jump.png'
 
-}
+};
 var diffcolor = {
 "novice":'green',
 "easy":'blue',
@@ -84,7 +80,7 @@ var diffcolor = {
 "advanced":'black',
 "expert":'orange',
 "freeride":'E9C900'
-}
+};
 var diffcolorUS = {
 "novice":'green',
 "easy":'green',
@@ -92,16 +88,7 @@ var diffcolorUS = {
 "advanced":'black',
 "expert":'black',
 "freeride":'#E9C900'
-}
-function get_page(url){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",url,false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var response = oRequest.responseText;
-	response = response.replace("../","");
-	return response;
-}
+};
 
 function getWinHeight(){
 	  var myWidth = 0, myHeight = 0;
@@ -137,7 +124,7 @@ function show_live_edits(when,display) {
 		var DiffStyle = new OpenLayers.Style({
 				pointRadius: 1.5,
 				fillColor: "#FF1200",
-				strokeColor:"#FF1200"})
+				strokeColor:"#FF1200"});
 		if (when == "daily") {
 			var DailyLayer=new OpenLayers.Layer.Vector("Daily", {
 						strategies: [new OpenLayers.Strategy.Fixed(),
@@ -220,41 +207,90 @@ function showlegend() {
 }
 function showabout() {
 	hideexcept('about');
-	url = server+'iframes/about.'+iframelocale+'.html';
-	var full_length = parseFloat(lengthes.downhill) + parseFloat(lengthes.nordic) + parseFloat(lengthes.aerialway) + parseFloat(lengthes.skitour) + parseFloat(lengthes.sled) + parseFloat(lengthes.snowshoeing);
-	
-	var content = get_page(url).replace('**update**',update)
-	.replace('**nordic**',lengthes.nordic)
-	.replace('**downhill**',lengthes.downhill)
-	.replace('**aerialway**',lengthes.aerialway)
-	.replace('**skitour**',lengthes.skitour)
-	.replace('**sled**',lengthes.sled)
-	.replace('**snowshoeing**',lengthes.snowshoeing);
-	document.getElementById('content_title').innerHTML='&nbsp;'+_('about');
+    var aboutDiv = document.getElementById('about');
+    aboutDiv.style.display='inline';
+    document.getElementById('content').style.maxWidth="80%";
+    document.getElementById('content').style.width="80%";
+
+    var XMLHttp = new XMLHttpRequest();
+    url = server + 'iframes/about.' + iframelocale + '.html';
+    XMLHttp.open("GET", url);
+    XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+            //var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
+
+            var content = XMLHttp.responseText;
+            content = content.replace('**update**', data.date)
+            .replace('**nordic**', data.nordic)
+            .replace('**downhill**', data.downhill)
+            .replace('**aerialway**', data.aerialway)
+            .replace('**skitour**', data.skitour)
+            .replace('**sled**', data.sled)
+            .replace('**snowshoeing**', data.snowshoeing);
+            aboutDiv.innerHTML = content;
+            
+	document.getElementById('content_title').innerHTML='&nbsp;'+_('ABOUT');
 	document.getElementById('about').innerHTML = content;
 	document.getElementById('about').style.display='inline';
 	document.getElementById('content').style.display='inline';
 	document.getElementById('content').scrollTop = 0;
+            //aboutDiv.style.display='inline';
+            //cacheInHistory(aboutDiv);
+        }
+    };
+    XMLHttp.send();
+    //~ return true;
+	//~ var content = get_page(url).replace('**update**',update)
+	//~ .replace('**nordic**',lengthes.nordic)
+	//~ .replace('**downhill**',lengthes.downhill)
+	//~ .replace('**aerialway**',lengthes.aerialway)
+	//~ .replace('**skitour**',lengthes.skitour)
+	//~ .replace('**sled**',lengthes.sled)
+	//~ .replace('**snowshoeing**',lengthes.snowshoeing);
 }
 
-function showlanguages() {
-	hideexcept('languages');
-	document.getElementById('content').style.display='inline';
-	html = '<p>'
-	for (l=0; l<locs.length; l++ ){
-		
-		html += '<div class="fastclick button" onclick="setlanguage(\''+locs[l]+'\');" ';
-		html += 'style="border: solid 1px #EEE;margin: 10px 10px 10px 10px" >';
-		html +='<img style="margin: 10px 4px 10px 4px" class="button-img" src="pics/flags/'+locs[l]+'.png">'+locs[l];
-		html +='</div>&nbsp;';
-	}
-	html +='</p>'
-	document.getElementById('languages').innerHTML=html;
+function show_languages() {
+    hideexcept('languages');
 	document.getElementById('languages').style.display='inline';
-	document.getElementById('content').scrollTop = 0;
+    
+    var languageDiv = document.getElementById('languages');
+    languageDiv.innerHTML='';
+
+    for (l = 0; l < locs.length; l++){
+
+        var flagdiv = document.getElementById('flagsLinksProto').cloneNode(true);
+        while (flagdiv.firstChild) {
+            flagdiv.removeChild(flagdiv.firstChild);
+        } //clear previous list
+
+        flagdiv.removeAttribute("id");
+        flagdiv.setAttribute('loc', locs[l]);
+
+        flagdiv.onclick = function () {
+            setlanguage(this.getAttribute('loc'));
+        };
+
+        var img2 = document.createElement('img');
+        img2.src = 'pics/flags/' + locs[l] + '.png';
+        img2.className = ('flagMenuImg');
+        flagdiv.appendChild(img2);
+
+        var link = document.createElement('a');
+        link.innerHTML = '&nbsp;' + eval(locs[l]).lang;
+        flagdiv.appendChild(link);
+
+        languageDiv.appendChild(flagdiv);
+        var cleardiv = document.getElementById('clearProto').cloneNode(true);
+        cleardiv.removeAttribute("id");
+        languageDiv.appendChild(cleardiv);
+        }
+    
 }
 
 function hideexcept(div) {
+    document.getElementById('content').style.maxWidth="210px";
 	if (div != 'menu') {document.getElementById('menu').style.display='none';}
 	if (div != 'search') {document.getElementById('search').style.display='none';}
 	if (div != 'legend') {document.getElementById('legend').style.display='none';}
@@ -308,10 +344,10 @@ document.onkeypress = stopRKey;
 // register 'enter' and 'esc' keyboard hit
 function checkKey(e) {
 	var keynum;
-	if (window.event) keynum = window.event.keyCode; //IE
+	if (window.event) {keynum = window.event.keyCode;} //IE
 	else if (e) {
 		keynum = e.which;
-		if (keynum == undefined)
+		if (keynum === undefined)
 		{
 		e.preventDefault();
 		keynum = e.keyCode;
@@ -325,60 +361,150 @@ function checkKey(e) {
 
 function stopRKey(evt) {
 	// disable the enter key action in a form.
-  var evt = (evt) ? evt : ((event) ? event : null);
+  evt = (evt) ? evt : ((event) ? event : null);
   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
   if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
 }
-function get_stats(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	lengthes = JSON.parse(oRequest.responseText);
+function get_stats() {
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", server + 'data/stats.json');
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+            var lengthes = JSON.parse(XMLHttp.responseText);
+            for (k = 0; k < Object.keys(lengthes).length; k++) {
+                data[Object.keys(lengthes)[k]] = lengthes[Object.keys(lengthes)[k]];
+            }
+        }
+    };
+    XMLHttp.send();
+    return true;
+
 }
-function get_update(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/stats.json',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var stats = JSON.parse(oRequest.responseText);
-	update=stats.date;
-}function get_modisupdate(){
-	var oRequest = new XMLHttpRequest();
-	oRequest.open("GET",server+'data/modis-update.txt',false);
-	oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-	oRequest.send();
-	var period=oRequest.responseText.split(' ')[5];
-	return period;
-}
+
 function page_init(){
+	document.addEventListener('DOMContentLoaded', function () {
+	var button = document.querySelector(".fastclick");
+	new FastClick(document.body);
+	});
 	updateZoom();
 	initFlags();
-	//~ resize_sideBar();
 	get_stats();
-	get_update();
-	document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-	document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
 	document.getElementById('dailyVector').style.backgroundColor='#FFF';
 	document.getElementById('weekVector').style.backgroundColor='#FFF';
 	document.getElementById('noVector').style.backgroundColor='#DDD';
-}
-function loadend(){
 	
+	document.getElementById('menuButton').onclick= function() {
+		showmenu();
+		};
+	document.getElementById('location').onclick= function() {
+		closecontent();
+		toggleLocation();
+		};
+	document.getElementById('searchButton').onclick= function() {
+        showsearch();
+    };
+	
+	document.getElementById('reduceButton').onclick= function() {
+        closecontent();
+    };
+	document.getElementById('doSearch').onclick= function() {
+		SearchByName(document.search.nom_search.value);
+		};
+	
+	document.getElementById('mobileswitch').onclick= function() {
+		
+		};
+	document.getElementById('desktopswitch').onclick= function() {
+		
+		window.open(document.getElementById('permalink').href.replace('mobile','index'));
+		};
+	
+	document.getElementById('permalinkButton').onclick= function() {
+		location.href=document.getElementById('permalink').href;
+		};
+	document.getElementById('permalink.marker').onclick= function() {
+		location.href=document.getElementById('permalink').href+'&marker=true';
+		};
+	document.getElementById('langs').onclick= function() {
+		show_languages();
+		};
+	
+	document.getElementById('OSMBaseLAyer').onclick= function() {
+		setBaseLayer('osm');
+		document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+		document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
+		};
+	document.getElementById('MQBaseLAyer').onclick= function() {
+		setBaseLayer('mapquest');
+		document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+		document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+		};
+	document.getElementById('dailyVector').onclick= function() {
+		show_live_edits('daily',true);
+		document.getElementById('dailyVector').style.backgroundColor='#DDD';
+		document.getElementById('weekVector').style.backgroundColor='#FFF';
+		document.getElementById('noVector').style.backgroundColor='#FFF';
+		};
+	document.getElementById('weekVector').onclick= function() {
+		show_live_edits('weekly',true);
+		document.getElementById('dailyVector').style.backgroundColor='#FFF';
+		document.getElementById('weekVector').style.backgroundColor='#DDD';
+		document.getElementById('noVector').style.backgroundColor='#FFF';
+		};
+	document.getElementById('noVector').onclick= function() {
+		show_live_edits('none',false);
+		document.getElementById('dailyVector').style.backgroundColor='#FFF';
+		document.getElementById('weekVector').style.backgroundColor='#FFF';
+		document.getElementById('noVector').style.backgroundColor='#DDD';
+		};
+		
+	document.getElementById('legendButton').onclick= function() { 
+		showlegend();
+		};
+	document.getElementById('blogButton').onclick= function() {
+		window.open('http://blog.opensnowmap.org');
+		};
+	document.getElementById('dataButton').onclick= function() {
+		window.open('iframes/data.html');
+		};
+	document.getElementById('aboutButton').onclick= function() {
+		showabout();
+		};
+		
+	translateDiv('body');
 }
+
 //======================================================================
 // NOMINATIM
 function setCenterMap(nlon, nlat, zoom) {
 		nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
 		map.setCenter(nlonLat, zoom);
-		document.getElementById('content').style.display='none';
+		//document.getElementById('content').style.display='none';
 	}
+function zoomToElement(osm_id, type) {
+    //type is either 'pistes' or 'sites'
+    var element = null;
+    for (p = 0; p < jsonPisteList[type].length; p++) {
+        var ids = jsonPisteList[type][p].ids.join('_').toString();
+        if (ids == osm_id){
+            element = jsonPisteList[type][p];
+            break;
+        }
+    }
+    if (!element) {return false;}
 
+    var bbox = element.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
+    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:900913')));
+
+}
 function highlightElement(osm_id, type){
-	closecontent();
+	
 	//type is either 'pistes' or 'sites'
 	var element=null;
-	for (p in jsonPisteList[type]) {
+	for (p =0; p< jsonPisteList[type].length; p++) {
 		var ids=jsonPisteList[type][p].ids.join('_').toString();
 		if (ids == osm_id ){
 			element=jsonPisteList[type][p];
@@ -388,7 +514,7 @@ function highlightElement(osm_id, type){
 	if (! element) {return false;}
 	
 	var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
+	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
 	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
 	
 	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
@@ -412,12 +538,12 @@ function highlightElement(osm_id, type){
 	
 }
 function highlightParentSite(osm_id,r){
-	closecontent();
+	
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
-		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
+	for (p =0; p< jsonPisteList.pistes.length; p++) {
+		var ids=jsonPisteList.pistes[p].ids.join('_').toString();
 		if (ids == osm_id ){
-			piste=jsonPisteList['pistes'][p];
+			piste=jsonPisteList.pistes[p];
 			break;
 		}
 	}
@@ -428,7 +554,7 @@ function highlightParentSite(osm_id,r){
 	if (! parent) {return false;}
 	
 	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
+	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
 	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
 	
 	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
@@ -448,12 +574,12 @@ function highlightParentSite(osm_id,r){
 	
 }
 function highlightParentRoute(osm_id,r){
-	closecontent();
+	
 	var piste=null;
-	for (p in jsonPisteList['pistes']) {
-		var ids=jsonPisteList['pistes'][p].ids.join('_').toString();
+	for (p =0; p< jsonPisteList.pistes.length; p++) {
+		var ids=jsonPisteList.pistes[p].ids.join('_').toString();
 		if (ids == osm_id ){
-			piste=jsonPisteList['pistes'][p];
+			piste=jsonPisteList.pistes[p];
 			break;
 		}
 	}
@@ -464,7 +590,7 @@ function highlightParentRoute(osm_id,r){
 	if (! parent) {return false;}
 	
 	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3])
+	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
 	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
 	
 	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
@@ -481,8 +607,51 @@ function highlightParentRoute(osm_id,r){
 	//~ highlightLayer.addFeatures(features);
 	
 }
+function zoomToParentSite(osm_id,r) {
+    var piste = null;
+    for (p = 0; p < jsonPisteList.pistes.length; p++) {
+        var ids = jsonPisteList.pistes[p].ids.join('_').toString();
+        if (ids == osm_id){
+            piste = jsonPisteList.pistes[p];
+            break;
+        }
+    }
+    if (!piste) {return false;}
+
+    var parent = piste.in_sites[r];
+
+    if (!parent) {return false;}
+
+    var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
+    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:900913')));
+
+    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
+    //~ var geometry=parent.geometry;
+    //~ var features=[];
+    //~ for (g in geometry) {
+    //~ var escaped=geometry[g];
+    //~ encPol.geometryType='polygon';
+    //~ var feature = encPol.read(escaped);
+    //~ feature.attributes.polygon=true;
+    //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+    //~ features.push(feature);
+    //~ }
+    //~
+    //~ highlightLayer.destroyFeatures();
+    //~ highlightLayer.addFeatures(features);
+
+}
 function getMembersById(id) {
-	document.getElementById("search_results").innerHTML ='<p><img style="margin-left: 100px;" src="../pics/snake_transparent.gif" /></p>';
+	document.getElementById("waiterResults").style.display='inline';
+    
+
+    var list = document.getElementsByClassName('nominatimLi')[0];
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    } //clear previous list
+    document.getElementById('piste_search_results').innerHTML='';
+    
 	var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
@@ -492,12 +661,15 @@ function getMembersById(id) {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
-			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+            document.getElementById("waiterResults").style.display='none';
+			showHTMLPistesList(document.getElementById('piste_search_results'));
 		}
-	}
+	};
 	XMLHttp.send();
 }
 function getByName(name) {
+	document.getElementById("waiterResults").style.display='inline';
+    document.getElementById('piste_search_results').innerHTML='';
 	var q = server+"request?group=true&geo=true&list=true&name="+name;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
@@ -507,13 +679,19 @@ function getByName(name) {
 		if (XMLHttp.readyState == 4) {
 			var resp=XMLHttp.responseText;
 			jsonPisteList = JSON.parse(resp);
-			document.getElementById('search_results').innerHTML=makeHTMLPistesList();
+            document.getElementById("waiterResults").style.display='none';
+			showHTMLPistesList(document.getElementById('piste_search_results'));
 		}
-	}
+	};
 	XMLHttp.send();
 	return true;
 }
 function nominatimSearch(name) {
+	document.getElementById("waiterNominatim").style.display='inline';
+    var list = document.getElementsByClassName('nominatimLi')[0];
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    } //clear previous list
 	var q = server+'nominatim?format=json&place='+name;
 	var XMLHttp = new XMLHttpRequest();
 	XMLHttp.open("GET", q);
@@ -522,331 +700,402 @@ function nominatimSearch(name) {
 	XMLHttp.onreadystatechange= function () {
 		if (XMLHttp.readyState == 4) {
 			var nom = JSON.parse(XMLHttp.responseText);
-			htmlResponse = '<hr/><ul>\n'
-			for (var i=0;i<nom.length;i++) {
-				htmlResponse += '<li><a onclick="setCenterMap('
-				+ nom[i].lon +','
-				+ nom[i].lat +','
-				+ 14 +');">'
-				+ nom[i].display_name +'</a></li><br/>\n';
-			}
-			htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
-			
-			document.getElementById('nominatim_results').innerHTML=htmlResponse;
+            document.getElementById("waiterNominatim").style.display='none';
+            
+            var Ul = document.getElementsByClassName('nominatimLi')[0];
+            for (var i = 0;i < nom.length;i++) {
+                var resultli = document.getElementById('nominatim_result_list_proto').cloneNode(true);
+                resultli.removeAttribute("id");
+                resultli.setAttribute('lon', nom[i].lon);
+                resultli.setAttribute('lat', nom[i].lat);
+                resultli.onclick = function () {
+                    setCenterMap(this.getAttribute('lon'), this.getAttribute('lat'), 14);
+                };
+                resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
+                Ul.appendChild(resultli);
+            }
 		}
-	}
+	};
 	XMLHttp.send();
 	return true;
 }
 function SearchByName(name) {
-	if (name == '') {return false;};
-	document.getElementById("searchresult").innerHTML ='<div id="search_results"><p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p></div>';
-	document.getElementById("searchresult").innerHTML +='<div id="nominatim_results"></div>';
+	if (name === '') {return false;}
 	
 	document.search.nom_search.value='';
 	getByName(name);
 	nominatimSearch(name);
 }
-function makeHTMLPistesList() {
-	var html='\n<div style="font-size:0.7em;">\n';
-	html+='\n<div class="clear"></div>'
-	//~ html+='\n'
-			//~ +'<a onclick="new_window()"'
-			//~ +' onmouseover="document.images[\'printPic\'].src=\'pics/print_hover.png\'"\n'
-			//~ +' onmouseout="document.images[\'printPic\'].src=\'pics/print.png\'">\n'
-			//~ +'<img name="printPic" src="pics/print.png"></a><br/>';
-	
-	html+='\n'
-	if (jsonPisteList['sites'] != null) {
-		
-		for (p in jsonPisteList['sites']) {
-			
-			var site=jsonPisteList['sites'][p];
-			var index;
-			index=site.result_index;
-			
-			var osm_id;
-			osm_id=site.ids.join('_').toString();
-			
-			var name = site.name;
-			if (name==' '){name=' x ';}
-			html+='<div class="sitesListElement pisteListButton fastclick" onClick="highlightElement(\''+osm_id+'\',\'sites\');getMembersById('+osm_id+');">\n';
-			var pic;
-			if (site.pistetype) {
-				var types=site.pistetype.split(';');
-				for (t in types) {
-					pic =icon[types[t]];
-					if (pic) {
-						html+='	<div style="float:left;">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-					}
-				}
-			}
-			
-			html+='	<div style="float:left;">&nbsp;&nbsp;<b style="color:#000000;font-weight:900;">'+name+'</b></div>\n';
-			
-		html+='\n<div class="clear"></div>'
-		html+='\n</div>'
-		}
-	}
-	html+='\n<hr>'
-	if (jsonPisteList['pistes'] != null) {
-		
-		for (p in jsonPisteList['pistes']) {
-			
-			var piste=jsonPisteList['pistes'][p];
-			
-			var osm_ids;
-			osm_ids=piste.ids.join('_').toString();
-			
-			var pic;
-			if (piste.pistetype) {pic =icon[piste.pistetype];}
-			else {pic =icon[piste.aerialway];}
-			
-			var color='';
-			if (piste.color) {
-				color ='&nbsp;<b style="color:'+piste.color+';font-weight:900;">&nbsp;&#9679; </b>';
-			}
-			
-			var lon = piste.center[0];
-			var lat = piste.center[1];
-			
-			var difficulty='';
-			if (piste.difficulty) {
-				var marker = '&#9679;'
-				if (lat>0 && lon <-40) {
-					if (piste.difficulty =='expert') {marker = '&diams;';}
-					if (piste.difficulty =='advanced') {marker = '&diams;&diams;';}
-					if (piste.difficulty =='freeride') {marker = '!!';}
-					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolorUS[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
-				}
-				else {
-					if (piste.difficulty =='freeride') {marker = '!';}
-					difficulty='&nbsp;('+_(piste.difficulty)+'<b style="color:'+diffcolor[piste.difficulty]+';font-weight:900;">&nbsp;'+marker+'&nbsp;</b>)';
-				}
-			}
-			
-			var name = piste.name;
-			if (name==' '){name=' - ';}
-			
-			html+='<div class="pisteListElement">\n'
-			
-			html+='<div class="pisteElement pisteListButton fastclick" onClick="highlightElement(\''+osm_ids+'\',\'pistes\');">\n'
-			
-				if (pic) {
-					html+='	<div style="float:left; ">&nbsp;<img src="../'+pic+'">&nbsp;</div>\n';
-				}
-				
-				html+='	<div style="float:left;">&nbsp;'+color+name+difficulty+'</div>\n';
-				
-				html+='\n<div class="clear"></div>\n'
-			
-			html+='\n</div>'; //pisteElement
-			
-			html+='\n<div class="clear"></div>\n'
-			// parent routes
-			if (piste.in_routes.length != 0) {
-				
-				for (r in piste.in_routes) {
-					html+='<div class="inRouteElement pisteListButton fastclick" style="float:left;" onClick="highlightParentRoute(\''+osm_ids+'\','+r+');">\n'
-					var color;
-					if (piste.in_routes[r].color) {color =piste.in_routes[r].color;}
-					else {color =diffcolor[piste.in_routes[r].difficulty];}
-					
-					var name = piste.in_routes[r].name;
-					if (name==' '){name=' ? ';}
-					if (color){
-					html+='	&nbsp;<b style="color:'+color+';font-weight:900;">&nbsp;&#9679 </b>'+name+'&nbsp;\n';
-					} else {
-					html+='	&nbsp;<b style="color:#000000;font-weight:900;">&nbsp;&#186; </b>'+name+'&nbsp;\n';
-					}
-					html+='</div>\n'; //inRouteElement
-				}
-				
-			}
-			html+='\n<div class="clear"></div>\n'
-			// parent sites
-			if (piste.in_sites.length != 0) {
-				
-				for (r in piste.in_sites) {
-					
-					html+='<div class="inSiteElement pisteListButton fastclick" style="float:right;" onClick="highlightParentSite(\''+osm_ids+'\','+r+');">\n'
-					var name = piste.in_sites[r].name;
-					if (name==' '){name=' ? ';}
-					html+='<b>'+name+'&nbsp;</b>\n';
-					html+='</div>\n' // inSiteElement
-				}
-			}
-		html+='\n<div class="clear"></div>\n';
-		html+='\n</div>\n'; // pisteListElement
-		}
-	}
-	
-	if (jsonPisteList['limit_reached']) {
-		html+='<p>'+jsonPisteList['info']+'</p>\n'
-	}
-	html+='\n</div>'
-	
-	return html
+
+function showHTMLPistesList(Div) {
+
+    while (Div.firstChild) {
+        Div.removeChild(Div.firstChild);
+    } //clear previous list
+    var site
+    , piste
+    , index;
+    var name
+    ,osm_id
+    ,element_type
+    ,types
+    ,difficulty
+    ,marker
+    ,routeName
+    ,siteId
+    ,siteName;
+    var sitediv
+    ,pistediv
+    ,spans
+    ,span
+    ,pic
+    ,picDiv
+    ,hrDiv
+    ,hrsDiv
+    ,cleardiv
+    ,buttonDiv
+    ,inroutediv
+    ,insitediv;
+
+    if (jsonPisteList.sites !== null) {
+
+        for (p = 0 ; p < jsonPisteList.sites.length; p++) {
+
+
+            site = jsonPisteList.sites[p];
+            index = site.result_index;
+
+
+            //console.log('ids: ' + site.ids);
+            osm_id = site.ids.join('_').toString(); // What to do with that '_' for sites ??
+
+            name = site.name;
+            if (name == ' '){name = ' x ';}
+
+            element_type = '';
+
+            if (site.type) {element_type = site.type;}
+
+            sitediv = document.getElementById('pisteListElementProto').cloneNode(true);
+
+            sitediv.removeAttribute("id");
+            sitediv.setAttribute('osm_id', osm_id);
+            sitediv.setAttribute('element_type', element_type);
+
+            sitediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
+
+            sitediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
+            /*.onclick = function (e) {
+                showSiteStats(this.parentNode,
+                    this.parentNode.getAttribute('osm_id'),
+                    this.parentNode.getAttribute('element_type'));
+                showExtLink(this.parentNode,
+                    this.parentNode.getAttribute('osm_id'),
+                    this.parentNode.getAttribute('element_type'));
+            };*/
+
+            sitediv.getElementsByClassName("getMemberListButton")[0].onclick = function (e) {
+                getMembersById(this.parentNode.getAttribute('osm_id'));
+            };
+
+            /*sitediv.onmouseout = function () {
+                deHighlight();
+            };
+
+            sitediv.onmouseover = function () {
+                highlightElement(this.getAttribute('osm_id'), 'sites');
+            };*/
+
+            sitediv.onclick = function () {
+                zoomToElement(this.getAttribute('osm_id'), 'sites');
+                //deHighlight();
+            };
+            Div.appendChild(sitediv);
+
+            spans = sitediv.getElementsByTagName('span');
+            for (i = 0; i < spans.length; i++) {
+                span = spans[i];
+                if (span.className == "routeColorSpan") {span.style.display = 'none';}
+                if (span.className == "pisteNameSpan") {span.style.display = 'none';}
+                if (span.className == "siteNameSpan") {
+                    span.innerHTML = name;//+' '+osm_id;
+                }
+                if (span.className == "difficultySpan") {span.style.display = 'none';}
+                if (span.className == "difficultyColorSpan") {span.style.display = 'none';}
+            }
+
+
+            picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
+            picDiv.innerHTML = '';
+            if (site.pistetype) {
+                types = '';
+                types = site.pistetype.split(';');
+                for (t = 0; t < types.length; t++) {
+                    pic = icon[types[t]];
+                    if (pic) {
+                        img = document.createElement('img');
+                        img.src = pic;
+                        img.className = 'pisteIcon';
+                        picDiv.appendChild(img);
+                    }
+                }
+            }
+
+            sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");
+            Div.appendChild(cleardiv);
+            
+            hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+            hrDiv.removeAttribute("id");
+            Div.appendChild(hrDiv);
+
+        }
+    }
+    
+    
+    if (jsonPisteList.pistes !== null) {
+
+        for (p = 0; p < jsonPisteList.pistes.length; p++) {
+            piste = jsonPisteList.pistes[p];
+
+            osm_ids = piste.ids.join('_').toString();
+
+            if (piste.type) {element_type = piste.type;}
+            color = '';
+            if (piste.color) {
+                color = piste.color;
+            }
+
+            lon = piste.center[0];
+            lat = piste.center[1];
+
+            difficulty = '';
+            if (piste.difficulty) {difficulty = piste.difficulty;}
+
+            name = piste.name;
+            if (name == ' '){name = ' - ';}
+
+            pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
+
+            pistediv.removeAttribute("id");
+            pistediv.setAttribute('osm_id', osm_ids);
+            pistediv.setAttribute('element_type', element_type);
+
+            pistediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
+            /*.onclick = function (e) {
+                zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+                showProfileFromGeometry(this.parentNode.getAttribute('osm_id'), 'pistes');
+            };*/
+
+            pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
+            /*onclick = function (e) {
+                showExtLink(this.parentNode, this.parentNode.getAttribute('osm_id')
+                    , this.parentNode.getAttribute('element_type'));
+            };*/
+
+            pistediv.getElementsByClassName("getMemberListButton")[0].style.display = 'none';
+
+            buttondiv = pistediv.getElementsByClassName("pisteListButton")[0];
+            /*buttondiv.onmouseout = function () {
+                deHighlight();
+            };*/
+
+            /*buttondiv.onmouseover = function () {
+                highlightElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+            };*/
+
+            buttondiv.onclick = function () {
+                zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+                //deHighlight();
+            };
+            Div.appendChild(pistediv);
+
+            spans = pistediv.getElementsByTagName('span');
+            for (i = 0; i < spans.length; i++) {
+                span = spans[i];
+                if (span.className == "routeColorSpan") {
+                    if (piste.color) {span.style.color = piste.color;} else {span.style.display = 'none';}
+                }
+                if (span.className == "pisteNameSpan") {
+                    span.innerHTML = name;
+                }
+                if (span.className == "siteNameSpan") {span.style.display = 'none';}
+                if (span.className == "difficultySpan") {
+                    span.innerHTML = _(piste.difficulty);
+                }
+                if (span.className == "difficultyColorSpan") {
+                    if (piste.difficulty) {
+                        marker = '&#9679;';
+                        if (piste.difficulty == 'freeride') {marker = '!';}
+                        if (lat > 0 && lon < -40) {
+                            if (piste.difficulty == 'expert') {marker = '&diams;';}
+                            if (piste.difficulty == 'advanced') {marker = '&diams;&diams;';}
+                            if (piste.difficulty == 'freeride') {marker = '!!';}
+                            span.style.color = diffcolorUS[piste.difficulty];
+                        } else {
+                            span.style.color = diffcolor[piste.difficulty];
+                        }
+                        span.innerHTML = marker;
+
+                    } else {span.style.display = 'none';}
+                }
+            }
+
+
+            picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
+            picDiv.innerHTML = '';
+            pic = null;
+            if (piste.pistetype) {
+                pic = icon[piste.pistetype];
+            } else {
+                pic = icon[piste.aerialway];
+            }
+            if (pic) {
+                img = document.createElement('img');
+                img.src = pic;
+                img.className = 'pisteIcon';
+                picDiv.appendChild(img);
+            }
+
+            if (!piste.pistetype) {
+                pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+            }
+            if (piste.difficulty && piste.difficulty.split(',').length > 1) {
+                pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+            }
+            
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");
+            pistediv.appendChild(cleardiv);
+            hrsDiv = document.getElementById('hrSuperLightProto').cloneNode(true);
+            hrsDiv.removeAttribute("id");
+            pistediv.appendChild(hrsDiv);
+            
+
+            // parent sites
+            if (piste.in_sites.length !== 0) {
+
+                for (r = 0; r < piste.in_sites.length; r++) {
+                    siteId = piste.in_sites[r].id;
+                    siteName = piste.in_sites[r].name;
+                    insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
+
+                    insitediv.removeAttribute("id");
+                    insitediv.setAttribute('osm_id', osm_ids);
+                    insitediv.setAttribute('parent_site_id', siteId);
+                    insitediv.setAttribute('element_type', element_type);
+                    insitediv.setAttribute('r', r);
+
+                    /*insitediv.onmouseout = function () {
+                        //deHighlight();
+                    };
+
+                    insitediv.onmouseover = function () {
+                        highlightParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+                    };*/
+
+                    insitediv.onclick = function () {
+                        zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+                        //deHighlight();
+                        getMembersById(this.getAttribute('parent_site_id'));
+                    };
+                    pistediv.appendChild(insitediv);
+                    spans = pistediv.getElementsByTagName('span');
+                    for (i = 0; i < spans.length; i++) {
+                        span = spans[i];
+                        if (span.className == "siteNameSpan") {
+                            span.innerHTML = siteName;
+                        }
+                    }
+                }
+            }
+            
+            // parent routes
+            if (piste.in_routes.length !== 0) {
+
+                for (r = 0; r < piste.in_routes.length; r++) {
+
+                    color = '';
+                    if (piste.in_routes[r].color) {color = piste.in_routes[r].color;} else {color = diffcolor[piste.in_routes[r].difficulty];}
+
+                    routeName = piste.in_routes[r].name;
+                    inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
+
+                    inroutediv.removeAttribute("id");
+                    inroutediv.setAttribute('osm_id', osm_ids);
+                    inroutediv.setAttribute('element_type', element_type);
+                    inroutediv.setAttribute('r', r);
+
+                    /*inroutediv.onmouseout = function () {
+                        //deHighlight();
+                    };
+
+                    inroutediv.onmouseover = function () {
+                        highlightParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+                    };*/
+
+                    inroutediv.onclick = function () {
+                        showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+                        //deHighlight();
+                    };
+                    pistediv.appendChild(inroutediv);
+
+                    spans = inroutediv.getElementsByTagName('span');
+                    for (i = 0; i < spans.length; i++) {
+                        span = spans[i];
+                        if (span.className == "routeNameSpan") {
+                            span.innerHTML = routeName;
+                        }
+                        if (span.className == "routeColorSpan") {
+                            if (color !== '') {span.style.color = color;} else {span.style.display = 'none';}
+                        }
+                    }
+
+                }
+
+
+            }
+
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");
+            Div.appendChild(cleardiv);
+
+            hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+            hrDiv.removeAttribute("id");
+            Div.appendChild(hrDiv);
+
+        } // end for
+
+    }
+
 }
 
-
-/*function nominatimSearch(string) {
-		if (string == '') {return false;};
-		//~ close_sideBar();
-		//~ SIDEBARSIZE=70;
-		//~ document.getElementById('sideBar').style.display='inline';
-		//~ document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-		//~ document.getElementById('sideBarContent').style.display='inline';
-		//~ document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-		//~ document.getElementById('sideBarTitle').innerHTML='&nbsp;'+_('search_results');
-		//~ document.getElementById("sideBarContent").innerHTML ='<p><img style="margin-left: 100px;" src="pics/snake_transparent.gif" /></p>';
-		
-		
-		var html='<p><img style="text-align:center;" src="pics/snake_transparent.gif"></p>';
-		document.getElementById("searchresult").innerHTML = html;
-		
-		var oRequest = new XMLHttpRequest();
-		//oRequest.open("GET",'http://open.mapquestapi.com/nominatim/v1/search?format=xml&q='+string,false);
-		oRequest.open("GET",server+'nominatim?format=json&place='+string,false);
-		oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-		oRequest.send();
-		setTimeout('',500);
-		var nom = JSON.parse(oRequest.responseText);
-		
-		oRequest.open("GET",server+'search?name='+string+'&full=true',false);
-		oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-		oRequest.send();
-		setTimeout('',1000);
-		var pist = JSON.parse(oRequest.responseText);
-		
-		var htmlResponse='';
-		for (r in pist) {
-			var elt = pist[r]
-			if (elt.type == 'SITE') {
-				htmlResponse += '<p>'
-				types=elt.pistetype.split(';');
-				for (t in  types) {
-					htmlResponse +='&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[types[t]]+'">';
-				}
-				htmlResponse += '<a onclick="setCenterMap('
-				+ elt.center +','
-				+ 12 +');" ><b style="font-weight:900;">'
-				+ elt.site_name +'</b></a></p>\n<hr/>\n'
-			}
-			//htmlResponse += '</p><p>'
-			if (elt.type == 'ROUTE') {
-				type=elt.pistetype;
-				color=elt.color;
-				htmlResponse += '<p><b style="color:'+color+';font-weight:900;">&#9679 </b>'
-				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-				+'<a onclick="setCenterMap('
-				+ elt.center +','
-				+ 15 +');">'
-				+ elt.route_name +'</a>\n'
-				+'<br/>'
-				if (elt.sites[0]) {
-					if (elt.sites[0].site_name){
-						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-						+ elt.sites[0].site_center +','
-						+ 12 +');">'
-						+elt.sites[0].site_name+'</a>'
-					}
-				}
-				else {htmlResponse +='-'}
-				htmlResponse +='</p>\n';
-			}
-			//htmlResponse += '</p><p>'
-			if (elt.type == 'PISTE'){
-				type=elt.pistetype;
-				htmlResponse += '<p>'
-				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-				+'<a onclick="setCenterMap('
-				+ elt.center +','
-				+ 15 +');">'
-				+ elt.name +'</a>'
-				+'<b style="color:'+diffcolor[elt.pistedifficulty]+';font-weight:900;">&nbsp;&#9830 </b>'
-				+'<br/>'
-				if (elt.sites[0]) {
-					if (elt.sites[0].site_name){
-						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-						+ elt.sites[0].site_center +','
-						+ 12 +');">'
-						+elt.sites[0].site_name+'</a>\n'
-					}
-				}
-				else {htmlResponse +='-'}
-				htmlResponse +='</p>\n';
-			}
-			//htmlResponse += '</p><p>'
-			if (elt.type == 'AERIALWAY') {
-				type=elt.aerialway;
-				htmlResponse += '<p>'
-				+'&nbsp;<img style="margin-right:10px;" align="left" src="'+icon[type]+'">'
-				+'<a onclick="setCenterMap('
-				+ elt.center +','
-				+ 15 +');">'
-				+ elt.name +'</a>'
-				+'<br/>'
-				if (elt.sites[0]) {
-					if (elt.sites[0].site_name){
-						htmlResponse += '<a style="font-size: 0.75em;vertical-align:super;" onclick="setCenterMap('
-						+ elt.sites[0].site_center +','
-						+ 12 +');">'
-						+elt.sites[0].site_name+'</a>\n'
-					}
-				}
-				else {htmlResponse +='-'}
-				htmlResponse += '</p>\n'
-			}
-			//htmlResponse += '</p>'
-		}
-		htmlResponse += '<hr/>\n'
-		htmlResponse += '<ul>\n'
-		for (var i=0;i<nom.length;i++) {
-			htmlResponse += '<li><a onclick="setCenterMap('
-			+ nom[i].lon +','
-			+ nom[i].lat +','
-			+ 14 +');">'
-			+ nom[i].display_name +'</a></li><br/>\n';
-		}
-		htmlResponse += '</ul> \n <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>';
-		
-		//~ document.getElementById("sideBarContent").innerHTML = htmlResponse;
-		//~ SIDEBARSIZE='full';
-		//~ resize_sideBar();
-		document.getElementById("searchresult").innerHTML = htmlResponse;
-	}
-*/
 //======================================================================
 // MAP
 
 // Redirect permalink
-if (location.search != "") {
+if (location.search !== "") {
 	readPermalink(location.search);
 }
 function readPermalink(link) {
-	//?zoom=13&lat=46.82272&lon=6.87183&layers=B0TT
-	var x = link.substr(1).split("&")
-	for (var i=0; i<x.length; i++)
-	{
-		if (x[i].split("=")[0] == 'zoom') {zoom=x[i].split("=")[1];}
-		if (x[i].split("=")[0] == 'lon') {lon=x[i].split("=")[1];}
-		if (x[i].split("=")[0] == 'lat') {lat=x[i].split("=")[1];}
-		if (x[i].split("=")[0] == 'marker' && x[i].split("=")[1] == 'true') { MARKER = true;}
-		if (x[i].split("=")[0] == 'e') {
-			var ext=x[i].split("=")[1];
-			if (ext == 'false'){EXT_MENU=false;}
-			else if (ext == 'true'){EXT_MENU=true;}
-			else {EXT_MENU=false;}
-		}
-	}
-	//Then hopefully map_init() will do the job when the map is loaded
+    //?zoom=13&lat=46.82272&lon=6.87183&layers=B0TT
+    var x = link.substr(1).split("&");
+    for (var i = 0; i < x.length; i++)
+    {
+        if (x[i].split("=")[0] == 'zoom') {zoom = x[i].split("=")[1];}
+        if (x[i].split("=")[0] == 'lon') {lon = x[i].split("=")[1];}
+        if (x[i].split("=")[0] == 'lat') {lat = x[i].split("=")[1];}
+        if (x[i].split("=")[0] == 'layers') {BASELAYER = x[i].split("=")[1];}
+        if (x[i].split("=")[0] == 'marker' && x[i].split("=")[1] == 'true') { MARKER = true;}
+    }
+    //Then hopefully map_init() will do the job when the map is loaded
 }
 function updateZoom() {
 	document.getElementById('zoom').innerHTML= map.getZoom();
 }
-function onZoomEnd(){
-}
+
 function get_osm_url(bounds) {
 	var res = this.map.getResolution();
 	var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
@@ -877,22 +1126,42 @@ function get_tms_url(bounds) {
 		  return this.url + z + "/" + x + "/" + y + ".png"; 
 		}
 	} 
-function toggleBaseLayer(){
-	var mq=map.getLayersByName("MapQuest")[0];
-	var osm=map.getLayersByName("OSM")[0];
-	if (mq) {
-		map.removeLayer(mq);
-		var mapnik = new OpenLayers.Layer.OSM("OSM");
-		map.addLayer(mapnik);
+function setBaseLayer(baseLayer) {
+    var mq = map.getLayersByName("MapQuest")[0];
+    var osm = map.getLayersByName("OSM")[0];
+    if (baseLayer == "osm" && mq) {
+        map.removeLayer(mq);
+        var mapnik = new OpenLayers.Layer.OSM("OSM");
+        map.addLayer(mapnik);
+        if (document.getElementById('setOSMLayer')) {
+            document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
+            document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
+        }
+		document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+		document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
+        BASELAYER = 'osm';
+    }
+    if (baseLayer == "mapquest" && osm) {
+        map.removeLayer(osm);
+        var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+        var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
+        map.addLayer(mapquest);
+        if (document.getElementById('setOSMLayer')) {
+            document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
+            document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
+        }
+		document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+		document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        BASELAYER = 'mapquest';
+    }
 
-	} else {
-		map.removeLayer(osm);
-		var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-			"http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-			"http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-			"http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-		var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
-		map.addLayer(mapquest);	}
+    var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
+    for (p = 0; p < permalinks.length; p++){
+        permalinks[p].updateLink();
+    }
 }
 function baseLayers() {
 
@@ -924,7 +1193,8 @@ function permalink3Args() {
 		OpenLayers.Control.Permalink.prototype.createParams.apply(
 			this, arguments
 		);
-	args['marker'] = 'true';
+	args.marker = 'true';
+    args.layers = BASELAYER;
 	return args;
 }
 function permalink0Args() {
@@ -932,9 +1202,8 @@ function permalink0Args() {
 		OpenLayers.Control.Permalink.prototype.createParams.apply(
 			this, arguments
 		);
-	args['layers']='';
-	//args['e'] = EXT_MENU;
-	//~ args['marker'] = 'false';
+	
+    args.layers = BASELAYER;
 	return args;
 }
 
@@ -960,19 +1229,17 @@ function map_init(){
 		projection: new OpenLayers.Projection("EPSG:900913"),
 		displayProjection: new OpenLayers.Projection("EPSG:4326")
 	} );
-	//zoomBar = new zoomSlider({'div':document.getElementById("paneldiv")});
-	//zoomBar.zoomStopWidth=24;
-	//map.addControl(zoomBar);
 	
 	permalink_simple = new OpenLayers.Control.Permalink("permalink",
 	server+'mobile.html',{'createParams': permalink0Args});
 	map.addControl(permalink_simple);
 	
 	baseLayers();
+	
+    setBaseLayer(BASELAYER);
 // Switch base layer
 	map.events.on({ "zoomend": function (e) {
 		updateZoom();
-		onZoomEnd();
 	}
 	});
 
@@ -986,106 +1253,109 @@ function map_init(){
 	// map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
 	map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
 	if (MARKER) {
-		markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) 
+		markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) ;
 		var markers = new OpenLayers.Layer.Markers( "Markers" );
 		map.addLayer(markers);
 		markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
 	}
-	loadend();
 }
 
 //======================================================================
 // I18N
-var locs = [ "ast","cz","de","en","es","cat","fi","fr","hu","it","jp","nl","nn","ru","se","ukr"];
-var iloc= 0;
+var locs = ["ast","cze","deu","eng","spa","cat","fin","fra","hun","ita","jpa","nld","nno","rus","swe","ukr"];
+var iloc = 0;
 var locale;
 var iframelocale;
-locale="en"; //set default
+var found = false;
+locale = "eng"; //set default
 //localization
 
 // Get the locale first: from localstorage if set
 if (localStorage.l10n) {
-	locale = localStorage.l10n;
+    locale = localStorage.l10n;
 }
 // No localstorage, check for browser locale
-else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
+//else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
+
+for (i = 0; i < locs.length; i++) {
+    found = false;
+    if (locale == locs[i]) {found = true; break;}
+}
+if (!found) {locale = 'eng';}
 
 // only a few iframe content pages are translated:
-if (locale != 'en' && locale !='fr') { iframelocale = 'en';}
-else { iframelocale = locale;}
+if (locale != 'eng' && locale != 'fra') { iframelocale = 'eng';} else { iframelocale = locale;}
 
-// Load the localized strings
-var oRequest = new XMLHttpRequest();
-oRequest.open("GET",'i18n/'+locale+'.json',false);
-oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-oRequest.send();
-var i18n = eval('('+oRequest.responseText+')');
+var i18n = eval(locale);
+var i18nDefault = eng;
 
 // Translating function
 function _(s) {
-	if (typeof(i18n)!='undefined' && i18n[s]) {
-		return i18n[s];
-	}
-	return s;
+    if (typeof(i18n) !== 'undefined' && i18n[s] && i18n[s] !== '') {
+        return i18n[s];
+    }
+    if (typeof(i18n) == 'undefined' && typeof(i18nDefault) == 'undefined') {
+        return s;
+    }
+    return i18nDefault[s];
 }
 
+function translateDiv(divID) {
+    var div = document.getElementById(divID);
+    var elements = div.getElementsByClassName('i18n');
+    for (i = 0; i < elements.length; i++) {
+        elements[i].innerHTML = _(elements[i].getAttribute('i18nText'));
+    }
+    return true;
+}
 // this get the browser install language, not the one set in preference
-function get_locale() {
-	var loc="en";
-	if ( navigator ) {
-		if ( navigator.language) {
-			loc= navigator.language;
-		}
-		else if ( navigator.browserLanguage) {
-			loc= navigator.browserLanguage;
-		}
-		else if ( navigator.systemLanguage) {
-			loc= navigator.systemLanguage;
-		}
-		else if ( navigator.userLanguage) {
-			loc= navigator.userLanguage;
-		}
-		else {loc = 'en';}
-	}
-	else {loc = 'en';}
-	
-	// use the locale only if string file is available!
-	if (loc == 'en' | loc =='fr' | loc == 'de'){
-		return loc;
-	}
-	else {return 'en';}
-}
+/*function get_locale() {
+    var loc="en";
+    if ( navigator ) {
+        if ( navigator.language) {
+            loc= navigator.language;
+        }
+        else if ( navigator.browserLanguage) {
+            loc= navigator.browserLanguage;
+        }
+        else if ( navigator.systemLanguage) {
+            loc= navigator.systemLanguage;
+        }
+        else if ( navigator.userLanguage) {
+            loc= navigator.userLanguage;
+        }
+        else {loc = 'en';}
+    }
+    else {loc = 'en';}
 
+    // use the locale only if string file is available!
+    if (loc == 'en' | loc =='fr' | loc == 'de'){
+        return loc;
+    }
+    else {return 'en';}
+}*/
 
 //set the language in a localstorage, then reload
-function setlanguage(what){
-	localStorage.l10n=what
-	var linkto = document.getElementById('permalink').href;
-	window.location.href = linkto;
+function setlanguage(what) {
+    for (i = 0; i < locs.length; i++) {
+        found = false;
+        if (what == locs[i]) {found = true; locale=what; break;}
+    }
+    if (!found) {locale = 'eng';}
+    localStorage.l10n = locale;
+    i18n = eval(locale);
+    if (locale != 'eng' && locale != 'fra') { iframelocale = 'eng';} else { iframelocale = locale;}
+    translateDiv('body');
+    initFlags();
+    //close_sideBar();
+    showmenu();
 }
-// Show langage bar
-function initFlags(){
-	var max=4;
-	var html='';
-	//~ html+= '<a id="" onclick="show_languages();">'
-		//~ +'<img style="margin: 0 4px 0 4px;" src="pics/flags/'+locale+'.png"></a>';
-	//~ html+='<a onclick="show_languages();" '
-		//~ + 'style="margin: 0 2px 0 2px;font-size:1.5em;font-weight:200;">&#187;</a>';
-	document.getElementById('flag').src = 'pics/flags/'+locale+'.png';
-}
-
-function show_languages() {
-	SIDEBARSIZE=150;
-	document.getElementById('sideBar').style.display='inline';
-	document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-	document.getElementById('sideBarContent').style.display='inline';
-	document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-	document.getElementById('sideBarTitle').innerHTML='<img style="margin: 2px 4px 2px 4px;vertical-align: middle;" src="pics/flags/'+locale+'.png">'+_('lang').replace('<br/>',' ');
-	html = ''
-	for (l=0; l<locs.length; l++ ){
-		html += '<a id="" onclick="setlanguage(\''+locs[l]+'\');">'
-			 +'<img style="margin: 10px 2px 10px 20px;vertical-align: middle;" src="pics/flags/'+locs[l]+'.png">'+locs[l]+'</a>';
-	}
-	document.getElementById('sideBarContent').innerHTML=html;
+// Set flag button
+function initFlags() {
+    var img = document.createElement('img');
+    img.src = 'pics/flags/' + locale + '.png';
+    img.className = ('flagMenuImg');
+    document.getElementById('langs').innerHTML='';
+    document.getElementById('langs').appendChild(img);
 }
 

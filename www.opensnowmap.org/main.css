@@ -1,3 +1,9 @@
+/*
+ * to show hidden content for styling see at the end or use
+ * 
+ * */
+
+
 body{
     margin:0px;
     overflow:hidden;
@@ -31,26 +37,29 @@ a:hover {
         margin: 0px
     }
 a.amenu:link, a.amenu:visited {
-		font-weight: 600;
-		color: #444444;
-		font-size: 1em;
+        font-weight: 600;
+        color: #444444;
+        font-size: 1em;
         text-decoration: none;
         margin: 0px
     }
     
 a.amenu:hover {
         color: #FF7800;
-		font-size: 1em;
+        font-size: 1em;
         text-decoration: none;
         font-weight: 600;
         margin: 0px
     }
+a.black {color: #000;font-weight: 600;}
 li{
 list-style-position:outside;
 list-style-type:disc;
 }
 hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
-hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #EEE; background-color: #EEE}
+hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
+hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
+
 .hrmenu{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 td {
         border:0px solid grey;
@@ -85,6 +94,12 @@ label {
 }
 .float-left{
     float:left
+}
+.hidden {
+    display: none
+}
+.shown {
+    display: inline
 }
 #map {
         position: fixed;    width: 100%; height:100%;
@@ -156,33 +171,30 @@ label {
     position: relative;
     margin-left: auto;
     margin-right: auto;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.5);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    width: 290px;
-	    text-align:center;
-	    }
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.5);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        width: 290px;
+        text-align:center;
+        }
 #donateCloseControl {
-			margin: 3px 3px 3px 3px;
-			float: left;
+            margin: 3px 3px 3px 3px;
+            float: left;
 }
 #donate{
-			font-size: 0.8em;
-			color: #444;
-/*
-			background-color:#FDFDFD;
-*/
-			opacity:1;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			margin-left: 5px;
-			margin-right:5px;
-			overflow: auto;
-			position: relative;
-			width: 240px;
-			}
+            font-size: 0.8em;
+            color: #444;
+            opacity:1;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right:5px;
+            overflow: auto;
+            position: relative;
+            width: 240px;
+            }
 
 #right-container{
     position: absolute;
@@ -191,127 +203,134 @@ label {
     width: 50px;
 }
 
-	#sideBar{
-	    position: absolute;
-	    right: 0px;
-	    height: 200px;
-	    width: 400px;
-	    bottom: 60px;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.5);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    display: none;
-	    overflow: auto;
-	}
-		#sideBarContent{
-			font-size: 0.8em;
-			color: #444;
-			background-color:#FDFDFD;
-			opacity:1;
-			height:160px;
-			width: 360px;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			margin-left: 5px;
-			margin-right:5px;
-			padding-left:10px;
-			padding-right:10px;
-			overflow: auto;
-			position: absolute
-		}
-	.sideBarHeader{
-		top:0px;left:0px;right:0px;height:24px;position:relative;
-		margin-left: 5px;
-		background-color:#EEE; /*fallback*/
-		background-color: rgba(245,245,245,0.2);
-		color: #444444;
-		font-weight: 600;
-		font-size: 0.82em;
-		line-height: 14px
-	}
-	        #sideBarTitle{
-	                float: left;
-	                position:relative;
-	                top:0px
-	        }
-	#MainBlock{
-	    position: absolute;
-	    right: 0px;
-/*
-	    height: 175px;
-*/
-	    width: 400px;
-	    bottom: 0px;
-	    background-color:#EEE; /*fallback*/
-	    background-color: rgba(245,245,245,0.4);
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #aaaaaa;
-	    overflow: none;
-	}
-		#MenuBlock{
-			opacity:1;
-			height:95px;
-			width: 390px;
-			margin-top: 2px;
-			margin-bottom: 0px;
-			margin-left: 2px;
-			margin-right:5px;
-			overflow: hidden;
-			position: relative
-		}
-		#MenuVerticalRight{
-			position: absolute;
-			left: 35px;
-			top: 0px;
-			width:355px;
-			margin-top: 2px;
-		}
-		#MenuIcons{
-		background-color:#FDFDFD;
-		height: 30px;
-		width:355px;
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    margin-top:2px;
-		}
-		.IconBarVertical{
-			position: absolute;
-			left: 0px;
-			top: 0px;
-			width: 30px;
-		}
-		#TitleBlock{
-		        opacity:1;
-		        height:86px;
-				width: 390px;
-		        margin-top: 0px;
-		        margin-bottom: 5px;
-		        margin-left: 2px;
-		        margin-right:5px;
-		        overflow: hidden;
-		        position: relative
-		}
-		#TitleVerticalRight{
-		width:355px;
-		height:80px;
-	    background-color:#FDFDFD;
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-		position: absolute;
-		left: 35px;
-		top: 0px;
-		margin-top: 5px;
-		}
+    #sideBar{
+        position: absolute;
+        right: 0px;
+        height: 200px;
+        width: 400px;
+        bottom: 60px;
+        background-color:#EEE;
+        background-color: rgba(245,245,245,0.5);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        display: none;
+        overflow: none;
+    }
+    .sideBarInBox{
+        position: absolute;
+            background-color:#FDFDFD;
+            width: 360px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right:5px;
+            padding-left:10px;
+            padding-right:10px;
+            overflow: auto
+    }
+        .sideBarContent{
+            font-size: 0.8em;
+            color: #444;
+            background-color:#FDFDFD;
+            opacity:1;
+            height:160px;
+            width: 350px;
+            overflow: none;
+            position: absolute
+        }
+        .sideBarHistory{
+            font-size: 1.25em
+        }
+    .sideBarHeader{
+        top:0px;left:0px;right:0px;height:24px;position:relative;
+        margin-left: 5px;
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.2);
+        color: #444444;
+        font-weight: 600;
+        font-size: 0.82em;
+        line-height: 14px
+    }
+            #sideBarTitle{
+                    float: left;
+                    position:relative;
+                    top:0px
+            }
+    .sideBarTable {width:300px;text-align:left;}
+    #MainBlock{
+        position: absolute;
+        right: 0px;
+        width: 400px;
+        bottom: 0px;
+        background-color:#EEE; /*fallback*/
+        background-color: rgba(245,245,245,0.4);
+        -moz-border-radius:6px;
+        border-radius:6px;
+        border: 1px solid #aaaaaa;
+        overflow: none;
+    }
+        #MenuBlock{
+            opacity:1;
+            height:95px;
+            width: 390px;
+            margin-top: 2px;
+            margin-bottom: 0px;
+            margin-left: 2px;
+            margin-right:5px;
+            overflow: hidden;
+            position: relative
+        }
+        #MenuVerticalRight{
+            position: absolute;
+            left: 35px;
+            top: 0px;
+            width:355px;
+            margin-top: 2px;
+        }
+        #MenuIcons{
+        background-color:#FDFDFD;
+        height: 30px;
+        width:355px;
+        -moz-border-radius:6px;
+        border-radius:6px;
+        margin-top:2px;
+        }
+        .IconBarVertical{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 30px;
+        }
+        #TitleBlock{
+                opacity:1;
+                height:86px;
+                width: 390px;
+                margin-top: 0px;
+                margin-bottom: 5px;
+                margin-left: 2px;
+                margin-right:5px;
+                overflow: hidden;
+                position: relative
+        }
+        #TitleVerticalRight{
+        width:355px;
+        height:80px;
+        background-color:#FDFDFD;
+        -moz-border-radius:6px;
+        border-radius:6px;
+        position: absolute;
+        left: 35px;
+        top: 0px;
+        margin-top: 5px;
+        }
 
 #searchDiv{
-	display: none;
-	position: absolute;
-	bottom: 30px;
-	right: 410px;
-	width: 92px;
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    right: 410px;
+    width: 92px;
     background-color:#EEE; /*fallback*/
     background-color: rgba(245,245,245,0.4);
     -moz-border-radius:6px;
@@ -320,20 +339,17 @@ label {
 }
 
 #search_input{
-	border: 1px solid #CCCCCC;
-	font-size: 0.8em;
-	width: 80px;
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-top: 2px;
-	margin-bottom: 2px;
+    border: 1px solid #CCCCCC;
+    font-size: 0.8em;
+    width: 80px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 #attributions{
     position: absolute;
-/*
-    width: 100%;
-*/
     -moz-border-radius:6px;
     border-radius:6px;
     bottom:0px;
@@ -364,21 +380,7 @@ label {
     border: 1px solid #aaaaaa;
     background-color:#EEE; /*fallback*/
     background-color: rgba(245,245,245,0.7);}
-#catcher{
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    padding-top: 3px;
-    width: 350px;
-    font-size: 0.9em;
-    font-weight: 300;
-    /*height: 26px;*/
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #aaaaaa;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);}
+
 #zoomin-helper{
     position: relative;
     margin: 5px;
@@ -391,9 +393,10 @@ label {
 
 #permalink{
     position: absolute;
-    bottom: 0px;
+    bottom: 2px;
     font-size: 0.8em;
-    right: 200px;
+    right: 150px;
+    bottom: 2px;"
 }
 .box {
         position: relative;
@@ -408,54 +411,78 @@ label {
         border-radius:5px;
         border: 1px solid #888888;
 }
-/*					Piste list						 */
+/*                  Piste list                       */
 .pisteListElement{
-	background-color:#FFF;
-	margin: 0px;
-	padding:0px;
+    background-color:#FFF;
+    margin: 0px;
+    padding:0px;
+    font-size:0.7em;
 }
 .pisteListButton{
     font-size: 1.3em;
-	background-color:#FFFFFF;
-	border: 0px solid grey;
-	padding: 2px;
-	margin: 0px;
-	-moz-border-radius:4px;
-	border-radius:4px;
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
 }
 .pisteListButtonStatic{
-    font-size: 1.3em;
-	background-color:#FFFFFF;
-	border: 0px solid grey;
-	padding: 2px;
-	margin: 0px;
-	-moz-border-radius:4px;
-	border-radius:4px;
+    font-size: 1em;
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
 }
 .pisteListButton:hover{
-	background-color:#DDDDDD;
+    background-color:#DDDDDD;
 }
 .pisteListButton:active{
-	background-color:#CCCCCC;
+    background-color:#CCCCCC;
 }
 .inRouteElement{
-  font-size: 1.1em;
+  font-size: 1.05em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
 }
 .inSiteElement{
-  font-size: 1.1em;
+  font-size: 1.05em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
+}
+.elementExtLink{
+  font-size: 1.05em;
+  font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
+}
+.routeLengthElement{
+  font-size: 1.2em;
 }
 
 .Button {
     background-color:#FDFDFD;
-	border-style:solid;
-	border-width:1px;
-	border-color: #ccc;
-	padding: 1px;
-	margin: 2px;
-	-moz-border-radius:5px;
-	border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+}
+.ButtonStatic {
+    background-color:#FDFDFD;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
 .Button:hover{
     background-color:#DBDBDB;
@@ -468,35 +495,83 @@ label {
     color: #AAA;
 }
 .iconButton{
-	width:22px;
-	height:22px
+    width:22px;
+    height:22px;
+    margin-left: 5px;
+    margin-right:5px;
+    -moz-border-radius:3px;
+    border-radius:3px;
 }
 .textButton{
-	font-weight: 700;
-	color: #444444;
-	font-size: 0.65em;
-	text-decoration: none;
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top:2px;
-	padding-bottom:2px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-	margin-bottom: 1px;
-	
+    font-weight: 700;
+    color: #444444;
+    font-size: 0.65em;
+    text-decoration: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 1px;
+}
+.ButtonMap{
+padding:3px 3px 3px 3px;
 }
 
+#sideBarControls {margin-right:5px;}
+.sideBarControlsButton{font-size:1.5em;}
 .closeBox{
-	position: relative;
-		top:0px;
-		left:0px;
-		width: 22px;
-		height:22px;
+    position: relative;
+        top:0px;
+        left:0px;
+        width: 22px;
+        height:22px;
 /*
-		margin: 0px 0px 5px -3px ;
+        margin: 0px 0px 5px -3px ;
 */
-		padding:0px;
-		float:left;
-		z-index: 1000;
+        padding:0px;
+        float:left;
+        z-index: 1000;
 }
+
+.statsIcon {
+	vertical-align: middle;
+	margin-left:20px;
+}
+.pisteIconDiv {
+	float:left;
+	vertical-align: middle;
+}
+.pisteIcon {
+	margin-left: 3px;
+}
+
+.getProfileButton, .getMemberListButton, .moreInfoButton{
+float:right;
+}
+.flagImg {margin: 5px 10px 5px 10px;vertical-align: middle;float:left;}
+.flagMenuImg {margin-top: 5px; margin-left: 2px;}
+.textImg {vertical-align:middle;}
+.waiterImg {margin-left: 100px;}
+#titleImg{margin: 8px 15px 8px 15px;}
+/*
+ * Un comment end of file to show hidden content for styling
+ * 
+ * */
+
+/*
+.hidden {
+display: inline
+}
+
+.sideBarContent{
+position: static
+}
+
+.sideBarInBox{
+height:6000px;
+position: relative
+}
+*/

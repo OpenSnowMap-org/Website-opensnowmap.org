@@ -401,8 +401,8 @@ class SrtmLayer(object):
     
         ilon = ceil(colmin / 6000.0)
         ilat = ceil(rowmin / 6000.0)"""
-        ilon = abs(floor(lon))
-        ilat = abs(floor(lat+1))
+        ilon = (floor(lon))
+        ilat = (floor(lat+1))
         
         #~ if lon > 0 and lat > 0 and lat <60 :return 'N%02dE%03d.tif' % (ilat, ilon)
         #~ if lon < 0 and lat > 0 and lat <60:return 'N%02dW%03d.tif' % (ilat, ilon)

@@ -25,23 +25,41 @@ a:link, a:visited {
     }
     
 a.amenu:link, a.amenu:visited {
-		font-weight: 600;
-		color: #444444;
-		font-size: 1em;
+        font-weight: 600;
+        color: #444444;
+        font-size: 1em;
         text-decoration: none;
         margin: 0px
     }
 
 select, option, input{
         background-color: #FFFFFF;
-        width: 80%;
+        width: 140px;
         font-size: 1em;
         border: 1px solid #CCCCCC;
         text-align: left;
         margin: 5px 5px 5px 5px;
 }
 .hrmenu{border: 0; width: 100%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
+hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
+
 .clear { clear: both}
+/*use to place divs side by side*/
+
+.float-right{
+    float:right
+}
+.float-left{
+    float:left
+}
+.hidden {
+    display: none
+}
+.shown {
+    display: inline
+}
 #map {
         position: fixed;    width: 100%; 
         top: 35px;
@@ -53,27 +71,11 @@ select, option, input{
 .olButton {
     z-index: 1004
 }
-#zoom{
-    position: absolute;
-    top:0px;
-    right: 8px;
-    font-size: 0.5em;
-    color: #050505;
-    padding: 2px 5px 2px 5px;
-    text-align: center;
-    vertical-align: center;
-    -moz-border-radius:6px;
-    border-radius:6px;
-    border: 1px solid #AAAAAA;
-    background-color: #F5F5F5;
-    opacity: 0.5;
-    z-index: 1000;
-}
 #attribution{
 position: absolute;
 bottom: 1px;
 right:1px;
-font-size: 0.4em;
+font-size: 0.6em;
 font-weight:300;
 z-index: 1000;
 background-color: #F5F5F5;
@@ -82,92 +84,143 @@ color: black;
 
 }
 .olControlZoom {visibility:hidden;}
+
+#zoom{
+    position: absolute;
+    top:72px;
+    right: 15px;
+    width: 30px;
+    font-size: 0.8em;
+    text-align: center;
+    vertical-align: center;
+    color: #333;
+    background-color: #F5F5F5;
+    opacity: 0.5;
+    border: 1px solid #888;
+    border-radius: 3px;
+    opacity: 0.5;
+    z-index: 1000;
+}
 #customZoom {
-	z-index: 1001;
-	position: relative;
-	top: 5px;
-	left: 5px;
+    z-index: 1001;
+    position: absolute;
+    top: 5px;
+    right: 47px;
 }
 #customZoom a {
-	text-decoration: none;
-	position: absolute;
-	display: block;
-	text-align: center;
-	vertical-align: center;
-	font-weight: bold;
-	color: #888;
-	background-color: #F5F5F5;
-    opacity: 0.7;
-	border: 2px solid #ccc;
-	border-radius: 6px;
-	width: 50px;
-	line-height: 50px;
-	height:50px;
-	font-size: 1.5em;
+    text-decoration: none;
+    position: absolute;
+    display: block;
+    text-align: center;
+    vertical-align: center;
+    font-weight: bold;
+    color: #000;
+    background-color: #F5F5F5;
+    opacity: 0.5;
+    border: 1px solid #888;
+    border-radius: 3px;
+    width: 30px;
+    line-height: 30px;
+    height:30px;
+    font-size: 1.2em;
 }
 #customZoomOut {
-	top: 51px;
+    top: 32px;
 }
 #customZoom a:hover {
-	background: #036;
+    background: #036;
 }
-#content {
-        position: fixed;
-        top: 35px;
-        bottom: 5px;
-        left: 10px;
-        right:10px;
-        padding: 0px 10px 10px 10px;
-	    -moz-border-radius:6px;
-	    border-radius:6px;
-	    border: 1px solid #AAAAAA;
-        background-color:#FFF;
-        z-index: 1000;
-        overflow: auto;
-     }
 #content-control {
-	width: 100%;
+    width: 100%;
     background-color:#FAFAFA;
 }
 .closebox {float: right;}
 #header{
     float:right;
+/*
     -moz-border-radius:6px;
     border-radius:6px;
+*/
     border: 1px solid #AAAAAA;
     font-size: 0.75em;
     color: #050505;
     width: 100%;
-    height: 33px;
+    height: 40px;
     vertical-align: center;
     background-color:#FAFAFA;
-	background-image: url('pics/opensnowmap_title_thin_400.png');
+    background-image: url('pics/opensnowmap_title_thin_400.png');
     background-repeat: no-repeat;
     background-position: right center;
     background-attachment: scroll;
     background-size: 200px;
-	
+    
 }
-.button {
-/*inside image and margin make the size*/
-float:left;
--moz-border-radius:4px;
-border-radius:4px;
-/*
-border: 1px solid #D2D2D2;
-*/
-border: none;
-margin: 2px 2px 2px 2px;
-font-weight: 600;
-font-size:1em;
+.Button {
+    background-color:#FDFDFD;
+    border-style:solid;
+    border-width:1px;
+    border-color: #eee;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
-.button:hover{
-   background-color:#DDD;
+.noBorder {
+    border-width:0px;
+    }
+.ButtonStatic {
+    background-color:#FDFDFD;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
+    padding: 1px;
+    margin: 2px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
-.button:active{
-   background-color:#BBB;
+.Button:hover{
+    background-color:#DBDBDB;
 }
-
+.Button:active{
+    background-color:#E65B3F;
+}
+.Button:disabled{
+    background-color:#E65B3F;
+    color: #AAA;
+}
+.iconButton{
+    width:36px;
+    height:36px;
+    margin-left: 3px;
+    margin-right:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    padding: 2px 2px 2px 2px;
+}
+.reduceButton{
+    right: 0px;
+    margin-right:-10px;
+}
+.menuButton {
+    margin-left:15px;
+}
+.textButton{
+    font-weight: 700;
+    color: #444444;
+    font-size: 0.8em;
+    text-decoration: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 1px;
+    max-width: 200px;
+    text-align:center;
+}
+.menuInfo {font-size: 0.7em;}
 
 * {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -199,74 +252,127 @@ div.olMapViewport {
     perspective: 1000;
 }
 */
-.button-img {
-vertical-align: middle;
-margin: 4px 4px 4px 4px;
-}
-@media screen and (min-width: 481px) {
-  .button-img {  width: 32px;  }
-  #header{height: 40px;background-size: 280px;}
-#content-control {height: 40px;}
-  #content {top: 42px;}
-  #map {top: 42px;}
-    #customZoom a {
-	width: 32px;
-	line-height: 32px;
-	height:32px;
-	font-size: 1em;
-	}
-	#customZoomOut {
-		top: 33px;
-	}
-}
 
-@media screen and (max-width: 480px) {
-  .button-img {  width: 22px;}
-  #titleimg {width: 200px;} 
-  #header{height: 40px;background-size: 200px;}
-#content-control {height: 40px;}
-  #content {top: 42px;}
-  #map {top: 42px;}
-    #customZoom a {
-	width: 22px;
-	line-height: 22px;
-	height:22px;
-	font-size: 0.8em;
-	}
-	#customZoomOut {
-		top: 23px;
-	}
+/*                  Piste list                       */
+.pisteListElement{
+    background-color:#FFF;
+    margin: 0px;
+    padding:0px;
+    font-size:1em;
 }
-/*					Piste list						 */
 .pisteListButton{
-    font-size: 1.3em;
-	background-color:#FFFFFF;
-	border: 0px solid grey;
-	padding: 2px;
-	margin: 0px;
-	-moz-border-radius:4px;
-	border-radius:4px;
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+}
+.pisteListButtonStatic{
+    background-color:#FFFFFF;
+    border: 0px solid grey;
+    padding: 2px;
+    margin: 0px;
+    -moz-border-radius:4px;
+    border-radius:4px;
 }
 .pisteListButton:hover{
-	background-color:#DDDDDD;
+    background-color:#DDDDDD;
 }
 .pisteListButton:active{
-	background-color:#CCCCCC;
+    background-color:#CCCCCC;
 }
-.pisteListElement{
-	background-color:#EEEEEE;
-	margin: 2px;
-	padding:2px;
-}
-.sitesListElement{
-	padding:6px;
-}
-.pisteElement{}
 .inRouteElement{
-  font-size: 1.1em;
+  font-size: 0.8em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
 }
 .inSiteElement{
-  font-size: 1.1em;
+  font-size: 0.8em;
   font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:right
 }
+
+.elementExtLink{
+  font-size: 1.05em;
+  font-style:oblique;
+  margin: 0px 0px 0px 30px;
+  float:left
+}
+.routeLengthElement{
+  font-size: 1.2em;
+}
+.pisteIconDiv {
+    float:left;
+    vertical-align: middle;
+}
+.pisteIcon {
+    margin-left: 3px;
+}
+
+.getProfileButton, .getMemberListButton, .moreInfoButton{
+float:right;
+}
+  .flagMenuImg {vertical-align: middle;}
+.button-img {margin: 2px 2px 2px 2px;}
+.textImg {vertical-align:middle;}
+#piste_search_results{
+    font-size: 0.7em;}
+#nominatim_results{
+    font-size: 0.7em;}
+#content {
+        position: fixed;
+        top: 35px;
+        bottom: 0px;
+        left: 0px;
+        right:10px;
+        padding: 0px 10px 10px 10px;
+/*
+        -moz-border-radius:6px;
+        border-radius:6px;
+*/
+        border: 1px solid #AAAAAA;
+        background-color:#FFF;
+        z-index: 1000;
+        overflow: auto;
+     }
+/*
+@media screen and (min-width: 481px) {
+body {font-size: 1.2em;}
+  #content {max-width:280px;width:280px;top: 42px;}
+  .button-img {  width: 26px;  }
+  .iconButton {  width: 30px;height: 30px;}
+  .flagMenuImg {margin: 9px 7px 10px 7px;width: 21px;}
+  #header{height: 42px;background-size: 280px;}
+#content-control {height: 46px;}
+  #map {top: 42px;}
+    #customZoom a {
+    width: 32px;
+    line-height: 32px;
+    height:32px;
+    font-size: 1em;
+    }
+    #customZoomOut {
+        top: 33px;
+    }
+}
+*/
+
+/*
+@media screen and (max-width: 480px) {
+*/
+body {font-size: 1em;}
+  #content {max-width:210px;width:210px;top: 36px;}
+  .button-img {  width: 26px;}
+  .iconButton {  width: 30px;height: 30px;}
+  .flagMenuImg {margin: 8px 5px 8px 5px;width: 20px;}
+  #titleimg {width: 200px;} 
+  #header{height: 38px;background-size: 200px;}
+#content-control {height: 36px;}
+  #map {top: 38px;}
+
+/*
+}
+*/
