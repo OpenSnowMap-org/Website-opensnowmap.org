@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>The absolute beginner guide to map a XC trail</TITLE>
+    <style type="text/css">
+body{
+    margin:0px;
+    overflow:hidden;
+    padding:0px;
+    font-family:sans-serif;
+    font-size: 0.8em;
+    font-weight: 400;
+    width: 100%; height:100%;
+    color: #303030
+   }
+h1{
+       font-family:sans-serif;
+       font-size: 1.3em;
+       font-weight: 300;
+       letter-spacing: 0.1ex;
+       border:0;
+       padding: 0px;
+       margin:0
+   }
+a:link, a:visited {
+        color: #5ca5ff;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
+    
+a:hover {
+        color: #FF7800;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0px
+    }
+li{
+list-style-position:outside;
+list-style-type:disc;
+/*
+margin-left: -20px
+*/
+}
+td {
+        border:1px solid #ffffff;
+        margin: 0px;
+        padding:-10px;
+        width: 70px;
+        text-align: center
+}
+select, option{
+        background-color: #FFFFFF;
+        width: 100px;
+        font-size: 0.9em;
+        border: 1px solid #CCCCCC;
+        text-align: left;
+        margin-left: 20px
+}
+label {
+        padding:0;
+        font-size: 0.9em
+    }
+
+.clear { clear: both}
+/*use to place divs side by side*/
+#centering{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto
+}
+#center{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width:750px
+
+    }
+    </style>
+</HEAD>
+<BODY LANG="en-US">
+<div id="centering"><div id="center">
+
+<div id="title" style="width:95%;height: 60px;border: 1px solid grey;" >
+
+<img src="/pics/pistes-nordiques-238-45.png" 
+style="margin: 5px 5px 10px 5px;" ALT="align box" ALIGN="left">
+<a href="/">Back to the map</a>
+
+</div>
+
+<div id="content">
+
+<H1 style="font-size:2em;">The absolute beginner guide to map a XC trail</H1>
+<P>So,
+your favorite trail is not shown on the map? This guide will teach you how to add it yourself, from A to Z.</P>
+<P> Disclaimer: One of the policy of OpenStreetMap is 'tag as you want'. So, understand the tagging scheme exposed here as 'how I do', you are free 
+to do otherwise!</P>
+<div style="border: 1px solid black;background-color:#F0F0F0;">
+    <P>Note:
+    You are about to edit the OpenStreetMap database. This database is free and open, but you are asked to respect the following rules:</P>
+    <P><B>_Do not use copyrighted maps or data as a source. </B>
+    </BR>
+    <I>Don't
+    loose your time adding features from Google Maps or topographic maps like IGN, this infringe their term of use and your work is likely to be deleted from OpenStreetMap.</P>
+    <P><B>_
+    Do not tag for the renderer</B></BR>
+    <I>OpenStreetMap is not exactly a 'map', but rather a geographic database. A renderer is a piece of software that compute a map with data from OpenStreetMap database.</I></BR>
+    <I>The
+    priority here is to have high quality information in the database. Contact the one in charge of the rendering of a particular map or website if you think the map representation is not accurate or false. Keep in mind that the vast majority of map users do not care much about crosscountry skiing !</I></P>
+</div></BR>
+<ul>
+<li><a href="#first">First Step: register at OpenStreetMap</a>
+</li>
+<li><a href="#source">The Source</a>
+</li>
+<li><a href="#edit">Edit the map</a>
+</li>
+<li><a href="#tags">Tags</a>
+</li>
+<li><a href="#modify">There is already a track followed by the XC trail</a>
+</li>
+<li><a href="#color">My trail has a name and is marked with a color</a>
+</li>
+<li><a href="#rendering">Rendering the trail</a>
+</li>
+<li><a href="#further">Going further with relations</a>
+</li>
+<li><a href="#links">Useful Links</a>
+</li>
+</ul>
+<!-- ############################################################### -->
+<H2 id="first"><B>First Step: register at OpenStreetMap</B></H2>
+<P>To
+edit the map, you need an account at OpenStreetMap, it's free. Follow the
+following link: <a href="https://www.openstreetmap.org/user/new" target="blank">https://www.openstreetmap.org/user/new</a>
+</P></BR>
+<!-- ############################################################### -->
+
+<H2 id="source"><B>The source</B></H2>
+<P>To add new ways in the map, you will need something draw upon. 
+ The map editors will provide you with aerial imagery to help you. This could be sufficient for you
+to draw a trail. 
+</BR>However, if you have recorded a GPX trace with a GPS or with your smart-phone, it is the good time to upload it to the database. You can do it here: 
+<a href="http://www.openstreetmap.org/trace/create" target="blank">
+http://www.openstreetmap.org/trace/create</a>
+</BR>Another
+way to add a trail is to follow the tracks already mapped by other contributors like you.</P></BR>
+<!-- ############################################################### -->
+<H2 id="edit"><B>Edit
+	the map</B></H2>
+<P>To
+edit the map, first zoom on the area you want to edit, then use 'Edit the Map' in the menu. Here you can choose between two on-line editors, Potlatch and Potlatch2. You may also choose to download more complete editors like JOSM and Merkaartor. 
+</P>
+<P>Learn quickly how to use them with the following links:</P>
+<ul>
+<li><a href="http://wiki.openstreetmap.org/wiki/Beginners_Guide_1.3" target="blank">
+Basic of editing</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Beginners_Guide_1.3.2" target="blank">
+Potlatch</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Potlatch_2/Primer" target="blank">
+Potlatch2</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/JOSM/Guide" target="blank">
+JOSM</a></li>
+<li><a href="http://wiki.openstreetmap.org/wiki/Merkaartor" target="blank">
+Merkaartor</a></li>
+</ul>
+</P></BR>
+<!-- ############################################################### -->
+<H2 id="tags"><B>Tags</B></H2>
+<P>Following
+the above links, you are now able to add a way in OpenStreetMap. Now it's time to add the proper tags to make it a XC trail.</P>
+<P>One
+OpenStreetMap policy is <b>'tag as you want'</b>. However, to have a chance to see your contributions on a rendered map, you can use the following tagging scheme.</P>
+<P>
+</P>
+<P><B>piste:type
+= nordic</B></BR>
+piste:type is the tag for winter-sports: ski, snowshoeing, winter-hiking, sled, sleigh, ...</BR>
+'nordic' denote a way dedicated to cross-country skiing, otherwise called nordic ski or 'ski de fond' in French. This sport use skis that are long and narrow.</P>
+
+<P><B>Piste:grooming
+= classic, skating, classic;skating, scooter or backcountry</B></BR>
+The three first are self explanatory. 'backcountry' means that there is no official grooming, you follow the trail marked by other skiers.</P>
+
+<P><B>Piste:difficulty
+= novice, easy, intermediate, advanced, expert.</B></BR>
+The difficulty tag is not here to show a color on the map!! An easy trail 10km long can feature only a 100m  section which is very steep, this only section should be tagged as intermediate or advanced. See later to
+show the trail marking color.</BR>
+The difficulty do not represent the length of the trail neither. We are talking about maps, and on a map you actually <b>see</b> lengths.</P>
+<P></P>
+	<I><B>Novice
+	</B></I>
+	Strictly flat terrain, no effort needed (not more than 2km away from a hot chocolate, ideal place for a amenity=ski_school). </BR>
+
+	<I><B>Easy </B></I>
+	Soft hills, short steep sections.  </BR>
+	
+	<I><B>Intermediate </B></I>
+	Steep sections are present in the piste, or short narrow on average slopes. User gets away with sweat. Maybe used for the relevant sections only.  </BR>
+	
+	<I><B>Advanced </B></I>
+	Steep sections are present
+	in the piste, with narrow steep passages or sharp turns in steep
+	passages, often icy pistes. Maybe used for the relevant sections
+	only.  </BR>
+	
+	<I><B>Expert </B></I>
+	Steep sections are present in the piste, with narrow steep passages or sharp turns in steep passages, often icy pistes. Dangerous terrain surrounds the piste. Maybe used for the relevant sections only.  </BR>
+	
+	</P>
+
+<BR>
+<!-- ############################################################### -->
+<H2 id="modify"><B>There is already a track followed by the XC trail</B></H2>
+
+<P>Don't superimpose ways. The very same track can be used for other purpose than skiing!</P>
+<ul>
+	<li>Split the existing way at nodes where it crosses the ski trail.</li>
+	<li>Add the necessary tags to the existing way in between these nodes (that is piste:type=nordic, …)</li>
+	<li>Make sure that the way you add are connected to the nodes of the existing ways</li>
+</ul>
+<P><IMG SRC="split_600x371.png"></P>
+
+<!-- ############################################################### -->
+<H2 id="color"><B>My trail has a name and is marked with a color</B></H2>
+
+<P>Great,
+we can render a great map out of these information. But if it's a 'blue' trail, don't tag it as easy!</P>
+
+<P>There
+is much more information to put in the database trough relations. A relation is a collection of ways which share common characteristics. For XC trails, it's a 'route'.</BR>
+Take a look at the example below. The left piste is the 'purple trail', the right one is the 'green trail'. 
+</P>
+
+<P><IMG SRC="relations_01_300x235.png"></P>
+
+<P>In
+your favorite editor, select all the ways composing the 'green trail' and create a relation with the following tags:</BR>
+<B>type=route</B><BR>
+<B>route=piste</B><BR>
+<B>piste:type=nordic</B><BR>
+</P>
+<P>This will create a route describing the complete trail. 
+</P>
+
+<P><B>Optional tags </B></BR>
+<I>name</I> = *</BR>
+<I>ref</I> = number</BR>
+<I>operator</I> = *</BR>
+<I>network</I> = *</BR>
+<I>description</I> = *</BR>
+<I>distance</I> = number
+- offcial length of the complete route </BR><I>colour</I> = <FONT COLOR="#008000"><B>green</B></FONT>
+<I>use
+here a html <a href="http://en.wikipedia.org/wiki/HTML_color_names" target="blank">
+color code</a> or on hex code like #FFFF00</I></BR>
+<I>symbol</I> = piste markings - textual description </BR><I>osmc:symbol</I> = * - machine readable description (see <a href="http://wiki.openstreetmap.org/wiki/Key:osmc:symbol" target="blank">
+http://wiki.openstreetmap.org/wiki/Key:osmc:symbol</a>
+</BR>
+<I>website</I> = * - url of a website (e.g. actual snow conditions) </BR>
+</P>
+
+<P>Note that all members of a 'piste:type=nordic' route relation are not necessary dedicated for skiing. In particular cases, you could have to quit your skis and walk on the side of a road for a while. This walk (and the 'highway=secondary' road) is part of the relation, but there is no tag 'piste:type=nordic' on this way.</P>
+
+<P>More
+help on how to create a relation for various editors: 
+<a href="http://wiki.openstreetmap.org/wiki/Potlatch_1/FAQs#How_do_I_create_relations.3F" target="blank">
+Potlatch FAQ</a> - 
+<a href="http://wiki.openstreetmap.org/wiki/JOSM/Advanced_editing#Relations" target="blank">
+JOSM</a>
+</P>
+<!-- ############################################################### -->
+<H2 id="rendering">Rendering the trail</H2>
+<P>It
+is up to the renderer (the person or piece of software that actually shows you he map) to decide how to represent your trail.</BR>
+This could be one of these:</P>
+<TABLE WIDTH=714 style="font-size: 0.8em;">
+	<COL WIDTH=470>
+	<COL WIDTH=244>
+	<TR>
+		<TD>
+			<P>The
+			'purple trail' or 'green trail' could be rendered on top of each other, or side by side if they share the same way (tell me if you know how to do that!).</BR>
+			<B>In
+			no case the same physical way on the ground should be entered as two superimposed or parallel ways in the database.</B>
+			</P>
+		</TD>
+		<TD>
+			<P>The
+			map can show you only difficulty, here the two trails share a 'piste:difficulty = intermediate' section. 
+			</BR>
+			<B>Note that this section cannot be easy AND difficult.</B></P>
+		</TD>
+	</TR>
+</TABLE>
+<P><IMG SRC="relations_02_714x202.png"></P>
+<BR>
+
+<!-- ############################################################### -->
+<H2 id="further"><B>Going further with relations</B></H2>
+<P>Additional
+information on the route can be set trough the 'role' of a particular member of the relation.</P>
+<P><B>Role
+= forward/backward</B></P>
+<P>if
+a piste should only be followed in one direction for some or all of its length, the &quot;role&quot; can indicate this for some or all of the constituent ways. &quot;forward&quot; means the route follows this way only in the direction of the way and &quot;backward&quot; means the route runs only against the direction of the way.</P>
+<P><B>role
+= link </B>
+</P>
+<P>a way for the sole purpose of linking this route to the rest of a the network but not a primary part of this route itself.</P>
+<P><B>role
+= shortcut/variant</B></P>
+<P>shortcuts
+and variants</P>
+<P><B>role
+= start</B></P>
+<P>entry
+points 
+</P>
+
+<BR>
+<!-- ############################################################### -->
+<H2 id="links"><B>Useful Links</B></H2>
+<P>
+<a href="http://wiki.openstreetmap.org/wiki/Beginners%27_guide" target="blank">
+OSM beginner's guide</a></BR>
+<a href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" target="blank">
+Piste Map proposal (how to tag pistes)</a></BR>
+<a href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste" target="blank">
+Route=piste proposal (how to tag pistes relations)</a></BR>
+</P>
+<BR>
+</div></div></div>
+</BODY>
+</HTML>
