@@ -472,12 +472,6 @@ function page_init(){
 	document.getElementById('aboutButton').onclick= function() {
 		showabout();
 		};
-	document.getElementById('content-control').ondragstart= function() {
-		closecontent();
-		};
-	document.getElementById('content-control').ontouchmove= function() {
-		closecontent();
-		};
 		
 	translateDiv('body');
 }
