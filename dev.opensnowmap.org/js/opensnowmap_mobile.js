@@ -472,10 +472,10 @@ function page_init(){
 	document.getElementById('aboutButton').onclick= function() {
 		showabout();
 		};
-	document.getElementById('content').ondragstart= function() {
+	document.getElementById('content-control').ondragstart= function() {
 		closecontent();
 		};
-	document.getElementById('content').ontouchmove= function() {
+	document.getElementById('content-control').ontouchmove= function() {
 		closecontent();
 		};
 		
