@@ -471,8 +471,11 @@ function page_init(){
 		};
 	document.getElementById('aboutButton').onclick= function() {
 		showabout();
-		}
+		};
 	document.getElementById('content').ondragstart= function() {
+		closecontent();
+		};
+	document.getElementById('content').ontouchmove= function() {
 		closecontent();
 		};
 		
