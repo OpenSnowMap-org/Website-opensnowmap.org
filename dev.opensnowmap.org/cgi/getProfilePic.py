@@ -1,6 +1,32 @@
 #!/usr/bin/env python
 # Source is GPL
 
+test="""LINESTRING(6.44719 46.83028,6.44735 46.83045,6.44787 46.83108,6.44832 46.83157,6.44848 46.83172,6.45038
+ 46.83287,6.45048 46.83292,6.45079 46.83294,6.4516599999999995 46.832770000000004,6.4518699999999995
+ 46.83276,6.452229999999999 46.83279,6.454289999999999 46.83325,6.45459 46.83346,6.45496 46.83386,6.45534
+ 46.8345,6.4553899999999995 46.834849999999996,6.45517 46.83559999999999,6.4551 46.83575999999999,6.45473
+ 46.83619999999999,6.45407 46.83702999999999,6.45397 46.83724999999999,6.45395 46.83732999999999,6.45397
+ 46.83741999999999,6.45364 46.83751999999999,6.45361 46.837439999999994,6.453270000000001 46.83736,6
+.452800000000001 46.83714,6.45234 46.83688,6.4516 46.83653,6.45134 46.83621,6.45107 46.835950000000004
+,6.45069 46.83567000000001,6.44977 46.835100000000004,6.4495 46.834920000000004,6.44935 46.83476,6.44911
+ 46.83467,6.4488 46.83462,6.44845 46.834630000000004,6.44798 46.834590000000006,6.447690000000001 46
+.834520000000005,6.447500000000001 46.834410000000005,6.447150000000001 46.834140000000005,6.446860000000001
+ 46.83395,6.446280000000001 46.83373,6.445970000000001 46.83368,6.445800000000001 46.8337,6.445630000000001
+ 46.83363,6.445440000000001 46.83347,6.445310000000001 46.8333,6.445130000000001 46.83299,6.445050000000001
+ 46.83268,6.444580000000001 46.83240000000001,6.444390000000001 46.832260000000005,6.4440300000000015
+ 46.83189000000001,6.443670000000002 46.831590000000006,6.443530000000002 46.83151000000001,6.443410000000002
+ 46.83137000000001,6.443410000000002 46.83128000000001,6.443620000000002 46.83072000000001,6.443620000000002
+ 46.83061000000001,6.443150000000002 46.83015000000001,6.443110000000002 46.83008000000001,6.443100000000002
+ 46.83000000000001,6.443210000000002 46.829920000000016,6.443340000000003 46.82989000000001,6.444230000000003
+ 46.829990000000016,6.4445200000000025 46.830030000000015,6.445090000000002 46.830230000000014,6.445510000000002
+ 46.830320000000015,6.447190000000003 46.830280000000016)"""
+"""
+tracks= [{'lat': 46.83028, 'dist': 0, 'lon': 6.44719, 'ele': 1095.3285854152914}, {'lat': 46.83045, 'dist': 0.00023345235059658522, 'lon': 6.44735, 'ele': 1095.8333890633241}, {'lat': 46.83108, 'dist': 0.0010503366753336508, 'lon': 6.44787, 'ele': 1100.4144731515669}, {'lat': 46.83157, 'dist': 0.0017156185704721586, 'lon': 6.44832, 'ele': 1100.4484384767977}, {'lat': 46.83172, 'dist': 0.0019349356924654344, 'lon': 6.44848, 'ele': 1099.9968500421558}, {'lat': 46.83287, 'dist': 0.004155858923918098, 'lon': 6.45038, 'ele': 1101.9574635434376}, {'lat': 46.83292, 'dist': 0.004267662322793622, 'lon': 6.45048, 'ele': 1102.2882424006871}, {'lat': 46.83294, 'dist': 0.004578306814133565, 'lon': 6.45079, 'ele': 1102.6460464336396}, {'lat': 46.832770000000004, 'dist': 0.005464760422620152, 'lon': 6.4516599999999995, 'ele': 1103.5910383634473}, {'lat': 46.83276, 'dist': 0.005674998383036633, 'lon': 6.4518699999999995, 'ele': 1103.7200637742753}, {'lat': 46.83279, 'dist': 0.006036246220400298, 'lon': 6.452229999999999, 'ele': 1103.9046482667306}, {'lat': 46.83325, 'dist': 0.008146980689725553, 'lon': 6.454289999999999, 'ele': 1109.9942773445403}, {'lat': 46.83346, 'dist': 0.00851317735819927, 'lon': 6.45459, 'ele': 1106.6761060576016}, {'lat': 46.83386, 'dist': 0.009058062667231736, 'lon': 6.45496, 'ele': 1103.4293250037092}, {'lat': 46.8345, 'dist': 0.009802374429866277, 'lon': 6.45534, 'ele': 1107.2786090394229}, {'lat': 46.834849999999996, 'dist': 0.010155927820456968, 'lon': 6.4553899999999995, 'ele': 1111.0103209047807}, {'lat': 46.83559999999999, 'dist': 0.010937528741640258, 'lon': 6.45517, 'ele': 1116.6959383251972}, {'lat': 46.83575999999999, 'dist': 0.011112171233606954, 'lon': 6.4551, 'ele': 1117.5630714592905}, {'lat': 46.83619999999999, 'dist': 0.011687062527677405, 'lon': 6.45473, 'ele': 1120.8134368000281}, {'lat': 46.83702999999999, 'dist': 0.012747486971002229, 'lon': 6.45407, 'ele': 1124.1127313579211}, {'lat': 46.83724999999999, 'dist': 0.01298914789047291, 'lon': 6.45397, 'ele': 1123.3607177712163}, {'lat': 46.83732999999999, 'dist': 0.013071610002982357, 'lon': 6.45395, 'ele': 1123.1331917945747}, {'lat': 46.83741999999999, 'dist': 0.013163805447555455, 'lon': 6.45397, 'ele': 1123.2893557988057}, {'lat': 46.83751999999999, 'dist': 0.013508624240547695, 'lon': 6.45364, 'ele': 1121.72902128188}, {'lat': 46.837439999999994, 'dist': 0.013594064277997947, 'lon': 6.45361, 'ele': 1121.4064871392463}, {'lat': 46.83736, 'dist': 0.013943349261928287, 'lon': 6.453270000000001, 'ele': 1120.1533295888867}, {'lat': 46.83714, 'dist': 0.014462290491740906, 'lon': 6.452800000000001, 'ele': 1121.0563342982862}, {'lat': 46.83688, 'dist': 0.014990684284284779, 'lon': 6.45234, 'ele': 1120.8741510684031}, {'lat': 46.83653, 'dist': 0.01580928064391435, 'lon': 6.4516, 'ele': 1120.1248692797451}, {'lat': 46.83621, 'dist': 0.016221591206477697, 'lon': 6.45134, 'ele': 1118.3513904925985}, {'lat': 46.835950000000004, 'dist': 0.01659642450275594, 'lon': 6.45107, 'ele': 1116.2885550780477}, {'lat': 46.83567000000001, 'dist': 0.017068441451601964, 'lon': 6.45069, 'ele': 1113.276877290702}, {'lat': 46.835100000000004, 'dist': 0.01815070759262431, 'lon': 6.44977, 'ele': 1112.2724062934565}, {'lat': 46.834920000000004, 'dist': 0.01847520720741659, 'lon': 6.4495, 'ele': 1112.5686509325471}, {'lat': 46.83476, 'dist': 0.01869452432941173, 'lon': 6.44935, 'ele': 1112.6970543015834}, {'lat': 46.83467, 'dist': 0.018950844441771118, 'lon': 6.44911, 'ele': 1114.1849888945108}, {'lat': 46.83462, 'dist': 0.019264850811133348, 'lon': 6.4488, 'ele': 1115.9226413114839}, {'lat': 46.834630000000004, 'dist': 0.019614993639133743, 'lon': 6.44845, 'ele': 1117.447421798576}, {'lat': 46.834590000000006, 'dist': 0.020086692695736416, 'lon': 6.44798, 'ele': 1118.0866126108249}, {'lat': 46.834520000000005, 'dist': 0.02038502137353984, 'lon': 6.447690000000001, 'ele': 1118.1804108694676}, {'lat': 46.834410000000005, 'dist': 0.02060456635754046, 'lon': 6.447500000000001, 'ele': 1117.9270839880255}, {'lat': 46.834140000000005, 'dist': 0.02104660707964679, 'lon': 6.447150000000001, 'ele': 1117.1129064113325}, {'lat': 46.83395, 'dist': 0.021393305796115616, 'lon': 6.446860000000001, 'ele': 1117.6629912367091}, {'lat': 46.83373, 'dist': 0.022013628292886247, 'lon': 6.446280000000001, 'ele': 1120.8318638462156}, {'lat': 46.83368, 'dist': 0.022327634662248477, 'lon': 6.445970000000001, 'ele': 1123.1524482800214}, {'lat': 46.8337, 'dist': 0.02249880708993441, 'lon': 6.445800000000001, 'ele': 1125.4451508364102}, {'lat': 46.83363, 'dist': 0.022682654853043053, 'lon': 6.445630000000001, 'ele': 1126.1432128193744}, {'lat': 46.83347, 'dist': 0.022931049700011145, 'lon': 6.445440000000001, 'ele': 1125.872839549178}, {'lat': 46.8333, 'dist': 0.02314505904559943, 'lon': 6.445310000000001, 'ele': 1126.2433440499433}, {'lat': 46.83299, 'dist': 0.02350352801217734, 'lon': 6.445130000000001, 'ele': 1126.7014267411153}, {'lat': 46.83268, 'dist': 0.02382368422404785, 'lon': 6.445050000000001, 'ele': 1124.7753354754659}, {'lat': 46.83240000000001, 'dist': 0.024370767398709633, 'lon': 6.444580000000001, 'ele': 1127.2507632000531}, {'lat': 46.832260000000005, 'dist': 0.024606775873134753, 'lon': 6.444390000000001, 'ele': 1127.1539242564343}, {'lat': 46.83189000000001, 'dist': 0.02512301225309775, 'lon': 6.4440300000000015, 'ele': 1124.0676179503153}, {'lat': 46.831590000000006, 'dist': 0.02559162723365374, 'lon': 6.443670000000002, 'ele': 1123.1740942003005}, {'lat': 46.83151000000001, 'dist': 0.025752872388618234, 'lon': 6.443530000000002, 'ele': 1123.7428208247934}, {'lat': 46.83137000000001, 'dist': 0.025937263277765396, 'lon': 6.443410000000002, 'ele': 1124.2500362168403}, {'lat': 46.83128000000001, 'dist': 0.02602726327776554, 'lon': 6.443410000000002, 'ele': 1123.6138413339038}, {'lat': 46.83072000000001, 'dist': 0.026625343539937892, 'lon': 6.443620000000002, 'ele': 1114.1977689133378}, {'lat': 46.83061000000001, 'dist': 0.02673534353993728, 'lon': 6.443620000000002, 'ele': 1112.5968133213864}, {'lat': 46.83015000000001, 'dist': 0.027392990861833316, 'lon': 6.443150000000002, 'ele': 1111.2183619181565}, {'lat': 46.83008000000001, 'dist': 0.027473613439317215, 'lon': 6.443110000000002, 'ele': 1111.0079919289042}, {'lat': 46.83000000000001, 'dist': 0.02755423601679715, 'lon': 6.443100000000002, 'ele': 1110.5466980007825}, {'lat': 46.829920000000016, 'dist': 0.027690250721882945, 'lon': 6.443210000000002, 'ele': 1109.5605976704892}, {'lat': 46.82989000000001, 'dist': 0.02782366736252515, 'lon': 6.443340000000003, 'ele': 1108.7946753107663}, {'lat': 46.829990000000016, 'dist': 0.02871926771982787, 'lon': 6.444230000000003, 'ele': 1103.5379685954933}, {'lat': 46.830030000000015, 'dist': 0.029012013343193435, 'lon': 6.4445200000000025, 'ele': 1103.3247167190295}, {'lat': 46.830230000000014, 'dist': 0.02961608287561459, 'lon': 6.445090000000002, 'ele': 1103.1545346264913}, {'lat': 46.830320000000015, 'dist': 0.030045617507512997, 'lon': 6.445510000000002, 'ele': 1101.9375523649474}, {'lat': 46.830280000000016, 'dist': 0.03172609363052131, 'lon': 6.447190000000003, 'ele': 1095.3285854153432}]
+"""
+
+import matplotlib
+matplotlib.use('Agg')
+
 import Image, ImageDraw, ImageFont
 import sys
 #from lxml import etree
@@ -15,6 +41,14 @@ from osgeo import gdal, gdalnumeric
 import os, os.path
 import random
 import atexit
+
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from matplotlib import rc
+import numpy as np
+
 
 if os.path.isdir("/home/website"):
 	SRTMFilesDir='/home/website/DEM/tiles/'
@@ -83,13 +117,15 @@ def createPics(tracks):
 
     randFilename = random.randrange(0, 100001, 2)
     #PIL_images_dir = os.path.join(os.path.dirname(__file__) , 'tmp/')
-    profile_filename = 'profile'+str(randFilename)+'.png'
+    profile_filename = 'profile'+str(randFilename)
     
     # serialize tracks
     track=[]
     for t in tracks:
         track.extend(t)
-        
+    
+    
+    """
     # set scales:
     maxDist=track[len(track)-1]['dist']
     
@@ -219,9 +255,147 @@ def createPics(tracks):
     del draw 
     resolution=(int(width/2),int(height/2))
     im = im.resize(resolution,Image.ANTIALIAS)
-    
     outname=PIL_images_dir + profile_filename
     im.save(outname, "PNG")
+    """
+    lats=[]
+    lons=[]
+    eles=[]
+    dists=[]
+    
+    
+    for t in track:
+        lats.append(t['lat'])
+        lons.append(t['lon'])
+        eles.append(t['ele'])
+        dists.append(t['dist'])
+    #~ plt.plot(lons,lats)
+    #~ plt.show()
+    
+    #~ fig = plt.figure()
+    #~ ax = fig.gca(projection='3d')
+    #~ ax.fill(lons,lats,eles,'r')
+    #~ plt.show()
+    #~ exit(0)
+    xs=lons
+    ys=lats
+    zs=eles
+    ls=dists
+    
+    ### 3D plot
+    # Code to convert data in 3D polygons
+    v = []
+    h=min(zs)
+    for k in range(0, len(xs) - 1):
+        x = [xs[k], xs[k+1], xs[k+1], xs[k]]
+        y = [ys[k], ys[k+1], ys[k+1], ys[k]]
+        z = [zs[k], zs[k+1],       h,     h]
+        v.append(zip(x, y, z))
+    poly3dCollection = Poly3DCollection(v,facecolors=(0.0,0.2,0.6,0.5),edgecolors='none')
+    dpi=100
+    width=300
+    height=250
+    # Code to plot the 3D polygons
+    plt.rcParams['axes.labelsize']= 1
+    fig = plt.figure(figsize=(width/dpi,height/dpi),dpi=dpi)
+    #~ ax = Axes3D(fig)
+    ax = fig.gca(projection='3d')
+    ax.add_collection3d(poly3dCollection)
+    
+    ax.set_zlim([min(zs), max(zs)])
+    
+    # set equal scale on x and y
+    ex = max(xs)-min(xs)
+    mx = (max(xs)+min(xs))/2
+    ey = max(ys)-min(ys)
+    my = (max(ys)+min(ys))/2
+    if (ex > ey) :
+        ax.set_ylim(my - ex/2 , my + ex/2)
+        ax.set_xlim(mx - ex/2 , mx + ex/2)
+    else :
+        ax.set_xlim(mx - ey/2, mx + ey/2)
+        ax.set_ylim(my - ey/2 , my + ey/2)
+    
+    #~ ax.set_axis_off()
+    # Get rid of the spines
+    #~ ax.w_xaxis.line.set_color((1.0, 1.0, 1.0, 0.0)) 
+    #~ ax.w_yaxis.line.set_color((1.0, 1.0, 1.0, 0.0)) 
+    # Get rid of the ticks 
+    ax.zaxis._axinfo['tick']['inward_factor'] = 0
+    ax.zaxis._axinfo['tick']['outward_factor'] = 0.2
+    ax.set_xticks([])                               
+    ax.set_yticks([])         
+    ax.set_zticks([int(min(zs)), int(max(zs))])
+    ax.set_zticks([])  
+    zed = [tick.label.set_fontsize(7) for tick in ax.zaxis.get_major_ticks()]
+    ax.elev=60
+    plt.tight_layout(pad=0.1)
+    #~ plt.axis('equal')
+    fig.savefig(PIL_images_dir+profile_filename+'-3d.png',dpi=dpi)
+    #plt.show()
+    
+    ### Way plot
+    
+    fig, ax = plt.subplots()
+    fig.set_size_inches(width/dpi,height/dpi, forward=True)
+    fig.set_dpi(dpi)
+    ax.set_xticks([])                               
+    ax.set_yticks([])
+    plt.axis('off')
+    ax.plot(xs,ys, alpha=0.6, linewidth=3, color='b')
+    
+    
+    # set equal scale on x and y
+    ex = (max(xs)-min(xs))*1.1
+    mx = (max(xs)+min(xs))/2
+    ey = (max(ys)-min(ys))*1.1
+    my = (max(ys)+min(ys))/2
+    
+    ax.set_xlim([min(xs)-ex/10, max(xs)+ex/10])
+    ax.set_ylim([min(ys)-ey/10, max(ys)+ey/10])
+    if (ex > ey) :
+        ax.set_ylim(my - ex/2 , my + ex/2)
+    else :
+        ax.set_xlim(mx - ey/2, mx + ey/2)
+    
+    for n in [int(len(xs)/4), 2*int(len(xs)/4), 3*int(len(xs)/4)] :
+        l=sqrt((max(xs)-min(xs))**2+((max(ys)-min(ys))**2))/30
+        a=math.atan2((ys[n+1]-ys[n]),(xs[n+1]-xs[n]))
+        y2=ys[n]+math.sin(a)*l
+        x2=xs[n]+math.cos(a)*l
+        
+        arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, frac = 0.7, width=2)
+        plt.annotate(s='',xy=(x2,y2),xytext=(xs[n],ys[n]),arrowprops=arrow)
+    ax.plot(xs[0],ys[0],'o',color=(0,0,0), alpha=0.6)
+    plt.tight_layout(pad=0.1)
+    print profile_filename
+    fig.savefig(PIL_images_dir+profile_filename+'-2d.png',dpi=dpi)
+    #~ plt.show()
+    
+    
+    ### profileplot
+    fig, ax = plt.subplots()
+    fig.set_size_inches(width/dpi,height/dpi, forward=True)
+    fig.set_dpi(dpi)
+    ax.set_xticks([])                               
+    #~ ax.set_yticks([])
+    #~ plt.axis('off')
+    ax.spines['bottom'].set_color((1.0, 1.0, 1.0, 0.5)) 
+    ax.spines['top'].set_color((1.0, 1.0, 1.0, 0)) 
+    ax.spines['left'].set_color((1.0, 1.0, 1.0, 0)) 
+    ax.spines['right'].set_color((1.0, 1.0, 1.0, 0)) 
+    ax.tick_params(axis='y', colors=(0,0,0,0.7))
+    
+    ax.plot(ls,zs, alpha=0.6, linewidth=1, color=(0.5,0.5,0.5))
+    
+    ax.fill_between(ls, min(zs), zs, facecolor=(0,0,0,0.3), interpolate=True)
+    ax.set_yticks([int(min(zs)), int(max(zs))])
+    
+    zed = [tick.label.set_fontsize(7) for tick in ax.yaxis.get_major_ticks()]
+    plt.tight_layout(pad=0.1)
+    fig.savefig(PIL_images_dir+profile_filename+'-ele.png',dpi=dpi)
+    
+    
     return profile_filename
     
 #
@@ -341,20 +515,20 @@ class SrtmTiff(object):
         col_f, row_f = gdal.ApplyGeoTransform(gdal.InvGeoTransform(self.geotransform)[1], lon, lat)
         
         col = int(col_f)
-        row=int(row_f)
+        row = int(row_f)
         
         # NOTE - THIS IS A FIDDLE TO STOP ERRORS AT THE EDGE OF
         # TILES - IT IS NO CORRECT - WE SHOULD GET TWO POINTS 
         # FROM THE NEXT TILE.
         #if row==5999: row=5998
         #if col==5999: col=5998
-        if row==3602: row=3601
-        if row==3602: row=3601
-        if col==3602: col=3601
-        if col==3602: col=3601
-        
+        if row>3600: row=3600
+        if row>3600: row=3600
+        if col>3600: col=3600
+        if col>3600: col=3600
+        print row, col, row_f-row, col_f-col
         htarr = gdalnumeric.DatasetReadAsArray(self.tile['dataset'], col, row, 2, 2)
-
+        
         height = bilinear_interpolation(htarr[0][0], htarr[0][1], htarr[1][0], htarr[1][1],
                                        row_f-row, col_f-col)
 
@@ -532,7 +706,7 @@ def processData(tracks):
         for i in range(1,len(track)):
                 track[i]['dist']=track[i-1]['dist']+llDistance(track[i],track[i-1])
                 dist=track[i]['dist']
-        
+        #~ print tracks
     return tracks
 #
 def addtionnalComputation(track):
