@@ -293,8 +293,8 @@ def createPics(tracks):
         v.append(zip(x, y, z))
     poly3dCollection = Poly3DCollection(v,facecolors=(0.0,0.2,0.6,0.5),edgecolors='none')
     dpi=100
-    width=300
-    height=250
+    width=200
+    height=150
     # Code to plot the 3D polygons
     plt.rcParams['axes.labelsize']= 1
     fig = plt.figure(figsize=(width/dpi,height/dpi),dpi=dpi)
@@ -336,37 +336,43 @@ def createPics(tracks):
     
     ### Way plot
     
+    mercxs = [ merc_x(x) for x in xs]
+    mercys = [ merc_y(y) for y in ys]
+    print mercxs, mercys
     fig, ax = plt.subplots()
-    fig.set_size_inches(width/dpi,height/dpi, forward=True)
+    fig.set_size_inches(width/dpi,width/dpi, forward=True)
     fig.set_dpi(dpi)
     ax.set_xticks([])                               
     ax.set_yticks([])
     plt.axis('off')
-    ax.plot(xs,ys, alpha=0.6, linewidth=3, color='b')
+    ax.plot(mercxs,mercys, alpha=0.6, linewidth=3, color='b')
     
     
     # set equal scale on x and y
-    ex = (max(xs)-min(xs))*1.1
-    mx = (max(xs)+min(xs))/2
-    ey = (max(ys)-min(ys))*1.1
-    my = (max(ys)+min(ys))/2
+    ex = (max(mercxs)-min(mercxs))*1.1
+    mx = (max(mercxs)+min(mercxs))/2
+    ey = (max(mercys)-min(mercys))*1.1
+    my = (max(mercys)+min(mercys))/2
     
-    ax.set_xlim([min(xs)-ex/10, max(xs)+ex/10])
-    ax.set_ylim([min(ys)-ey/10, max(ys)+ey/10])
+    ax.set_xlim([min(mercxs)-ex/10, max(mercxs)+ex/10])
+    ax.set_ylim([min(mercys)-ey/10, max(mercys)+ey/10])
     if (ex > ey) :
         ax.set_ylim(my - ex/2 , my + ex/2)
     else :
         ax.set_xlim(mx - ey/2, mx + ey/2)
     
-    for n in [int(len(xs)/4), 2*int(len(xs)/4), 3*int(len(xs)/4)] :
-        l=sqrt((max(xs)-min(xs))**2+((max(ys)-min(ys))**2))/30
-        a=math.atan2((ys[n+1]-ys[n]),(xs[n+1]-xs[n]))
-        y2=ys[n]+math.sin(a)*l
-        x2=xs[n]+math.cos(a)*l
-        
-        arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, frac = 0.7, width=2)
-        plt.annotate(s='',xy=(x2,y2),xytext=(xs[n],ys[n]),arrowprops=arrow)
-    ax.plot(xs[0],ys[0],'o',color=(0,0,0), alpha=0.6)
+    print len(mercxs)
+    print mercxs
+    for n in [int(len(mercxs)/4), 2*int(len(mercxs)/4), 3*int(len(mercxs)/4)] :
+        if n < len(mercxs)-1:
+            l=sqrt((max(mercxs)-min(mercxs))**2+((max(mercys)-min(mercys))**2))/30
+            a=math.atan2((mercys[n+1]-mercys[n]),(mercxs[n+1]-mercxs[n]))
+            y2=mercys[n]+math.sin(a)*l
+            x2=mercxs[n]+math.cos(a)*l
+            
+            arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, frac = 0.7, width=2)
+            plt.annotate(s='',xy=(x2,y2),xytext=(mercxs[n],mercys[n]),arrowprops=arrow)
+    ax.plot(mercxs[0],mercys[0],'o',color=(0,0,0), alpha=0.6)
     plt.tight_layout(pad=0.1)
     print profile_filename
     fig.savefig(PIL_images_dir+profile_filename+'-2d.png',dpi=dpi)
@@ -646,6 +652,26 @@ def linearDist(lat1, lon1, lat2, lon2):
 #
 def clamp(value, minvalue, maxvalue):
     return max(minvalue, min(value, maxvalue))
+#
+def merc_x(lon):
+  r_major=6378137.000
+  return r_major*math.radians(lon)
+
+def merc_y(lat):
+  if lat>89.5:lat=89.5
+  if lat<-89.5:lat=-89.5
+  r_major=6378137.000
+  r_minor=6356752.3142
+  temp=r_minor/r_major
+  eccent=math.sqrt(1-temp**2)
+  phi=math.radians(lat)
+  sinphi=math.sin(phi)
+  con=eccent*sinphi
+  com=eccent/2
+  con=((1.0-con)/(1.0+con))**com
+  ts=math.tan((math.pi/2-phi)/2)/con
+  y=0-r_major*math.log(ts)
+  return y
 #
 def llDistance(ll1,ll2):
     return math.sqrt((ll2['lon']-ll1['lon'])**2+(ll2['lat']-ll1['lat'])**2)

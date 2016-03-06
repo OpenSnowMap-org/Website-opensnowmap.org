@@ -642,6 +642,75 @@ function zoomToParentSite(osm_id,r) {
     //~ highlightLayer.addFeatures(features);
 
 }
+function showPisteProfile(osm_id, type, div) {
+    //if (mode == "raster") {infoMode();}
+    var waiter = document.getElementById('waiterProto').cloneNode(true);
+    div.appendChild(waiter);
+    waiter.className = waiter.className.replace('hidden', 'shown');
+    
+    var pics = document.getElementsByClassName('profilePic');
+    while (pics.length > 0) {
+        var parent = pics[pics.length-1].parentNode;
+        parent.removeChild(pics[pics.length-1]);
+    }
+    
+    //type is either 'pistes' or 'sites'
+    var element = null;
+    for (p = 0; p < jsonPisteList[type].length; p++) {
+        var ids = jsonPisteList[type][p].ids.join('_').toString();
+        if (ids == osm_id){
+            element = jsonPisteList[type][p];
+            break;
+        }
+    }
+    if (!element) {
+        return false;
+        waiter.className = waiter.className.replace('shown', 'hidden');
+    }
+
+    //drawGeomAsRoute(element.geometry, 'piste');
+
+    var wkt = encpolArray2WKT(element.geometry);
+
+// request the elevation profile
+
+    var XMLHttp = new XMLHttpRequest();
+
+    //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+
+    XMLHttp.open("POST", server + "demrequest?");
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+
+            var profileDiv = div;
+            while (profileDiv.firstChild) {
+                profileDiv.removeChild(profileDiv.firstChild);
+            } //clear previous list
+            waiter.className = waiter.className.replace('shown', 'hidden');
+            var img = document.createElement('img');
+            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
+            img.className='profilePic';
+            var img2 = document.createElement('img');
+            img2.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-2d.png';
+            img2.className='profilePic';
+            var img3 = document.createElement('img');
+            img3.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-3d.png';
+            img3.className='profilePic';
+            
+            //document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
+            //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
+            profileDiv.appendChild(img);
+            profileDiv.appendChild(img2);
+            profileDiv.appendChild(img3);
+        }
+    };
+    XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    //XMLHttp.setRequestHeader("Content-length", wktroute.length);
+    //XMLHttp.setRequestHeader("Connection", "close");
+
+    XMLHttp.send(wkt.geom);
+    return true;
+}
 function getMembersById(id) {
 	document.getElementById("waiterResults").style.display='inline';
     
@@ -726,7 +795,31 @@ function SearchByName(name) {
 	getByName(name);
 	nominatimSearch(name);
 }
+function encpolArray2WKT(encpol) {
+    var wktGeom;
+    var l = 0;
+    var encPol = new OpenLayers.Format.EncodedPolyline();
+    encPol.geometryType = 'linestring';
 
+    var wkt = new OpenLayers.Format.WKT();
+    var feature;
+    if (encpol.length == 1) {
+        feature = encPol.read(encpol[0]);
+        wktGeom = wkt.write(feature);
+        l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
+    } else if (encpol.length > 1) {
+        wktGeom = 'MULTILINESTRING(';
+        for (i = 0; i < encpol.length; i++) {
+            feature = encPol.read(encpol[i]);
+            var linestring = wkt.write(feature);
+            wktGeom += linestring.replace('LINESTRING', '') + ',';
+            l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
+        }
+        wktGeom = wktGeom.substring(0, wktGeom.length - 1) + ')';
+    }
+
+    return {geom: wktGeom, length_km: l};
+}
 function showHTMLPistesList(Div) {
 
     while (Div.firstChild) {
@@ -883,11 +976,11 @@ function showHTMLPistesList(Div) {
             pistediv.setAttribute('osm_id', osm_ids);
             pistediv.setAttribute('element_type', element_type);
 
-            pistediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
-            /*.onclick = function (e) {
+            pistediv.getElementsByClassName("getProfileButton")[0].onclick = function (e) {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
-                showProfileFromGeometry(this.parentNode.getAttribute('osm_id'), 'pistes');
-            };*/
+                var profileDiv = this.parentNode.getElementsByClassName("profile")[0];
+                showPisteProfile(this.parentNode.getAttribute('osm_id'), 'pistes',profileDiv);
+            };
 
             pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
             /*onclick = function (e) {

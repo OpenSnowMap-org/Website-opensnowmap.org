@@ -1124,13 +1124,19 @@ function getProfile(wktroute) {//DONE in pisteList
             } //clear previous list
 
             var img = document.createElement('img');
-            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText;
+            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-3d.png';
+            var img2 = document.createElement('img');
+            img2.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-2d.png';
+            var img3 = document.createElement('img');
+            img3.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
 
             SIDEBARSIZE = 'full';
             document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
             //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
             document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
             profileDiv.appendChild(img);
+            profileDiv.appendChild(img2);
+            profileDiv.appendChild(img3);
             resize_sideBar();
             searchComplete += 1;
             if (searchComplete == 2) {
