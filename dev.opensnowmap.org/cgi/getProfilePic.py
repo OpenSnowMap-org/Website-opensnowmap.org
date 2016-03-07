@@ -34,6 +34,7 @@ import math
 from math import floor, ceil, sqrt
 import sys, random, re, zipfile
 import StringIO
+import urllib
 
 from osgeo import gdal, gdalnumeric
 
@@ -46,6 +47,9 @@ import atexit
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+from matplotlib.collections import PolyCollection
+from matplotlib.colors import colorConverter
 from matplotlib import rc
 import numpy as np
 
@@ -68,6 +72,16 @@ def application(environ,start_response):
         request_body_size = int(environ.get('CONTENT_LENGTH', 0))
     except (ValueError):
         request_body_size = 0
+    request =urllib.unquote(environ['QUERY_STRING'])
+    size = 'small'
+    if request.find('size=big') !=-1:
+        size = 'big'
+    
+    color = 'black'
+    if request.find('color=') !=-1:
+        color=request.split('color=')[1]
+        if color.find('&'): color=color.split('&')[0]
+    
     data = environ['wsgi.input'].read(request_body_size)
     tracks=listTracks(data)
     
@@ -82,7 +96,7 @@ def application(environ,start_response):
 
     tracks=processData(tracks)
     
-    response_body = createPics(tracks)
+    response_body = createPics(tracks, size, color)
     status = '200 OK'
     response_headers = [('Content-Type', 'image/png'),('Content-Length', str(len(response_body)))]
     start_response(status, response_headers)
@@ -111,7 +125,7 @@ def handle(req):
     return apache.OK
 
 #
-def createPics(tracks):
+def createPics(tracks, size, color):
 
     fontfile = os.path.join(os.path.dirname(__file__) , 'Fonts/FreeSans.ttf')
 
@@ -122,7 +136,9 @@ def createPics(tracks):
     # serialize tracks
     track=[]
     for t in tracks:
+        
         track.extend(t)
+        track.append({'lat': np.nan, 'dist': np.nan, 'lon': np.nan, 'ele': np.nan})
     
     
     """
@@ -282,6 +298,17 @@ def createPics(tracks):
     zs=eles
     ls=dists
     
+    dpi=100
+    width =200
+    height=150
+    if size == 'big':
+        width=280
+        height=200
+        
+    col = (0,0,0)
+    try: col = colorConverter.to_rgb(color)
+    except: pass # cheap colorparser
+    
     ### 3D plot
     # Code to convert data in 3D polygons
     v = []
@@ -291,10 +318,7 @@ def createPics(tracks):
         y = [ys[k], ys[k+1], ys[k+1], ys[k]]
         z = [zs[k], zs[k+1],       h,     h]
         v.append(zip(x, y, z))
-    poly3dCollection = Poly3DCollection(v,facecolors=(0.0,0.2,0.6,0.5),edgecolors='none')
-    dpi=100
-    width=200
-    height=150
+    poly3dCollection = Poly3DCollection(v,facecolors=(0.0,0.,0.1,0.5),edgecolors='none')
     # Code to plot the 3D polygons
     plt.rcParams['axes.labelsize']= 1
     fig = plt.figure(figsize=(width/dpi,height/dpi),dpi=dpi)
@@ -321,8 +345,8 @@ def createPics(tracks):
     #~ ax.w_xaxis.line.set_color((1.0, 1.0, 1.0, 0.0)) 
     #~ ax.w_yaxis.line.set_color((1.0, 1.0, 1.0, 0.0)) 
     # Get rid of the ticks 
-    ax.zaxis._axinfo['tick']['inward_factor'] = 0
-    ax.zaxis._axinfo['tick']['outward_factor'] = 0.2
+    #~ ax.zaxis._axinfo['tick']['inward_factor'] = 0
+    #~ ax.zaxis._axinfo['tick']['outward_factor'] = 0.2
     ax.set_xticks([])                               
     ax.set_yticks([])         
     ax.set_zticks([int(min(zs)), int(max(zs))])
@@ -338,14 +362,14 @@ def createPics(tracks):
     
     mercxs = [ merc_x(x) for x in xs]
     mercys = [ merc_y(y) for y in ys]
-    print mercxs, mercys
+    
     fig, ax = plt.subplots()
     fig.set_size_inches(width/dpi,width/dpi, forward=True)
     fig.set_dpi(dpi)
     ax.set_xticks([])                               
     ax.set_yticks([])
     plt.axis('off')
-    ax.plot(mercxs,mercys, alpha=0.6, linewidth=3, color='b')
+    ax.plot(mercxs,mercys, alpha=0.6, linewidth=3, color=col)
     
     
     # set equal scale on x and y
@@ -361,8 +385,6 @@ def createPics(tracks):
     else :
         ax.set_xlim(mx - ey/2, mx + ey/2)
     
-    print len(mercxs)
-    print mercxs
     for n in [int(len(mercxs)/4), 2*int(len(mercxs)/4), 3*int(len(mercxs)/4)] :
         if n < len(mercxs)-1:
             l=sqrt((max(mercxs)-min(mercxs))**2+((max(mercys)-min(mercys))**2))/30
@@ -374,12 +396,35 @@ def createPics(tracks):
             plt.annotate(s='',xy=(x2,y2),xytext=(mercxs[n],mercys[n]),arrowprops=arrow)
     ax.plot(mercxs[0],mercys[0],'o',color=(0,0,0), alpha=0.6)
     plt.tight_layout(pad=0.1)
-    print profile_filename
     fig.savefig(PIL_images_dir+profile_filename+'-2d.png',dpi=dpi)
     #~ plt.show()
     
     
     ### profileplot
+    
+    #Add points to 'close' the profile
+    zs.insert(0,min(zs))
+    ls.insert(0,ls[0])
+    
+    zs.append(min(zs))
+    ls.append(ls[-1])
+    
+    zs.append(zs[0])
+    ls.append(ls[0])
+    
+    print zs
+    while np.nan in zs:
+        n = zs.index(np.nan)
+        zs[n]=zs[n-1]
+    while np.nan in ls:
+        n = ls.index(np.nan)
+        ls[n]=ls[n-1]
+    
+    v= list(zip(ls,zs))
+    print v
+    poly = PolyCollection([v],facecolors=(0.0,0.,0.1,0.3),edgecolors='none')
+    
+    
     fig, ax = plt.subplots()
     fig.set_size_inches(width/dpi,height/dpi, forward=True)
     fig.set_dpi(dpi)
@@ -391,10 +436,13 @@ def createPics(tracks):
     ax.spines['left'].set_color((1.0, 1.0, 1.0, 0)) 
     ax.spines['right'].set_color((1.0, 1.0, 1.0, 0)) 
     ax.tick_params(axis='y', colors=(0,0,0,0.7))
+    ax.add_collection(poly)
+    ax.set_xlim(min(ls),max(ls))
+    ax.set_ylim(min(zs),max(zs))
+    #~ ax.plot(ls,zs, alpha=0.6, linewidth=1, color=(0.5,0.5,0.5))
     
-    ax.plot(ls,zs, alpha=0.6, linewidth=1, color=(0.5,0.5,0.5))
     
-    ax.fill_between(ls, min(zs), zs, facecolor=(0,0,0,0.3), interpolate=True)
+    #~ ax.fill_between(ls, min(zs), zs, facecolor=(0,0,0,0.3), interpolate=True)
     ax.set_yticks([int(min(zs)), int(max(zs))])
     
     zed = [tick.label.set_fontsize(7) for tick in ax.yaxis.get_major_ticks()]
@@ -532,7 +580,7 @@ class SrtmTiff(object):
         if row>3600: row=3600
         if col>3600: col=3600
         if col>3600: col=3600
-        print row, col, row_f-row, col_f-col
+        
         htarr = gdalnumeric.DatasetReadAsArray(self.tile['dataset'], col, row, 2, 2)
         
         height = bilinear_interpolation(htarr[0][0], htarr[0][1], htarr[1][0], htarr[1][1],

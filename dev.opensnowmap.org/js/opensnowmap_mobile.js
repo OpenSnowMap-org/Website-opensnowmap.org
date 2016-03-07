@@ -412,7 +412,12 @@ function page_init(){
 	document.getElementById('doSearch').onclick= function() {
 		SearchByName(document.search.nom_search.value);
 		};
-	
+    document.getElementById('listViewportButton').onclick= function() {
+		getTopoByViewport();
+		};
+    document.getElementById('dolistViewport').onclick= function() {
+		getTopoByViewport();
+		};
 	document.getElementById('mobileswitch').onclick= function() {
 		document.cookie='version=mobile';
 		};
@@ -471,6 +476,9 @@ function page_init(){
 		};
 	document.getElementById('aboutButton').onclick= function() {
 		showabout();
+		};
+	document.getElementById('donateButton').onclick= function() {
+		window.open('iframes/donate.html');
 		};
 		
 	translateDiv('body');
@@ -642,17 +650,25 @@ function zoomToParentSite(osm_id,r) {
     //~ highlightLayer.addFeatures(features);
 
 }
-function showPisteProfile(osm_id, type, div) {
+function showPisteProfile(osm_id, type, div, color) {
     //if (mode == "raster") {infoMode();}
-    var waiter = document.getElementById('waiterProto').cloneNode(true);
-    div.appendChild(waiter);
-    waiter.className = waiter.className.replace('hidden', 'shown');
-    
+    var alreadyShown = div.getElementsByClassName('profilePic');
+    if (alreadyShown.length >0) { // hide existing profile and exit
+        while (alreadyShown.length > 0) {
+            var parent = alreadyShown[alreadyShown.length-1].parentNode;
+            parent.removeChild(alreadyShown[alreadyShown.length-1]);
+        }
+        return true;
+    }
     var pics = document.getElementsByClassName('profilePic');
-    while (pics.length > 0) {
+    while (pics.length > 0) { // hide any existing profiles in the list
         var parent = pics[pics.length-1].parentNode;
         parent.removeChild(pics[pics.length-1]);
     }
+    
+    var waiter = document.getElementById('waiterProto').cloneNode(true);
+    div.appendChild(waiter);
+    waiter.className = waiter.className.replace('hidden', 'shown');
     
     //type is either 'pistes' or 'sites'
     var element = null;
@@ -669,8 +685,8 @@ function showPisteProfile(osm_id, type, div) {
     }
 
     //drawGeomAsRoute(element.geometry, 'piste');
-
     var wkt = encpolArray2WKT(element.geometry);
+    var routeLength = wkt.length_km;
 
 // request the elevation profile
 
@@ -678,7 +694,7 @@ function showPisteProfile(osm_id, type, div) {
 
     //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
 
-    XMLHttp.open("POST", server + "demrequest?");
+    XMLHttp.open("POST", server + "demrequest?size=small&color="+color);
     XMLHttp.onreadystatechange = function () {
         if (XMLHttp.readyState == 4) {
 
@@ -687,6 +703,13 @@ function showPisteProfile(osm_id, type, div) {
                 profileDiv.removeChild(profileDiv.firstChild);
             } //clear previous list
             waiter.className = waiter.className.replace('shown', 'hidden');
+
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");      
+            
+            var l = document.createElement('span');
+            l.innerHTML = parseFloat(routeLength).toFixed(1)+'&nbsp;km';
+            
             var img = document.createElement('img');
             img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
             img.className='profilePic';
@@ -699,6 +722,8 @@ function showPisteProfile(osm_id, type, div) {
             
             //document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
             //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
+            profileDiv.appendChild(cleardiv);      
+            profileDiv.appendChild(l);
             profileDiv.appendChild(img);
             profileDiv.appendChild(img2);
             profileDiv.appendChild(img3);
@@ -735,6 +760,39 @@ function getMembersById(id) {
 		}
 	};
 	XMLHttp.send();
+}
+function getTopoByViewport() { //DONE in pisteList
+	document.getElementById("waiterResults").style.display='inline';
+    
+
+    var list = document.getElementsByClassName('nominatimLi')[0];
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    } //clear previous list
+    document.getElementById('piste_search_results').innerHTML='';
+    
+
+    var bb = map.getExtent().transform(
+        new OpenLayers.Projection("EPSG:900913"),
+        new OpenLayers.Projection("EPSG:4326"));
+    var q = server + "request?group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb.left + ',' + bb.top + ',' + bb.right + ',' + bb.bottom;
+    var XMLHttp = new XMLHttpRequest();
+
+    //PisteAPIXHR.push(XMLHttp);
+
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+            var resp = XMLHttp.responseText;
+            jsonPisteList = JSON.parse(resp);
+            document.getElementById("waiterResults").style.display='none';
+			showHTMLPistesList(document.getElementById('piste_search_results'));
+        }
+    };
+    XMLHttp.send();
+    return true;
 }
 function getByName(name) {
 	document.getElementById("waiterResults").style.display='inline';
@@ -975,11 +1033,20 @@ function showHTMLPistesList(Div) {
             pistediv.removeAttribute("id");
             pistediv.setAttribute('osm_id', osm_ids);
             pistediv.setAttribute('element_type', element_type);
+            if (color !== '') {
+                pistediv.setAttribute('element_color', escape(color));
+            } else {
+                if (lat > 0 && lon < -40) {
+                    pistediv.setAttribute('element_color', escape(diffcolorUS[piste.difficulty]));
+                } else {
+                    pistediv.setAttribute('element_color', escape(diffcolor[piste.difficulty]));
+                }
+            }
 
             pistediv.getElementsByClassName("getProfileButton")[0].onclick = function (e) {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
                 var profileDiv = this.parentNode.getElementsByClassName("profile")[0];
-                showPisteProfile(this.parentNode.getAttribute('osm_id'), 'pistes',profileDiv);
+                showPisteProfile(this.parentNode.getAttribute('osm_id'), 'pistes',profileDiv, this.parentNode.getAttribute('element_color'));
             };
 
             pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';

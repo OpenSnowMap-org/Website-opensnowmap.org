@@ -68,15 +68,25 @@
 		
 		<div id="search">
 			<div>
-				<form name="search" class="float-right">
-					<input id="search_input" type="text" name="nom_search" autofocus>
-				</form>
-				<div id="doSearch" class="fastclick Button float-right iconButton">
+				<div id="doSearch" class="fastclick Button float-left iconButton">
 					<img class="button-img"  src="pics/search_50.png">
 				</div>
+				<form name="search" class="float-left">
+					<input id="search_input" type="text" name="nom_search" autofocus>
+				</form>
+                <div class="clear"></div>
+                
+				<div id="dolistViewport" class="fastclick Button float-left iconButton">
+					<img class="button-img"  src="pics/list_50.png">
+				</div>
+                <div id="listViewportButton" class="Button fastclick float-left textButton" >
+                    <span class="i18n" i18nText="list_pistes-tooltip"></span>
+                </div>
+                <div class="clear"></div>
+                
 			</div>
 			<div class="clear"></div>
-			<hr/>
+			<hr class="hrmenu">
 			<div id="search_results"> <!-- divs to display search results -->
 				<div id="waiterResults" class="hidden">
 					<p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
@@ -135,22 +145,6 @@
 						<div class="clear"></div>
 						
 						<hr class="hrmenu">
-						<i><span class="i18n menuInfo" i18nText="last_edits"></span></i>
-						<br/>
-						<div id="dailyVector"
-							class="Button fastclick textButton" >
-						<span class="i18n" i18nText="yesterday"></span>
-						</div>
-						<div id="weekVector"
-							class="Button fastclick textButton"  >
-						<span class="i18n" i18nText="weekly"></span>
-						</div>
-						<div id="noVector"
-							class="Button fastclick textButton" >
-						X
-						</div>
-						<div class="clear"></div>
-						<hr class="hrmenu">
 						
 						<div id="legendButton" 
 							class="Button fastclick textButton">
@@ -178,8 +172,30 @@
 						</div>
 						<div class="clear"></div>
 						
+						<div id="donateButton" 
+							class="Button fastclick textButton" >
+							<span class="i18n" i18nText="Donate"></span>
+						</div>
+						<div class="clear"></div>
+                        
 						<hr class="hrmenu">
 						
+						<i><span class="i18n menuInfo" i18nText="last_edits"></span></i>
+						<br/>
+						<div id="dailyVector"
+							class="Button fastclick textButton" >
+						<span class="i18n" i18nText="yesterday"></span>
+						</div>
+						<div id="weekVector"
+							class="Button fastclick textButton"  >
+						<span class="i18n" i18nText="weekly"></span>
+						</div>
+						<div id="noVector"
+							class="Button fastclick textButton" >
+						X
+						</div>
+						<div class="clear"></div>
+						<hr class="hrmenu">
 		</div>
 		
 		<div id="legend">
