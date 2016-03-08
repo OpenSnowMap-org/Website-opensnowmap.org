@@ -652,17 +652,18 @@ function zoomToParentSite(osm_id,r) {
 }
 function showPisteProfile(osm_id, type, div, color) {
     //if (mode == "raster") {infoMode();}
+    var parent;
     var alreadyShown = div.getElementsByClassName('profilePic');
     if (alreadyShown.length >0) { // hide existing profile and exit
         while (alreadyShown.length > 0) {
-            var parent = alreadyShown[alreadyShown.length-1].parentNode;
+            parent = alreadyShown[alreadyShown.length-1].parentNode;
             parent.removeChild(alreadyShown[alreadyShown.length-1]);
         }
         return true;
     }
     var pics = document.getElementsByClassName('profilePic');
     while (pics.length > 0) { // hide any existing profiles in the list
-        var parent = pics[pics.length-1].parentNode;
+        parent = pics[pics.length-1].parentNode;
         parent.removeChild(pics[pics.length-1]);
     }
     
@@ -680,8 +681,8 @@ function showPisteProfile(osm_id, type, div, color) {
         }
     }
     if (!element) {
-        return false;
         waiter.className = waiter.className.replace('shown', 'hidden');
+        return false;
     }
 
     //drawGeomAsRoute(element.geometry, 'piste');
