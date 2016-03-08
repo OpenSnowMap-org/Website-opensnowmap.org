@@ -412,7 +412,6 @@ def createPics(tracks, size, color):
     zs.append(zs[0])
     ls.append(ls[0])
     
-    print zs
     while np.nan in zs:
         n = zs.index(np.nan)
         zs[n]=zs[n-1]
@@ -421,7 +420,6 @@ def createPics(tracks, size, color):
         ls[n]=ls[n-1]
     
     v= list(zip(ls,zs))
-    print v
     poly = PolyCollection([v],facecolors=(0.0,0.,0.1,0.3),edgecolors='none')
     
     
@@ -780,7 +778,6 @@ def processData(tracks):
         for i in range(1,len(track)):
                 track[i]['dist']=track[i-1]['dist']+llDistance(track[i],track[i-1])
                 dist=track[i]['dist']
-        #~ print tracks
     return tracks
 #
 def addtionnalComputation(track):
