@@ -357,4 +357,7 @@ body {font-size: 1em;}
 .profilePic {
 border: 2px solid #efefef;
 padding: 2px 2px 2px 2px;
+display: block;
+margin-right:auto;
+margin-left:auto;
 }

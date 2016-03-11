@@ -141,139 +141,6 @@ def createPics(tracks, size, color):
         track.append({'lat': np.nan, 'dist': np.nan, 'lon': np.nan, 'ele': np.nan})
     
     
-    """
-    # set scales:
-    maxDist=track[len(track)-1]['dist']
-    
-    minEle=track[0]['ele']
-    maxEle=track[0]['ele']
-    for t in track:
-        if t['ele'] !=0: # discontinuities
-            if t['ele'] < minEle: minEle=t['ele']
-            if t['ele'] > maxEle: maxEle=t['ele']
-    # Set format
-    maxDistValue=" %.1fkm" % maxDist
-    minEleValue=" %.fm" % minEle
-    maxEleValue=" %.fm" % maxEle
-    
-    
-    
-    minLat=track[0]['lat']
-    maxLat=track[0]['lat']
-    for t in track:
-        if t['ele'] !=0: # discontinuities
-            if t['lat'] < minLat: minLat=t['lat']
-            if t['lat'] > maxLat: maxLat=t['lat']
-    minLon=track[0]['lon']
-    maxLon=track[0]['lon']
-    for t in track:
-        if t['ele'] !=0: # discontinuities
-            if t['lon'] < minLon: minLon=t['lon']
-            if t['lon'] > maxLon: maxLon=t['lon']
-    
-    # Set markers near the track fourth
-    #~ markers=[]
-    #~ for i in range(1, len(track)):
-        #~ if track[i-1]['dist'] < maxDist/4 and track[i]['dist'] > maxDist/4:
-             #~ markers.append(track[i])
-        #~ if track[i-1]['dist'] < maxDist/2 and track[i]['dist'] > maxDist/2:
-             #~ markers.append(track[i])
-        #~ if track[i-1]['dist'] < maxDist*3/4 and track[i]['dist'] > maxDist*3/4:
-             #~ markers.append(track[i])
-             
-    # Set the route points
-    points=[]
-    for t in tracks:
-        points.append(t[-1])
-    points=points[:-1]
-    
-    # Provide a reasonable scale for flat tracks
-    if (maxEle - minEle) < 50:
-        maxEle = (maxEle + minEle)/2 + 25
-        minEle = (maxEle + minEle)/2 - 25
-    
-    #---------------------------------------------
-    #------- draw the elevation profile ----------
-    #---------------------------------------------
-    
-    # All sizes are *2 then we downsample for aliasing
-    
-    sans=ImageFont.truetype(fontfile,10*2)
-    #sans=ImageFont.truetype('FreeSans.ttf',10*2) # XX
-    width=250*2
-    height=120*2
-    margin=15
-    marginLeft=sans.getsize(str(maxEleValue))[0]
-    marginBottom=sans.getsize(str(maxDistValue))[1]
-    plotHeight=height-2*margin-marginBottom
-    plotWidth=width-2*margin-marginLeft
-    
-    im = Image.new('RGB',(width,height),'#FFFFFF')
-    draw = ImageDraw.Draw(im)
-    
-    #Draw plot
-    # draw elevation grid (20m)
-    for i in range(int(minEle/20), int(maxEle/20)+1):
-        if i*20 > minEle and i*20< maxEle:
-            x1=margin+marginLeft
-            y =height-marginBottom-(i*20-minEle)/(maxEle-minEle)*plotHeight
-            x2=width-margin
-            draw.line((x1,y,x2,y),fill='#BBBBBB',width=1)
-    # draw profile
-    for i in range(1, len(track)):
-        x1=margin+marginLeft+track[i-1]['dist']/maxDist*plotWidth
-        y1=height-marginBottom-(track[i-1]['ele']-minEle)/(maxEle-minEle)*plotHeight
-        x2=margin+marginLeft+track[i]['dist']/maxDist*plotWidth
-        y2=height-marginBottom-(track[i]['ele']-minEle)/(maxEle-minEle)*plotHeight
-        if track[i]['ele'] == 0 or track[i-1]['ele'] == 0:
-            # discontinuities
-            draw.line((x1,y1,x2,y2),fill='#606060',width=1)
-        else:
-            draw.line((x1,y1,x2,y2),fill='#808080',width=3)
-    # Draw point at start, end
-    r = 15
-    x1=margin+marginLeft+track[0]['dist']/maxDist*plotWidth
-    y1=height-marginBottom-(track[0]['ele']-minEle)/(maxEle-minEle)*plotHeight
-    x2=margin+marginLeft+track[len(track)-1]['dist']/maxDist*plotWidth
-    y2=height-marginBottom-(track[len(track)-1]['ele']-minEle)/(maxEle-minEle)*plotHeight
-    draw.ellipse((x1-r/2,y1-r/2,x1+r/2,y1+r/2), fill='#AAAAAA', outline='#000000')
-    draw.ellipse((x2-r/2,y2-r/2,x2+r/2,y2+r/2), fill='#000000')
-    
-    # Draw points on route points
-    r = 8
-    for point in points:
-        x1=margin+marginLeft+point['dist']/maxDist*plotWidth
-        y1=height-marginBottom-(point['ele']-minEle)/(maxEle-minEle)*plotHeight
-        draw.ellipse((x1-r/2,y1-r/2,x1+r/2,y1+r/2), fill='#FFFFFF', outline='#000000')
-        
-    # draw a white rectangle under the scales:
-    x = 0
-    y = height-marginBottom +2
-    draw.rectangle((x,y,width,height),\
-        fill='#EEEEEE', outline='#EEEEEE')
-    draw.rectangle((0,0,marginLeft,height),\
-        fill='#EEEEEE', outline='#EEEEEE')
-    # Draw scales:
-    #~ draw.text((margin+marginLeft,height-marginBottom),'0',fill='#000000',font=sans)
-    #~ draw.text((width-sans.getsize(str(maxDistValue))[0],\
-    #~ height-marginBottom),str(maxDistValue),fill='#000000',font=sans)
-    draw.text((2,height-marginBottom - sans.getsize('1')[1]/2),minEleValue,fill='#000000',font=sans)
-    draw.text((2,\
-      height-marginBottom-plotHeight - sans.getsize('1')[1]/2),maxEleValue,fill='#000000',font=sans)
-    #Draw markers
-    #~ for m in markers:
-        #~ mDist=" %.1fkm" % m['dist']
-        #~ x=margin+marginLeft+m['dist']/maxDist*plotWidth\
-         #~ -sans.getsize(str(m['dist']))[0]/2
-        #~ y=height-marginBottom
-        #~ draw.text((x,y),mDist,fill='#000000',font=sans)
-    
-    del draw 
-    resolution=(int(width/2),int(height/2))
-    im = im.resize(resolution,Image.ANTIALIAS)
-    outname=PIL_images_dir + profile_filename
-    im.save(outname, "PNG")
-    """
     lats=[]
     lons=[]
     eles=[]
@@ -299,17 +166,23 @@ def createPics(tracks, size, color):
     ls=dists
     
     dpi=100
-    width =200
-    height=150
+    width =200.
+    width3D=200.
+    height=100.
+    width2D=140.
     if size == 'big':
-        width=280
-        height=200
+        width=350.
+        height=150.
+        width2D=width/2
+        width3D=width/2
         
     col = (0,0,0)
     try: col = colorConverter.to_rgb(color)
     except: pass # cheap colorparser
     
+    ############################
     ### 3D plot
+    ############################
     # Code to convert data in 3D polygons
     v = []
     h=min(zs)
@@ -321,7 +194,7 @@ def createPics(tracks, size, color):
     poly3dCollection = Poly3DCollection(v,facecolors=(0.0,0.,0.1,0.5),edgecolors='none')
     # Code to plot the 3D polygons
     plt.rcParams['axes.labelsize']= 1
-    fig = plt.figure(figsize=(width/dpi,height/dpi),dpi=dpi)
+    fig = plt.figure(figsize=(width3D/dpi,height/dpi),dpi=dpi)
     #~ ax = Axes3D(fig)
     ax = fig.gca(projection='3d')
     ax.add_collection3d(poly3dCollection)
@@ -358,13 +231,14 @@ def createPics(tracks, size, color):
     fig.savefig(PIL_images_dir+profile_filename+'-3d.png',dpi=dpi)
     #plt.show()
     
+    ############################
     ### Way plot
-    
+    ############################
     mercxs = [ merc_x(x) for x in xs]
     mercys = [ merc_y(y) for y in ys]
     
     fig, ax = plt.subplots()
-    fig.set_size_inches(width/dpi,width/dpi, forward=True)
+    fig.set_size_inches(width2D/dpi,width2D/dpi, forward=True)
     fig.set_dpi(dpi)
     ax.set_xticks([])                               
     ax.set_yticks([])
@@ -399,8 +273,9 @@ def createPics(tracks, size, color):
     fig.savefig(PIL_images_dir+profile_filename+'-2d.png',dpi=dpi)
     #~ plt.show()
     
-    
+    ############################
     ### profileplot
+    ############################
     
     #Add points to 'close' the profile
     zs.insert(0,min(zs))
