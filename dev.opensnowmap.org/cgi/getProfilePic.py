@@ -240,9 +240,11 @@ def createPics(tracks, size, color):
     fig, ax = plt.subplots()
     fig.set_size_inches(width2D/dpi,width2D/dpi, forward=True)
     fig.set_dpi(dpi)
-    ax.set_xticks([])                               
+    ax.set_xticks([]) 
     ax.set_yticks([])
+    
     plt.axis('off')
+    
     ax.plot(mercxs,mercys, alpha=0.6, linewidth=3, color=col)
     
     
@@ -301,27 +303,45 @@ def createPics(tracks, size, color):
     fig, ax = plt.subplots()
     fig.set_size_inches(width/dpi,height/dpi, forward=True)
     fig.set_dpi(dpi)
-    ax.set_xticks([])                               
-    #~ ax.set_yticks([])
+    
     #~ plt.axis('off')
+    
     ax.spines['bottom'].set_color((1.0, 1.0, 1.0, 0.5)) 
     ax.spines['top'].set_color((1.0, 1.0, 1.0, 0)) 
     ax.spines['left'].set_color((1.0, 1.0, 1.0, 0)) 
     ax.spines['right'].set_color((1.0, 1.0, 1.0, 0)) 
-    ax.tick_params(axis='y', colors=(0,0,0,0.7))
+    ax.tick_params(axis='y', colors=(0,0,0,0.6), which='minor')
+    ax.tick_params(axis='y', colors=(0,0,0,0.7), which='major')
+    
     ax.add_collection(poly)
+    
     ax.set_xlim(min(ls),max(ls))
-    ax.set_ylim(min(zs),max(zs))
-    #~ ax.plot(ls,zs, alpha=0.6, linewidth=1, color=(0.5,0.5,0.5))
+    if max(zs)-min(zs) > 20:
+        ax.set_ylim(min(zs),max(zs))
+    else: 
+        ax.set_ylim(min(zs),min(zs)+20)
     
+
+    ax.set_xticks([])                               
     
-    #~ ax.fill_between(ls, min(zs), zs, facecolor=(0,0,0,0.3), interpolate=True)
-    ax.set_yticks([int(min(zs)), int(max(zs))])
+    ax.get_yaxis().get_major_formatter().set_useOffset(False)
+    yminorLocator=matplotlib.ticker.MaxNLocator(integer= True, steps= [5,10,20,50,100,200,500], prune= 'both', nbins= 10, symmetric= False, trim= True)
+    ax.yaxis.set_minor_locator( yminorLocator )
+
+    majorFormatter = matplotlib.ticker.FormatStrFormatter('%d')
+    ax.yaxis.set_major_formatter(majorFormatter)
+    #~ ax.yaxis.set_minor_formatter(majorFormatter)
     
-    zed = [tick.label.set_fontsize(7) for tick in ax.yaxis.get_major_ticks()]
+    # get the calculated ticks, then add them as minor then add min and max
+    ticks=ax.yaxis.get_minorticklocs()
+    
+    ax.set_yticks(ticks,minor=True)
+    ax.set_yticks([int(min(zs)),int(max(zs))],minor=False)
+    
+    zed = [tick.label.set_fontsize(6) for tick in ax.yaxis.get_major_ticks()]
+    zed = [tick.label.set_fontsize(5.5) for tick in ax.yaxis.get_minor_ticks()]
     plt.tight_layout(pad=0.1)
     fig.savefig(PIL_images_dir+profile_filename+'-ele.png',dpi=dpi)
-    
     
     return profile_filename
     
