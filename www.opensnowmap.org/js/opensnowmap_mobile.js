@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var server = "http://" + window.location.host + "/";
 if (!window.location.host) {
     server = window.location.pathname.replace("index.html", '');
-	server=window.location.pathname.replace("mobile.html",'');
+    server=window.location.pathname.replace("mobile.html",'');
 }
 if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 
@@ -91,122 +91,122 @@ var diffcolorUS = {
 };
 
 function getWinHeight(){
-	  var myWidth = 0, myHeight = 0;
-	  if( typeof( window.innerWidth ) == 'number' ) {
-		//Non-IE
-		myWidth = window.innerWidth;
-		myHeight = window.innerHeight;
-	  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-		//IE 6+ in 'standards compliant mode'
-		myWidth = document.documentElement.clientWidth;
-		myHeight = document.documentElement.clientHeight;
-	  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-		//IE 4 compatible
-		myWidth = document.body.clientWidth;
-		myHeight = document.body.clientHeight;
-	  }
-	return parseInt(myHeight);
+      var myWidth = 0, myHeight = 0;
+      if( typeof( window.innerWidth ) == 'number' ) {
+        //Non-IE
+        myWidth = window.innerWidth;
+        myHeight = window.innerHeight;
+      } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+        //IE 6+ in 'standards compliant mode'
+        myWidth = document.documentElement.clientWidth;
+        myHeight = document.documentElement.clientHeight;
+      } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+        //IE 4 compatible
+        myWidth = document.body.clientWidth;
+        myHeight = document.body.clientHeight;
+      }
+    return parseInt(myHeight);
 }
 function resize_sideBar() {
-	//~ if (SIDEBARSIZE=='full'){
-		//~ document.getElementById('sideBar').style.height= (getWinHeight() - 80)+"px";
-		//~ document.getElementById('sideBarContent').style.height= (getWinHeight() - 103-5)+"px";
-	//~ } else {
-		//~ document.getElementById('sideBar').style.display='inline';
-		//~ document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-		//~ document.getElementById('sideBarContent').style.display='inline';
-		//~ document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-	//~ }
-	//~ return true
+    //~ if (SIDEBARSIZE=='full'){
+        //~ document.getElementById('sideBar').style.height= (getWinHeight() - 80)+"px";
+        //~ document.getElementById('sideBarContent').style.height= (getWinHeight() - 103-5)+"px";
+    //~ } else {
+        //~ document.getElementById('sideBar').style.display='inline';
+        //~ document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
+        //~ document.getElementById('sideBarContent').style.display='inline';
+        //~ document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+    //~ }
+    //~ return true
 }
 function show_live_edits(when,display) {
-	if (display) {
-		var DiffStyle = new OpenLayers.Style({
-				pointRadius: 1.5,
-				fillColor: "#FF1200",
-				strokeColor:"#FF1200"});
-		if (when == "daily") {
-			var DailyLayer=new OpenLayers.Layer.Vector("Daily", {
-						strategies: [new OpenLayers.Strategy.Fixed(),
-									new OpenLayers.Strategy.Cluster()],
-						protocol: new OpenLayers.Protocol.HTTP({
-							url: "data/daily.tsv",
-							format: new OpenLayers.Format.Text()
-							}),
-						styleMap: new OpenLayers.StyleMap({
-							"default": DiffStyle
-							}),
-						projection: new OpenLayers.Projection("EPSG:4326")
-					});
-			map.addLayers([DailyLayer]);
-		}
-		if (when == "weekly") {
-			var WeeklyLayer=new OpenLayers.Layer.Vector("Weekly", {
-						strategies: [new OpenLayers.Strategy.Fixed(),
-									new OpenLayers.Strategy.Cluster()],
-						protocol: new OpenLayers.Protocol.HTTP({
-							url: "data/weekly.tsv",
-							format: new OpenLayers.Format.Text()
-							}),
-						styleMap: new OpenLayers.StyleMap({
-							"default": DiffStyle
-							}),
-						projection: new OpenLayers.Projection("EPSG:4326")
-					});
-			map.addLayers([WeeklyLayer]);
-		}
-		if (when == "monthly") {
-			var MonthlyLayer=new OpenLayers.Layer.Vector("Monthly", {
-						strategies: [new OpenLayers.Strategy.Fixed(),
-									new OpenLayers.Strategy.Cluster()],
-						protocol: new OpenLayers.Protocol.HTTP({
-							url: "data/monthly.tsv",
-							format: new OpenLayers.Format.Text()
-							}),
-						styleMap: new OpenLayers.StyleMap({
-							"default": DiffStyle
-							}),
-						projection: new OpenLayers.Projection("EPSG:4326")
-					});
-			map.addLayers([MonthlyLayer]);
-		}
-	} else {
-		if (when == "daily") {map.getLayersByName("Daily")[0].destroy();}
-		if (when == "weekly") {map.getLayersByName("Weekly")[0].destroy();}
-		if (when == "monthly") {map.getLayersByName("Monthly")[0].destroy();}
-		if (when == "none") {
-			if (map.getLayersByName("Daily")[0]){map.getLayersByName("Daily")[0].destroy();}
-			if (map.getLayersByName("Weekly")[0]){map.getLayersByName("Weekly")[0].destroy();}
-			if (map.getLayersByName("Monthly")[0]){map.getLayersByName("Monthly")[0].destroy();}
-			}
-	}
+    if (display) {
+        var DiffStyle = new OpenLayers.Style({
+                pointRadius: 1.5,
+                fillColor: "#FF1200",
+                strokeColor:"#FF1200"});
+        if (when == "daily") {
+            var DailyLayer=new OpenLayers.Layer.Vector("Daily", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily.tsv",
+                            format: new OpenLayers.Format.Text()
+                            }),
+                        styleMap: new OpenLayers.StyleMap({
+                            "default": DiffStyle
+                            }),
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailyLayer]);
+        }
+        if (when == "weekly") {
+            var WeeklyLayer=new OpenLayers.Layer.Vector("Weekly", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly.tsv",
+                            format: new OpenLayers.Format.Text()
+                            }),
+                        styleMap: new OpenLayers.StyleMap({
+                            "default": DiffStyle
+                            }),
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklyLayer]);
+        }
+        if (when == "monthly") {
+            var MonthlyLayer=new OpenLayers.Layer.Vector("Monthly", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/monthly.tsv",
+                            format: new OpenLayers.Format.Text()
+                            }),
+                        styleMap: new OpenLayers.StyleMap({
+                            "default": DiffStyle
+                            }),
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([MonthlyLayer]);
+        }
+    } else {
+        if (when == "daily") {map.getLayersByName("Daily")[0].destroy();}
+        if (when == "weekly") {map.getLayersByName("Weekly")[0].destroy();}
+        if (when == "monthly") {map.getLayersByName("Monthly")[0].destroy();}
+        if (when == "none") {
+            if (map.getLayersByName("Daily")[0]){map.getLayersByName("Daily")[0].destroy();}
+            if (map.getLayersByName("Weekly")[0]){map.getLayersByName("Weekly")[0].destroy();}
+            if (map.getLayersByName("Monthly")[0]){map.getLayersByName("Monthly")[0].destroy();}
+            }
+    }
 }
 function closecontent(){
-	document.getElementById('content').style.display="none";
+    document.getElementById('content').style.display="none";
 }
 function showsearch() {
-	document.getElementById('content').style.display='inline';
-	hideexcept('search');
-	document.getElementById('search').style.display='inline';
-	document.getElementById('content_title').innerHTML='&nbsp;'+_('search_results');
-	document.getElementById('content').scrollTop = 0;
+    document.getElementById('content').style.display='inline';
+    hideexcept('search');
+    document.getElementById('search').style.display='inline';
+    document.getElementById('content_title').innerHTML='&nbsp;'+_('search_results');
+    document.getElementById('content').scrollTop = 0;
 }
 function showmenu() {
-	hideexcept('menu');
-	document.getElementById('menu').style.display='inline';
-	document.getElementById('content').style.display='inline';
-	document.getElementById('content_title').innerHTML='';
-	document.getElementById('content').scrollTop = 0;
+    hideexcept('menu');
+    document.getElementById('menu').style.display='inline';
+    document.getElementById('content').style.display='inline';
+    document.getElementById('content_title').innerHTML='';
+    document.getElementById('content').scrollTop = 0;
 }
 function showlegend() {
-	hideexcept('legend');
-	document.getElementById('legend').style.display='inline';
-	document.getElementById('content').style.display='inline';
-	document.getElementById('content_title').innerHTML='&nbsp;'+_('map_key').replace('<br/>',' ');
-	document.getElementById('content').scrollTop = 0;
+    hideexcept('legend');
+    document.getElementById('legend').style.display='inline';
+    document.getElementById('content').style.display='inline';
+    document.getElementById('content_title').innerHTML='&nbsp;'+_('map_key').replace('<br/>',' ');
+    document.getElementById('content').scrollTop = 0;
 }
 function showabout() {
-	hideexcept('about');
+    hideexcept('about');
     var aboutDiv = document.getElementById('about');
     aboutDiv.style.display='inline';
     document.getElementById('content').style.maxWidth="80%";
@@ -231,29 +231,29 @@ function showabout() {
             .replace('**snowshoeing**', data.snowshoeing);
             aboutDiv.innerHTML = content;
             
-	document.getElementById('content_title').innerHTML='&nbsp;'+_('ABOUT');
-	document.getElementById('about').innerHTML = content;
-	document.getElementById('about').style.display='inline';
-	document.getElementById('content').style.display='inline';
-	document.getElementById('content').scrollTop = 0;
+    document.getElementById('content_title').innerHTML='&nbsp;'+_('ABOUT');
+    document.getElementById('about').innerHTML = content;
+    document.getElementById('about').style.display='inline';
+    document.getElementById('content').style.display='inline';
+    document.getElementById('content').scrollTop = 0;
             //aboutDiv.style.display='inline';
             //cacheInHistory(aboutDiv);
         }
     };
     XMLHttp.send();
     //~ return true;
-	//~ var content = get_page(url).replace('**update**',update)
-	//~ .replace('**nordic**',lengthes.nordic)
-	//~ .replace('**downhill**',lengthes.downhill)
-	//~ .replace('**aerialway**',lengthes.aerialway)
-	//~ .replace('**skitour**',lengthes.skitour)
-	//~ .replace('**sled**',lengthes.sled)
-	//~ .replace('**snowshoeing**',lengthes.snowshoeing);
+    //~ var content = get_page(url).replace('**update**',update)
+    //~ .replace('**nordic**',lengthes.nordic)
+    //~ .replace('**downhill**',lengthes.downhill)
+    //~ .replace('**aerialway**',lengthes.aerialway)
+    //~ .replace('**skitour**',lengthes.skitour)
+    //~ .replace('**sled**',lengthes.sled)
+    //~ .replace('**snowshoeing**',lengthes.snowshoeing);
 }
 
 function show_languages() {
     hideexcept('languages');
-	document.getElementById('languages').style.display='inline';
+    document.getElementById('languages').style.display='inline';
     
     var languageDiv = document.getElementById('languages');
     languageDiv.innerHTML='';
@@ -291,49 +291,49 @@ function show_languages() {
 
 function hideexcept(div) {
     document.getElementById('content').style.maxWidth="210px";
-	if (div != 'menu') {document.getElementById('menu').style.display='none';}
-	if (div != 'search') {document.getElementById('search').style.display='none';}
-	if (div != 'legend') {document.getElementById('legend').style.display='none';}
-	if (div != 'about') {document.getElementById('about').style.display='none';}
-	if (div != 'languages') {document.getElementById('languages').style.display='none';}
+    if (div != 'menu') {document.getElementById('menu').style.display='none';}
+    if (div != 'search') {document.getElementById('search').style.display='none';}
+    if (div != 'legend') {document.getElementById('legend').style.display='none';}
+    if (div != 'about') {document.getElementById('about').style.display='none';}
+    if (div != 'languages') {document.getElementById('languages').style.display='none';}
 }
 
 //======================================================================
 // LOCATION
 function toggleLocation() {
-	if (LOC) {
-		navigator.geolocation.clearWatch(geoWatchID);
-		LOC=false;
-		LOC_ONCE=false;
-		document.getElementById('location').style.backgroundColor='#FAFAFA';
-	} 
-	else {
-		if (navigator.geolocation){
-			LOC=true;
-			geoWatchID = navigator.geolocation.watchPosition(showLocation,errorLocation,{
-				enableHighAccuracy: true, maximumAge: 300000, timeout: 20000,frequency: 15000});
-		}
-	}
+    if (LOC) {
+        navigator.geolocation.clearWatch(geoWatchID);
+        LOC=false;
+        LOC_ONCE=false;
+        document.getElementById('location').style.backgroundColor='#FAFAFA';
+    } 
+    else {
+        if (navigator.geolocation){
+            LOC=true;
+            geoWatchID = navigator.geolocation.watchPosition(showLocation,errorLocation,{
+                enableHighAccuracy: true, maximumAge: 300000, timeout: 20000,frequency: 15000});
+        }
+    }
 }
 function showLocation(position) {
-	document.getElementById('location').style.backgroundColor='#DDD';
+    document.getElementById('location').style.backgroundColor='#DDD';
   var latitude = position.coords.latitude;
   var longitude = position.coords.longitude;
   //alert("Latitude : " + latitude + " Longitude: " + longitude);
   var nlonLat = new OpenLayers.LonLat(longitude, latitude).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
   if (LOC_ONCE) {
-	  map.setCenter(nlonLat, map.getZoom());
-	}
+      map.setCenter(nlonLat, map.getZoom());
+    }
   else {
-	map.setCenter(nlonLat, 16);
-	LOC_ONCE=true;
+    map.setCenter(nlonLat, 16);
+    LOC_ONCE=true;
   }
 }
 function errorLocation(error) {
-	alert(error.message);
-	navigator.geolocation.clearWatch(geoWatchID);
-	LOC=false;
-	document.getElementById('location').style.backgroundColor='#FAFAFA';
+    alert(error.message);
+    navigator.geolocation.clearWatch(geoWatchID);
+    LOC=false;
+    document.getElementById('location').style.backgroundColor='#FAFAFA';
 }
 
 //======================================================================
@@ -343,24 +343,24 @@ document.onkeypress = stopRKey;
 
 // register 'enter' and 'esc' keyboard hit
 function checkKey(e) {
-	var keynum;
-	if (window.event) {keynum = window.event.keyCode;} //IE
-	else if (e) {
-		keynum = e.which;
-		if (keynum === undefined)
-		{
-		e.preventDefault();
-		keynum = e.keyCode;
-		}
-	}
-	if(keynum == 13) {
-		// fires nominatim search
-		SearchByName(document.search.nom_search.value);
-		}
+    var keynum;
+    if (window.event) {keynum = window.event.keyCode;} //IE
+    else if (e) {
+        keynum = e.which;
+        if (keynum === undefined)
+        {
+        e.preventDefault();
+        keynum = e.keyCode;
+        }
+    }
+    if(keynum == 13) {
+        // fires nominatim search
+        SearchByName(document.search.nom_search.value);
+        }
 }
 
 function stopRKey(evt) {
-	// disable the enter key action in a form.
+    // disable the enter key action in a form.
   evt = (evt) ? evt : ((event) ? event : null);
   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
   if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
@@ -384,105 +384,113 @@ function get_stats() {
 }
 
 function page_init(){
-	document.addEventListener('DOMContentLoaded', function () {
-	var button = document.querySelector(".fastclick");
-	new FastClick(document.body);
-	});
-	updateZoom();
-	initFlags();
-	get_stats();
-	document.getElementById('dailyVector').style.backgroundColor='#FFF';
-	document.getElementById('weekVector').style.backgroundColor='#FFF';
-	document.getElementById('noVector').style.backgroundColor='#DDD';
-	
-	document.getElementById('menuButton').onclick= function() {
-		showmenu();
-		};
-	document.getElementById('location').onclick= function() {
-		closecontent();
-		toggleLocation();
-		};
-	document.getElementById('searchButton').onclick= function() {
+    document.addEventListener('DOMContentLoaded', function () {
+    var button = document.querySelector(".fastclick");
+    new FastClick(document.body);
+    });
+    updateZoom();
+    initFlags();
+    get_stats();
+    document.getElementById('dailyVector').style.backgroundColor='#FFF';
+    document.getElementById('weekVector').style.backgroundColor='#FFF';
+    document.getElementById('noVector').style.backgroundColor='#DDD';
+    
+    document.getElementById('menuButton').onclick= function() {
+        showmenu();
+        };
+    document.getElementById('location').onclick= function() {
+        closecontent();
+        toggleLocation();
+        };
+    document.getElementById('searchButton').onclick= function() {
         showsearch();
     };
-	
-	document.getElementById('reduceButton').onclick= function() {
+    
+    document.getElementById('reduceButton').onclick= function() {
         closecontent();
     };
-	document.getElementById('doSearch').onclick= function() {
-		SearchByName(document.search.nom_search.value);
-		};
-	
-	document.getElementById('mobileswitch').onclick= function() {
-		document.cookie='version=mobile';
-		};
-	document.getElementById('desktopswitch').onclick= function() {
-		document.cookie='version=desktop';
-		window.open(document.getElementById('permalink').href.replace('mobile','index'));
-		};
-	
-	document.getElementById('permalinkButton').onclick= function() {
-		location.href=document.getElementById('permalink').href;
-		};
-	document.getElementById('permalink.marker').onclick= function() {
-		location.href=document.getElementById('permalink').href+'&marker=true';
-		};
-	document.getElementById('langs').onclick= function() {
-		show_languages();
-		};
-	
-	document.getElementById('OSMBaseLAyer').onclick= function() {
-		setBaseLayer('osm');
-		document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
-		document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
-		};
-	document.getElementById('MQBaseLAyer').onclick= function() {
-		setBaseLayer('mapquest');
-		document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-		document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-		};
-	document.getElementById('dailyVector').onclick= function() {
-		show_live_edits('daily',true);
-		document.getElementById('dailyVector').style.backgroundColor='#DDD';
-		document.getElementById('weekVector').style.backgroundColor='#FFF';
-		document.getElementById('noVector').style.backgroundColor='#FFF';
-		};
-	document.getElementById('weekVector').onclick= function() {
-		show_live_edits('weekly',true);
-		document.getElementById('dailyVector').style.backgroundColor='#FFF';
-		document.getElementById('weekVector').style.backgroundColor='#DDD';
-		document.getElementById('noVector').style.backgroundColor='#FFF';
-		};
-	document.getElementById('noVector').onclick= function() {
-		show_live_edits('none',false);
-		document.getElementById('dailyVector').style.backgroundColor='#FFF';
-		document.getElementById('weekVector').style.backgroundColor='#FFF';
-		document.getElementById('noVector').style.backgroundColor='#DDD';
-		};
-		
-	document.getElementById('legendButton').onclick= function() { 
-		showlegend();
-		};
-	document.getElementById('blogButton').onclick= function() {
-		window.open('http://blog.opensnowmap.org');
-		};
-	document.getElementById('dataButton').onclick= function() {
-		window.open('iframes/data.html');
-		};
-	document.getElementById('aboutButton').onclick= function() {
-		showabout();
-		};
-		
-	translateDiv('body');
+    document.getElementById('doSearch').onclick= function() {
+        SearchByName(document.search.nom_search.value);
+        };
+    document.getElementById('listViewportButton').onclick= function() {
+        getTopoByViewport();
+        };
+    document.getElementById('dolistViewport').onclick= function() {
+        getTopoByViewport();
+        };
+    document.getElementById('mobileswitch').onclick= function() {
+        document.cookie='version=mobile';
+        };
+    document.getElementById('desktopswitch').onclick= function() {
+        document.cookie='version=desktop';
+        window.open(document.getElementById('permalink').href.replace('mobile','index'));
+        };
+    
+    document.getElementById('permalinkButton').onclick= function() {
+        location.href=document.getElementById('permalink').href;
+        };
+    document.getElementById('permalink.marker').onclick= function() {
+        location.href=document.getElementById('permalink').href+'&marker=true';
+        };
+    document.getElementById('langs').onclick= function() {
+        show_languages();
+        };
+    
+    document.getElementById('OSMBaseLAyer').onclick= function() {
+        setBaseLayer('osm');
+        document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+        document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
+        };
+    document.getElementById('MQBaseLAyer').onclick= function() {
+        setBaseLayer('mapquest');
+        document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        };
+    document.getElementById('dailyVector').onclick= function() {
+        show_live_edits('daily',true);
+        document.getElementById('dailyVector').style.backgroundColor='#DDD';
+        document.getElementById('weekVector').style.backgroundColor='#FFF';
+        document.getElementById('noVector').style.backgroundColor='#FFF';
+        };
+    document.getElementById('weekVector').onclick= function() {
+        show_live_edits('weekly',true);
+        document.getElementById('dailyVector').style.backgroundColor='#FFF';
+        document.getElementById('weekVector').style.backgroundColor='#DDD';
+        document.getElementById('noVector').style.backgroundColor='#FFF';
+        };
+    document.getElementById('noVector').onclick= function() {
+        show_live_edits('none',false);
+        document.getElementById('dailyVector').style.backgroundColor='#FFF';
+        document.getElementById('weekVector').style.backgroundColor='#FFF';
+        document.getElementById('noVector').style.backgroundColor='#DDD';
+        };
+        
+    document.getElementById('legendButton').onclick= function() { 
+        showlegend();
+        };
+    document.getElementById('blogButton').onclick= function() {
+        window.open('http://blog.opensnowmap.org');
+        };
+    document.getElementById('dataButton').onclick= function() {
+        window.open('iframes/data.html');
+        };
+    document.getElementById('aboutButton').onclick= function() {
+        showabout();
+        };
+    document.getElementById('donateButton').onclick= function() {
+        window.open('iframes/donate.html');
+        };
+        
+    translateDiv('body');
 }
 
 //======================================================================
 // NOMINATIM
 function setCenterMap(nlon, nlat, zoom) {
-		nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-		map.setCenter(nlonLat, zoom);
-		//document.getElementById('content').style.display='none';
-	}
+        nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+        map.setCenter(nlonLat, zoom);
+        //document.getElementById('content').style.display='none';
+    }
 function zoomToElement(osm_id, type) {
     //type is either 'pistes' or 'sites'
     var element = null;
@@ -501,111 +509,111 @@ function zoomToElement(osm_id, type) {
 
 }
 function highlightElement(osm_id, type){
-	
-	//type is either 'pistes' or 'sites'
-	var element=null;
-	for (p =0; p< jsonPisteList[type].length; p++) {
-		var ids=jsonPisteList[type][p].ids.join('_').toString();
-		if (ids == osm_id ){
-			element=jsonPisteList[type][p];
-			break;
-		}
-	}
-	if (! element) {return false;}
-	
-	var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-	
-	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
-	//~ var geometry=element.geometry;
-	//~ var features=[];
-	//~ for (g in geometry) {
-		//~ var escaped=geometry[g];
-		//~ 
-		//~ if (type=='sites'){encPol.geometryType='polygon';}
-		//~ else {encPol.geometryType='linestring';}
-		//~ var feature = encPol.read(escaped);
-		//~ 
-		//~ if (type=='sites'){feature.attributes.polygon=true;}
-		//~ 
-		//~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-		//~ features.push(feature);
-	//~ }
-	//~ 
-	//~ highlightLayer.destroyFeatures();
-	//~ highlightLayer.addFeatures(features);
-	
+    
+    //type is either 'pistes' or 'sites'
+    var element=null;
+    for (p =0; p< jsonPisteList[type].length; p++) {
+        var ids=jsonPisteList[type][p].ids.join('_').toString();
+        if (ids == osm_id ){
+            element=jsonPisteList[type][p];
+            break;
+        }
+    }
+    if (! element) {return false;}
+    
+    var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
+    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
+    
+    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
+    //~ var geometry=element.geometry;
+    //~ var features=[];
+    //~ for (g in geometry) {
+        //~ var escaped=geometry[g];
+        //~ 
+        //~ if (type=='sites'){encPol.geometryType='polygon';}
+        //~ else {encPol.geometryType='linestring';}
+        //~ var feature = encPol.read(escaped);
+        //~ 
+        //~ if (type=='sites'){feature.attributes.polygon=true;}
+        //~ 
+        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+        //~ features.push(feature);
+    //~ }
+    //~ 
+    //~ highlightLayer.destroyFeatures();
+    //~ highlightLayer.addFeatures(features);
+    
 }
 function highlightParentSite(osm_id,r){
-	
-	var piste=null;
-	for (p =0; p< jsonPisteList.pistes.length; p++) {
-		var ids=jsonPisteList.pistes[p].ids.join('_').toString();
-		if (ids == osm_id ){
-			piste=jsonPisteList.pistes[p];
-			break;
-		}
-	}
-	if (! piste) {return false;}
-	
-	var parent=piste.in_sites[r];
-	
-	if (! parent) {return false;}
-	
-	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-	
-	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
-	//~ var geometry=parent.geometry;
-	//~ var features=[];
-	//~ for (g in geometry) {
-		//~ var escaped=geometry[g];
-		//~ encPol.geometryType='polygon';
-		//~ var feature = encPol.read(escaped);
-		//~ feature.attributes.polygon=true;
-		//~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-		//~ features.push(feature);
-	//~ }
-	//~ 
-	//~ highlightLayer.destroyFeatures();
-	//~ highlightLayer.addFeatures(features);
-	
+    
+    var piste=null;
+    for (p =0; p< jsonPisteList.pistes.length; p++) {
+        var ids=jsonPisteList.pistes[p].ids.join('_').toString();
+        if (ids == osm_id ){
+            piste=jsonPisteList.pistes[p];
+            break;
+        }
+    }
+    if (! piste) {return false;}
+    
+    var parent=piste.in_sites[r];
+    
+    if (! parent) {return false;}
+    
+    var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
+    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
+    
+    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
+    //~ var geometry=parent.geometry;
+    //~ var features=[];
+    //~ for (g in geometry) {
+        //~ var escaped=geometry[g];
+        //~ encPol.geometryType='polygon';
+        //~ var feature = encPol.read(escaped);
+        //~ feature.attributes.polygon=true;
+        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+        //~ features.push(feature);
+    //~ }
+    //~ 
+    //~ highlightLayer.destroyFeatures();
+    //~ highlightLayer.addFeatures(features);
+    
 }
 function highlightParentRoute(osm_id,r){
-	
-	var piste=null;
-	for (p =0; p< jsonPisteList.pistes.length; p++) {
-		var ids=jsonPisteList.pistes[p].ids.join('_').toString();
-		if (ids == osm_id ){
-			piste=jsonPisteList.pistes[p];
-			break;
-		}
-	}
-	if (! piste) {return false;}
-	
-	var parent=piste.in_routes[r];
-	
-	if (! parent) {return false;}
-	
-	var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-	map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-	
-	//~ var encPol= new OpenLayers.Format.EncodedPolyline();
-	//~ var geometry=parent.geometry;
-	//~ var features=[];
-	//~ for (g in geometry) {
-		//~ var escaped=geometry[g];
-		//~ var feature = encPol.read(escaped);
-		//~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-		//~ features.push(feature);
-	//~ }
-	//~ 
-	//~ highlightLayer.destroyFeatures();
-	//~ highlightLayer.addFeatures(features);
-	
+    
+    var piste=null;
+    for (p =0; p< jsonPisteList.pistes.length; p++) {
+        var ids=jsonPisteList.pistes[p].ids.join('_').toString();
+        if (ids == osm_id ){
+            piste=jsonPisteList.pistes[p];
+            break;
+        }
+    }
+    if (! piste) {return false;}
+    
+    var parent=piste.in_routes[r];
+    
+    if (! parent) {return false;}
+    
+    var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
+    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
+    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
+    
+    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
+    //~ var geometry=parent.geometry;
+    //~ var features=[];
+    //~ for (g in geometry) {
+        //~ var escaped=geometry[g];
+        //~ var feature = encPol.read(escaped);
+        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+        //~ features.push(feature);
+    //~ }
+    //~ 
+    //~ highlightLayer.destroyFeatures();
+    //~ highlightLayer.addFeatures(features);
+    
 }
 function zoomToParentSite(osm_id,r) {
     var piste = null;
@@ -642,8 +650,95 @@ function zoomToParentSite(osm_id,r) {
     //~ highlightLayer.addFeatures(features);
 
 }
+function showPisteProfile(osm_id, type, div, color) {
+    //if (mode == "raster") {infoMode();}
+    var parent;
+    var alreadyShown = div.getElementsByClassName('profilePic');
+    if (alreadyShown.length >0) { // hide existing profile and exit
+        while (alreadyShown.length > 0) {
+            parent = alreadyShown[alreadyShown.length-1].parentNode;
+            parent.removeChild(alreadyShown[alreadyShown.length-1]);
+        }
+        return true;
+    }
+    var pics = document.getElementsByClassName('profilePic');
+    while (pics.length > 0) { // hide any existing profiles in the list
+        parent = pics[pics.length-1].parentNode;
+        parent.removeChild(pics[pics.length-1]);
+    }
+    
+    var waiter = document.getElementById('waiterProto').cloneNode(true);
+    div.appendChild(waiter);
+    waiter.className = waiter.className.replace('hidden', 'shown');
+    
+    //type is either 'pistes' or 'sites'
+    var element = null;
+    for (p = 0; p < jsonPisteList[type].length; p++) {
+        var ids = jsonPisteList[type][p].ids.join('_').toString();
+        if (ids == osm_id){
+            element = jsonPisteList[type][p];
+            break;
+        }
+    }
+    if (!element) {
+        waiter.className = waiter.className.replace('shown', 'hidden');
+        return false;
+    }
+
+    //drawGeomAsRoute(element.geometry, 'piste');
+    var wkt = encpolArray2WKT(element.geometry);
+    var routeLength = wkt.length_km;
+
+// request the elevation profile
+
+    var XMLHttp = new XMLHttpRequest();
+
+    //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+
+    XMLHttp.open("POST", server + "demrequest?size=small&color="+color);
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+
+            var profileDiv = div;
+            while (profileDiv.firstChild) {
+                profileDiv.removeChild(profileDiv.firstChild);
+            } //clear previous list
+            waiter.className = waiter.className.replace('shown', 'hidden');
+
+            cleardiv = document.getElementById('clearProto').cloneNode(true);
+            cleardiv.removeAttribute("id");      
+            
+            var l = document.createElement('span');
+            l.innerHTML = parseFloat(routeLength).toFixed(1)+'&nbsp;km';
+            
+            var img = document.createElement('img');
+            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
+            img.className='profilePic';
+            var img2 = document.createElement('img');
+            img2.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-2d.png';
+            img2.className='profilePic';
+            var img3 = document.createElement('img');
+            img3.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-3d.png';
+            img3.className='profilePic';
+            
+            //document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
+            //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
+            profileDiv.appendChild(cleardiv);      
+            profileDiv.appendChild(l);
+            profileDiv.appendChild(img);
+            profileDiv.appendChild(img2);
+            profileDiv.appendChild(img3);
+        }
+    };
+    XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    //XMLHttp.setRequestHeader("Content-length", wktroute.length);
+    //XMLHttp.setRequestHeader("Connection", "close");
+
+    XMLHttp.send(wkt.geom);
+    return true;
+}
 function getMembersById(id) {
-	document.getElementById("waiterResults").style.display='inline';
+    document.getElementById("waiterResults").style.display='inline';
     
 
     var list = document.getElementsByClassName('nominatimLi')[0];
@@ -652,54 +747,87 @@ function getMembersById(id) {
     } //clear previous list
     document.getElementById('piste_search_results').innerHTML='';
     
-	var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
-	var XMLHttp = new XMLHttpRequest();
-	XMLHttp.open("GET", q);
-	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-	
-	XMLHttp.onreadystatechange= function () {
-		if (XMLHttp.readyState == 4) {
-			var resp=XMLHttp.responseText;
-			jsonPisteList = JSON.parse(resp);
+    var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+    
+    XMLHttp.onreadystatechange= function () {
+        if (XMLHttp.readyState == 4) {
+            var resp=XMLHttp.responseText;
+            jsonPisteList = JSON.parse(resp);
             document.getElementById("waiterResults").style.display='none';
-			showHTMLPistesList(document.getElementById('piste_search_results'));
-		}
-	};
-	XMLHttp.send();
+            showHTMLPistesList(document.getElementById('piste_search_results'));
+        }
+    };
+    XMLHttp.send();
 }
-function getByName(name) {
-	document.getElementById("waiterResults").style.display='inline';
-    document.getElementById('piste_search_results').innerHTML='';
-	var q = server+"request?group=true&geo=true&list=true&name="+name;
-	var XMLHttp = new XMLHttpRequest();
-	XMLHttp.open("GET", q);
-	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-	
-	XMLHttp.onreadystatechange= function () {
-		if (XMLHttp.readyState == 4) {
-			var resp=XMLHttp.responseText;
-			jsonPisteList = JSON.parse(resp);
-            document.getElementById("waiterResults").style.display='none';
-			showHTMLPistesList(document.getElementById('piste_search_results'));
-		}
-	};
-	XMLHttp.send();
-	return true;
-}
-function nominatimSearch(name) {
-	document.getElementById("waiterNominatim").style.display='inline';
+function getTopoByViewport() { //DONE in pisteList
+    document.getElementById("waiterResults").style.display='inline';
+    
+
     var list = document.getElementsByClassName('nominatimLi')[0];
     while (list.firstChild) {
         list.removeChild(list.firstChild);
     } //clear previous list
-	var q = server+'nominatim?format=json&place='+name;
-	var XMLHttp = new XMLHttpRequest();
-	XMLHttp.open("GET", q);
-	XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-	
-	XMLHttp.onreadystatechange= function () {
-		if (XMLHttp.readyState == 4) {
-			var nom = JSON.parse(XMLHttp.responseText);
+    document.getElementById('piste_search_results').innerHTML='';
+    
+
+    var bb = map.getExtent().transform(
+        new OpenLayers.Projection("EPSG:900913"),
+        new OpenLayers.Projection("EPSG:4326"));
+    var q = server + "request?group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb.left + ',' + bb.top + ',' + bb.right + ',' + bb.bottom;
+    var XMLHttp = new XMLHttpRequest();
+
+    //PisteAPIXHR.push(XMLHttp);
+
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+            var resp = XMLHttp.responseText;
+            jsonPisteList = JSON.parse(resp);
+            document.getElementById("waiterResults").style.display='none';
+            showHTMLPistesList(document.getElementById('piste_search_results'));
+        }
+    };
+    XMLHttp.send();
+    return true;
+}
+function getByName(name) {
+    document.getElementById("waiterResults").style.display='inline';
+    document.getElementById('piste_search_results').innerHTML='';
+    var q = server+"request?group=true&geo=true&list=true&name="+name;
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+    
+    XMLHttp.onreadystatechange= function () {
+        if (XMLHttp.readyState == 4) {
+            var resp=XMLHttp.responseText;
+            jsonPisteList = JSON.parse(resp);
+            document.getElementById("waiterResults").style.display='none';
+            showHTMLPistesList(document.getElementById('piste_search_results'));
+        }
+    };
+    XMLHttp.send();
+    return true;
+}
+function nominatimSearch(name) {
+    document.getElementById("waiterNominatim").style.display='inline';
+    var list = document.getElementsByClassName('nominatimLi')[0];
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    } //clear previous list
+    var q = server+'nominatim?format=json&place='+name;
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+    
+    XMLHttp.onreadystatechange= function () {
+        if (XMLHttp.readyState == 4) {
+            var nom = JSON.parse(XMLHttp.responseText);
             document.getElementById("waiterNominatim").style.display='none';
             
             var Ul = document.getElementsByClassName('nominatimLi')[0];
@@ -714,19 +842,43 @@ function nominatimSearch(name) {
                 resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
                 Ul.appendChild(resultli);
             }
-		}
-	};
-	XMLHttp.send();
-	return true;
+        }
+    };
+    XMLHttp.send();
+    return true;
 }
 function SearchByName(name) {
-	if (name === '') {return false;}
-	
-	document.search.nom_search.value='';
-	getByName(name);
-	nominatimSearch(name);
+    if (name === '') {return false;}
+    
+    document.search.nom_search.value='';
+    getByName(name);
+    nominatimSearch(name);
 }
+function encpolArray2WKT(encpol) {
+    var wktGeom;
+    var l = 0;
+    var encPol = new OpenLayers.Format.EncodedPolyline();
+    encPol.geometryType = 'linestring';
 
+    var wkt = new OpenLayers.Format.WKT();
+    var feature;
+    if (encpol.length == 1) {
+        feature = encPol.read(encpol[0]);
+        wktGeom = wkt.write(feature);
+        l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
+    } else if (encpol.length > 1) {
+        wktGeom = 'MULTILINESTRING(';
+        for (i = 0; i < encpol.length; i++) {
+            feature = encPol.read(encpol[i]);
+            var linestring = wkt.write(feature);
+            wktGeom += linestring.replace('LINESTRING', '') + ',';
+            l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
+        }
+        wktGeom = wktGeom.substring(0, wktGeom.length - 1) + ')';
+    }
+
+    return {geom: wktGeom, length_km: l};
+}
 function showHTMLPistesList(Div) {
 
     while (Div.firstChild) {
@@ -755,7 +907,8 @@ function showHTMLPistesList(Div) {
     ,cleardiv
     ,buttonDiv
     ,inroutediv
-    ,insitediv;
+    ,insitediv
+    ,footer;
 
     if (jsonPisteList.sites !== null) {
 
@@ -784,18 +937,14 @@ function showHTMLPistesList(Div) {
 
             sitediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
 
-            sitediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
-            /*.onclick = function (e) {
-                showSiteStats(this.parentNode,
-                    this.parentNode.getAttribute('osm_id'),
-                    this.parentNode.getAttribute('element_type'));
-                showExtLink(this.parentNode,
-                    this.parentNode.getAttribute('osm_id'),
-                    this.parentNode.getAttribute('element_type'));
-            };*/
+            sitediv.getElementsByClassName("moreInfoButton")[0].onclick = function (e) {
+                showSiteStats(this.parentNode.parentNode,
+                    this.parentNode.parentNode.getAttribute('osm_id'),
+                    this.parentNode.parentNode.getAttribute('element_type'));
+            };
 
             sitediv.getElementsByClassName("getMemberListButton")[0].onclick = function (e) {
-                getMembersById(this.parentNode.getAttribute('osm_id'));
+                getMembersById(this.parentNode.parentNode.getAttribute('osm_id'));
             };
 
             /*sitediv.onmouseout = function () {
@@ -808,6 +957,7 @@ function showHTMLPistesList(Div) {
 
             sitediv.onclick = function () {
                 zoomToElement(this.getAttribute('osm_id'), 'sites');
+                map.moveByPx(-105,0);
                 //deHighlight();
             };
             Div.appendChild(sitediv);
@@ -880,14 +1030,27 @@ function showHTMLPistesList(Div) {
             pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
 
             pistediv.removeAttribute("id");
+            
+            
             pistediv.setAttribute('osm_id', osm_ids);
             pistediv.setAttribute('element_type', element_type);
+            if (color !== '') {
+                pistediv.setAttribute('element_color', escape(color));
+            } else {
+                if (lat > 0 && lon < -40) {
+                    pistediv.setAttribute('element_color', escape(diffcolorUS[piste.difficulty]));
+                } else {
+                    pistediv.setAttribute('element_color', escape(diffcolor[piste.difficulty]));
+                }
+            }
 
-            pistediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
-            /*.onclick = function (e) {
-                zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
-                showProfileFromGeometry(this.parentNode.getAttribute('osm_id'), 'pistes');
-            };*/
+            pistediv.getElementsByClassName("getProfileButton")[0].onclick = function (e) {
+                zoomToElement(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes');
+                
+                map.moveByPx(-105,0);
+                var profileDiv = this.parentNode.parentNode.getElementsByClassName("profile")[0];
+                showPisteProfile(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes',profileDiv, this.parentNode.parentNode.getAttribute('element_color'));
+            };
 
             pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
             /*onclick = function (e) {
@@ -908,10 +1071,12 @@ function showHTMLPistesList(Div) {
 
             buttondiv.onclick = function () {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+                map.moveByPx(-105,0);
                 //deHighlight();
             };
             Div.appendChild(pistediv);
 
+            footer = pistediv.getElementsByClassName("pisteListElementFooter")[0];
             spans = pistediv.getElementsByTagName('span');
             for (i = 0; i < spans.length; i++) {
                 span = spans[i];
@@ -998,10 +1163,11 @@ function showHTMLPistesList(Div) {
 
                     insitediv.onclick = function () {
                         zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+                        map.moveByPx(-105,0);
                         //deHighlight();
                         getMembersById(this.getAttribute('parent_site_id'));
                     };
-                    pistediv.appendChild(insitediv);
+                    footer.appendChild(insitediv);
                     spans = pistediv.getElementsByTagName('span');
                     for (i = 0; i < spans.length; i++) {
                         span = spans[i];
@@ -1040,7 +1206,7 @@ function showHTMLPistesList(Div) {
                         showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
                         //deHighlight();
                     };
-                    pistediv.appendChild(inroutediv);
+                    footer.appendChild(inroutediv);
 
                     spans = inroutediv.getElementsByTagName('span');
                     for (i = 0; i < spans.length; i++) {
@@ -1071,13 +1237,77 @@ function showHTMLPistesList(Div) {
     }
 
 }
+function showSiteStats(div, id, element_type) { // fix for normal ways
+
+    var child = div.getElementsByClassName('siteStats')[0];
+    if (child === undefined) {
+        var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
+        statsdiv.removeAttribute("id");
+        div.appendChild(statsdiv);
+        
+        //abortXHR('PisteAPI'); // abort another request if any
+
+        var q = server + "request?site-stats=" + id;
+        var XMLHttp = new XMLHttpRequest();
+
+        //PisteAPIXHR.push(XMLHttp);
+
+        XMLHttp.open("GET", q);
+        XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+        XMLHttp.onreadystatechange = function () {
+            if (XMLHttp.readyState == 4) {
+                var resp = XMLHttp.responseText;
+                var jsonStats = JSON.parse(resp);
+                statsdiv.getElementsByClassName('stats')[0].className.replace('hidden', 'shown');
+
+                fillHTMLStats(jsonStats, statsdiv, id, element_type);
+            }
+        };
+        XMLHttp.send();
+    } else {
+        child.parentNode.removeChild(child);
+    }
+}
+function fillHTMLStats(jsonStats, div, element_type) {
+
+
+    spans = div.getElementsByClassName('data');
+    for (i = 0; i < spans.length; i++) {
+        var data = spans[i].getAttribute('dataText');
+        if (jsonStats.site !== null) {
+            if (['downhill','nordic','skitour','sled','lifts','hike'].indexOf(data) != -1) {
+                spans[i].innerHTML = (parseFloat(jsonStats[data]) / 1000).toFixed(1);
+            }
+            if (['snow_park','jump','playground','sleigh','ice_skate'].indexOf(data) != -1){
+                if (jsonStats[data] !== 0) {
+                    spans[i].innerHTML = '&#9679;';
+                    spans[i].style.color = 'green';
+                } else {
+                    spans[i].innerHTML = 'x';
+                    spans[i].style.color = 'red';
+                }
+            }
+        }
+        if (data == 'siteUrl'){
+            spans[i].href = "http://openstreetmap.org/browse/" + element_type + "/" + id;
+        }
+        if (data == 'siteId'){
+            spans[i].innerHTML = id;
+        }
+        if (data == 'siteType'){
+            spans[i].innerHTML = element_type; //way or relation
+        }
+    }
+
+}
 
 //======================================================================
 // MAP
 
 // Redirect permalink
 if (location.search !== "") {
-	readPermalink(location.search);
+    readPermalink(location.search);
 }
 function readPermalink(link) {
     //?zoom=13&lat=46.82272&lon=6.87183&layers=B0TT
@@ -1093,39 +1323,39 @@ function readPermalink(link) {
     //Then hopefully map_init() will do the job when the map is loaded
 }
 function updateZoom() {
-	document.getElementById('zoom').innerHTML= map.getZoom();
+    document.getElementById('zoom').innerHTML= map.getZoom();
 }
 
 function get_osm_url(bounds) {
-	var res = this.map.getResolution();
-	var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-	var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
-	var z = this.map.getZoom();
-	var limit = Math.pow(2, z);
+    var res = this.map.getResolution();
+    var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+    var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+    var z = this.map.getZoom();
+    var limit = Math.pow(2, z);
 
-	if (y < 0 || y >= limit) {
-		return OpenLayers.Util.getImagesLocation() + "404.png";
-	} else {
-		x = ((x % limit) + limit) % limit;
-		return this.url + z + "/" + x + "/" + y + ".png";
-	}
+    if (y < 0 || y >= limit) {
+        return OpenLayers.Util.getImagesLocation() + "404.png";
+    } else {
+        x = ((x % limit) + limit) % limit;
+        return this.url + z + "/" + x + "/" + y + ".png";
+    }
 }
 function get_tms_url(bounds) {
-		var res = this.map.getResolution();
-		var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-		var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
-		var z = this.map.getZoom();
-		var limit = Math.pow(2, z);
-		//if (mapBounds.intersectsBounds( bounds ) && z >= mapMinZoom && z <= mapMaxZoom ) {
-	  if (y < 0 || y >= limit)
-		{
-		  return null;
-		}
-	  else
-		{
-		  return this.url + z + "/" + x + "/" + y + ".png"; 
-		}
-	} 
+        var res = this.map.getResolution();
+        var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+        var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
+        var z = this.map.getZoom();
+        var limit = Math.pow(2, z);
+        //if (mapBounds.intersectsBounds( bounds ) && z >= mapMinZoom && z <= mapMaxZoom ) {
+      if (y < 0 || y >= limit)
+        {
+          return null;
+        }
+      else
+        {
+          return this.url + z + "/" + x + "/" + y + ".png"; 
+        }
+    } 
 function setBaseLayer(baseLayer) {
     var mq = map.getLayersByName("MapQuest")[0];
     var osm = map.getLayersByName("OSM")[0];
@@ -1137,8 +1367,8 @@ function setBaseLayer(baseLayer) {
             document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
             document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
         }
-		document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
-		document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
+        document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+        document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
         BASELAYER = 'osm';
     }
     if (baseLayer == "mapquest" && osm) {
@@ -1153,8 +1383,8 @@ function setBaseLayer(baseLayer) {
             document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
             document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
         }
-		document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-		document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
         BASELAYER = 'mapquest';
     }
 
@@ -1166,98 +1396,98 @@ function setBaseLayer(baseLayer) {
 function baseLayers() {
 
 // Layer 1.5
-	var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
-	//map.addLayer(mapnik);
+    var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
+    //map.addLayer(mapnik);
 // Layer 1
-	var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-		"http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-		"http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-		"http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-	var mapquest = new OpenLayers.Layer.OSM("MapQuest",
-				arrayMapQuest,
-				{transitionEffect: null});
-	map.addLayer(mapquest);
+    var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+    var mapquest = new OpenLayers.Layer.OSM("MapQuest",
+                arrayMapQuest,
+                {transitionEffect: null});
+    map.addLayer(mapquest);
 // Layer 5
-	var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-	pistes_overlay_URL,{
-			getURL: get_osm_url, 
-			isBaseLayer: false, numZoomLevels: 19,
-			visibility: true, opacity: 1,
-				transitionEffect: null
-		});
-	map.addLayer(PistesTiles);
+    var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
+    pistes_overlay_URL,{
+            getURL: get_osm_url, 
+            isBaseLayer: false, numZoomLevels: 19,
+            visibility: true, opacity: 1,
+                transitionEffect: null
+        });
+    map.addLayer(PistesTiles);
 
 }
 function permalink3Args() {
-	var args = 
-		OpenLayers.Control.Permalink.prototype.createParams.apply(
-			this, arguments
-		);
-	args.marker = 'true';
+    var args = 
+        OpenLayers.Control.Permalink.prototype.createParams.apply(
+            this, arguments
+        );
+    args.marker = 'true';
     args.layers = BASELAYER;
-	return args;
+    return args;
 }
 function permalink0Args() {
-	var args = 
-		OpenLayers.Control.Permalink.prototype.createParams.apply(
-			this, arguments
-		);
-	
+    var args = 
+        OpenLayers.Control.Permalink.prototype.createParams.apply(
+            this, arguments
+        );
+    
     args.layers = BASELAYER;
-	return args;
+    return args;
 }
 
 function map_init(){
-	map = new OpenLayers.Map ("map", {
-	zoomMethod: null,
-	panMethod: null,
-	controls:[
-		new OpenLayers.Control.TouchNavigation({
+    map = new OpenLayers.Map ("map", {
+    zoomMethod: null,
+    panMethod: null,
+    controls:[
+        new OpenLayers.Control.TouchNavigation({
                 dragPanOptions: {
                     enableKinetic: true
                 }
-		}),
-		new OpenLayers.Control.Zoom({
+        }),
+        new OpenLayers.Control.Zoom({
             zoomInId: "customZoomIn",
             zoomOutId: "customZoomOut"
         })
-		],
-		maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-		maxResolution: 156543.0399,
-		numZoomLevels: 19,
-		units: 'm',
-		projection: new OpenLayers.Projection("EPSG:900913"),
-		displayProjection: new OpenLayers.Projection("EPSG:4326")
-	} );
-	
-	permalink_simple = new OpenLayers.Control.Permalink("permalink",
-	server+'mobile.html',{'createParams': permalink0Args});
-	map.addControl(permalink_simple);
-	
-	baseLayers();
-	
+        ],
+        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+        maxResolution: 156543.0399,
+        numZoomLevels: 19,
+        units: 'm',
+        projection: new OpenLayers.Projection("EPSG:900913"),
+        displayProjection: new OpenLayers.Projection("EPSG:4326")
+    } );
+    
+    permalink_simple = new OpenLayers.Control.Permalink("permalink",
+    server+'mobile.html',{'createParams': permalink0Args});
+    map.addControl(permalink_simple);
+    
+    baseLayers();
+    
     setBaseLayer(BASELAYER);
 // Switch base layer
-	map.events.on({ "zoomend": function (e) {
-		updateZoom();
-	}
-	});
+    map.events.on({ "zoomend": function (e) {
+        updateZoom();
+    }
+    });
 
-	//################################
-	var lonLat = new OpenLayers.LonLat(lon, lat).transform(
-		new OpenLayers.Projection("EPSG:4326"),
-		new OpenLayers.Projection("EPSG:900913"));
-	map.setCenter (lonLat, zoom); 
-	//map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.top=0;
-	//map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.left=0;
-	// map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
-	map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
-	if (MARKER) {
-		markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) ;
-		var markers = new OpenLayers.Layer.Markers( "Markers" );
-		map.addLayer(markers);
-		markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
-	}
+    //################################
+    var lonLat = new OpenLayers.LonLat(lon, lat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913"));
+    map.setCenter (lonLat, zoom); 
+    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.top=0;
+    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.left=0;
+    // map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
+    map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
+    if (MARKER) {
+        markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) ;
+        var markers = new OpenLayers.Layer.Markers( "Markers" );
+        map.addLayer(markers);
+        markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
+    }
 }
 
 //======================================================================

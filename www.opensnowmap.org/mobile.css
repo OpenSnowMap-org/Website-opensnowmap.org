@@ -338,31 +338,7 @@ float:right;
         z-index: 1000;
         overflow: auto;
      }
-/*
-@media screen and (min-width: 481px) {
-body {font-size: 1.2em;}
-  #content {max-width:280px;width:280px;top: 42px;}
-  .button-img {  width: 26px;  }
-  .iconButton {  width: 30px;height: 30px;}
-  .flagMenuImg {margin: 9px 7px 10px 7px;width: 21px;}
-  #header{height: 42px;background-size: 280px;}
-#content-control {height: 46px;}
-  #map {top: 42px;}
-    #customZoom a {
-    width: 32px;
-    line-height: 32px;
-    height:32px;
-    font-size: 1em;
-    }
-    #customZoomOut {
-        top: 33px;
-    }
-}
-*/
 
-/*
-@media screen and (max-width: 480px) {
-*/
 body {font-size: 1em;}
   #content {max-width:210px;width:210px;top: 36px;}
   .button-img {  width: 26px;}
@@ -376,3 +352,12 @@ body {font-size: 1em;}
 /*
 }
 */
+#search_input{width: 150px;}
+#listViewportButton{width: 150px;}
+.profilePic {
+border: 2px solid #efefef;
+padding: 2px 2px 2px 2px;
+display: block;
+margin-right:auto;
+margin-left:auto;
+}

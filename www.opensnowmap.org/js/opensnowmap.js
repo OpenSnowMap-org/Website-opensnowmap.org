@@ -1093,7 +1093,7 @@ function getClosestPistes(lonlat) {//DONE in pisteList
     return true;
 }
 
-function getProfile(wktroute) {//DONE in pisteList
+function getProfile(wktroute, color) {//DONE in pisteList
     SIDEBARSIZE = 'full';
     abortXHR('GetProfile'); // abort another request if any
     resize_sideBar();
@@ -1114,7 +1114,7 @@ function getProfile(wktroute) {//DONE in pisteList
 
     GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
 
-    XMLHttp.open("POST", server + "demrequest?");
+    XMLHttp.open("POST", server + "demrequest?size=big&color="+color);
     XMLHttp.onreadystatechange = function () {
         if (XMLHttp.readyState == 4) {
 
@@ -1124,13 +1124,19 @@ function getProfile(wktroute) {//DONE in pisteList
             } //clear previous list
 
             var img = document.createElement('img');
-            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText;
+            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-3d.png';
+            var img2 = document.createElement('img');
+            img2.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-2d.png';
+            var img3 = document.createElement('img');
+            img3.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
 
             SIDEBARSIZE = 'full';
             document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
             //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden','shown');
             document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
             profileDiv.appendChild(img);
+            profileDiv.appendChild(img2);
+            profileDiv.appendChild(img3);
             resize_sideBar();
             searchComplete += 1;
             if (searchComplete == 2) {
@@ -1849,7 +1855,7 @@ function showProfileFromGeometryParentRoute(osm_id,r) {
     getProfile(wkt.geom);
     return true;
 }
-function showProfileFromGeometry(osm_id, type) {
+function showProfileFromGeometry(osm_id, type, div, color) {
     if (mode == "raster") {infoMode();}
 
     //type is either 'pistes' or 'sites'
@@ -1874,7 +1880,7 @@ function showProfileFromGeometry(osm_id, type) {
     document.getElementById('profile_title').className = document.getElementById('profile_title').className.replace('hidden', 'shown');
     
     getTopoById(osm_id.split('_').join(','), wkt.length_km);
-    getProfile(wkt.geom);
+    getProfile(wkt.geom, color);
     return true;
 }
 
@@ -2096,6 +2102,7 @@ function showHTMLPistesList(Div) {
 
             sitediv.onclick = function () {
                 zoomToElement(this.getAttribute('osm_id'), 'sites');
+                map.moveByPx(125,0);
                 deHighlight();
             };
             Div.appendChild(sitediv);
@@ -2170,10 +2177,20 @@ function showHTMLPistesList(Div) {
             pistediv.removeAttribute("id");
             pistediv.setAttribute('osm_id', osm_ids);
             pistediv.setAttribute('element_type', element_type);
+            if (color !== '') {
+                pistediv.setAttribute('element_color', escape(color));
+            } else {
+                if (lat > 0 && lon < -40) {
+                    pistediv.setAttribute('element_color', escape(diffcolorUS[piste.difficulty]));
+                } else {
+                    pistediv.setAttribute('element_color', escape(diffcolor[piste.difficulty]));
+                }
+            }
 
             pistediv.getElementsByClassName("getProfileButton")[0].onclick = function (e) {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
-                showProfileFromGeometry(this.parentNode.getAttribute('osm_id'), 'pistes');
+                map.moveByPx(125,0);
+                showProfileFromGeometry(this.parentNode.getAttribute('osm_id'), 'pistes',null, this.parentNode.getAttribute('element_color'));
             };
 
             pistediv.getElementsByClassName("moreInfoButton")[0].onclick = function (e) {
@@ -2194,6 +2211,7 @@ function showHTMLPistesList(Div) {
 
             buttondiv.onclick = function () {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+                map.moveByPx(125,0);
                 deHighlight();
             };
             Div.appendChild(pistediv);

@@ -68,15 +68,25 @@
 		
 		<div id="search">
 			<div>
-				<form name="search" class="float-right">
-					<input id="search_input" type="text" name="nom_search" autofocus>
-				</form>
-				<div id="doSearch" class="fastclick Button float-right iconButton">
+				<div id="doSearch" class="fastclick Button float-left iconButton">
 					<img class="button-img"  src="pics/search_50.png">
 				</div>
+				<form name="search" class="float-left">
+					<input id="search_input" type="text" name="nom_search" autofocus>
+				</form>
+                <div class="clear"></div>
+                
+				<div id="dolistViewport" class="fastclick Button float-left iconButton">
+					<img class="button-img"  src="pics/list_50.png">
+				</div>
+                <div id="listViewportButton" class="Button fastclick float-left textButton" >
+                    <span class="i18n" i18nText="list_pistes-tooltip"></span>
+                </div>
+                <div class="clear"></div>
+                
 			</div>
 			<div class="clear"></div>
-			<hr/>
+			<hr class="hrmenu">
 			<div id="search_results"> <!-- divs to display search results -->
 				<div id="waiterResults" class="hidden">
 					<p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
@@ -135,22 +145,6 @@
 						<div class="clear"></div>
 						
 						<hr class="hrmenu">
-						<i><span class="i18n menuInfo" i18nText="last_edits"></span></i>
-						<br/>
-						<div id="dailyVector"
-							class="Button fastclick textButton" >
-						<span class="i18n" i18nText="yesterday"></span>
-						</div>
-						<div id="weekVector"
-							class="Button fastclick textButton"  >
-						<span class="i18n" i18nText="weekly"></span>
-						</div>
-						<div id="noVector"
-							class="Button fastclick textButton" >
-						X
-						</div>
-						<div class="clear"></div>
-						<hr class="hrmenu">
 						
 						<div id="legendButton" 
 							class="Button fastclick textButton">
@@ -178,8 +172,30 @@
 						</div>
 						<div class="clear"></div>
 						
+						<div id="donateButton" 
+							class="Button fastclick textButton" >
+							<span class="i18n" i18nText="Donate"></span>
+						</div>
+						<div class="clear"></div>
+                        
 						<hr class="hrmenu">
 						
+						<i><span class="i18n menuInfo" i18nText="last_edits"></span></i>
+						<br/>
+						<div id="dailyVector"
+							class="Button fastclick textButton" >
+						<span class="i18n" i18nText="yesterday"></span>
+						</div>
+						<div id="weekVector"
+							class="Button fastclick textButton"  >
+						<span class="i18n" i18nText="weekly"></span>
+						</div>
+						<div id="noVector"
+							class="Button fastclick textButton" >
+						X
+						</div>
+						<div class="clear"></div>
+						<hr class="hrmenu">
 		</div>
 		
 		<div id="legend">
@@ -202,6 +218,40 @@
 PROTOS
 -->
 	<div class="hidden">
+		<div class="siteStats pisteListButtonStatic" id="siteStatsProto">
+			<hr class="superlight">
+			<div class="stats" class="hidden">
+				<table><tbody>
+					<tr>
+						<td><img class="statsIcon" src="pics/alpine-nb-20.png">&nbsp;
+						<span class="data" dataText="downhill">xx</span>&nbsp;km<br></td>
+						<td><img class="statsIcon" src="pics/nordic-nb-20.png">&nbsp;
+						<span class="data" dataText="nordic">xx</span>&nbsp;km<br></td>
+						<td><img class="statsIcon" src="pics/drag_lift-nb-20.png">&nbsp;
+						<span class="data" dataText="lifts">xx</span>&nbsp;km<br></td>
+					</tr><tr>
+						<td><img class="statsIcon" src="pics/skitour-nb-20.png">&nbsp;
+						<span class="data" dataText="skitour">xx</span>&nbsp;km<br></td>
+						<td><img class="statsIcon" src="pics/sled-nb-20.png">&nbsp;
+						<span class="data" dataText="sled">xx</span>&nbsp;km<br></td>
+						<td><img class="statsIcon" src="pics/snowshoe-nb-20.png">&nbsp;
+						<span class="data" dataText="hike">xx</span>&nbsp;km<br></td>
+					</tr><tr>
+						<td><img class="statsIcon" src="pics/snowpark-nb-20.png">&nbsp;&nbsp;
+						<span class="data" dataText="snow_park" style="color:red">x</span></td>
+						<td><img class="statsIcon" src="pics/jump-nb-20.png">&nbsp;&nbsp;
+						<span class="data" dataText="jump" style="color:red">x</span></td>
+						<td><img class="statsIcon" src="pics/playground-nb-20.png">&nbsp;&nbsp;
+						<span class="data" dataText="playground" style="color:red">x</span></td>
+					</tr><tr>
+						<td><img class="statsIcon" src="pics/sleigh-nb-20.png">&nbsp;&nbsp;
+						<span class="data" dataText="sleigh" style="color:red">x</span></td>
+						<td><img class="statsIcon" src="pics/iceskate-nb-20.png">&nbsp;&nbsp;
+						<span class="data" dataText="ice_skate" style="color:green">&#9679;</span></td>
+					</tr>
+				</tbody></table>
+			</div>
+		</div>
 		
 		
 		<li class="nominatim_result_list" id="nominatim_result_list_proto">
@@ -223,21 +273,6 @@ PROTOS
 		
 		
 		<div class="pisteListElement" id="pisteListElementProto">
-			<!-- Buttons -->
-			<div class="Button getProfileButton">
-				
-				<img src="pics/profile-flat22.png">
-			</div>
-			
-			<div  class="Button moreInfoButton">
-				
-				<img src="pics/info-flat22.png">
-			</div>
-			
-			<div  class="Button getMemberListButton">
-				
-				<img src="pics/list-flat22.png">
-			</div>
 			<!-- Buttons -->
 			<div class="pisteListButton">
 				
@@ -273,6 +308,25 @@ PROTOS
 				</div>
 			</div>
 			
+			<div class="clear"></div>
+			<!-- Buttons -->
+			<div class="pisteListElementFooter">
+				<div class="Button getProfileButton">
+					
+					<img src="pics/profile-flat22.png">
+				</div>
+				
+				<div  class="Button moreInfoButton">
+					
+					<img src="pics/info-flat22.png">
+				</div>
+				
+				<div  class="Button getMemberListButton">
+					
+					<img src="pics/list-flat22.png">
+				</div>
+			</div>
+			<div class="profile"></div>
 			<div class="clear"></div>
 		
 		</div>
