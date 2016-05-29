@@ -27,7 +27,7 @@ if (!window.location.host) {
 if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL = "http://www.opensnowmap.org/opensnowmap-overlay/";
+var pistes_overlay_URL = "http://www4.opensnowmap.org/opensnowmap-overlay/";
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode = "raster";
@@ -1124,11 +1124,11 @@ function getProfile(wktroute, color) {//DONE in pisteList
             } //clear previous list
 
             var img = document.createElement('img');
-            img.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-3d.png';
+            img.src = server+'tmp/' + XMLHttp.responseText+'-3d.png';
             var img2 = document.createElement('img');
-            img2.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-2d.png';
+            img2.src = server+'tmp/' + XMLHttp.responseText+'-2d.png';
             var img3 = document.createElement('img');
-            img3.src = 'http://www3.opensnowmap.org/tmp/' + XMLHttp.responseText+'-ele.png';
+            img3.src = server+'tmp/' + XMLHttp.responseText+'-ele.png';
 
             SIDEBARSIZE = 'full';
             document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');

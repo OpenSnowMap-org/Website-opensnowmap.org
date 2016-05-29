@@ -268,7 +268,7 @@ def createPics(tracks, size, color):
             y2=mercys[n]+math.sin(a)*l
             x2=mercxs[n]+math.cos(a)*l
             
-            arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, frac = 0.7, width=2)
+            arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, width=2, headlength = 3) #, frac = 0.7
             plt.annotate(s='',xy=(x2,y2),xytext=(mercxs[n],mercys[n]),arrowprops=arrow)
     ax.plot(mercxs[0],mercys[0],'o',color=(0,0,0), alpha=0.6)
     plt.tight_layout(pad=0.1)
