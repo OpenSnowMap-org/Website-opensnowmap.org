@@ -27,7 +27,7 @@ if (!window.location.host) {
 if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL = "http://www4.opensnowmap.org/opensnowmap-overlay/";
+var pistes_overlay_URL = "http://www.opensnowmap.org/opensnowmap-overlay/";
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var mode = "raster";
