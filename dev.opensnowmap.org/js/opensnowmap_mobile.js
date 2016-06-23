@@ -43,7 +43,7 @@ var position;
 var lengthes;
 var today=new Date();
 var data = {};
-var BASELAYER = 'mapquest';
+var BASELAYER = 'osm';
 
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
@@ -438,14 +438,14 @@ function page_init(){
     
     document.getElementById('OSMBaseLAyer').onclick= function() {
         setBaseLayer('osm');
-        document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
         document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
         };
-    document.getElementById('MQBaseLAyer').onclick= function() {
-        setBaseLayer('mapquest');
-        document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        };
+    //~ document.getElementById('MQBaseLAyer').onclick= function() {
+        //~ setBaseLayer('mapquest');
+        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+        //~ document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        //~ };
     document.getElementById('dailyVector').onclick= function() {
         show_live_edits('daily',true);
         document.getElementById('dailyVector').style.backgroundColor='#DDD';
@@ -1354,36 +1354,36 @@ function get_tms_url(bounds) {
         }
     } 
 function setBaseLayer(baseLayer) {
-    var mq = map.getLayersByName("MapQuest")[0];
+    //~ var mq = map.getLayersByName("MapQuest")[0];
     var osm = map.getLayersByName("OSM")[0];
-    if (baseLayer == "osm" && mq) {
-        map.removeLayer(mq);
+    //~ if (baseLayer == "osm" && mq) {
+        //~ map.removeLayer(mq);
         var mapnik = new OpenLayers.Layer.OSM("OSM");
         map.addLayer(mapnik);
         if (document.getElementById('setOSMLayer')) {
             document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
-            document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
+            //~ document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
         }
-        document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
         document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
         BASELAYER = 'osm';
-    }
-    if (baseLayer == "mapquest" && osm) {
-        map.removeLayer(osm);
-        var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-        var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
-        map.addLayer(mapquest);
-        if (document.getElementById('setOSMLayer')) {
-            document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
-            document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
-        }
-        document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        BASELAYER = 'mapquest';
-    }
+    //~ }
+    //~ if (baseLayer == "mapquest" && osm) {
+        //~ map.removeLayer(osm);
+        //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+        //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
+        //~ map.addLayer(mapquest);
+        //~ if (document.getElementById('setOSMLayer')) {
+            //~ document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
+            //~ document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
+        //~ }
+        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
+        //~ document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        //~ BASELAYER = 'mapquest';
+    //~ }
 
     var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
     for (p = 0; p < permalinks.length; p++){
@@ -1396,14 +1396,14 @@ function baseLayers() {
     var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
     //map.addLayer(mapnik);
 // Layer 1
-    var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-    var mapquest = new OpenLayers.Layer.OSM("MapQuest",
-                arrayMapQuest,
-                {transitionEffect: null});
-    map.addLayer(mapquest);
+    //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+    //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",
+                //~ arrayMapQuest,
+                //~ {transitionEffect: null});
+    //~ map.addLayer(mapquest);
 // Layer 5
     var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
     pistes_overlay_URL,{
