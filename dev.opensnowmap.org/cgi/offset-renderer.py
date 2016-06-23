@@ -90,46 +90,58 @@ def application(environ,start_response):
 	port = 5432
 	)
 	# GRANT SELECT ON pg_statistic TO mapnik;
-	offset=3
+	offset=3.0
 	i=0
 	
 	
-	try :
-		relations = rels.strip('|').split('|')
-		for rel in relations:
+	#~ try :
+	relations = rels.strip('|').split('|')
+	for rel in relations:
+		
+		osm_id=rel.split(':')[0]
+		of=int(rel.split(':')[1])
+		col=rel.split(':')[2]
+		if (col == 'None'):
+			col='pink'
+		
+		if (RepresentsInt(osm_id) and RepresentsInt(of)):
+			s = (Style())
+			r=Rule()
+			l=LineSymbolizer()
 			
-			osm_id=rel.split(':')[0]
-			of=int(rel.split(':')[1])
-			col=rel.split(':')[2]
-			if (col == 'None'):
-				col='pink'
 			
-			if (RepresentsInt(osm_id) and RepresentsInt(of)):
-				s = (Style())
-				r=Rule()
-				try: l = (LineSymbolizer(Color(col),3))
-				except: 
-					try: l = (LineSymbolizer(Color('#'+col),3))
-					except : l = (LineSymbolizer(Color('black'),3))
-				l.offset = of*offset
-				r.symbols.append(l)
-				s.rules.append(r)
-				m.append_style('My Style'+str(i),s)
-				lyr= Layer('shape'+str(i), proj)
-				db_params['table']='(Select way from planet_osm_line where osm_id = %s) as mysubquery' % (osm_id)
-				lyr.datasource = PostGIS(**db_params)
-				lyr.styles.append('My Style'+str(i))
-				m.layers.append(lyr)
-				i+=1
-	except: pass # maybe there's nothing in the viewport
+			try: l.stroke = Color(col)
+			except: 
+				try: l.stroke=Color('#'+col)
+				except : l.stroke=Color('black')
+			l.stroke_width = 3.0
+			l.offset = of*offset
+			r.symbols.append(l)
+			s.rules.append(r)
+			m.append_style('My Style'+str(i),s)
+			lyr= Layer('shape'+str(i), proj)
+			db_params['table']='(Select way from planet_osm_line where osm_id = %s) as mysubquery' % (osm_id)
+			lyr.datasource = PostGIS(**db_params)
+			lyr.styles.append('My Style'+str(i))
+			m.layers.append(lyr)
+			i+=1
+	#~ except: pass # maybe there's nothing in the viewport
 	
 	# compute the bbox corresponding to the requested tile
 	ll = num2bbox(x, y, z)
 	#return str(ll)
-	prj= Projection(proj)
-	c0 = prj.forward(Coord(ll[0],ll[1]))
-	c1 = prj.forward(Coord(ll[2],ll[3]))
-	bbox = Envelope(c0.x,c0.y,c1.x,c1.y)
+	#~ prj= Projection(proj)
+	#~ c0 = prj.forward(Coord(ll[0],ll[1]))
+	#~ c1 = prj.forward(Coord(ll[2],ll[3]))
+	#~ bbox = Box2d(c0.x,c0.y,c1.x,c1.y)
+	to = Projection('+init=epsg:3857');
+	fro = Projection('+init=epsg:4326')
+	trans = ProjTransform(fro,to)
+	bbox = Box2d(ll[0],ll[1],ll[2],ll[3])
+	#~ print bbox
+	bbox = trans.forward(bbox)
+	#~ print bbox
+	
 	
 	bbox.width(bbox.width() )
 	bbox.height(bbox.height() )
