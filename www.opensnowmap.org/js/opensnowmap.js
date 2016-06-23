@@ -37,7 +37,7 @@ var CATCHER;
 var MARKER = false;
 var ONCE = false;
 var DONATE_ONCE = true;
-var BASELAYER = 'mapquest';
+var BASELAYER = 'osm';
 var permalink_id;
 var permalink_ofsetter;
 var zoomBar;
@@ -407,16 +407,16 @@ function show_settings() {
     settingDiv.className = settingDiv.className.replace('hidden', 'shown');
 
     // highlight current base layer
-    var mq = map.getLayersByName("MapQuest")[0];
+    //~ var mq = map.getLayersByName("MapQuest")[0];
     var osm = map.getLayersByName("OSM")[0];
     if (osm) {
         document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
-        document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
+        //~ document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
     }
-    if (mq) {
-        document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
-        document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
-    }
+    //~ if (mq) {
+        //~ document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
+        //~ document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
+    //~ }
     // check for currently displayed layers
     var d = map.getLayersByName("Daily")[0];
     var w = map.getLayersByName("Weekly")[0];
@@ -1349,32 +1349,32 @@ function get_tms_url(bounds) {
         }
     }
 function setBaseLayer(baseLayer) {
-    var mq = map.getLayersByName("MapQuest")[0];
+    //~ var mq = map.getLayersByName("MapQuest")[0];
     var osm = map.getLayersByName("OSM")[0];
-    if (baseLayer == "osm" && mq) {
-        map.removeLayer(mq);
+    //~ if (baseLayer == "osm" && mq) {
+        //~ map.removeLayer(mq);
         var mapnik = new OpenLayers.Layer.OSM("OSM");
         map.addLayer(mapnik);
         if (document.getElementById('setOSMLayer')) {
             document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
-            document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
+            //~ document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
         }
         BASELAYER = 'osm';
-    }
-    if (baseLayer == "mapquest" && osm) {
-        map.removeLayer(osm);
-        var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-        var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
-        map.addLayer(mapquest);
-        if (document.getElementById('setOSMLayer')) {
-            document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
-            document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
-        }
-        BASELAYER = 'mapquest';
-    }
+    //~ }
+    //~ if (baseLayer == "mapquest" && osm) {
+        //~ map.removeLayer(osm);
+        //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+            //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+        //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
+        //~ map.addLayer(mapquest);
+        //~ if (document.getElementById('setOSMLayer')) {
+            //~ document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
+            //~ document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
+        //~ }
+        //~ BASELAYER = 'mapquest';
+    //~ }
 
     var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
     for (p = 0; p < permalinks.length; p++){
@@ -1387,14 +1387,14 @@ function baseLayers() {
     var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
     //map.addLayer(mapnik);
     // Layer 1
-    var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-    var mapquest = new OpenLayers.Layer.OSM("MapQuest",
-                arrayMapQuest,
-                {transitionEffect: null});
-    map.addLayer(mapquest);
+    //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
+        //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
+    //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",
+                //~ arrayMapQuest,
+                //~ {transitionEffect: null});
+    //~ map.addLayer(mapquest);
     // Layer 5
     var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
     pistes_overlay_URL,{
