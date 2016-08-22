@@ -27,7 +27,9 @@ if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 
 //~ var hillshade_URL="http://www.opensnowmap.org/hillshading/"
 //~ var contours_URL="http://www2.opensnowmap.org/tiles-contours/"
-var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
+var pistes_and_relief_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
+var pistes_only_overlay_URL="http://www.opensnowmap.org/tiles-pistes/";
+var snow_base_layer_URL ="http://www2.opensnowmap.org/base_snow_map/";
 //~ var snow_cover_URL="http://www2.opensnowmap.org/snow-cover/"
 
 var MARKER=false;
@@ -44,6 +46,7 @@ var lengthes;
 var today=new Date();
 var data = {};
 var BASELAYER = 'osm';
+var INIT = false;
 
 // a dummy proxy script is located in the directory to allow use of wfs
 OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
@@ -390,7 +393,7 @@ function page_init(){
     });
     updateZoom();
     initFlags();
-    get_stats();
+    //get_stats();
     document.getElementById('dailyVector').style.backgroundColor='#FFF';
     document.getElementById('weekVector').style.backgroundColor='#FFF';
     document.getElementById('noVector').style.backgroundColor='#DDD';
@@ -438,14 +441,15 @@ function page_init(){
     
     document.getElementById('OSMBaseLAyer').onclick= function() {
         setBaseLayer('osm');
-        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
+        document.getElementById('SnowBaseLAyer').style.backgroundColor='#FFF';
         document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
         };
-    //~ document.getElementById('MQBaseLAyer').onclick= function() {
-        //~ setBaseLayer('mapquest');
-        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-        //~ document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        //~ };
+    document.getElementById('SnowBaseLAyer').onclick= function() {
+        setBaseLayer('snowbase');
+        document.getElementById('SnowBaseLAyer').style.backgroundColor='#DDD';
+        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
+        };
+        
     document.getElementById('dailyVector').onclick= function() {
         show_live_edits('daily',true);
         document.getElementById('dailyVector').style.backgroundColor='#DDD';
@@ -1354,36 +1358,62 @@ function get_tms_url(bounds) {
         }
     } 
 function setBaseLayer(baseLayer) {
-    //~ var mq = map.getLayersByName("MapQuest")[0];
+    var snowbase = map.getLayersByName("SnowBase")[0];
     var osm = map.getLayersByName("OSM")[0];
-    //~ if (baseLayer == "osm" && mq) {
-        //~ map.removeLayer(mq);
-        var mapnik = new OpenLayers.Layer.OSM("OSM");
+    
+    if (baseLayer == "osm" && snowbase) {
+        map.removeLayer(snowbase);
+        var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
+        var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
+            {   visibility: true,
+                isBaseLayer: true,
+                transitionEffect: null
+            });
         map.addLayer(mapnik);
-        if (document.getElementById('setOSMLayer')) {
-            document.getElementById('setOSMLayer').style.border = "solid #AAA 2px";
-            //~ document.getElementById('setMQLayer').style.border = "solid #CCCCCC 1px";
+        
+        if (map.getLayersByName("PistesOnlyTiles")[0])
+        {
+            var PistesAndReliefTiles = new OpenLayers.Layer.XYZ("PistesAndReliefTiles",
+            pistes_and_relief_overlay_URL,{
+                    getURL: get_osm_url, 
+                    isBaseLayer: false, numZoomLevels: 19,
+                    visibility: true, opacity: 0.9,
+                        transitionEffect: null
+                });
+            map.addLayer(PistesAndReliefTiles);
+            map.removeLayer(map.getLayersByName("PistesOnlyTiles")[0]);
         }
-        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#FFF';
-        document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
+
         BASELAYER = 'osm';
-    //~ }
-    //~ if (baseLayer == "mapquest" && osm) {
-        //~ map.removeLayer(osm);
-        //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-            //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-        //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest,{visibility: true});
-        //~ map.addLayer(mapquest);
-        //~ if (document.getElementById('setOSMLayer')) {
-            //~ document.getElementById('setMQLayer').style.border = "solid #AAA 2px";
-            //~ document.getElementById('setOSMLayer').style.border = "solid #CCCCCC 1px";
-        //~ }
-        //~ document.getElementById('MQBaseLAyer').style.backgroundColor='#DDD';
-        //~ document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        //~ BASELAYER = 'mapquest';
-    //~ }
+    }
+    if (baseLayer == "snowbase" && osm) {
+        map.removeLayer(osm);
+        var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
+        var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
+            arraySnowBase,
+            {   visibility: true,
+                isBaseLayer: true,
+                transitionEffect: null
+            });
+        map.addLayer(snowbaseLayer);
+        
+        if (map.getLayersByName("PistesAndReliefTiles")[0])
+        {
+            var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
+            pistes_only_overlay_URL,{
+                    getURL: get_osm_url, 
+                    isBaseLayer: false, numZoomLevels: 19,
+                    visibility: true, opacity: 0.9,
+                        transitionEffect: null
+                });
+            map.addLayer(PistesOnlyTiles);
+            map.removeLayer(map.getLayersByName("PistesAndReliefTiles")[0]);
+        }
+
+        BASELAYER = 'snowbase';
+    }
 
     var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
     for (p = 0; p < permalinks.length; p++){
@@ -1392,27 +1422,28 @@ function setBaseLayer(baseLayer) {
 }
 function baseLayers() {
 
-// Layer 1.5
-    var mapnik = new OpenLayers.Layer.OSM("OSM",{transitionEffect: null});
-    //map.addLayer(mapnik);
-// Layer 1
-    //~ var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        //~ "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        //~ "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-        //~ "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-    //~ var mapquest = new OpenLayers.Layer.OSM("MapQuest",
-                //~ arrayMapQuest,
-                //~ {transitionEffect: null});
-    //~ map.addLayer(mapquest);
-// Layer 5
-    var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-    pistes_overlay_URL,{
+
+    var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+        "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+        "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
+    var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
+        {   visibility: true,
+            isBaseLayer: true,
+            transitionEffect: null
+        });
+    map.addLayer(mapnik);
+    
+
+
+    var PistesAndReliefTiles = new OpenLayers.Layer.XYZ("PistesAndReliefTiles",
+    pistes_and_relief_overlay_URL,{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
-            visibility: true, opacity: 1,
+            visibility: true, opacity: 0.9,
                 transitionEffect: null
         });
-    map.addLayer(PistesTiles);
+    map.addLayer(PistesAndReliefTiles);
+    
 
 }
 function permalink3Args() {
