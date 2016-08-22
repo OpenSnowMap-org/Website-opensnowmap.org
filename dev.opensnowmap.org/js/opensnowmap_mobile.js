@@ -1325,6 +1325,15 @@ function readPermalink(link) {
 }
 function updateZoom() {
     document.getElementById('zoom').innerHTML= map.getZoom();
+    if (map.getLayersByName("PistesOnlyTiles")[0]) 
+    {
+        if (map.getZoom() <9)
+        {
+            map.getLayersByName("PistesOnlyTiles")[0].setVisibility(false);
+        } else {
+            map.getLayersByName("PistesOnlyTiles")[0].setVisibility(true);
+        }
+    }
 }
 
 function get_osm_url(bounds) {
@@ -1379,7 +1388,7 @@ function setBaseLayer(baseLayer) {
             pistes_and_relief_overlay_URL,{
                     getURL: get_osm_url, 
                     isBaseLayer: false, numZoomLevels: 19,
-                    visibility: true, opacity: 0.9,
+                    visibility: true, opacity: 0.95,
                         transitionEffect: null
                 });
             map.addLayer(PistesAndReliefTiles);
@@ -1405,7 +1414,7 @@ function setBaseLayer(baseLayer) {
             pistes_only_overlay_URL,{
                     getURL: get_osm_url, 
                     isBaseLayer: false, numZoomLevels: 19,
-                    visibility: true, opacity: 0.9,
+                    visibility: true, opacity: 0.95,
                         transitionEffect: null
                 });
             map.addLayer(PistesOnlyTiles);
@@ -1439,7 +1448,7 @@ function baseLayers() {
     pistes_and_relief_overlay_URL,{
             getURL: get_osm_url, 
             isBaseLayer: false, numZoomLevels: 19,
-            visibility: true, opacity: 0.9,
+            visibility: true, opacity: 0.95,
                 transitionEffect: null
         });
     map.addLayer(PistesAndReliefTiles);
