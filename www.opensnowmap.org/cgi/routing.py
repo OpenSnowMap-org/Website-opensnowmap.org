@@ -75,7 +75,7 @@ def getOsm(coords):
 		nd_ref+=1
 		# closest way
 		cur.execute("""
-		select id, ST_Line_Locate_Point(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+		select id, ST_LineLocatePoint(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
 		FROM ways
 		WHERE linestring && st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326)  \
 		ORDER BY ST_Distance(linestring, ST_GeometryFromText('POINT(%s %s)', 4326)) LIMIT 1;
@@ -96,8 +96,8 @@ def getOsm(coords):
 		UPDATE ways SET linestring=(
 		ST_LineMerge(
 			ST_Union(
-				ST_Line_Substring(linestring, 0, %s),
-				ST_Line_Substring(linestring, %s, 1)
+				ST_LineSubstring(linestring, 0, %s),
+				ST_LineSubstring(linestring, %s, 1)
 		)))
 		WHERE id=%s
 		""" % (l,l,wayid))
