@@ -1392,7 +1392,7 @@ function setBaseLayer(baseLayer) {
         }
         
             try{
-                document.getElementById("map").style.transform = 'scale(1)';
+                document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1)';
                 document.getElementById("header").style.zIndex=10;
                 document.getElementById("map").style.zIndex=0;
                 }catch(err){}
@@ -1431,9 +1431,9 @@ function setBaseLayer(baseLayer) {
             }
             
             try{
-                document.getElementById("map").style.transform = 'scale(2)';
-                                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;;
+                document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1.5)';
+                document.getElementById("header").style.zIndex=10;
+                document.getElementById("map").style.zIndex=0;
                 }catch(err){}
         } else {
             map.removeLayer(osm);
@@ -1463,9 +1463,9 @@ function setBaseLayer(baseLayer) {
                 map.removeLayer(map.getLayersByName("PistesAndReliefTiles")[0]);
             }
             try{
-                document.getElementById("map").style.transform = 'scale(1)';
-                                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;;
+                document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1)';
+                document.getElementById("header").style.zIndex=10;
+                document.getElementById("map").style.zIndex=0;
                 }catch(err){}
         }
         BASELAYER = 'snowbase';
@@ -1507,9 +1507,10 @@ function baseLayers() {
 
             
             try{
-                document.getElementById("map").style.transform = 'scale(2)';
-                                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;;
+                document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1.5)';
+                document.getElementById("header").style.zIndex=10;
+                document.getElementById("map").style.zIndex=0;
+                
                 }catch(err){}
         } else {
             
