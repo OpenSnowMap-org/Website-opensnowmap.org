@@ -61,7 +61,7 @@ hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; he
     display: inline
 }
 #map {
-        position: fixed;    width: 100%; 
+        position: absolute;    width: 100%; 
         top: 35px;
         left: 0px;
         bottom: 0px;
@@ -136,6 +136,7 @@ color: black;
 }
 .closebox {float: right;}
 #header{
+position: absolute;
     float:right;
 /*
     -moz-border-radius:6px;
