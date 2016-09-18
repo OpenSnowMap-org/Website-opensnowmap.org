@@ -125,11 +125,11 @@ color: black;
     height:30px;
     font-size: 1.2em;
 }
-#customZoomOut {
-    top: 32px;
-}
 #customZoom a:hover {
     background: #036;
+}
+#customZoomOut {
+    top: 32px;
 }
 #content-control {
     width: 100%;

@@ -1409,16 +1409,10 @@ function setBaseLayer(baseLayer) {
         if (HDPI){
             try{
                 document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1.5)';
-                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;
-                document.getElementById("customZoom").style.zIndex=1001;
                 }catch(err){console.log(err.message);}
         } else {
             try{
                 document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1)';
-                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;
-                document.getElementById("customZoom").style.zIndex=1001;
                 }catch(err){console.log(err.message);}
         }
         
@@ -1456,9 +1450,6 @@ function setBaseLayer(baseLayer) {
             
             try{
                 document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1.5)';
-                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;
-                    document.getElementById("customZoom").style.zIndex=1001;
                 }catch(err){console.log(err.message);}
         } else {
             var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
@@ -1485,13 +1476,16 @@ function setBaseLayer(baseLayer) {
             
             try{
                 document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1)';
-                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;
-                    document.getElementById("customZoom").style.zIndex=1001;
                 }catch(err){console.log(err.message);}
         }
         BASELAYER = 'snowbase';
     }
+    // forces redraw of element above the map after scaling, still something bad with zooms on mobile
+    document.getElementById("header").style.zIndex=10;
+    document.getElementById("map").style.zIndex=0;
+    document.getElementById("customZoom").style.zIndex=1001;
+    document.getElementById("customZoomIn").style.zIndex=1002;
+    document.getElementById("customZoomOut").style.zIndex=1002;
 
     var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
     for (p = 0; p < permalinks.length; p++){
