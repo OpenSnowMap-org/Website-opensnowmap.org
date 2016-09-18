@@ -1375,14 +1375,15 @@ function removeLayerByName(name){
     }
 }
 function setBaseLayer(baseLayer) {
+    removeLayerByName("OSM");
+    removeLayerByName("SnowBase");
+    removeLayerByName("PistesAndReliefTiles");
+    removeLayerByName("PistesAndReliefTiles");
     
     if (baseLayer == "osm") {
         
         document.getElementById('SnowBaseLAyer').style.backgroundColor='#FFF';
         document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
-        
-        removeLayerByName("SnowBase");
-        removeLayerByName("PistesOnlyTiles");
         
         var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
             "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
@@ -1427,9 +1428,6 @@ function setBaseLayer(baseLayer) {
         
         document.getElementById('SnowBaseLAyer').style.backgroundColor='#DDD';
         document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        
-        removeLayerByName("OSM");
-        removeLayerByName("PistesAndReliefTiles");
         
         if (HDPI){
             var arraySnowBase = [snow_base_layer_HDPI_URL+"${z}/${x}/${y}.png"];
