@@ -1559,6 +1559,11 @@ function map_init() {
 
     baseLayers();
     setBaseLayer(BASELAYER);
+    
+    highlightLayer = new OpenLayers.Layer.Vector("highlight", {styleMap: HLStyleMap});
+    map.addLayer(highlightLayer);
+    
+    
     // Switch base layer
     map.events.on({zoomend: function (e) {
         updateZoom();
