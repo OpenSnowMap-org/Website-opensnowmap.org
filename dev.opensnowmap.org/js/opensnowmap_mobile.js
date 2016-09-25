@@ -1378,7 +1378,7 @@ function setBaseLayer(baseLayer) {
     removeLayerByName("OSM");
     removeLayerByName("SnowBase");
     removeLayerByName("PistesAndReliefTiles");
-    removeLayerByName("PistesAndReliefTiles");
+    removeLayerByName("PistesOnlyTiles");
     
     if (baseLayer == "osm") {
         
