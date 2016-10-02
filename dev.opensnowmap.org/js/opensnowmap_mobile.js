@@ -1491,6 +1491,7 @@ function setBaseLayer(baseLayer) {
     for (p = 0; p < permalinks.length; p++){
         permalinks[p].updateLink();
     }
+    show_live_edits('none',false);
 }
 function baseLayers() {
     // Default to SnowBaseLayer

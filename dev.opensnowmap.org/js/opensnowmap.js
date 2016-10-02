@@ -28,7 +28,7 @@ if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
 
 var pistes_and_relief_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
 var pistes_only_overlay_URL="http://www.opensnowmap.org/tiles-pistes/";
-var snow_base_layer_URL ="http://www2.opensnowmap.org/base_snow_map/";
+var snow_base_layer_URL ="http://www5.opensnowmap.org/base_snow_map/";
 
 var mode = "raster";
 var EXT_MENU = true;
