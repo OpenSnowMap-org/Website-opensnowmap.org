@@ -61,7 +61,8 @@ hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; he
     display: inline
 }
 #map {
-        position: fixed;    width: 100%; 
+        position: fixed;
+        width: 100%; 
         top: 35px;
         left: 0px;
         bottom: 0px;
@@ -124,11 +125,11 @@ color: black;
     height:30px;
     font-size: 1.2em;
 }
-#customZoomOut {
-    top: 32px;
-}
 #customZoom a:hover {
     background: #036;
+}
+#customZoomOut {
+    top: 32px;
 }
 #content-control {
     width: 100%;
@@ -136,6 +137,7 @@ color: black;
 }
 .closebox {float: right;}
 #header{
+position: absolute;
     float:right;
 /*
     -moz-border-radius:6px;
@@ -227,6 +229,7 @@ color: black;
 }
 div.olMapViewport {
     -ms-touch-action: none;
+    position: absolute;
 }
 .olLayerGrid .olTileImage {
     -webkit-transition: opacity 0.2s linear;

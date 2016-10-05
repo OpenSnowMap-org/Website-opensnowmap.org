@@ -473,13 +473,13 @@ def snapToWay(ID, center):
 	cur.execute("""
 	SELECT
 		ST_X(
-			ST_Line_Interpolate_Point(linestring,
-				st_line_locate_point(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+			ST_LineInterpolatePoint(linestring,
+				st_linelocatepoint(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
 			)
 		),
 		ST_Y(
-			ST_Line_Interpolate_Point(linestring,
-				st_line_locate_point(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+			ST_LineInterpolatePoint(linestring,
+				st_linelocatepoint(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
 			)
 		)
 	FROM ways
