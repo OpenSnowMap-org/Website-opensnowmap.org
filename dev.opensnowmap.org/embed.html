@@ -27,7 +27,7 @@ Attribution must be preserved.
 		}
 		#attribution {
 			font-size: xx-small;
-		    font-family:'Open Sans', sans-serif;
+			font-family:'Open Sans', sans-serif;
 			position:absolute;
 			bottom: 0px;
 			z-index:1000;
@@ -42,7 +42,10 @@ Attribution must be preserved.
 		var zoom		   = 3; 
 		var lon			   = 0; 
 		var lat			   = 45; 
-		// look fro permalink
+		
+		var pistes_only_overlay_URL="http://www.opensnowmap.org/tiles-pistes/";
+		var snow_base_layer_URL ="http://www5.opensnowmap.org/base_snow_map/";
+		// look for permalink
 		if (location.search != "") {
 			var x = location.search.substr(1).split("&")
 			for (var i=0; i<x.length; i++)
@@ -78,20 +81,29 @@ Attribution must be preserved.
 				{projection: new OpenLayers.Projection("EPSG:900913")
 				});
 				
-			var mapnik		 = new OpenLayers.Layer.OSM();
-			mapnik.attribution="";
-			var pistes_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
-			var PistesTiles = new OpenLayers.Layer.XYZ("Pistes Tiles LZ",
-			pistes_overlay_URL,{
+		var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
+		var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
+			arraySnowBase,
+			{   visibility: true,
+				isBaseLayer: true,
+				transitionEffect: null
+			});
+		
+			var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
+			pistes_only_overlay_URL,{
 					getURL: get_osm_url, 
 					isBaseLayer: false,
 					numZoomLevels: 19,
 					visibility: true,
-					opacity: 0.9,
+					opacity: 0.95,
+					minResolution: 0.001,
+					maxResolution: 500,
 					transitionEffect: null
 				});
-			map.addLayer(mapnik);
-			map.addLayer(PistesTiles);
+			
+			
+			map.addLayer(snowbaseLayer);
+			map.addLayer(PistesOnlyTiles);
 			map.setCenter(position, zoom );
 		}
 	</script>
