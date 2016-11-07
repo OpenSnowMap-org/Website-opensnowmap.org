@@ -215,7 +215,7 @@ function map_init() {
 	map.setCenter(position, zoom );
 	
 	requestRelations();
-    var PistesTilesLowZoom = new OpenLayers.Layer.XYZ(
+    /*var PistesTilesLowZoom = new OpenLayers.Layer.XYZ(
 		  "Pistes Tiles LZ",
 		  "http://tiles.pistes-nordiques.org/tiles-pistes/",{
 		  getURL: get_osm_url, 
@@ -223,7 +223,7 @@ function map_init() {
 		  visibility: true, opacity: 0.8,
 		  maxScale: 1000000
 		  });
-    map.addLayer(PistesTilesLowZoom);
+    map.addLayer(PistesTilesLowZoom);*/
 	
 	tilesLayer = new OpenLayers.Layer.XYZ("mapnik",
 	server+"offset-renderer?",{

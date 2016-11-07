@@ -201,18 +201,21 @@ function map_init() {
 	
 	
 	
-	var arrayMapQuest = ["http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-						 "http://otile2.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-						 "http://otile3.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg",
-						 "http://otile4.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg"];
-	var mapquest = new OpenLayers.Layer.OSM("MapQuest",arrayMapQuest);
-	map.addLayer(mapquest);
+    var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+        "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+        "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
+    var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
+        {   visibility: true,
+            isBaseLayer: true,
+            transitionEffect: null
+        });
+    map.addLayer(mapnik);
 	
 	var position = new OpenLayers.LonLat(lon, lat).transform( fromProjection, toProjection);
 	map.setCenter(position, zoom );
 	
 	requestRelations();
-    var PistesTilesLowZoom = new OpenLayers.Layer.XYZ(
+    /*var PistesTilesLowZoom = new OpenLayers.Layer.XYZ(
 		  "Pistes Tiles LZ",
 		  "http://tiles.pistes-nordiques.org/tiles-pistes/",{
 		  getURL: get_osm_url, 
@@ -220,7 +223,7 @@ function map_init() {
 		  visibility: true, opacity: 0.8,
 		  maxScale: 1000000
 		  });
-    map.addLayer(PistesTilesLowZoom);
+    map.addLayer(PistesTilesLowZoom);*/
 	
 	tilesLayer = new OpenLayers.Layer.XYZ("mapnik",
 	server+"offset-renderer?",{
