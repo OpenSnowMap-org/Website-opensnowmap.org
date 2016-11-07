@@ -1595,7 +1595,7 @@ function show_printSettings() {
     var z = map.getZoom();
     var center = map.getCenter().transform(new OpenLayers.Projection('EPSG:900913'), new OpenLayers.Projection('EPSG:4326'));
     //#map=4/6/42/0
-    var hash = "#map=" + z + '/' + center.lon + '/' + center.lat + '/0';
+    var hash = "#map="+z+'/'+center.lon+'/'+center.lat+'&base='+BASELAYER;
     window.open("print.html" + hash, "_blank", "height=480,width=685");
 }
 

@@ -1,98 +1,175 @@
-var center= ol.proj.fromLonLat([6, 42]);
+var center= ol.proj.toLonLat([7, 46],'EPSG:4326');
 var zoom= 4;
 var shouldUpdate = true;
 var map;
 var attribution;
+var base_layer = "osm";
+
 
 if (window.location.hash !== '') {
-  // try to restore center, zoom-level and rotation from the URL
-  var hash = window.location.hash.replace('#map=', '');
-  var parts = hash.split('/');
-  if (parts.length === 4) {
-    zoom = parseInt(parts[0], 10);
-    center = [
-      parseFloat(parts[1]),
-      parseFloat(parts[2])
-    ];
-    center = ol.proj.fromLonLat(ol.proj.toLonLat(center,'EPSG:4326'), 'EPSG:3857')
-    rotation = parseFloat(parts[3]);
-  }
+	// try to restore center, zoom-level and rotation from the URL
+	var hash = window.location.hash.replace('#map=', '')
+	while (hash.search('&')> -1) {
+		hash=hash.replace('&','/');
+	}
+	var parts = hash.split('/');
+	if (parts.length >= 3) {
+		zoom = parseInt(parts[0], 10);
+		center = [
+		parseFloat(parts[1]),
+		parseFloat(parts[2])
+		];
+		center = ol.proj.toLonLat(center,'EPSG:4326');
+	
+		parts.forEach(function(part) {
+			//~ if (part.search('marker=true') > -1) {MARKER = true;}
+			if (part.search('base=snowbase') > -1) {base_layer = 'snowmap';}
+			if (part.search('base=osm') > -1) {base_layer = 'osm';}
+		});
+	}
 }
 function load_print(){
 	document.getElementById('controls').style.display='none';
 	print();
 	document.getElementById('controls').style.display='inline';
 }
-
+function switchBaseLayerTo(switchTo) {
+	if (switchTo == 'osm') {
+		getLayerByName('osm').setVisible(true);
+		getLayerByName('snowmap').setVisible(false);
+        getLayerByName('pistes&relief').setVisible(true);
+        getLayerByName('pistes').setVisible(false);
+		base_layer='osm';
+		updatePermalink();
+	}
+	else if (switchTo == 'mapquest') {
+		getLayerByName('osm').setVisible(false);
+		getLayerByName('snowmap').setVisible(true);
+            getLayerByName('pistes&relief').setVisible(false);
+            getLayerByName('pistes').setVisible(true);
+		base_layer='snowmap';
+		updatePermalink();
+	}
+	
+}
+function getLayerByName(name) {
+	var l = null;
+	map.getLayers().forEach(function(layer) {
+		if (layer.get('name') == name) {l = layer;}
+	});
+	return l
+}
 
 function map_init(){
+
 	attribution = new ol.control.Attribution({
 		collapsible: false, collapsed: false})
-	
-      map = new ol.Map({
-        target: 'map',
-        layers: [
-          new ol.layer.Tile({
-            source: new ol.source.XYZ({
-				url: "http://otile{1-4}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg",
-				attributions: [new ol.Attribution({
-					html:'<a target="_blank" href="http://www.mapquest.com/">MapQuest</a><img src="pics/mq_logo_xs.png">.'
-					})],
+		
+	map = new ol.Map({
+		layers: [
+				new ol.layer.Tile({
+					name: 'snowmap',
+					source: new ol.source.XYZ({
+						url: "http://www5.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png",
+						attributions: [
+							new ol.Attribution({
+							html: 'Opensnowmap.org CC-BY-SA' 
+							+' - EU-DEM produced using Copernicus data and information funded by the EU. ' 
+							+' - ASTER GDEM is a product of METI and NASA.'
+							+' - data (c) OpenStreetMap.org & contributors'
+							}),
+							ol.source.OSM.ATTRIBUTION
+							],
+						}),
+					visible: true
+				}),
+				
+				new ol.layer.Tile({
+					name: 'osm',
+					source: new ol.source.OSM(),
 					visible: false
+				}),
+				
+				new ol.layer.Tile({
+					name: 'pistes&relief',
+					source: new ol.source.XYZ({
+						url: "http://www.opensnowmap.org/opensnowmap-overlay/{z}/{x}/{y}.png",
+						attributions: [
+							new ol.Attribution({
+							html: 'Opensnowmap.org CC-BY-SA' 
+							+' - EU-DEM produced using Copernicus data and information funded by the EU. ' 
+							+' - ASTER GDEM is a product of METI and NASA.'
+							+' - data (c) OpenStreetMap.org & contributors'
+							}),
+							ol.source.OSM.ATTRIBUTION
+							],
+						}),
+					visible: false
+				}),
+				
+				new ol.layer.Tile({
+					name: 'pistes',
+					source: new ol.source.XYZ({
+						url: "http://www.opensnowmap.org/tiles-pistes/{z}/{x}/{y}.png",
+						attributions: [
+							new ol.Attribution({
+							html: 'Opensnowmap.org CC-BY-SA' 
+							+' - data (c) OpenStreetMap.org & contributors'
+							}),
+							ol.source.OSM.ATTRIBUTION
+							],
+						}),
+                    maxResolution: 500,
+					visible: true
 				})
-          }),
-          new ol.layer.Tile({
-            source: new ol.source.OSM(),
-            visible: true
-          }),
-          new ol.layer.Tile({
-            source: new ol.source.XYZ({
-				url: "http://www.opensnowmap.org/opensnowmap-overlay/{z}/{x}/{y}.png",
-				  attributions: [
-					new ol.Attribution({
-					html: '</br>EU-DEM produced using Copernicus data and information funded by the European Union. ' 
-					+'ASTER GDEM is a product of METI and NASA.'
-					}),
-					ol.source.OSM.ATTRIBUTION
-					],
-				})
-          })
-        ],
-        view: new ol.View({
-          center: center,
-          zoom: zoom,
-          maxZoom: 18
-        }),
-        controls: ol.control.defaults({ attribution: false }).extend([attribution])
-      });
-	map.on('moveend', updatePermalink);
+		],
+		target: 'map',
+		view: new ol.View({
+			center: ol.proj.fromLonLat(center, 'EPSG:3857'),
+			zoom: zoom,
+			maxZoom: 18
+		}),
+		logo: false,
+		controls: ol.control.defaults({ attribution: false, rotate: false }).extend([attribution]),
+		interactions: ol.interaction.defaults({altShiftDragRotate:false, pinchRotate:false})
+		
+	});
+	
 
+	switchBaseLayerTo(base_layer);
+
+	// MAP EVENTS
+	map.on('moveend', updatePermalink);
+	
 }
 
 var updatePermalink = function() {
 	
-	  if (!shouldUpdate) {
-	    // do not update the URL when the view was changed in the 'popstate' handler
-	    shouldUpdate = true;
-	    return;
-	  }
-	  
-	  var view = map.getView();
-	  var zoom=view.getZoom();
-	  var center = view.getCenter();
-	  center = ol.proj.fromLonLat(ol.proj.toLonLat(center,'EPSG:3857'), 'EPSG:4326')
-	  var hash = '#map=' +
-	      zoom + '/' +
-	      Math.round(center[0] * 1000) / 1000 + '/' +
-	      Math.round(center[1] * 1000) / 1000 + '/' +
-	      view.getRotation();
-	  var state = {
-	    zoom: zoom,
-	    center: view.getCenter(),
-	    rotation: view.getRotation()
-	  };
-	  window.history.pushState(state, 'map', hash);
+	if (!shouldUpdate) {
+		// do not update the URL when the view was changed in the 'popstate' handler
+		shouldUpdate = true;
+		return;
+	}
+	
+	var view = map.getView();
+	var zoom=view.getZoom();
+	var center = view.getCenter();
+	
+	center = ol.proj.fromLonLat(ol.proj.toLonLat(center,'EPSG:3857'), 'EPSG:4326')
+	var hash = '#map=' +
+		zoom + '/' +
+		Math.round(center[0] * 1000) / 1000 + '/' +
+		Math.round(center[1] * 1000) / 1000 + 
+		'&base='+base_layer;
+	var state = {
+		zoom: zoom,
+		center: center,
+		rotation: view.getRotation()
+	};
+	window.history.pushState(state, 'map', hash);
+	//~ document.getElementsByClassName('ol-zoomslider-thumb')[0].innerHTML=zoom;
 };
+
 
 function page_init() {
 	
