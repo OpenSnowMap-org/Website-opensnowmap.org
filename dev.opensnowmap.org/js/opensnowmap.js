@@ -19,16 +19,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 //
+if (location.protocol != 'https:')
+{
+    protocol = 'http:';
+} else
+{
+    protocol = 'https:';
+}
 
-var server = "http://" + window.location.host + "/";
+var server = protocol+"//" + window.location.host + "/";
 if (!window.location.host) {
     server = window.location.pathname.replace("index.html", '');
 }
-if (server.search('home') != -1){ server = "http://beta.opensnowmap.org/";}
+if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
-var pistes_and_relief_overlay_URL="http://www.opensnowmap.org/opensnowmap-overlay/";
-var pistes_only_overlay_URL="http://www.opensnowmap.org/tiles-pistes/";
-var snow_base_layer_URL ="http://www5.opensnowmap.org/base_snow_map/";
+var pistes_and_relief_overlay_URL=protocol+"//www.opensnowmap.org/opensnowmap-overlay/";
+var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/tiles-pistes/";
+var snow_base_layer_URL =protocol+"//www5.opensnowmap.org/base_snow_map/";
 
 var mode = "raster";
 var EXT_MENU = true;
@@ -363,7 +370,7 @@ function show_edit() {
     cacheInHistory(editDiv);
 
     permalink_id = new OpenLayers.Control.Permalink("permalink.id",
-    "http://www.openstreetmap.org/edit",{createParams: permalink1Args});
+    protocol+"//www.openstreetmap.org/edit",{createParams: permalink1Args});
     map.addControl(permalink_id);
     permalink_ofsetter = new OpenLayers.Control.Permalink("permalink.offseter",
         "offseter");
@@ -1355,9 +1362,9 @@ function setBaseLayer(baseLayer) {
     
     if (baseLayer == "osm" && snowbase) {
         map.removeLayer(snowbase);
-        var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
+        var arrayOSM = [protocol+"//a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            protocol+"//b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+            protocol+"//c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
         var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
             {   visibility: true,
                 isBaseLayer: true,
@@ -1453,31 +1460,6 @@ function baseLayers() {
                 transitionEffect: null
             });
         map.addLayer(PistesOnlyTiles);
-
-/* // Default to OSM
-    var arrayOSM = ["http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
-    var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
-        {   visibility: true,
-            isBaseLayer: true,
-            transitionEffect: null
-        });
-    map.addLayer(mapnik);
-    
-
-
-    var PistesAndReliefTiles = new OpenLayers.Layer.XYZ("PistesAndReliefTiles",
-    pistes_and_relief_overlay_URL,{
-                getURL: get_osm_url, 
-                isBaseLayer: false,
-                numZoomLevels: 19,
-                visibility: true,
-                opacity: 0.95,
-                transitionEffect: null
-        });
-    map.addLayer(PistesAndReliefTiles);
-    */
 
 }
 function permalink3Args() {
@@ -2504,7 +2486,7 @@ function fillHTMLStats(jsonStats, div, element_type) {
             }
         }
         if (data == 'siteUrl'){
-            spans[i].href = "http://openstreetmap.org/browse/" + element_type + "/" + id;
+            spans[i].href = protocol+"//openstreetmap.org/browse/" + element_type + "/" + id;
         }
         if (data == 'siteId'){
             spans[i].innerHTML = id;
@@ -2540,7 +2522,7 @@ function showExtLink(div, ids, element_type) {
                 var data = spans[i].getAttribute('dataText');
 
                 if (data == 'siteUrl'){
-                    spans[i].href = "http://openstreetmap.org/browse/" + element_type + "/" + id;
+                    spans[i].href = protocol+"//openstreetmap.org/browse/" + element_type + "/" + id;
                 }
                 if (data == 'siteId'){
                     spans[i].innerHTML = id;
