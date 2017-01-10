@@ -1106,8 +1106,8 @@ function showHTMLPistesList(Div) {
                         marker = '&#9679;';
                         if (piste.difficulty == 'freeride') {marker = '!';}
                         if (lat > 0 && lon < -40) {
-                            if (piste.difficulty == 'expert') {marker = '&diams;';}
-                            if (piste.difficulty == 'advanced') {marker = '&diams;&diams;';}
+                            if (piste.difficulty == 'expert') {marker = '&diams;&diams;';}
+                            if (piste.difficulty == 'advanced') {marker = '&diams;';}
                             if (piste.difficulty == 'freeride') {marker = '!!';}
                             span.style.color = diffcolorUS[piste.difficulty];
                         } else {
