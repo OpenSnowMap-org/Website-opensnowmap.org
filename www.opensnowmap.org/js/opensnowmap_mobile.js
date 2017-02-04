@@ -404,7 +404,7 @@ function page_init(){
     });
     updateZoom();
     initFlags();
-    //get_stats();
+    get_stats();
     document.getElementById('dailyVector').style.backgroundColor='#FFF';
     document.getElementById('weekVector').style.backgroundColor='#FFF';
     document.getElementById('noVector').style.backgroundColor='#DDD';
