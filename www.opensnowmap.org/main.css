@@ -150,7 +150,7 @@ label {
     color: #050505;
     text-align: center;
     vertical-align: center;
-    opacity: 0.5;
+    opacity: 1;
 }
 #zoom{
     position: absolute;
