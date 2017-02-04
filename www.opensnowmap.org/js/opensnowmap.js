@@ -726,6 +726,7 @@ function page_init() {
     translateDiv('body');
     updateTooltips();
     document.getElementById("desktopswitch").style.backgroundColor='#CCC';
+    document.getElementById("OpenLayers_Control_PanZoomBar_41").style.top="38px"; 
 
 }
 //~ function loadend() {

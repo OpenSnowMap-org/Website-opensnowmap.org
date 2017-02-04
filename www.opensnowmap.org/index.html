@@ -46,6 +46,20 @@
 			</div>	   
 		
 		</div>
+<!-- Small control on top-left corner accessible to mobile user-->
+        <div id="mobile-switcher">                
+            <div id="mobileswitch"  href="javascript:void(0);"
+            onmouseover="document.images['mobilePicTop'].src='pics/mobile-22-hover.png';"
+            onmouseout="document.images['mobilePicTop'].src='pics/mobile-22.png';"
+            onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
+                    document.cookie='version=mobile';"
+            class="Button" >
+                <img name="mobilePicTop" src="pics/mobile-22.png">
+<!--
+                <img name="desktopPicTop" src="pics/desktop-22-hover.png">
+-->
+                </div>
+        </div>
 <!-- Zoom level in PanZoomBar-->
 		<div id="zoom"></div>
 

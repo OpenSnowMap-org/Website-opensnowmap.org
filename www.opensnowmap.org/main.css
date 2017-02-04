@@ -133,7 +133,7 @@ label {
             margin-bottom: 0px;
             margin-right: 10px
     }
-.olControlPanZoomBar div {
+.olControlPanZoomBar div{
     font-size: 1px;
     border: 1px solid #AAAAAA;
     -moz-border-radius:6px;
@@ -143,15 +143,24 @@ label {
 .olButton {
     z-index: 1004
 }
-#zoom{
+#mobile-switcher{
     position: absolute;
     top:0px;
+    left: 14px;
+    color: #050505;
+    text-align: center;
+    vertical-align: center;
+    opacity: 0.5;
+}
+#zoom{
+    position: absolute;
+    top:28px;
     left: 16px;
     font-size: 0.75em;
     color: #050505;
     width: 24px;
-    height: 11px;
-    padding-top: 0px;
+    height: 16px;
+    padding-top: 2px;
     text-align: center;
     vertical-align: center;
     -moz-border-radius:6px;
