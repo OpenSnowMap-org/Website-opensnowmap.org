@@ -722,11 +722,16 @@ function page_init() {
     updateZoom();
     initFlags();
     resize_sideBar();
-    window.onresize = function () {resize_sideBar();};
+    window.onresize = function () {
+        resize_sideBar();
+        document.getElementsByClassName('olControlPanZoomBar')[0].style.top="38px"; 
+        document.getElementsByClassName('olControlPanZoomBar')[0].style.left="0px";
+        };
     translateDiv('body');
     updateTooltips();
     document.getElementById("desktopswitch").style.backgroundColor='#CCC';
-    document.getElementById("OpenLayers_Control_PanZoomBar_41").style.top="38px"; 
+    document.getElementsByClassName('olControlPanZoomBar')[0].style.top="38px"; 
+    document.getElementsByClassName('olControlPanZoomBar')[0].style.left="0px";
 
 }
 //~ function loadend() {
