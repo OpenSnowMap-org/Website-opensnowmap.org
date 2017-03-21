@@ -34,8 +34,10 @@ if (!window.location.host) {
 if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
 var pistes_and_relief_overlay_URL=protocol+"//www.opensnowmap.org/opensnowmap-overlay/";
-var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/tiles-pistes/";
+var pistes_only_overlay_URL=protocol+"//127.0.0.1/pistes-tiles/";
+//var pistes_only_overlay_URL=protocol+"//127.0.0.1/tests/";
 var snow_base_layer_URL =protocol+"//www5.opensnowmap.org/base_snow_map/";
+//var snow_base_layer_URL =protocol+"//0.0.0.0:6789/k_snow_map/tile/";
 
 var mode = "raster";
 var EXT_MENU = true;
@@ -1403,7 +1405,7 @@ function setBaseLayer(baseLayer) {
     }
     if (baseLayer == "snowbase" && osm) {
         map.removeLayer(osm);
-        var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
+        var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png?debug"];
         var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
             arraySnowBase,
             {   visibility: true,
@@ -1444,7 +1446,7 @@ function setBaseLayer(baseLayer) {
 }
 function baseLayers() {
     // Default to SnowBaseLayer
-    var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
+    var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png?debug"];
     var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
         arraySnowBase,
         {   visibility: true,
