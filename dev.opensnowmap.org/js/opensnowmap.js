@@ -38,6 +38,9 @@ var pistes_only_overlay_URL=protocol+"//127.0.0.1/pistes-tiles/";
 //var pistes_only_overlay_URL=protocol+"//127.0.0.1/tests/";
 var snow_base_layer_URL =protocol+"//www5.opensnowmap.org/base_snow_map/";
 //var snow_base_layer_URL =protocol+"//0.0.0.0:6789/k_snow_map/tile/";
+var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/tiles-pistes/";
+var pistes_only_overlay_clean_URL=protocol+"//www.opensnowmap.org/tiles-pistes-clean/";
+var snow_base_layer_URL =protocol+"//www5.opensnowmap.org/base_snow_map/";
 
 var mode = "raster";
 var EXT_MENU = true;
@@ -52,6 +55,7 @@ var permalink_ofsetter;
 var zoomBar;
 var PRINT_TYPE = 'small';
 var map;
+var overmap;
 var lat = 46.82084;
 var lon = 6.39942;
 var zoom = 2;//2
@@ -1300,7 +1304,7 @@ function updateZoom() {
 
 }
 function onZoomEnd() {
-
+    
     ONCE = true;
     if (CATCHER && ONCE){
         close_sideBar();
@@ -1517,6 +1521,42 @@ function josmRemote() {
 
 }
 function map_init() {
+    overmap = new OpenLayers.Map ("overmap", {
+        zoomMethod: null,
+        panMethod: null,
+        controls:[],
+        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+        maxResolution: 156543.0399,
+        numZoomLevels: 19,
+        units: 'm',
+        projection: new OpenLayers.Projection("EPSG:900913"),
+        displayProjection: new OpenLayers.Projection("EPSG:4326")
+    });
+    
+    // Default to SnowBaseLayer
+    var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png?debug"];
+    var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
+        arraySnowBase,
+        {   visibility: true,
+            isBaseLayer: true,
+            transitionEffect: null
+        });
+    overmap.addLayer(snowbaseLayer);
+    
+
+    var PistesOnlyTilesClean = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
+    pistes_only_overlay_clean_URL,{
+            getURL: get_osm_url, 
+            isBaseLayer: false,
+            numZoomLevels: 19,
+            visibility: true,
+            opacity: 0.95,
+            minResolution: 0.001,
+            maxResolution: 500,
+            transitionEffect: null
+        });
+    overmap.addLayer(PistesOnlyTilesClean);
+    
     map = new OpenLayers.Map ("map", {
         zoomMethod: null,
         panMethod: null,
@@ -1560,6 +1600,14 @@ function map_init() {
         onZoomEnd();
     }
     });
+    m = document.getElementById("map");
+    map.events.on({move: function (e) {
+        var cpx= map.getViewPortPxFromLonLat(map.getCenter());
+        
+        cpx.x = 2*cpx.x - cpx.x/2;
+        overmap.setCenter(map.getLonLatFromViewPortPx(cpx),map.getZoom());
+    }
+    });
 
     //################################
     var lonLat = new OpenLayers.LonLat(lon, lat).transform(
@@ -1576,6 +1624,9 @@ function map_init() {
         map.addLayer(markers);
         markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
     }
+    
+
+
     
 }
 

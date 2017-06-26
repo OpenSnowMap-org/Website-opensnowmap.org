@@ -101,10 +101,18 @@ label {
 .shown {
     display: inline
 }
+#overmap {
+        background-color: #F5F5F5;
+        position: fixed;    width: 50%; height:100%;
+        top: px;
+        right: 0px;
+        border: 2px solid grey;
+        padding: 0px;
+     }
 #map {
         position: fixed;    width: 100%; height:100%;
         top: 0px;
-        left: 0px;
+        right: 0px;
         border: 0px;
         padding: 0px;
      }
