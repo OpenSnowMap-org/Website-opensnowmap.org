@@ -394,7 +394,7 @@ def queryByName(name):
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
 	# set limit for pg_trgm
-	cur.execute("""select set_limit(0.31);""")
+	cur.execute("""select set_limit(0.5);""")
 	con.commit()
 	
 	cur.execute("""
