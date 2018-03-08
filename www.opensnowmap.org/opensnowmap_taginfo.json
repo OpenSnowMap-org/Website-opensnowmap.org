@@ -25,7 +25,7 @@
    {
        "key": "piste:type",
        "object_types": ["relation","way"],
-       "description": "Renderedand searchable. Value supported are 'downhill', 'nordic', 'hike', 'snow_park', 'playground', 'sled', 'ice_skate', 'sleigh', 'ski_jump', 'jump', 'ski_jump_landing'."
+       "description": "Rendered and searchable. Value supported are 'downhill', 'nordic', 'hike', 'snow_park', 'playground', 'sled', 'ice_skate', 'sleigh', 'ski_jump', 'jump', 'ski_jump_landing'."
    },
    {
        "key": "piste:difficulty",
