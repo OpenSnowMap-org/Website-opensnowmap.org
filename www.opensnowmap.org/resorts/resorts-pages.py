@@ -67,7 +67,7 @@ def rootPage():
 	tpl.close()
 	
 	page=page.replace('xxcontentxx',html)
-	return str(page)
+	return page.encode('utf-8')
 
 def countryPage(country):
 	json_data=open(data).read()
