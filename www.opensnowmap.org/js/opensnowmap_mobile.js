@@ -32,11 +32,11 @@ if (!window.location.host) {
 if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
 
-var pistes_and_relief_overlay_URL=protocol+"//www6.opensnowmap.org/opensnowmap-overlay/";
-var pistes_only_overlay_HDPI_URL=protocol+"//www6.opensnowmap.org/tiles-pistes-high-dpi/";
-var pistes_only_overlay_URL=protocol+"//www6.opensnowmap.org/tiles-pistes/";
-var snow_base_layer_URL =protocol+"//www6.opensnowmap.org/base_snow_map/";
-var snow_base_layer_HDPI_URL =protocol+"//www6.opensnowmap.org/base_snow_map_high_dpi/";
+var pistes_and_relief_overlay_URL=protocol+"//www.opensnowmap.org/pistes-relief/";
+var pistes_only_overlay_HDPI_URL=protocol+"//www.opensnowmap.org/pistes-high-dpi/";
+var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/pistes/";
+var snow_base_layer_URL =protocol+"//www.opensnowmap.org/base_snow_map/";
+var snow_base_layer_HDPI_URL =protocol+"//www.opensnowmap.org/base_snow_map_high_dpi/";
 
 
 var MARKER=false;
@@ -1628,10 +1628,16 @@ function map_init(){
     
     map.events.on({ "movestart": function (e) {
         updateZoom();
+        closecontent();
     }
     });
     map.events.on({ "zoomend": function (e) {
         updateZoom();
+        closecontent();
+    }
+    });
+    map.events.on({ "click": function (e) {
+        closecontent();
     }
     });
 
