@@ -285,12 +285,12 @@ function show_catcher() {
     close_sideBar();
     document.getElementById('sideBar').style.display = 'inline';
     CATCHER = true;
-    SIDEBARSIZE = 220;
+    SIDEBARSIZE = 240;
     resize_sideBar();
 
-    var title = document.createElement('i');
-    title.innerHTML = '&nbsp;&nbsp;' + today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear() + '&nbsp';
-    document.getElementById('sideBarTitle').appendChild(title);
+    //~ var title = document.createElement('i');
+    //~ title.innerHTML = '&nbsp;&nbsp;' + today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear() + '&nbsp';
+    //~ document.getElementById('sideBarTitle').appendChild(title);
 
     var catcherDiv = document.getElementById('catcher');
     catcherDiv.className = catcherDiv.className.replace('hidden', 'shown');
@@ -2602,6 +2602,9 @@ function fillData(divID) {
     var elements = div.getElementsByClassName('data');
     for (i = 0; i < elements.length; i++) {
         elements[i].innerHTML = data[elements[i].getAttribute('dataText')];
+        if (elements[i].getAttribute('dataText') == 'date'){
+            elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0];
+        }
     }
     return true;
 }

@@ -25,8 +25,8 @@ def application(environ,start_response):
 			st_intersects(\
 					planet_osm_line.way,\
 					st_transform( \
-							ST_MakeEnvelope(%s,%s,%s,%s, 900913),\
-							900913)) \
+							ST_MakeEnvelope(%s,%s,%s,%s, 3857),\
+							3857)) \
 			 and osm_id <0 group by osm_id, route_name, color, colour; "\
 			, (left, bottom, right, top))
 	result=cur.fetchall()

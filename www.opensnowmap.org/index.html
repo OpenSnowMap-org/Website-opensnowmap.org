@@ -77,9 +77,9 @@
 				<div id="sideBarHeader" class="sideBarHeader">
 					<div class="closeBox" id="sideBarCloseControl"
 						onclick="close_sideBar();echap();"
-						onmouseover="document.images['sideBarClose'].src='pics/close-22-hover.png'"
-						onmouseout="document.images['sideBarClose'].src='pics/close-22.png'">
-						<img name="sideBarClose"  src="pics/close-22.png">
+						onmouseover="document.images['sideBarClose'].src='pics/close-22-hover_lt.png'"
+						onmouseout="document.images['sideBarClose'].src='pics/close-22_lt.png'">
+						<img name="sideBarClose"  src="pics/close-22_lt.png">
 					</div>
 					<div id="sideBarTitle"></div>
 					<div id="sideBarControls">
@@ -309,47 +309,61 @@
 					<div id="languages" class="hidden sideBarContent"></div> <!-- control to choose languages -->
 					<div id="catcher" class="hidden sideBarContent"> <!-- displayed once whenentering the site -->
 						<div class="float-left" itemscope itemtype="http://data-vocabulary.org/Event">
+<!--
 							<a href="http://wiki.openstreetmap.org" target="blank">
-								<img src="pics/osm-pistes-nordiques_logo-80px.png"></img>
+								<img src="pics/osm-pistes-nordiques_logo-60px.png"></img>
 							</a>
+-->
 						</div>
-							<p>
+							<p><b>
 							<span itemprop="summary">
 								<span id="full_length">xxxx</span> 
 								<span class="i18n" i18nText="piste_length">xxxx</span>
 							</span>
-							<span class="i18n" i18nText="you">xxxx</span>
-							</p>
-							<p>
+							<span class="i18n" i18nText="you">xxxx</span></b>
 							<a class="amenu i18n" 
 							href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;" 
 							i18nText="EDIT">
 							xxxx
 							</a>
 							</p>
-						
-						<table border="0">
+						<div class="news">
+                          <b><span class="data" dataText="date">xxxx</span> :</b><br/>
+						  <table border="0">
 							<tr>
-							<td><img src="pics/nordic.png">&nbsp;</td>
+							<td><img src="pics/nordic-nb-20.png">&nbsp;</td>
 							<td><span class="data" dataText="nordic">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/alpine.png">&nbsp;</td>
+							<td><img src="pics/alpine-nb-20.png">&nbsp;</td>
 							<td><span class="data" dataText="downhill">xxxx</span>&nbsp;km</td>
-							</tr>
-							
-							<tr>
-							<td><img src="pics/sled.png">&nbsp;</td>
-							<td><span class="data" dataText="sled">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/skitour.png">&nbsp;</td>
-							<td><span class="data" dataText="skitour">xxxx</span>&nbsp;km</td>
-							</tr>
-							
-							<tr>
-							<td><img src="pics/snowshoe.png">&nbsp;</td>
-							<td><span class="data" dataText="snowshoeing">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/drag_lift.png">&nbsp;</td>
+							<td><img src="pics/drag_lift-nb-20.png">&nbsp;</td>
 							<td><span class="data" dataText="aerialway">xxxx</span>&nbsp;km</td>
 							</tr>
-						</table>
+							
+							<tr>
+							<td><img src="pics/sled-nb-20.png">&nbsp;</td>
+							<td><span class="data" dataText="sled">xxxx</span>&nbsp;km</td>
+							<td><img src="pics/skitour-nb-20.png">&nbsp;</td>
+							<td><span class="data" dataText="skitour">xxxx</span>&nbsp;km</td>
+							<td><img src="pics/snowshoe-nb-20.png">&nbsp;</td>
+							<td><span class="data" dataText="snowshoeing">xxxx</span>&nbsp;km</td>
+							</tr>
+						  </table>
+                        </div>
+                        <div class="news">
+                            <b>News :</b><br/>
+                            <a class="amenuLt" target="_blank" 
+                              href="http://blog.opensnowmap.org/post/2018/09/15/At-last-%21"
+                              >&bullet;&nbsp;At last!&nbsp;&raquo;</a>
+                            <br/>
+                            <a class="amenuLt" target="_blank" 
+                              href="http://blog.opensnowmap.org/post/2018/08/24/Ski-pistes-mapping-2018%21"
+                              >&bullet;&nbsp;Ski pistes mapping 2018&nbsp;&raquo;</a>
+                            <br/>
+                            <a class="amenuLt" target="_blank" 
+                              href="http://blog.opensnowmap.org/"
+                              >&bullet;&nbsp;...&nbsp;&raquo;</a>
+                        </div>
+                        
 					</div>
 					<div id="helper" class="hidden sideBarContent">  <!-- help -->
 						<img src="pics/interactive-help.png"/><br/>
@@ -474,9 +488,9 @@
 					<div id="MenuVerticalLeft" class="IconBarVertical">
 						<div class="closeBox" id="mainCloseControl"
 						onclick="closeMenu();"
-						onmouseover="document.images['menuClose'].src='pics/close-22-hover.png'"
-						onmouseout="document.images['menuClose'].src='pics/close-22.png'">
-						<img name="menuClose"  src="pics/close-22.png"></div>
+						onmouseover="document.images['menuClose'].src='pics/collapse-22-hover_lt.png'"
+						onmouseout="document.images['menuClose'].src='pics/collapse-22_lt.png'">
+						<img name="menuClose"  src="pics/collapse-22_lt.png"></div>
 						<br class="clear" />
 					</div>
 					
@@ -568,7 +582,7 @@
 -->
 				<div id="TitleBlock">
 					<div id="TitleVerticalLeft" class="IconBarVertical">
-						<div class="closeBox" id="MainExtendControl"
+						<div class="menuBox" id="MainExtendControl"
 						onclick="showMenu();"
 						onmouseover="document.images['menuExt'].src='pics/menu-22-hover.png'"
 						onmouseout="document.images['menuExt'].src='pics/menu-22.png'">
@@ -604,9 +618,9 @@
 
 					<div id="donateCloseControl"
 						onclick="close_donate();"
-						onmouseover="document.images['helperClose'].src='pics/close-22-hover.png'"
-						onmouseout="document.images['helperClose'].src='pics/close-22.png'">
-						<img name="helperClose"  src="pics/close-22.png">
+						onmouseover="document.images['helperClose'].src='pics/close-22-hover_lt.png'"
+						onmouseout="document.images['helperClose'].src='pics/close-22.png_lt'">
+						<img name="helperClose"  src="pics/close-22_lt.png">
 					</div>
 			     
 					 <div class="Button textButton" id="donate">

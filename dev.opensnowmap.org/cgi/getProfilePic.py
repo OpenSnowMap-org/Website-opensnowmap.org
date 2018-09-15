@@ -458,8 +458,9 @@ class SrtmTiff(object):
         required point.
         """
         
-        
-        col_f, row_f = gdal.ApplyGeoTransform(gdal.InvGeoTransform(self.geotransform)[1], lon, lat)
+        print "lon, lat: ", lon, lat
+        print "geotransform : ", gdal.InvGeoTransform(self.geotransform)
+        col_f, row_f = gdal.ApplyGeoTransform(gdal.InvGeoTransform(self.geotransform), lon, lat)
         
         col = int(col_f)
         row = int(row_f)

@@ -51,6 +51,21 @@ a.amenu:hover {
         font-weight: 600;
         margin: 0px
     }
+a.amenuLt:link, a.amenuLt:visited {
+        font-weight: 400;
+        color: #444444;
+        font-size: 1em;
+        text-decoration: none;
+        margin: 0px
+    }
+    
+a.amenuLt:hover {
+        color: #FF7800;
+        font-size: 1em;
+        text-decoration: none;
+        font-weight: 400;
+        margin: 0px
+    }
 a.black {color: #000;font-weight: 600;}
 li{
 list-style-position:outside;
@@ -101,18 +116,10 @@ label {
 .shown {
     display: inline
 }
-#overmap {
-        background-color: #F5F5F5;
-        position: fixed;    width: 50%; height:100%;
-        top: px;
-        right: 0px;
-        border: 2px solid grey;
-        padding: 0px;
-     }
 #map {
         position: fixed;    width: 100%; height:100%;
         top: 0px;
-        right: 0px;
+        left: 0px;
         border: 0px;
         padding: 0px;
      }
@@ -189,7 +196,7 @@ label {
     margin-left: auto;
     margin-right: auto;
         background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.5);
+        background-color: rgba(245,245,245,0.7);
         -moz-border-radius:6px;
         border-radius:6px;
         border: 1px solid #aaaaaa;
@@ -227,7 +234,7 @@ label {
         width: 400px;
         bottom: 60px;
         background-color:#EEE;
-        background-color: rgba(245,245,245,0.5);
+        background-color: rgba(245,245,245,0.6);
         -moz-border-radius:6px;
         border-radius:6px;
         border: 1px solid #aaaaaa;
@@ -236,7 +243,7 @@ label {
     }
     .sideBarInBox{
         position: absolute;
-            background-color:#FDFDFD;
+            background-color:#FCFCFC;
             width: 360px;
             margin-top: 5px;
             margin-bottom: 5px;
@@ -244,12 +251,15 @@ label {
             margin-right:5px;
             padding-left:10px;
             padding-right:10px;
-            overflow: auto
+            overflow: auto;
+    border-style:solid;
+    border-width:1px;
+    border-color: #ccc;
     }
         .sideBarContent{
             font-size: 0.8em;
             color: #444;
-            background-color:#FDFDFD;
+            background-color:#FCFCFC;
             opacity:1;
             height:160px;
             width: 350px;
@@ -260,10 +270,10 @@ label {
             font-size: 1.25em
         }
     .sideBarHeader{
-        top:0px;left:0px;right:0px;height:24px;position:relative;
+        top:10px;left:0px;right:0px;height:24px;position:relative;
         margin-left: 5px;
         background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.2);
+        background-color: rgba(245,245,245,0.1);
         color: #444444;
         font-weight: 600;
         font-size: 0.82em;
@@ -275,13 +285,18 @@ label {
                     top:0px
             }
     .sideBarTable {width:300px;text-align:left;}
+    
+    .news {
+        background-color:#FFF;
+        margin-left: 20px;}
+        
     #MainBlock{
         position: absolute;
         right: 0px;
         width: 400px;
         bottom: 0px;
         background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.4);
+        background-color: rgba(245,245,245,0.6);
         -moz-border-radius:6px;
         border-radius:6px;
         border: 1px solid #aaaaaa;
@@ -297,6 +312,10 @@ label {
             margin-right:5px;
             overflow: hidden;
             position: relative
+        }
+        #MenuVerticalLeft{
+            position: absolute;
+            top: 5px;
         }
         #MenuVerticalRight{
             position: absolute;
@@ -349,7 +368,7 @@ label {
     right: 410px;
     width: 92px;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.4);
+    background-color: rgba(245,245,245,0.6);
     -moz-border-radius:6px;
     border-radius:6px;
     border: 1px solid #aaaaaa;
@@ -396,7 +415,7 @@ label {
     border-radius:6px;
     border: 1px solid #aaaaaa;
     background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.7);}
+    background-color: rgba(245,245,245,0.3);}
 
 #zoomin-helper{
     position: relative;
@@ -537,21 +556,29 @@ label {
 padding:3px 3px 3px 3px;
 }
 
-#sideBarControls {margin-right:5px;}
+#sideBarControls {margin-right:15px;}
 .sideBarControlsButton{font-size:1.5em;}
 .closeBox{
     position: relative;
-        top:0px;
+        top:-8px;
         left:0px;
         width: 22px;
         height:22px;
-/*
-        margin: 0px 0px 5px -3px ;
-*/
-        padding:0px;
+        margin-right: 20px;padding:0px;
         float:left;
         z-index: 1000;
 }
+.menuBox{
+    position: relative;
+        top:0px;
+        left:5px;
+        width: 22px;
+        height:22px;
+        margin-right: 20px;padding:0px;
+        float:left;
+        z-index: 1000;
+}
+#menuExt { display: none;}
 
 .statsIcon {
 	vertical-align: middle;

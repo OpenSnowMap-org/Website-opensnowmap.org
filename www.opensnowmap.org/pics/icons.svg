@@ -10072,30 +10072,39 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.1112698"
-     inkscape:cx="-1045.2024"
-     inkscape:cy="-43.224835"
+     inkscape:zoom="6.2225396"
+     inkscape:cx="-64.339341"
+     inkscape:cy="50.333988"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1865"
      inkscape:window-height="1056"
      inkscape:window-x="55"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:snap-global="false"
+     inkscape:snap-global="true"
      inkscape:snap-grids="false"
      inkscape:snap-nodes="true"
      inkscape:snap-to-guides="false"
      inkscape:object-paths="true"
-     showguides="false"
+     showguides="true"
      inkscape:guide-bbox="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:snap-intersection-paths="true"
-     inkscape:snap-midpoints="true">
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-nodes="true"
+     inkscape:bbox-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true">
     <inkscape:grid
        type="xygrid"
        id="grid4707"
@@ -10130,7 +10139,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="guids"
-     style="display:inline"
+     style="display:none"
      transform="translate(700,100)">
     <rect
        ry="0.78400099"
@@ -12717,7 +12726,10 @@
        height="49.019962"
        width="49.019962"
        id="rect7134"
-       style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008" />
+       style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008"
+       inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/collapse-22_lt.png"
+       inkscape:export-xdpi="39.584198"
+       inkscape:export-ydpi="39.584198" />
     <rect
        style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008"
        id="rect7136"
@@ -12726,7 +12738,10 @@
        x="-749.50964"
        y="-149.50986"
        rx="0.62658054"
-       ry="0.78400099" />
+       ry="0.78400099"
+       inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/close-22_lt.png"
+       inkscape:export-xdpi="39.584198"
+       inkscape:export-ydpi="39.584198" />
     <rect
        style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008"
        id="rect7138"
@@ -12753,7 +12768,10 @@
        x="-799.51001"
        y="-99.509964"
        rx="0.62658054"
-       ry="0.78400099" />
+       ry="0.78400099"
+       inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/collapse-22-hover_lt"
+       inkscape:export-xdpi="39.584198"
+       inkscape:export-ydpi="39.584198" />
     <rect
        ry="0.78400099"
        rx="0.62658054"
@@ -12762,7 +12780,10 @@
        height="49.019962"
        width="49.019962"
        id="rect7145"
-       style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008" />
+       style="opacity:0.5;fill:#000000;fill-opacity:0.05235602;stroke:#000000;stroke-opacity:0.26178008"
+       inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/close-22-hover_lt.png"
+       inkscape:export-xdpi="39.584198"
+       inkscape:export-ydpi="39.584198" />
     <rect
        ry="0.78400099"
        rx="0.62658054"
@@ -17044,19 +17065,18 @@
     </g>
     <g
        id="g5903">
-      <path
+      <circle
          inkscape:export-ydpi="82.368874"
          inkscape:export-xdpi="82.368874"
          inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
          transform="matrix(3.9336229,0,0,3.9336226,-304.84509,995.97056)"
-         d="M 12.776412,7.9803438 A 5.189189,5.189189 0 0 1 7.5872235,13.169533 5.189189,5.189189 0 0 1 2.3980346,7.9803438 5.189189,5.189189 0 0 1 7.5872235,2.7911549 5.189189,5.189189 0 0 1 12.776412,7.9803438 Z"
+         id="path2816-3"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.31567657;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:type="arc"
          sodipodi:ry="5.189189"
          sodipodi:rx="5.189189"
          sodipodi:cy="7.9803438"
-         sodipodi:cx="7.5872235"
-         id="path2816-3"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.31567657;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         sodipodi:type="arc" />
+         sodipodi:cx="7.5872235" />
       <g
          inkscape:export-ydpi="82.368874"
          inkscape:export-xdpi="82.368874"
@@ -27762,6 +27782,124 @@
          id="circle9786"
          transform="matrix(0.04935526,0,0,0.04935526,-0.49451499,-0.43126767)"
          style="fill:#000000;fill-opacity:1" />
+    </g>
+    <g
+       id="g8745"
+       transform="translate(-0.02279472,0.42107876)">
+      <ellipse
+         ry="20.412312"
+         rx="20.412313"
+         style="fill:#ffffff;fill-opacity:0.11764706;stroke:#ffffff;stroke-width:5.17537546;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.11764706"
+         id="circle8725"
+         inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+         inkscape:export-xdpi="82.368874"
+         inkscape:export-ydpi="82.368874"
+         cx="-724.97687"
+         cy="876.94135" />
+      <g
+         style="stroke:#545454;stroke-opacity:1"
+         id="g8727"
+         transform="matrix(3.0547991,0,0,3.0547948,-748.89152,-2313.8945)"
+         inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+         inkscape:export-xdpi="82.368874"
+         inkscape:export-ydpi="82.368874">
+        <path
+           inkscape:connector-curvature="0"
+           id="path8729"
+           d="m 4.5378892,1041.1304 6.6938878,6.6939"
+           style="fill:none;stroke:#545454;stroke-width:1.67253625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        <path
+           inkscape:connector-curvature="0"
+           style="fill:none;stroke:#545454;stroke-width:1.67253625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 11.231777,1041.1304 -6.6938878,6.6939"
+           id="path8731" />
+      </g>
+    </g>
+    <g
+       id="g8751"
+       transform="translate(2.5484943,0.60206326)">
+      <ellipse
+         cy="926.76025"
+         cx="-727.54816"
+         inkscape:export-ydpi="82.368874"
+         inkscape:export-xdpi="82.368874"
+         inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+         id="ellipse8737"
+         style="fill:#ffffff;fill-opacity:0.11764706;stroke:#ffffff;stroke-width:5.17537546;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.11764706"
+         rx="20.412313"
+         ry="20.412312" />
+      <g
+         inkscape:export-ydpi="82.368874"
+         inkscape:export-xdpi="82.368874"
+         inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+         transform="matrix(3.0547991,0,0,3.0547948,-751.46282,-2264.0756)"
+         id="g8739"
+         style="stroke:#333333;stroke-opacity:1">
+        <path
+           style="fill:none;stroke:#333333;stroke-width:1.67253625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 4.5378892,1041.1304 6.6938878,6.6939"
+           id="path8741"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path8743"
+           d="m 11.231777,1041.1304 -6.6938878,6.6939"
+           style="fill:none;stroke:#333333;stroke-width:1.67253625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g8871">
+      <g
+         id="g8829"
+         transform="translate(-50.252388,0.42107876)">
+        <ellipse
+           ry="20.412312"
+           rx="20.412313"
+           style="fill:#ffffff;fill-opacity:0.11764706;stroke:#ffffff;stroke-width:5.17537546;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.11764706"
+           id="ellipse8831"
+           inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+           inkscape:export-xdpi="82.368874"
+           inkscape:export-ydpi="82.368874"
+           cx="-724.97687"
+           cy="876.94135" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path8835"
+           d="m -735.20111,866.7171 10.22424,10.22424"
+           style="fill:none;stroke:#545454;stroke-width:5.109;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path8837"
+           d="m -714.75263,866.7171 -10.22424,10.22424"
+           style="fill:none;stroke:#545454;stroke-width:5.109;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      </g>
+    </g>
+    <g
+       id="g8877">
+      <ellipse
+         ry="20.412312"
+         rx="20.412313"
+         style="fill:#ffffff;fill-opacity:0.11764706;stroke:#ffffff;stroke-width:5.17537546;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.11764706"
+         id="ellipse8841"
+         inkscape:export-filename="/home/yves/KIMSUFI/www.git/beta.pistes-nordiques.org/pics/close-simple.png"
+         inkscape:export-xdpi="82.368874"
+         inkscape:export-ydpi="82.368874"
+         cx="-775.22925"
+         cy="927.3623" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#333333;stroke-width:5.10925865;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -785.28158,916.96623 10.28155,10.39609"
+         id="path8845"
+         inkscape:connector-curvature="0" />
+      <path
+         sodipodi:nodetypes="cc"
+         id="path8847"
+         d="m -764.8331,916.96623 -10.16693,10.39609"
+         style="fill:none;stroke:#333333;stroke-width:5.10925865;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
