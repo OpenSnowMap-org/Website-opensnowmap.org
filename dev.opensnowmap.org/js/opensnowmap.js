@@ -50,8 +50,8 @@ var permalink_ofsetter;
 var zoomBar;
 var PRINT_TYPE = 'small';
 var map;
-var lat = 46.82084;
-var lon = 6.39942;
+var lat = 0;
+var lon = 0;
 var zoom = 2;//2
 var linesLayer;
 var pointsLayer;
