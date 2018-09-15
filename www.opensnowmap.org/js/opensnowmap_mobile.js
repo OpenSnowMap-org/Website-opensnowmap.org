@@ -45,9 +45,9 @@ var LOC_ONCE=false;
 var geoWatchID;
 var zoomBar;
 var map;
-var lat=46.82084;
-var lon=6.39942;
-var zoom=3;//2
+var lat=0;
+var lon=0;
+var zoom=1;//2
 var position;
 var lengthes;
 var today=new Date();
