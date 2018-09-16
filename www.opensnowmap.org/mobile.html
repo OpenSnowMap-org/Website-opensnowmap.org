@@ -133,23 +133,52 @@
 						
 						<div class="clear"></div>
 						<hr class="hrmenu">
-						<i><span class="i18n menuInfo" i18nText="base_map"></span></i>
-						<br/>
-						<div id="OSMBaseLAyer"
-							class="Button fastclick textButton">
-						Openstreetmap
-						</div>
-						<div id="SnowBaseLAyer"
-							class="Button fastclick textButton">
-						SnowMap
-						</div>
-						<div id="high_dpi"
-							class="Button fastclick textButton">
-						High DPI
-						</div>
+                        
+                        <div id="mapSettingsDropDown"
+                          class="Button fastclick textButton">
+						  <span class="i18n " i18nText="base_map"></span>
+                        </div>
+                        <div id="mapSettingsDropDownContent"
+                            class="menuDropDownContent" >
+                            <div id="OSMBaseLAyer"
+                                class="Button fastclick textButtonDropDown">
+                            Openstreetmap
+                            </div>
+                            <div id="SnowBaseLAyer"
+                                class="Button fastclick textButtonDropDown">
+                            SnowMap
+                            </div>
+                            <div id="high_dpi"
+                                class="Button fastclick textButtonDropDown">
+                            High DPI
+                            </div>
+                            <div class="clear"></div>
+                            <hr class="hrmenu">
+                        </div>
+                        
+                        <div id="lastEditsDropDown"
+                          class="Button fastclick textButton">
+						  <span class="i18n menuInfo" i18nText="last_edits"></span>
+                        </div>
+                        <div id="lastEditsDropDownContent"
+                            class="menuDropDownContent" >
+                            <div id="dailyVector"
+                                class="Button fastclick textButtonDropDown" >
+                            <span class="i18n" i18nText="yesterday"></span>
+                            </div>
+                            <div id="weekVector"
+                                class="Button fastclick textButtonDropDown"  >
+                            <span class="i18n" i18nText="weekly"></span>
+                            </div>
+                            <div id="noVector"
+                                class="Button fastclick textButtonDropDown" >
+                            X
+                            </div>
+                            <div class="clear"></div>
+                            <hr class="hrmenu">
+                        </div>
+                        
 						<div class="clear"></div>
-						
-						<hr class="hrmenu">
 						
 						<div id="legendButton" 
 							class="Button fastclick textButton">
@@ -185,22 +214,6 @@
                         
 						<hr class="hrmenu">
 						
-						<i><span class="i18n menuInfo" i18nText="last_edits"></span></i>
-						<br/>
-						<div id="dailyVector"
-							class="Button fastclick textButton" >
-						<span class="i18n" i18nText="yesterday"></span>
-						</div>
-						<div id="weekVector"
-							class="Button fastclick textButton"  >
-						<span class="i18n" i18nText="weekly"></span>
-						</div>
-						<div id="noVector"
-							class="Button fastclick textButton" >
-						X
-						</div>
-						<div class="clear"></div>
-						<hr class="hrmenu">
 		</div>
 		
 		<div id="legend">
