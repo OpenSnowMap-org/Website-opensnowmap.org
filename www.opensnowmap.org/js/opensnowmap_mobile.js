@@ -245,7 +245,7 @@ function showlegend() {
     hideexcept('legend');
     document.getElementById('legend').style.display='inline';
     document.getElementById('content').style.display='inline';
-    document.getElementById('content_title').innerHTML='&nbsp;'+_('map_key').replace('<br/>',' ');
+    document.getElementById('content_title').innerHTML='&nbsp;'+_('MAP_KEY').replace('<br/>',' ');
     document.getElementById('content').scrollTop = 0;
 }
 function showabout() {
@@ -419,6 +419,8 @@ function get_stats() {
             for (k = 0; k < Object.keys(lengthes).length; k++) {
                 data[Object.keys(lengthes)[k]] = lengthes[Object.keys(lengthes)[k]];
             }
+            
+            fillData('menu');
         }
     };
     XMLHttp.send();
@@ -1742,6 +1744,18 @@ function translateDiv(divID) {
     var elements = div.getElementsByClassName('i18n');
     for (i = 0; i < elements.length; i++) {
         elements[i].innerHTML = _(elements[i].getAttribute('i18nText'));
+    }
+    return true;
+}
+
+function fillData(divID) {
+    var div = document.getElementById(divID);
+    var elements = div.getElementsByClassName('data');
+    for (i = 0; i < elements.length; i++) {
+        elements[i].innerHTML = data[elements[i].getAttribute('dataText')];
+        if (elements[i].getAttribute('dataText') == 'date'){
+            elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0];
+        }
     }
     return true;
 }

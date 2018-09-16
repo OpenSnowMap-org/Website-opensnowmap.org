@@ -44,7 +44,10 @@ select, option, input{
 hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
 hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
-
+.news {
+        font-size: 0.8em;
+    
+}
 .clear { clear: both}
 /*use to place divs side by side*/
 
@@ -193,8 +196,8 @@ position: absolute;
 .iconButton{
     width:36px;
     height:36px;
-    margin-left: 3px;
-    margin-right:3px;
+    margin-left: 1px;
+    margin-right:1px;
     -moz-border-radius:3px;
     border-radius:3px;
     padding: 2px 2px 2px 2px;
@@ -235,7 +238,7 @@ position: absolute;
     margin-right: 0px;
     margin-top: 0px;
     margin-bottom: 1px;
-    max-width: 180px;
+    max-width: 170px;
     text-align:left;
 }
 
