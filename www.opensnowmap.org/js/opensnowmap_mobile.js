@@ -240,6 +240,7 @@ function showmenu() {
     document.getElementById('content').style.display='inline';
     document.getElementById('content_title').innerHTML='';
     document.getElementById('content').scrollTop = 0;
+    
 }
 function showlegend() {
     hideexcept('legend');
@@ -432,7 +433,9 @@ function page_init(){
     document.addEventListener('DOMContentLoaded', function () {
     var button = document.querySelector(".fastclick");
     new FastClick(document.body);
+    
     });
+    
     updateZoom();
     initFlags();
     get_stats();
@@ -1658,6 +1661,9 @@ function map_init(){
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
     
+    document.getElementsByClassName('olMapViewport')[0].addEventListener('touchstart', function(e){
+        closecontent();
+    });
     permalink_simple = new OpenLayers.Control.Permalink("permalink",
     server+'mobile.html',{'createParams': permalink0Args});
     map.addControl(permalink_simple);
@@ -1669,12 +1675,12 @@ function map_init(){
     
     map.events.on({ "movestart": function (e) {
         updateZoom();
-        closecontent();
+        //~ closecontent();
     }
     });
     map.events.on({ "zoomend": function (e) {
         updateZoom();
-        closecontent();
+        //~ closecontent();
     }
     });
     map.events.on({ "click": function (e) {
