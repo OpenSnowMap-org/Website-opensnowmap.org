@@ -15,7 +15,7 @@
    id="svg4194"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="mapkey_2019.svg"
+   sodipodi:docname="mapkey.svg"
    inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/www.opensnowmap.org/pics/mapkey_2019.png"
    inkscape:export-xdpi="54.554794"
    inkscape:export-ydpi="54.554794">
@@ -26,17 +26,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.41254427"
-     inkscape:cx="-297.39979"
-     inkscape:cy="1046.7362"
+     inkscape:zoom="0.80004558"
+     inkscape:cx="357.37538"
+     inkscape:cy="2146.6735"
      inkscape:document-units="px"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="g5785"
      showgrid="false"
-     inkscape:window-width="1865"
-     inkscape:window-height="1056"
-     inkscape:window-x="55"
+     inkscape:window-width="1191"
+     inkscape:window-height="1028"
+     inkscape:window-x="729"
      inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="4"
      fit-margin-right="4"
@@ -98,7 +98,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2498,7 +2498,7 @@
          y="1569.8258"
          x="351.65436"
          id="tspan4970"
-         sodipodi:role="line">piste:type = snowpark</tspan></text>
+         sodipodi:role="line">piste:type = ski_jump</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#313131;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3638,17 +3638,21 @@
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#313131;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="352.78961"
-       y="1901.7034"
+       y="1888.2034"
        id="text5518"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5520"
          x="352.78961"
-         y="1901.7034">sport = ice_skating / hockey /</tspan><tspan
+         y="1888.2034">sport = ice_skating / ice_hockey /</tspan><tspan
          sodipodi:role="line"
          x="352.78961"
-         y="1917.3284"
-         id="tspan5593">             curling / ice_stock</tspan></text>
+         y="1903.8284"
+         id="tspan5593">             curling / ice_stock</tspan><tspan
+         sodipodi:role="line"
+         x="352.78961"
+         y="1919.4534"
+         id="tspan4778">leisure = ice_rink</tspan></text>
     <path
        d="m 275.91969,1708.6026 q -4.6875,4.6875 -11.48438,8.4375 -6.79687,3.9844 -9.14062,1.6406 -2.10938,-2.1094 1.64062,-8.9062 3.98438,-6.7969 8.67188,-11.4844 2.10937,-2.1094 5.15625,-2.1094 3.04687,0 5.15625,2.3438 2.10937,2.1093 2.10937,5.1562 0,2.8125 -2.10937,4.9219 z m 4.21875,-25.3125 q -4.6875,4.4531 -11.48438,8.4375 -6.79687,3.9844 -9.14062,1.6406 -2.10938,-2.3437 1.64062,-9.1406 3.98438,-6.7969 8.67188,-11.25 2.10937,-2.1094 5.15625,-2.1094 3.04687,0 5.15625,2.1094 2.10937,2.1094 2.10937,5.1562 0,3.0469 -2.10937,5.1563 z"
        style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:60px;line-height:125%;font-family:Ski;-inkscape-font-specification:'Ski Medium';letter-spacing:0px;word-spacing:0px;fill:#f07bbd;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3681,7 +3685,7 @@
          y="1481.538"
          x="352.78961"
          sodipodi:role="line"
-         id="tspan5579"></tspan><tspan
+         id="tspan5579" /><tspan
          y="1497.163"
          x="352.78961"
          sodipodi:role="line"
