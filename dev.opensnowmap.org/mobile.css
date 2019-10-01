@@ -91,9 +91,9 @@ color: black;
 
 #zoom{
     position: absolute;
-    top:75px;
+    top:68px;
     right: 15px;
-    width: 30px;
+    width: 24px;
     font-size: 0.8em;
     text-align: center;
     vertical-align: center;
@@ -108,8 +108,8 @@ color: black;
 #customZoom {
     z-index: 1001;
     position: absolute;
-    top: 5px;
-    right: 47px;
+    top: 8px;
+    right: 41px;
 }
 #customZoom a {
     text-decoration: none;
@@ -117,24 +117,21 @@ color: black;
     display: block;
     text-align: center;
     vertical-align: center;
-/*
-    font-weight: bold;
-*/
     color: #222;
     background-color: #FFF;
     opacity: 0.5;
     border: 1px solid #111;
     border-radius: 3px;
-    width: 30px;
-    line-height: 30px;
-    height:30px;
+    width: 24px;
+    line-height: 24px;
+    height:24px;
     font-size: 1.2em;
 }
 #customZoom a:hover {
     background: #036;
 }
 #customZoomOut {
-    top: 34px;
+    top: 28px;
 }
 #content-control {
     width: 100%;
