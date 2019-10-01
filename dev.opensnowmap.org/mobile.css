@@ -91,16 +91,16 @@ color: black;
 
 #zoom{
     position: absolute;
-    top:72px;
+    top:75px;
     right: 15px;
     width: 30px;
     font-size: 0.8em;
     text-align: center;
     vertical-align: center;
-    color: #333;
-    background-color: #F5F5F5;
+    color: #222;
+    background-color: #FFF;
     opacity: 0.5;
-    border: 1px solid #888;
+    border: 1px solid #111;
     border-radius: 3px;
     opacity: 0.5;
     z-index: 1000;
@@ -117,11 +117,13 @@ color: black;
     display: block;
     text-align: center;
     vertical-align: center;
+/*
     font-weight: bold;
-    color: #000;
-    background-color: #F5F5F5;
+*/
+    color: #222;
+    background-color: #FFF;
     opacity: 0.5;
-    border: 1px solid #888;
+    border: 1px solid #111;
     border-radius: 3px;
     width: 30px;
     line-height: 30px;
@@ -132,11 +134,12 @@ color: black;
     background: #036;
 }
 #customZoomOut {
-    top: 32px;
+    top: 34px;
 }
 #content-control {
     width: 100%;
-    background-color:#FAFAFA;
+    background-color:#FFF;
+    line-height: 1.8;
 }
 .closebox {float: right;}
 #header{
@@ -152,8 +155,8 @@ position: absolute;
     width: 100%;
     height: 40px;
     vertical-align: center;
-    background-color:#FAFAFA;
-    background-image: url('pics/opensnowmap_title_thin_400.png');
+    background-color:#FFF;
+    background-image: url('pics/opensnowmap_title_thin_420.png');
     background-repeat: no-repeat;
     background-position: right center;
     background-attachment: scroll;
@@ -163,12 +166,14 @@ position: absolute;
 .Button {
     background-color:#FDFDFD;
     border-style:solid;
-    border-width:1px;
-    border-color: #eee;
-    padding: 1px;
+    border-width:0px 0px 0px 0px;
+    border-color: #1A1A1A;
+    padding: 5px;
     margin: 2px;
+/*
     -moz-border-radius:5px;
     border-radius:5px;
+*/
 }
 .noBorder {
     border-width:0px;
@@ -176,7 +181,7 @@ position: absolute;
 .ButtonStatic {
     background-color:#FDFDFD;
     border-style:solid;
-    border-width:1px;
+    border-width:2px;
     border-color: #ccc;
     padding: 1px;
     margin: 2px;
@@ -198,8 +203,11 @@ position: absolute;
     height:36px;
     margin-left: 1px;
     margin-right:1px;
+    border-width:0px;
+/*
     -moz-border-radius:3px;
     border-radius:3px;
+*/
     padding: 2px 2px 2px 2px;
 }
 .reduceButton{
@@ -210,7 +218,7 @@ position: absolute;
     margin-left:15px;
 }
 .textButton{
-    font-weight: 700;
+    font-weight: 500;
     color: #444444;
     font-size: 0.8em;
     text-decoration: none;
@@ -226,7 +234,7 @@ position: absolute;
     text-align:left;
 }
 .textButtonDropDown{
-    font-weight: 700;
+    font-weight: 500;
     color: #444444;
     font-size: 0.8em;
     text-decoration: none;
@@ -350,7 +358,7 @@ float:right;
     font-size: 0.7em;}
 #content {
         position: fixed;
-        top: 35px;
+        top: 40px;
         bottom: 0px;
         left: 0px;
         right:10px;
@@ -359,14 +367,16 @@ float:right;
         -moz-border-radius:6px;
         border-radius:6px;
 */
-        border: 1px solid #AAAAAA;
-        background-color:#FFF;
+        border-style: solid;
+        border-color: #AAAAAA;
+        border-width: 0px 1px 1px 1px;
+        background-color: #FFF;
         z-index: 1000;
         overflow: auto;
      }
 
 body {font-size: 1em;}
-  #content {max-width:210px;width:210px;top: 36px;}
+  #content {max-width:210px;width:210px;top: 39px;}
   .button-img {  width: 26px;}
   .iconButton {  width: 30px;height: 30px;}
   .flagMenuImg {margin: 8px 5px 8px 5px;width: 20px;}
