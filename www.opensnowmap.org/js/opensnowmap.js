@@ -42,8 +42,10 @@ var EXT_MENU = true;
 var EDIT_SHOWED = false;
 var CATCHER;
 var MARKER = false;
+var LOC=false;
+var LOC_ONCE=false;
 var ONCE = false;
-var DONATE_ONCE = true;
+//~ var DONATE_ONCE = true;
 var BASELAYER = 'snowbase';
 var permalink_id;
 var permalink_ofsetter;
@@ -232,14 +234,30 @@ function infoMode() {
 }
 function showMenu() {
     document.getElementById('MenuBlock').style.display = 'block';
-    document.getElementById('menuExt').style.display = 'none';
+    //~ document.getElementById('menuExt').style.display = 'none';
     EXT_MENU = true;
     resize_sideBar();
     return true;
 }
 function closeMenu() {
     document.getElementById('MenuBlock').style.display = 'none';
-    document.getElementById('menuExt').style.display = 'block';
+    //~ document.getElementById('menuExt').style.display = 'block';
+    EXT_MENU = false;
+    resize_sideBar();
+    return true;
+}
+function toggleMenu() {
+    if (document.getElementById('MenuBlock').style.display == 'none')
+        {
+            document.getElementById('MenuBlock').style.display = 'block';
+            EXT_MENU = true;
+        }
+    else {
+        document.getElementById('MenuBlock').style.display = 'none';
+        EXT_MENU = false;
+        }
+        
+    //~ document.getElementById('menuExt').style.display = 'block';
     EXT_MENU = false;
     resize_sideBar();
     return true;
@@ -268,24 +286,24 @@ function close_sideBar() {
     CATCHER = false;
     ONCE = true;
     
-    if (DONATE_ONCE) {
-        DONATE_ONCE = false;
-    } else {
-        close_donate();
-    }
+    //~ if (DONATE_ONCE) {
+        //~ DONATE_ONCE = false;
+    //~ } else {
+        //~ close_donate();
+    //~ }
 
 }
 function close_helper() {
     close_sideBar();
 }
-function close_donate() {
-    document.getElementById('donate-centering').style.display='none';
-}
+//~ function close_donate() {
+    //~ document.getElementById('donate-centering').style.display='none';
+//~ }
 function show_catcher() {
     close_sideBar();
     document.getElementById('sideBar').style.display = 'inline';
     CATCHER = true;
-    SIDEBARSIZE = 240;
+    SIDEBARSIZE = 260;
     resize_sideBar();
 
     //~ var title = document.createElement('i');
@@ -458,25 +476,25 @@ function getWinHeight() {
 }
 function resize_sideBar() {
     if (document.getElementById('sideBar').style.display !== 'none') {
-        document.getElementById('sideBar').style.bottom = 10 + document.getElementById("MainBlock").clientHeight + 'px';
+        document.getElementById('sideBar').style.bottom = 4 + document.getElementById("MainBlock").clientHeight + 'px';
         var sidebars = document.getElementsByClassName('sideBarContent');
         if (SIDEBARSIZE == 'full'){
-            document.getElementById('sideBar').style.height = (getWinHeight() - document.getElementById("MainBlock").clientHeight - 35) + "px";
+            document.getElementById('sideBar').style.height = (getWinHeight() - document.getElementById("MainBlock").clientHeight - 28) + "px";
             document.getElementById('sideBar').style.display = 'inline';
 
             for (i = 0; i < sidebars.length; i++) {
-                sidebars[i].style.height = (document.getElementById("sideBar").clientHeight - 33) + "px";
+                sidebars[i].style.height = (document.getElementById("sideBar").clientHeight - 58) + "px";
             }
-            document.getElementById('sideBarInBox').style.height = (document.getElementById("sideBar").clientHeight - 33) + "px";
+            document.getElementById('sideBarInBox').style.height = (document.getElementById("sideBar").clientHeight - 58) + "px";
         } else {
             document.getElementById('sideBar').style.display = 'inline';
             document.getElementById('sideBar').style.height = SIDEBARSIZE + 'px';
 
 
             for (i = 0; i < sidebars.length; i++) {
-                sidebars[i].style.height = SIDEBARSIZE - 35 + 'px';
+                sidebars[i].style.height = SIDEBARSIZE - 60 + 'px';
             }
-            document.getElementById('sideBarInBox').style.height = SIDEBARSIZE - 35 + 'px';
+            document.getElementById('sideBarInBox').style.height = SIDEBARSIZE - 60 + 'px';
         }
     }
     return true;
@@ -699,6 +717,7 @@ function checkKey(e) {
 }
 function echap() {
     
+    document.getElementById('searchDiv').style.display = 'none';
     close_sideBar();
     // close extendedmenu
     //~ var em = document.getElementById('extendedmenu');
@@ -729,7 +748,7 @@ function page_init() {
         };
     translateDiv('body');
     updateTooltips();
-    document.getElementById("desktopswitch").style.backgroundColor='#CCC';
+    //~ document.getElementById("desktopswitch").style.backgroundColor='#CCC';
     document.getElementsByClassName('olControlPanZoomBar')[0].style.top="38px"; 
     document.getElementsByClassName('olControlPanZoomBar')[0].style.left="0px";
 
@@ -882,6 +901,8 @@ function SearchByName(name) {
     document.getElementById('nominatim_results').className = document.getElementById('nominatim_results').className.replace('shown', 'hidden');
     document.getElementById('piste_search_results').className = document.getElementById('piste_search_results').className.replace('shown', 'hidden');
     document.search.nom_search.value = '';
+    
+    document.getElementById('searchDiv').style.display = 'none';
     getByName(name);
     nominatimSearch(name);
     return true;
@@ -1302,7 +1323,7 @@ function onZoomEnd() {
     ONCE = true;
     if (CATCHER && ONCE){
         close_sideBar();
-        document.getElementById('donate-centering').style.display='none';
+        //~ document.getElementById('donate-centering').style.display='none';
         CATCHER = false;
         }
     //~ if (map.getZoom()<11){
@@ -2670,7 +2691,7 @@ function updateTooltips() {
     document.getElementById("printMenuButton").setAttribute('title', _('print-tooltip'));
     document.getElementById("permalink.marker").setAttribute('title', _('marker-tooltip'));
     document.getElementById("permalink.simple").setAttribute('title', _('link-tooltip'));
-    document.getElementById("desktopswitch").setAttribute('title', _('desktop-tooltip'));
+    //~ document.getElementById("desktopswitch").setAttribute('title', _('desktop-tooltip'));
     document.getElementById("mobileswitch").setAttribute('title', _('mobile-tooltip'));
     document.getElementById("listPistesMenuButton").setAttribute('title', _('list_pistes-tooltip'));
 
@@ -2719,4 +2740,43 @@ function cloneNodeAndEvents(oldNode) {
 
 
     return newNode;
+}
+
+
+//======================================================================
+// LOCATION
+function toggleLocation() {
+    if (LOC) {
+        navigator.geolocation.clearWatch(geoWatchID);
+        LOC=false;
+        LOC_ONCE=false;
+        document.getElementById('location').style.backgroundColor='#FAFAFA';
+    } 
+    else {
+        if (navigator.geolocation){
+            LOC=true;
+            geoWatchID = navigator.geolocation.watchPosition(showLocation,errorLocation,{
+                enableHighAccuracy: true, maximumAge: 300000, timeout: 20000,frequency: 15000});
+        }
+    }
+}
+function showLocation(position) {
+    document.getElementById('location').style.backgroundColor='#DDD';
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  //alert("Latitude : " + latitude + " Longitude: " + longitude);
+  var nlonLat = new OpenLayers.LonLat(longitude, latitude).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+  if (LOC_ONCE) {
+      map.setCenter(nlonLat, map.getZoom());
+    }
+  else {
+    map.setCenter(nlonLat, 16);
+    LOC_ONCE=true;
+  }
+}
+function errorLocation(error) {
+    alert(error.message);
+    navigator.geolocation.clearWatch(geoWatchID);
+    LOC=false;
+    document.getElementById('location').style.backgroundColor='#FAFAFA';
 }

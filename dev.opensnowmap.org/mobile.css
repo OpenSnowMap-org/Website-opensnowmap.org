@@ -347,7 +347,7 @@ div.olMapViewport {
 float:right;
 }
   .flagMenuImg {vertical-align: middle;}
-.button-img {margin: 2px 2px 2px 2px;}
+
 .textImg {vertical-align:middle;}
 #piste_search_results{
     font-size: 0.7em;}
@@ -375,6 +375,7 @@ float:right;
 body {font-size: 1em;}
   #content {max-width:210px;width:210px;top: 39px;}
   .button-img {  width: 26px;}
+  .button-img {margin: 2px 2px 2px 2px;}
   .iconButton {  width: 30px;height: 30px;}
   .flagMenuImg {margin: 8px 5px 8px 5px;width: 20px;}
   #titleimg {width: 200px;} 

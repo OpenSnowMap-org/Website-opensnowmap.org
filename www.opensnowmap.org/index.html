@@ -75,23 +75,21 @@
 -->
 			<div id="sideBar" class="float-right">
 				<div id="sideBarHeader" class="sideBarHeader">
-					<div class="closeBox" id="sideBarCloseControl"
-						onclick="close_sideBar();echap();"
-						onmouseover="document.images['sideBarClose'].src='pics/close-22-hover_lt.png'"
-						onmouseout="document.images['sideBarClose'].src='pics/close-22_lt.png'">
-						<img name="sideBarClose"  src="pics/close-22_lt.png">
+					<div class="Button textButton" id="sideBarCloseControl"
+						onclick="close_sideBar();echap();">
+						<img class="button-img" name="sideBarClose"  src="pics/reduce_down_thin_64.png">
 					</div>
 					<div id="sideBarTitle"></div>
 					<div id="sideBarControls">
-						<div id="next" class="Button textButton float-right sideBarControlsButton"  onclick="nextResult();"
+						<div id="next" class="Button float-right sideBarControlsButton"  onclick="nextResult();"
 						>&nbsp;&raquo;&nbsp;</div>
-						<div id="prev" class="Button textButton float-right sideBarControlsButton"  onclick="prevResult();"
+						<div id="prev" class="Button float-right sideBarControlsButton"  onclick="prevResult();"
 						>&nbsp;&laquo;&nbsp;</div>
-						<div id="prev" class="Button textButton float-right"  onclick="show_helper();"
+						<div id="prev" class="Button  float-right"  onclick="show_helper();"
 						><span class="i18n" i18nText="HELP"></span></div>
 					</div>
-					<br class="clear" />
 				</div>
+                    <hr class="hrmenu">
 				<div id="sideBarInBox" class="sideBarInBox">
 					<!-- The content-->
 					<div id="pisteListElementsProtos" class="hidden sideBarContent"> <!-- div to clone to build pistes lists -->
@@ -315,20 +313,22 @@
 							</a>
 -->
 						</div>
-							<p><b>
+							<b>
 							<span itemprop="summary">
 								<span id="full_length">xxxx</span> 
 								<span class="i18n" i18nText="piste_length">xxxx</span>
 							</span>
 							<span class="i18n" i18nText="you">xxxx</span></b>
+<!--
 							<a class="amenu i18n" 
 							href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;" 
 							i18nText="EDIT">
 							xxxx
 							</a>
-							</p>
+-->
+							
 						<div class="news">
-                          <b><span class="data" dataText="date">xxxx</span> :</b><br/>
+                          <b><span class="data" dataText="date">xxxx</span></b><br/>
 						  <table border="0">
 							<tr>
 							<td><img src="pics/nordic-nb-20.png">&nbsp;</td>
@@ -350,7 +350,7 @@
 						  </table>
                         </div>
                         <div class="news">
-                            <b>News :</b><br/>
+                            <b>News</b><br/>
                             <a class="amenuLt" target="_blank" 
                               href="http://blog.opensnowmap.org/post/2018/09/21/Comparison-of-Skimap.org-and-OpenStreetMap-data"
                               >&bullet;&nbsp;Comparison of Skimap.org and OpenStreetMap data&nbsp;&raquo;</a>
@@ -485,6 +485,7 @@
 			<br class="clear" />
 			<div id="MainBlock">
 				<div id="MenuBlock">
+<!--
 					<div id="MenuVerticalLeft" class="IconBarVertical">
 						<div class="closeBox" id="mainCloseControl"
 						onclick="closeMenu();"
@@ -493,6 +494,7 @@
 						<img name="menuClose"  src="pics/collapse-22_lt.png"></div>
 						<br class="clear" />
 					</div>
+-->
 					
 					<div id="MenuVerticalRight" class="">
 <!--
@@ -503,77 +505,120 @@
 							<div class="Button textButton float-left" onclick="close_sideBar();show_settings();return false;"
 							id="settingsMenuButton">
 								<span class="i18n" i18nText="SETTINGS"></span></div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left" onclick="close_sideBar();show_legend();return false;"
 							id="mapkeyMenuButton">
 								<span class="i18n" i18nText="MAP_KEY"></span></div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left" onclick="close_sideBar();show_edit();return false;"
 							id="editMenuButton">
 								<span class="i18n" i18nText="EDIT"></span></div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                                
 							<div class="Button textButton float-left" onclick="close_sideBar();show_about();return false;"
 							id="aboutMenuButton">
 								<span class="i18n" i18nText="ABOUT"></span></div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left" onclick="show_helper();return false;"
 							id="aboutMenuButton">
 								<span class="i18n" i18nText="HELP"></span></div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left" onclick="window.open('http://blog.opensnowmap.org');"
 							id="blogMenuButton">
 								<span class="i18n" i18nText="BLOG"></span>&nbsp;&raquo;</div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left"  onclick="window.open('iframes/data.html');"
 							id="dataMenuButton">
 								<span class="i18n" i18nText="DATA"></span>&nbsp;&raquo;</div>
+<!--
+                            <div class=" textButton float-left">|</div>
+-->
+                            
 							<div class="Button textButton float-left" onclick="window.open('iframes/donate.html');"
 							id="settingsMenuButton">
 								<span class="i18n" i18nText="menu-donate"></span></div>
+<!--
+							Empty items to avoid justifying the last line
+-->
+<!--
+                            <div class="Button textButton float-left" 
+							id="settingsMenuButton">
+								<span></span></div>
+							<div class="Button textButton float-left" 
+							id="settingsMenuButton">
+								<span></span></div>
+-->
 						</div>
+<!--
 						<br class="clear" />
+-->
 	<!--				MenuIcons-->
+                        <hr class="hrmenu">
 						<div id="MenuIcons">
-							<div id="langs" onclick="show_languages();"
-							class="Button iconButton float-right" >
-							</div>
-							
-							<div onclick="show_printSettings();"
-							id="printMenuButton"
-							onmouseover="document.images['printPic'].src='pics/print-22-hover.png'"
-							onmouseout="document.images['printPic'].src='pics/print-22.png'"
-							class="Button iconButton float-right" >
-								<img name="printPic" src="pics/print-22.png"></div>
-								
-							<div id="permalink.marker" href="javascript:void(0);"
-							onmouseover="document.images['markerPic'].src='pics/marker-22-hover.png'"
-							onmouseout="document.images['markerPic'].src='pics/marker-22.png'"
-							onclick="location.href=document.getElementById('permalink').href+'&marker=true';"
-							class="Button iconButton float-right" >
-								<img name="markerPic" src="pics/marker-22.png"></div>
-								
-							<div id="permalink.simple" href="javascript:void(0);" 
-							onmouseover="document.images['linkPicMenu'].src='pics/link-22-hover.png'"
-							onmouseout="document.images['linkPicMenu'].src='pics/link-22.png'"
-							onclick="location.href=document.getElementById('permalink').href;"
-							class="Button iconButton float-right" >
-								<img name="linkPicMenu" src="pics/link-22.png"></div>
-								
-							<div id="desktopswitch" href="javascript:void(0);"
-							onmouseover="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
-							onmouseout="document.images['desktopPic'].src='pics/desktop-22-hover.png'"
-							onclick="document.cookie='version=desktop';" 
-							class="Button iconButton float-right">
-								<img name="desktopPic" src="pics/desktop-22-hover.png"></div>
-								
-							<div id="mobileswitch"  href="javascript:void(0);"
-							onmouseover="document.images['mobilePic'].src='pics/mobile-22-hover.png'"
-							onmouseout="document.images['mobilePic'].src='pics/mobile-22.png'"
-							onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
-									document.cookie='version=mobile';"
-							class="Button iconButton float-right" >
-								<img name="mobilePic" src="pics/mobile-22.png"></div>
-								
+                            
+                            <div id="selectButton" class="Button iconButton float-left" onclick="infoMode()">
+                                <img class="button-img" name="selectPic" src="pics/select_thin_64.png">
+                            </div>
+                            
 							<div onclick="getTopoByViewport();"
-							id="listPistesMenuButton"
-							onmouseover="document.images['listPic'].src='pics/list-22-hover.png'"
-							onmouseout="document.images['listPic'].src='pics/list-22.png'"
-							class="Button iconButton float-right" >
-								<img name="listPic" src="pics/list-22.png"></div>
+                                id="listPistesMenuButton"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="listPic" src="pics/list_thin_64.png">
+                            </div>
+                            
+                            <div id="mobileswitch"  href="javascript:void(0);"
+                                onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
+									document.cookie='version=mobile';"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="mobilePic" src="pics/mobile_thin_64.png">
+                            </div>
+                            
+                            <div id="location"
+                                onclick="toggleLocation();"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="localisePic" src="pics/localisation_thin_64.png">
+                            </div>
+                            
+							<div id="permalink.simple" href="javascript:void(0);" 
+                                onclick="location.href=document.getElementById('permalink').href;"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="linkPicMenu" src="pics/link_thin_64.png">
+                            </div>
+                            
+							<div id="permalink.marker" href="javascript:void(0);"
+                                onclick="location.href=document.getElementById('permalink').href+'&marker=true';"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="markerPic" src="pics/marker_thin_64.png">
+                            </div>
+                            
+							<div onclick="show_printSettings();"
+                                id="printMenuButton"
+                                class="Button iconButton float-left" >
+								<img class="button-img" name="printPic" src="pics/print_thin_64.png">
+                            </div>
+								
+								
+							<div id="langs" onclick="show_languages();"
+                                class="Button iconButton float-left" >
+							</div>
+                            
 						</div>
 					</div>
 				</div>
@@ -581,38 +626,39 @@
 				TITLE
 -->
 				<div id="TitleBlock">
-					<div id="TitleVerticalLeft" class="IconBarVertical">
-						<div class="menuBox" id="MainExtendControl"
-						onclick="showMenu();"
-						onmouseover="document.images['menuExt'].src='pics/menu-22-hover.png'"
-						onmouseout="document.images['menuExt'].src='pics/menu-22.png'">
-						<img name="menuExt" id="menuExt" src="pics/menu-22.png"></div>
+						<div class="Button iconButton float-left" onclick="toggleMenu();">
+                            <img name="menuExt" class="button-img " src="pics/menu_thin_64.png"></div>
+<!--
 						<br class="clear" />
+-->
+<!--
 						<div id="selectButton" class="Button iconButton" onclick="infoMode()"
-						onmouseover="document.images['selectPic'].src='pics/select-22-hover.png'"
-						onmouseout="document.images['selectPic'].src='pics/select-22.png'">
+                            onmouseover="document.images['selectPic'].src='pics/select-22-hover.png'"
+                            onmouseout="document.images['selectPic'].src='pics/select-22.png'">
 							<img name="selectPic" src="pics/select-22.png"></div>
-						<div class="Button iconButton" onclick="SearchByName(document.search.nom_search.value);"
-						id="searchMenuButton"
-						onmouseover="document.images['searchPic'].src='pics/search-22-hover.png'"
-						onmouseout="document.images['searchPic'].src='pics/search-22.png'">
-							<img name="searchPic" src="pics/search-22.png"></div>
+-->
+						<div class="Button iconButton float-left" onclick="SearchByName(document.search.nom_search.value);"
+                            id="searchMenuButton">
+							<img class="button-img" name="searchPic" src="pics/search_thin_64.png"></div>
+<!--
+					<div id="" class="">
+						<img id="titleImg" src="pics/opensnowmap_title_thin_420.png" alt="OpenSnowMap.org">
 					</div>
-					<div id="TitleVerticalRight" class="">
-						<img id="titleImg" src="pics/opensnowmap-320x62_W.png" alt="OpenSnowMap.org">
-					</div>
+-->
+                        <div id="searchDiv" class="float-left">
+                            <form name="search">
+                                <input id="search_input" type="text" name="nom_search"/>
+                            </form>
+                        </div>
 				</div>
 				
 			</div>
 
 		</div> <!-- end right-container-->
 
-		<div id="searchDiv">
-			<form name="search">
-				<input id="search_input" type="text" name="nom_search"/>
-			</form>
-		</div>
+
 		
+<!--
 		<div id="donate-centering" >
 			<div id="donate-content">
 
@@ -629,6 +675,7 @@
 
 		    </div>
 	     </div>
+-->
 			
 			
 		<div id="attributions">

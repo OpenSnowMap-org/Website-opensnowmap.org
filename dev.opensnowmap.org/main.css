@@ -132,7 +132,6 @@ label {
        vertical-align: middle;
        text-align: center;
         overflow:hidden;
-        -moz-border-radius:10px;
         border-radius:10px;
         border: 1px solid #CCCCCC;
         background-color: #F5F5F5;
@@ -151,9 +150,8 @@ label {
 .olControlPanZoomBar div{
     font-size: 1px;
     border: 1px solid #AAAAAA;
-    -moz-border-radius:6px;
     border-radius:6px;
-    z-index: 1004
+    z-index: 1004;
 }
 .olButton {
     z-index: 1004
@@ -164,7 +162,7 @@ label {
     left: 14px;
     color: #050505;
     text-align: center;
-    vertical-align: center;
+    vertical-align: middle;
     opacity: 1;
 }
 #zoom{
@@ -177,8 +175,7 @@ label {
     height: 16px;
     padding-top: 2px;
     text-align: center;
-    vertical-align: center;
-    -moz-border-radius:6px;
+    vertical-align: middle;
     border-radius:6px;
     border: 1px solid #AAAAAA;
     background-color: #F5F5F5;
@@ -197,7 +194,6 @@ label {
     margin-right: auto;
         background-color:#EEE; /*fallback*/
         background-color: rgba(245,245,245,0.7);
-        -moz-border-radius:6px;
         border-radius:6px;
         border: 1px solid #aaaaaa;
         width: 290px;
@@ -234,17 +230,19 @@ label {
         width: 400px;
         bottom: 60px;
         background-color:#EEE;
+/*
         background-color: rgba(245,245,245,0.6);
-        -moz-border-radius:6px;
+*/
+        background-color: #FDFDFD;
         border-radius:6px;
         border: 1px solid #aaaaaa;
         display: none;
-        overflow: none;
+        overflow: hidden;
     }
     .sideBarInBox{
         position: absolute;
-            background-color:#FCFCFC;
-            width: 360px;
+            background-color:#FFF;
+            width: 380px;
             margin-top: 5px;
             margin-bottom: 5px;
             margin-left: 5px;
@@ -252,85 +250,98 @@ label {
             padding-left:10px;
             padding-right:10px;
             overflow: auto;
+/*
     border-style:solid;
     border-width:1px;
     border-color: #ccc;
+*/
     }
-        .sideBarContent{
-            font-size: 0.8em;
-            color: #444;
-            background-color:#FCFCFC;
-            opacity:1;
-            height:160px;
-            width: 350px;
-            overflow: none;
-            position: absolute
-        }
-        .sideBarHistory{
-            font-size: 1.25em
-        }
+    .sideBarContent{
+        font-size: 0.8em;
+        color: #444;
+        background-color:#FFF;
+        opacity:1;
+        height:160px;
+        width: 380px;
+        overflow: auto;
+        position: absolute;
+    }
+    .sideBarHistory{
+        font-size: 1.25em
+    }
     .sideBarHeader{
-        top:10px;left:0px;right:0px;height:24px;position:relative;
+        top:0px;left:0px;right:0px;height:30px;position:relative;
         margin-left: 5px;
-        background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.1);
+        background-color: #FDFDFD;
         color: #444444;
         font-weight: 600;
         font-size: 0.82em;
-        line-height: 14px
+        line-height: 14px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
-            #sideBarTitle{
-                    float: left;
-                    position:relative;
-                    top:0px
-            }
+    #sideBarTitle{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #sideBarControls {margin-right:15px;}
+    .sideBarControlsButton{font-size:1.5em;}
     .sideBarTable {width:300px;text-align:left;}
     
     .news {
-        background-color:#FFF;
-        margin-left: 20px;}
+        background-color:#f0f0f0;
+        margin-left: 0px;
+            border: 4px solid #fff;
+        }
         
     #MainBlock{
         position: absolute;
         right: 0px;
         width: 400px;
         bottom: 0px;
-        background-color:#EEE; /*fallback*/
-        background-color: rgba(245,245,245,0.6);
-        -moz-border-radius:6px;
-        border-radius:6px;
-        border: 1px solid #aaaaaa;
-        overflow: none;
+        overflow: hidden;
     }
         #MenuBlock{
             opacity:1;
-            height:95px;
-            width: 390px;
+            height:115px;
+            width: 400px;
             margin-top: 2px;
-            margin-bottom: 0px;
-            margin-left: 2px;
-            margin-right:5px;
+            margin-bottom: 6px;
+            margin-left: 0px;
+            margin-right:0px;
             overflow: hidden;
-            position: relative
+            position: relative;
+            background-color:#FDFDFD;
+            border-radius: 6px;
+            border: 1px solid #aaaaaa;
         }
+/*
         #MenuVerticalLeft{
             position: absolute;
             top: 5px;
         }
+*/
         #MenuVerticalRight{
             position: absolute;
-            left: 35px;
+            left: 20px;
             top: 0px;
-            width:355px;
+            width:360px;
             margin-top: 2px;
         }
+        #MenuTextButtons{
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
         #MenuIcons{
-        background-color:#FDFDFD;
-        height: 30px;
-        width:355px;
-        -moz-border-radius:6px;
-        border-radius:6px;
-        margin-top:2px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            height: 30px;
+/*
+            width:355px;
+*/
         }
         .IconBarVertical{
             position: absolute;
@@ -338,55 +349,56 @@ label {
             top: 0px;
             width: 30px;
         }
+        
         #TitleBlock{
-                opacity:1;
-                height:86px;
-                width: 390px;
-                margin-top: 0px;
-                margin-bottom: 5px;
-                margin-left: 2px;
-                margin-right:5px;
-                overflow: hidden;
-                position: relative
-        }
-        #TitleVerticalRight{
-        width:355px;
-        height:80px;
-        background-color:#FDFDFD;
-        -moz-border-radius:6px;
-        border-radius:6px;
-        position: absolute;
-        left: 35px;
-        top: 0px;
-        margin-top: 5px;
+            opacity:1;
+            height:42px;
+            width: 400px;
+            margin-top: 0px;
+            margin-bottom: 5px;
+            margin-left: 0px;
+            margin-right:0px;
+            overflow: hidden;
+            position: relative;
+            background-color:#FDFDFD;
+            border-radius:6px;
+            border: 1px solid #aaaaaa;
+            background-color:#FFF;
+            background-image: url('pics/opensnowmap_title_thin_420.png');
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-attachment: scroll;
+            background-size: 250px;
         }
 
 #searchDiv{
     display: none;
+/*
     position: absolute;
     bottom: 30px;
     right: 410px;
     width: 92px;
-    background-color:#EEE; /*fallback*/
-    background-color: rgba(245,245,245,0.6);
-    -moz-border-radius:6px;
-    border-radius:6px;
+*/
+/*
+    background-color:#EEE;
+*/
+/*
     border: 1px solid #aaaaaa;
+*/
 }
 
 #search_input{
     border: 1px solid #CCCCCC;
-    font-size: 0.8em;
-    width: 80px;
+    font-size: 26px;
+    width: 310px;
     margin-left: 5px;
     margin-right: 5px;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin-top: 5px;
+    margin-bottom: 0px;
 }
 
 #attributions{
     position: absolute;
-    -moz-border-radius:6px;
     border-radius:6px;
     bottom:0px;
     left: 0px;
@@ -411,7 +423,6 @@ label {
     /*text-align: center;*/
     padding-top: 3px;
     width: 220px;
-    -moz-border-radius:6px;
     border-radius:6px;
     border: 1px solid #aaaaaa;
     background-color:#EEE; /*fallback*/
@@ -443,7 +454,6 @@ label {
         text-align: center;
         background-color: #FFFFFF;
         opacity:0.8;
-        -moz-border-radius:5px; /* Firefox */
         border-radius:5px;
         border: 1px solid #888888;
 }
@@ -460,7 +470,6 @@ label {
     border: 0px solid grey;
     padding: 2px;
     margin: 0px;
-    -moz-border-radius:4px;
     border-radius:4px;
 }
 .pisteListButtonStatic{
@@ -469,7 +478,6 @@ label {
     border: 0px solid grey;
     padding: 2px;
     margin: 0px;
-    -moz-border-radius:4px;
     border-radius:4px;
 }
 .pisteListButton:hover{
@@ -502,22 +510,24 @@ label {
 
 .Button {
     background-color:#FDFDFD;
+/*
     border-style:solid;
     border-width:1px;
     border-color: #ccc;
+*/
     padding: 1px;
     margin: 2px;
-    -moz-border-radius:5px;
     border-radius:5px;
 }
 .ButtonStatic {
     background-color:#FDFDFD;
+/*
     border-style:solid;
     border-width:1px;
     border-color: #ccc;
+*/
     padding: 1px;
     margin: 2px;
-    -moz-border-radius:5px;
     border-radius:5px;
 }
 .Button:hover{
@@ -531,17 +541,20 @@ label {
     color: #AAA;
 }
 .iconButton{
-    width:22px;
-    height:22px;
+    width:30px;
+    height:30px;
+/*
     margin-left: 5px;
     margin-right:5px;
-    -moz-border-radius:3px;
+*/
     border-radius:3px;
 }
+.button-img {  width: 26px;}
+.button-img {margin: 2px 2px 2px 2px;}
 .textButton{
     font-weight: 700;
     color: #444444;
-    font-size: 0.65em;
+    font-size: 0.70em;
     text-decoration: none;
     padding-left: 5px;
     padding-right: 5px;
@@ -556,29 +569,8 @@ label {
 padding:3px 3px 3px 3px;
 }
 
-#sideBarControls {margin-right:15px;}
-.sideBarControlsButton{font-size:1.5em;}
-.closeBox{
-    position: relative;
-        top:-8px;
-        left:0px;
-        width: 22px;
-        height:22px;
-        margin-right: 20px;padding:0px;
-        float:left;
-        z-index: 1000;
-}
-.menuBox{
-    position: relative;
-        top:0px;
-        left:5px;
-        width: 22px;
-        height:22px;
-        margin-right: 20px;padding:0px;
-        float:left;
-        z-index: 1000;
-}
-#menuExt { display: none;}
+
+
 
 .statsIcon {
 	vertical-align: middle;
