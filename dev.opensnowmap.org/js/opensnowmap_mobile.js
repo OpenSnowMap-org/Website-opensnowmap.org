@@ -131,64 +131,326 @@ function resize_sideBar() {
     //~ return true
 }
 function show_live_edits(when,display) {
-    if (display) {
-        var DiffStyle = new OpenLayers.Style({
-                pointRadius: 1.5,
+if (display) {
+        var deletedNodesStyle = new OpenLayers.Style({
+                pointRadius: 1.5,strokeWidth: 0.5,
                 fillColor: "#FF1200",
-                strokeColor:"#FF1200"});
+                strokeColor:"#000000"});
+        var deletedWaysStyle = new OpenLayers.Style({
+                pointRadius: 3,strokeWidth: 0.5,
+                fillColor: "#FF1200",
+                strokeColor:"#000000"});
+        var deletedRelationsStyle = new OpenLayers.Style({
+                pointRadius: 5.5,strokeWidth: 0.5,
+                fillColor: "#FF1200",
+                strokeColor:"#000000"});
+        var modifiedNodesStyle = new OpenLayers.Style({
+                pointRadius: 1.5,strokeWidth: 0.5,
+                fillColor: "#FFA600",
+                strokeColor:"#000000"});
+        var modifiedWaysStyle = new OpenLayers.Style({
+                pointRadius: 3,strokeWidth: 0.5,
+                fillColor: "#FFA600",
+                strokeColor:"#000000"});
+        var modifiedRelationsStyle = new OpenLayers.Style({
+                pointRadius: 5.5,strokeWidth: 0.5,
+                fillColor: "#FFA600",
+                strokeColor:"#000000"});
+        var addedNodesStyle = new OpenLayers.Style({
+                pointRadius: 1.5,strokeWidth: 0.5,
+                fillColor: "#33FF00",
+                strokeColor:"#000000"});
+        var addedWaysStyle = new OpenLayers.Style({
+                pointRadius: 3,strokeWidth: 0.5,
+                fillColor: "#33FF00",
+                strokeColor:"#000000"});
+        var addedRelationsStyle = new OpenLayers.Style({
+                pointRadius: 5.5,strokeWidth: 0.5,
+                fillColor: "#33FF00",
+                strokeColor:"#000000"});
         if (when == "daily") {
-            var DailyLayer=new OpenLayers.Layer.Vector("Daily", {
+            
+            var DailyaddedRelationsLayer = new OpenLayers.Layer.Vector("DailyaddedRelationsLayer", {
                         strategies: [new OpenLayers.Strategy.Fixed(),
                                     new OpenLayers.Strategy.Cluster()],
                         protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily.tsv",
+                            url: "data/daily_relations_added.csv",
                             format: new OpenLayers.Format.Text()
-                            }),
+                        }),
                         styleMap: new OpenLayers.StyleMap({
-                            "default": DiffStyle
-                            }),
+                            'default': addedRelationsStyle
+                        }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
-            map.addLayers([DailyLayer]);
+            map.addLayers([DailyaddedRelationsLayer]);
+            var DailymodifiedRelationsLayer = new OpenLayers.Layer.Vector("DailymodifiedRelationsLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_relations_modified.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': modifiedRelationsStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailymodifiedRelationsLayer]);
+            var DailydeletedRelationsLayer = new OpenLayers.Layer.Vector("DailydeletedRelationsLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_relations_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedRelationsStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailydeletedRelationsLayer]);
+            
+            
+            
+            var DailyaddedWaysLayer = new OpenLayers.Layer.Vector("DailyaddedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_ways_added.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': addedWaysStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailyaddedWaysLayer]);
+            var DailymodifiedWaysLayer = new OpenLayers.Layer.Vector("DailymodifiedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_ways_modified.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': modifiedWaysStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailymodifiedWaysLayer]);
+            var DailydeletedWaysLayer = new OpenLayers.Layer.Vector("DailydeletedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_ways_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedWaysStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailydeletedWaysLayer]);
+            
+            
+            
+            var DailyaddedNodesLayer = new OpenLayers.Layer.Vector("DailyaddedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_nodes_added.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': addedNodesStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailyaddedNodesLayer]);
+            var DailymodifiedNodesLayer = new OpenLayers.Layer.Vector("DailymodifiedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_nodes_modified.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': modifiedNodesStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailymodifiedNodesLayer]);
+            var DailydeletedNodesLayer = new OpenLayers.Layer.Vector("DailydeletedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/daily_nodes_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedNodesStyle
+                        }), group: 'daily',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([DailydeletedNodesLayer]);
         }
         if (when == "weekly") {
-            var WeeklyLayer=new OpenLayers.Layer.Vector("Weekly", {
+            
+            var WeeklyaddedRelationsLayer = new OpenLayers.Layer.Vector("WeeklyaddedRelationsLayer", {
                         strategies: [new OpenLayers.Strategy.Fixed(),
                                     new OpenLayers.Strategy.Cluster()],
                         protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly.tsv",
+                            url: "data/weekly_relations_added.csv",
                             format: new OpenLayers.Format.Text()
-                            }),
+                        }),
                         styleMap: new OpenLayers.StyleMap({
-                            "default": DiffStyle
-                            }),
+                            'default': addedRelationsStyle
+                        }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
-            map.addLayers([WeeklyLayer]);
-        }
-        if (when == "monthly") {
-            var MonthlyLayer=new OpenLayers.Layer.Vector("Monthly", {
+            map.addLayers([WeeklyaddedRelationsLayer]);
+            var WeeklymodifiedRelationsLayer = new OpenLayers.Layer.Vector("WeeklymodifiedRelationsLayer", {
                         strategies: [new OpenLayers.Strategy.Fixed(),
                                     new OpenLayers.Strategy.Cluster()],
                         protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/monthly.tsv",
+                            url: "data/weekly_relations_modified.csv",
                             format: new OpenLayers.Format.Text()
-                            }),
+                        }),
                         styleMap: new OpenLayers.StyleMap({
-                            "default": DiffStyle
-                            }),
+                            'default': modifiedRelationsStyle
+                        }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
-            map.addLayers([MonthlyLayer]);
+            map.addLayers([WeeklymodifiedRelationsLayer]);
+            var WeeklydeletedRelationsLayer = new OpenLayers.Layer.Vector("WeeklydeletedRelationsLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_relations_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedRelationsStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklydeletedRelationsLayer]);
+            
+            
+            
+            var WeeklyaddedWaysLayer = new OpenLayers.Layer.Vector("WeeklyaddedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_ways_added.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': addedWaysStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklyaddedWaysLayer]);
+            var WeeklymodifiedWaysLayer = new OpenLayers.Layer.Vector("WeeklymodifiedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_ways_modified.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': modifiedWaysStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklymodifiedWaysLayer]);
+            var WeeklydeletedWaysLayer = new OpenLayers.Layer.Vector("WeeklydeletedWaysLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_ways_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedWaysStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklydeletedWaysLayer]);
+            
+            
+            
+            var WeeklyaddedNodesLayer = new OpenLayers.Layer.Vector("WeeklyaddedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_nodes_added.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': addedNodesStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklyaddedNodesLayer]);
+            var WeeklymodifiedNodesLayer = new OpenLayers.Layer.Vector("WeeklymodifiedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_nodes_modified.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': modifiedNodesStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklymodifiedNodesLayer]);
+            var WeeklydeletedNodesLayer = new OpenLayers.Layer.Vector("WeeklydeletedNodesLayer", {
+                        strategies: [new OpenLayers.Strategy.Fixed(),
+                                    new OpenLayers.Strategy.Cluster()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "data/weekly_nodes_deleted.csv",
+                            format: new OpenLayers.Format.Text()
+                        }),
+                        styleMap: new OpenLayers.StyleMap({
+                            'default': deletedNodesStyle
+                        }), group: 'weekly',
+                        projection: new OpenLayers.Projection("EPSG:4326")
+                    });
+            map.addLayers([WeeklydeletedNodesLayer]);
         }
+        //~ if (when == "monthly") {
+            //~ var MonthlyLayer = new OpenLayers.Layer.Vector("Monthly", {
+                        //~ strategies: [new OpenLayers.Strategy.Fixed(),
+                                    //~ new OpenLayers.Strategy.Cluster()],
+                        //~ protocol: new OpenLayers.Protocol.HTTP({
+                            //~ url: "data/monthly.tsv",
+                            //~ format: new OpenLayers.Format.Text()
+                        //~ }),
+                        //~ styleMap: new OpenLayers.StyleMap({
+                            //~ 'default': DeletedNodesStyle
+                        //~ }),
+                        //~ projection: new OpenLayers.Projection("EPSG:4326")
+                    //~ });
+            //~ map.addLayers([MonthlyLayer]);
+        //~ }
     } else {
-        if (when == "daily") {map.getLayersByName("Daily")[0].destroy();}
-        if (when == "weekly") {map.getLayersByName("Weekly")[0].destroy();}
-        if (when == "monthly") {map.getLayersByName("Monthly")[0].destroy();}
+        if (when == "daily") {
+            var layers = map.getLayersBy('group','daily');
+            for (l = 0; l < layers.length; l++){layers[l].destroy();}
+            }
+        if (when == "weekly") {
+            var layers = map.getLayersBy('group','weekly');
+            for (l = 0; l < layers.length; l++){layers[l].destroy();}
+            }
         if (when == "none") {
-            if (map.getLayersByName("Daily")[0]){map.getLayersByName("Daily")[0].destroy();}
-            if (map.getLayersByName("Weekly")[0]){map.getLayersByName("Weekly")[0].destroy();}
-            if (map.getLayersByName("Monthly")[0]){map.getLayersByName("Monthly")[0].destroy();}
+            var layers = map.getLayersBy('group','daily');
+            for (l = 0; l < layers.length; l++){layers[l].destroy();}
+            
+            layers = map.getLayersBy('group','weekly');
+            for (l = 0; l < layers.length; l++){layers[l].destroy();}
+            
             document.getElementById('dailyVector').style.backgroundColor='#FFF';
             document.getElementById('weekVector').style.backgroundColor='#FFF';
             document.getElementById('noVector').style.backgroundColor='#DDD';
