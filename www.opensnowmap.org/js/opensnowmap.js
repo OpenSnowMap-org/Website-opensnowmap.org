@@ -502,41 +502,41 @@ function resize_sideBar() {
 function show_live_edits(when,display) {
     if (display) {
         var deletedNodesStyle = new OpenLayers.Style({
-                pointRadius: 1.5,strokeWidth: 0.5,
+                pointRadius: 2.5,strokeWidth: 0,
                 fillColor: "#FF1200",
                 strokeColor:"#000000"});
         var deletedWaysStyle = new OpenLayers.Style({
-                pointRadius: 3,strokeWidth: 0.5,
+                pointRadius: 4,strokeWidth: 0,
                 fillColor: "#FF1200",
                 strokeColor:"#000000"});
         var deletedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 0.5,
-                fillColor: "#FF1200",
-                strokeColor:"#000000"});
+                pointRadius: 5.5,strokeWidth: 3,
+                fillColor: "#FF120000",
+                strokeColor:"#FF1200"});
         var modifiedNodesStyle = new OpenLayers.Style({
-                pointRadius: 1.5,strokeWidth: 0.5,
+                pointRadius: 2.5,strokeWidth: 0,
                 fillColor: "#FFA600",
                 strokeColor:"#000000"});
         var modifiedWaysStyle = new OpenLayers.Style({
-                pointRadius: 3,strokeWidth: 0.5,
+                pointRadius: 4,strokeWidth: 0,
                 fillColor: "#FFA600",
                 strokeColor:"#000000"});
         var modifiedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 0.5,
-                fillColor: "#FFA600",
-                strokeColor:"#000000"});
+                pointRadius: 5.5,strokeWidth: 3,
+                fillColor: "#FFA60000",
+                strokeColor:"#FFA600"});
         var addedNodesStyle = new OpenLayers.Style({
-                pointRadius: 1.5,strokeWidth: 0.5,
+                pointRadius: 2.5,strokeWidth: 0,
                 fillColor: "#33FF00",
                 strokeColor:"#000000"});
         var addedWaysStyle = new OpenLayers.Style({
-                pointRadius: 3,strokeWidth: 0.5,
+                pointRadius: 4,strokeWidth: 0,
                 fillColor: "#33FF00",
                 strokeColor:"#000000"});
         var addedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 0.5,
-                fillColor: "#33FF00",
-                strokeColor:"#000000"});
+                pointRadius: 5.5,strokeWidth: 3,
+                fillColor: "#33FF0000",
+                strokeColor:"#33FF00"});
         if (when == "daily") {
             
             var DailyaddedRelationsLayer = new OpenLayers.Layer.Vector("DailyaddedRelationsLayer", {
