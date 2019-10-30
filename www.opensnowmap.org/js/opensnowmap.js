@@ -1686,7 +1686,7 @@ function setBaseLayer(baseLayer) {
     }
     if (baseLayer == "snowbase" && osm) {
         map.removeLayer(osm);
-        var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png?debug1"];
+        var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
         var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
             arraySnowBase,
             {   visibility: true,
@@ -1727,7 +1727,7 @@ function setBaseLayer(baseLayer) {
 }
 function baseLayers() {
     // Default to SnowBaseLayer
-    var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png?debug1"];
+    var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
     var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
         arraySnowBase,
         {   visibility: true,
