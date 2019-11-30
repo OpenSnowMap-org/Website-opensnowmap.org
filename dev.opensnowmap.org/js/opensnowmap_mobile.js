@@ -765,6 +765,9 @@ function page_init(){
     document.getElementById('high_dpi').onclick= function() {
         setHighDpi();
         };
+    document.getElementById('viewSwitch').onclick= function() {
+        setHighDpi();
+        };
         
     document.getElementById('dailyVector').onclick= function() {
         show_live_edits('daily',true);
@@ -1676,9 +1679,13 @@ function get_tms_url(bounds) {
 function setHighDpi(){
     if (HDPI){
         document.getElementById('high_dpi').style.backgroundColor='#FFF';
+        document.getElementById('sw').style.marginLeft="8px";
+        document.getElementById('sw').innerHTML="+";
         HDPI = false;
     } else {
         document.getElementById('high_dpi').style.backgroundColor='#DDD';
+        document.getElementById('sw').style.marginLeft="-2px";
+        document.getElementById('sw').innerHTML="-";
         HDPI = true;
     }
     setBaseLayer(BASELAYER);
