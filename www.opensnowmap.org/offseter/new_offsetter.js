@@ -1,8 +1,5 @@
-var center;
-//~ = ol.proj.toLonLat([6.395,46.768],'EPSG:4326');
-var zoom;
-//~ = 14;
-var shouldUpdate = true;
+var center= ol.proj.toLonLat([6.395,46.768],'EPSG:4326');
+var zoom = 14;
 var map;
 var attribution;
 var base_layer = "osm";
@@ -10,7 +7,7 @@ var jsonPisteList = {};
 var vectorSource;
 
 
-var relationOffsets=[];
+var relationOffsets={};
 var relationList=[];
 var OFFSET_DIR=1;
 
@@ -78,8 +75,10 @@ function requestRelations(extent, resolution, projection) {
                     rel['name']=element.name;
                     rel['color']=element.color;
                     rel['id'] =element.ids[0];
+                    
                     if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
                     rel['of'] = relationOffsets[ rel['id'] ]; 
+                    
                     relationList.push(rel);
                     updateRelationList();
                     
@@ -203,15 +202,11 @@ function map_init(){
 	});
 	// MAP EVENTS
 	map.on('moveend', updatePermalink);
+    updatePermalink();
 }
 
 var updatePermalink = function() {
 	
-	if (!shouldUpdate) {
-		// do not update the URL when the view was changed in the 'popstate' handler
-		shouldUpdate = true;
-		return;
-	}
 	vectorSource.clear();
     
 	var view = map.getView();
@@ -225,10 +220,19 @@ var updatePermalink = function() {
 		Math.round(center[1] * 1000) / 1000 + '/';
 
     var relList="";
-	for (var t in relationList) 
+    for (var r in relationOffsets) {
+        if (relationOffsets[r] !=0){
+            relList+=r+":"+relationOffsets[r]+":|"
+        }
+    }
+	/*for (var t in relationList) 
     {
-		relList+=relationList[t]['id']+":"+relationOffsets[relationList[t]['id']]+":"+relationList[t]['color']+"|";
-	}
+        if (relationOffsets[relationList[t]['id']] !=0) {
+        relList+=relationList[t]['id']+":"
+            +relationOffsets[relationList[t]['id']]
+            +":"+relationList[t]['color']+"|";
+        }
+	}*/
 	relList=relList.replace(/#/g,'');
     
     hash+=relList;
@@ -244,17 +248,14 @@ var updatePermalink = function() {
 
 
 function page_init() {
-    document.getElementById('permalinkReset').onclick= function() {
-        reset();
-        };
 
 }
 
 function showList(){
 	// don't forget 'return false;' in onclick to avoid parent refresh
 	text="";
-	for (r in relationOffsets) {
-		if (relationOffsets[r] != 0){
+	for (var r in relationOffsets) {
+		if (relationOffsets[r] && relationOffsets[r] != 0){
 			text+=r+";"+relationOffsets[r]+"\n";
 		}
 	}
@@ -263,7 +264,7 @@ function showList(){
 	newtab.document.write("\n#"+Date()+"\n");
 	newtab.document.write(text);
 	newtab.document.write("</pre>"+"\n");
-	newtab.document.write("<a href=\""+$("permalinkOffset").href+"\"> preview </a>");
+	newtab.document.write("<a href=\""+window.location+"\"> preview </a>");
 
 }
 function updateRelationList(){
@@ -271,8 +272,8 @@ function updateRelationList(){
 	for (var t=0;t<relationList.length;t++) {
 		html += '<p style="color:'+relationList[t]['color']+
 		'">'+relationOffsets[relationList[t]['id']] +
-		'&nbsp;&nbsp;<a onClick="offset('+relationList[t]['id']+',15,\'left\');">--</a>&nbsp;'+
-		'<a onClick="offset('+relationList[t]['id']+',15,\'right\');">++</a>&nbsp;'+
+		'&nbsp;&nbsp;<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'+
+		'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'+
 		relationList[t]['id'] +'-'+relationList[t]['name']+'</p>';
 	}
 	document.getElementById("content").innerHTML=html;
@@ -300,23 +301,8 @@ function updateOffset(id,side) {
 	return true;
 }
 function reset() {
-	var view = map.getView();
-	var zoom=view.getZoom();
-	var center = view.getCenter();
-	
-	center = ol.proj.fromLonLat(ol.proj.toLonLat(center,'EPSG:3857'), 'EPSG:4326')
-	var hash = '#map=' +
-		zoom + '/' +
-		Math.round(center[0] * 1000) / 1000 + '/' +
-		Math.round(center[1] * 1000) / 1000 + '/';
-    
-	var state = {
-		zoom: zoom,
-		center: center,
-		rotation: view.getRotation()
-	};
-	window.history.pushState(state, 'map', hash);
-    relationOffsets.length=0;
+    relationOffsets={};
     relationList.length=0;
     vectorSource.clear();
+    return false;
 }
