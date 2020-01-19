@@ -35,7 +35,7 @@ if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
 var pistes_and_relief_overlay_URL=protocol+"//116.202.116.205/pistes-relief/";
 //var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/pistes/";
-var pistes_only_overlay_URL="http:"+"//116.202.116.205/pistes/";
+var pistes_only_overlay_URL="http://pluto10.cybex.gr/snowtiles/pistes/";
 var snow_base_layer_URL =protocol+"//116.202.116.205/base_snow_map/";
 
 var mode = "raster";
