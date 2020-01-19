@@ -15,7 +15,16 @@ if (window.location.hash !== '') {
     //opensnowmap.org/offseter/new_offsetter.html#map=16/6.382/46.764/1482062:0:orange|1970150:0:blue|1970151:0:green|1970152:0:purple|1970153:0:purple|7921593:0:purple|2065811:0:blue|2726388:0:cyan|1982237:0:red|
     
     // try to restore center, zoom-level and rotation from the URL
-    var hash = window.location.hash.replace('#map=', '')
+    var hash = window.location.hash;
+    //if no lonlat, look for a relation id
+    if (hash.search('#map=') <0) { 
+        searchLocation(hash);
+        hash = '0/0/0/'+hash.substring(1);
+    }
+    else {
+        hash = window.location.hash.replace('#map=', '');
+    }
+    
     while (hash.search('&')> -1) {
         hash=hash.replace('&','/');
     }
@@ -44,6 +53,31 @@ function getLayerByName(name) {
 		if (layer.get('name') == name) {l = layer;}
 	});
 	return l
+}
+function searchLocation(hash) {
+    var id = hash.split('#')[1].split(':')[0];
+    var url = 'http://www.opensnowmap.org/request?ids='+id+','+id+'&list=true';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    var onError = function() {
+      return true;
+    }
+    xhr.onerror = onError;
+     
+    xhr.onload = function() {
+       if (xhr.status == 200) {
+            var resp = xhr.responseText;
+           var pisteList = JSON.parse(resp);
+           var lonlat = pisteList.pistes[0].center;
+           var zoom = 14;
+           map.getView().setCenter(ol.proj.transform(lonlat, 'EPSG:4326','EPSG:3857'));
+           map.getView().setZoom(zoom);
+       }
+       return true;
+   }
+   xhr.send();
+   
+   return true;
 }
 function requestRelations(extent, resolution, projection) {
     if (map.getView().getZoom() < 12) {return true;}
