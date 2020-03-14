@@ -1860,6 +1860,35 @@ function map_init() {
     
 }
 
+
+// Handle saving a default location to go to when opening opensnowmap.org
+
+function savePositionInLocalStorage() {
+    if (typeof(Storage) !== 'undefined') {
+        var permaLink = document.getElementById('permalink').href;
+        localStorage.setItem('defaultLocation', permaLink);
+        alert('Default location has been saved. Next time you open opensnowmap.org it will open to this location.');
+    } else {
+        alert('Sorry, your browser does not support this feature.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function(event) { 
+    if (typeof(Storage) !== 'undefined') {
+        var permaLink = localStorage.getItem('defaultLocation');
+        if (permaLink) {
+            if (location.search && location.search.indexOf('lat=') > -1) {
+                // already at a specific location, do nothing
+            } else {
+                // go to default location
+                location.href = permaLink;
+            }
+        }
+    }
+});
+
+
+
 //======================================================================
 // PRINT
 function openOffseter() {
@@ -2962,6 +2991,7 @@ function updateTooltips() {
     document.getElementById("printMenuButton").setAttribute('title', _('print-tooltip'));
     document.getElementById("permalink.marker").setAttribute('title', _('marker-tooltip'));
     document.getElementById("permalink.simple").setAttribute('title', _('link-tooltip'));
+    document.getElementById("permalink.save").setAttribute('title', 'Store current location as the default. By clicking this you accept to store the current location in your browser.');
     //~ document.getElementById("desktopswitch").setAttribute('title', _('desktop-tooltip'));
     document.getElementById("mobileswitch").setAttribute('title', _('mobile-tooltip'));
     document.getElementById("listPistesMenuButton").setAttribute('title', _('list_pistes-tooltip'));
