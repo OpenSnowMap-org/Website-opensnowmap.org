@@ -409,7 +409,7 @@ label {
     border-radius:6px;
     bottom:0px;
     left: 0px;
-    font-size: 0.8em;
+    font-size: 0.6em;
 	color: black;
     background-color:#EEE; /*fallback*/
     background-color: rgba(245,245,245,0.3);
