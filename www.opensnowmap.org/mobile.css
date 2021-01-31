@@ -31,7 +31,13 @@ a.amenu:link, a.amenu:visited {
         text-decoration: none;
         margin: 0px
     }
-
+a.amenuLtEmphasis {
+        color: #FF7800;
+        font-size: 1em;
+        text-decoration: none;
+        font-weight: 800;
+        margin: 0px
+    }
 select, option, input{
         background-color: #FFFFFF;
         width: 140px;

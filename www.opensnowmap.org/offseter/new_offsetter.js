@@ -290,7 +290,7 @@ function showList(){
 	text="";
 	for (var r in relationOffsets) {
 		if (relationOffsets[r] && relationOffsets[r] != 0){
-			text+=r+";"+relationOffsets[r]+"\n";
+			text+="-"+r+";"+relationOffsets[r]+"\n";
 		}
 	}
 	var newtab = window.open('text/plain');

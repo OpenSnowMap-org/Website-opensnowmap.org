@@ -65,6 +65,13 @@ a.amenuLt:hover {
         text-decoration: none;
         font-weight: 400;
         margin: 0px
+    }    
+a.amenuLtEmphasis {
+        color: #FF7800;
+        font-size: 1em;
+        text-decoration: none;
+        font-weight: 800;
+        margin: 0px
     }
 a.black {color: #000;font-weight: 600;}
 li{
