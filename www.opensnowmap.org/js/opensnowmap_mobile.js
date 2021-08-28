@@ -32,11 +32,11 @@ if (!window.location.host) {
 if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
 
-var pistes_and_relief_overlay_URL=protocol+"//www.opensnowmap.org/pistes-relief/";
-var pistes_only_overlay_HDPI_URL=protocol+"//www.opensnowmap.org/pistes-high-dpi/";
-var pistes_only_overlay_URL=protocol+"//www.opensnowmap.org/pistes/";
-var snow_base_layer_URL =protocol+"//www.opensnowmap.org/base_snow_map/";
-var snow_base_layer_HDPI_URL =protocol+"//www.opensnowmap.org/base_snow_map_high_dpi/";
+var pistes_and_relief_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes-relief/";
+var pistes_only_overlay_HDPI_URL=protocol+"//tiles.opensnowmap.org/pistes-high-dpi/";
+var pistes_only_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes/";
+var snow_base_layer_URL =protocol+"//tiles.opensnowmap.org/base_snow_map/";
+var snow_base_layer_HDPI_URL =protocol+"//tiles.opensnowmap.org/base_snow_map_high_dpi/";
 
 
 var MARKER=false;
@@ -1679,13 +1679,11 @@ function get_tms_url(bounds) {
 function setHighDpi(){
     if (HDPI){
         document.getElementById('high_dpi').style.backgroundColor='#FFF';
-        document.getElementById('sw').style.marginLeft="8px";
-        document.getElementById('sw').innerHTML="+";
+        document.getElementById('viewSwitchImg').src = 'pics/minus_plus_64.png';
         HDPI = false;
     } else {
         document.getElementById('high_dpi').style.backgroundColor='#DDD';
-        document.getElementById('sw').style.marginLeft="-2px";
-        document.getElementById('sw').innerHTML="-";
+        document.getElementById('viewSwitchImg').src = 'pics/plus_minus_64.png';
         HDPI = true;
     }
     setBaseLayer(BASELAYER);
