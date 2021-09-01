@@ -31,7 +31,13 @@ a.amenu:link, a.amenu:visited {
         text-decoration: none;
         margin: 0px
     }
-
+a.amenuLtEmphasis {
+        color: #FF7800;
+        font-size: 1em;
+        text-decoration: none;
+        font-weight: 800;
+        margin: 0px
+    }
 select, option, input{
         background-color: #FFFFFF;
         width: 140px;
@@ -79,7 +85,7 @@ hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; he
 position: absolute;
 bottom: 1px;
 right:1px;
-font-size: 0.6em;
+font-size: 0.8em;
 font-weight:300;
 z-index: 1000;
 background-color: #F5F5F5;
@@ -159,29 +165,6 @@ position: absolute;
     background-attachment: scroll;
     background-size: 200px;
     
-}
-#swbg {
-    background-color:#FFF;
-    width: 21px;height: 12px;
-    margin-top: 6px;
-    border-radius:8px;
-    border: 2px solid black;
-}
-#sw {
-position: relative;
-    background-color:#FFF;
-    width: 12px;height: 12px;
-    top:-2px;
-    margin-left: -2px;
-    border-radius:8px;
-    border: 2px solid black;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    color: #7D7D7D;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 12px;
 }
 .Button {
     background-color:#FDFDFD;

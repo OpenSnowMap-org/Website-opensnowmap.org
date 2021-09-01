@@ -96,7 +96,7 @@
         }
     #main  {
         background:#fff; position:absolute; 
-        top:40px; bottom:110px; 
+        top:40px; bottom:55px; 
         width:100%;}
     #head  {
         background:#fff; position:absolute; 
@@ -114,9 +114,9 @@
     #foot  {
         position:absolute; 
         bottom:0; 
-        width:100%; height:80px; 
+        width:100%; height:50px; 
         overflow:auto;
-        background-color: #C6C6C6;
+        background-color: #EDEDED;
         font-size: 0.8em;
         font-weight: 300;
 		padding: 0px 20px 0px 20px;}
@@ -146,6 +146,10 @@
         text-decoration: none;
         
     }
+    .box {
+        border: 1px solid gray;
+        font-weight: 800;
+    }
     summary {
         font-size: 1.5em;
         font-weight: 800;        
@@ -161,14 +165,11 @@
     <div id='head'><H1>Helper tool to create offset of nordic relation on Opensnowmap rendering</H1></div>
     <div id='main'>
       <div id='left'>
-        <p><font class="small">
+        <p>
              <a href="https://www.opensnowmap.org" target=_"_blank">OpenSnowMap</a>. <br/>
-             Helper tool to create offset of nordic relation on Opensnowmap rendering.
-            </font>
         </p>
-		<a id="permalinkReset" href="">Reset</a>
-		<p style="font-size:0.7 em;font-weight:200;">Adjust the pistes lateral offset from the list below. 
-		When you are satisfied with the result, press 'export'.</br>
+		<p style="font-size:0.5 em;font-weight:200;">Adjust the pistes lateral offset from the list below. 
+		When you are pleased with the result, press 'export'.</br>
 		The resulting file can be sent to webmaster_at_opensnowmap.org or committed to 
 		<a target="blank" href="https://github.com/yvecai/mapnik-opensnowmap.org/tree/master/offset_lists">
 		github</a>.
@@ -177,7 +178,7 @@
 		<div id="form">
 		<form>
 		<input type="submit" value="Export" onclick="showList();return false;">
-		</form>
+		</form><a onclick="reset();return false;" href="">Reset</a>
 		</div>
 		<div id="content">
 		</div>
@@ -192,12 +193,7 @@
     
     </div>
     <div id='foot'>
-        
-        <b>Copyright notice</b> 
-        <ul> 
-            <li>OpenStreetMap® is open data, licensed under the <a href="https://opendatacommons.org/licenses/odbl/" target="_blank">Open Data Commons Open Database License (ODbL)</a> by the OpenStreetMap Foundation (OSMF). 
-            </li>
-        </ul>
+OpenStreetMap® is open data, licensed under the <a href="https://opendatacommons.org/licenses/odbl/" target="_blank">Open Data Commons Open Database License (ODbL)</a> by the OpenStreetMap Foundation (OSMF). 
 
     </div>
 

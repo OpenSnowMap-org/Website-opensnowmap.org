@@ -5,6 +5,16 @@ var map;
 var attribution;
 var base_layer = "osm";
 
+if (location.protocol != 'https:')
+{
+    protocol = 'http:';
+} else
+{
+    protocol = 'https:';
+}
+var pistes_and_relief_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes-relief/";
+var pistes_only_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes/";
+var snow_base_layer_URL =protocol+"//tiles.opensnowmap.org/base_snow_map/";
 
 if (window.location.hash !== '') {
 	// try to restore center, zoom-level and rotation from the URL
@@ -70,7 +80,7 @@ function map_init(){
 				new ol.layer.Tile({
 					name: 'snowmap',
 					source: new ol.source.XYZ({
-						url: "http://www5.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png",
+						url: snow_base_layer_URL+"{z}/{x}/{y}.png",
 						attributions: [
 							new ol.Attribution({
 							html: 'Opensnowmap.org CC-BY-SA' 
@@ -93,7 +103,7 @@ function map_init(){
 				new ol.layer.Tile({
 					name: 'pistes&relief',
 					source: new ol.source.XYZ({
-						url: "http://www.opensnowmap.org/opensnowmap-overlay/{z}/{x}/{y}.png",
+						url: pistes_and_relief_overlay_URL+"{z}/{x}/{y}.png",
 						attributions: [
 							new ol.Attribution({
 							html: 'Opensnowmap.org CC-BY-SA' 
@@ -110,7 +120,7 @@ function map_init(){
 				new ol.layer.Tile({
 					name: 'pistes',
 					source: new ol.source.XYZ({
-						url: "http://www.opensnowmap.org/tiles-pistes/{z}/{x}/{y}.png",
+						url: pistes_only_overlay_URL+"{z}/{x}/{y}.png",
 						attributions: [
 							new ol.Attribution({
 							html: 'Opensnowmap.org CC-BY-SA' 

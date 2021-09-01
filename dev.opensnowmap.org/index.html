@@ -351,13 +351,13 @@
                         </div>
                         <div class="news">
                             <b>News</b><br/>
-                            <a class="amenuLt" target="_blank" 
-                              href="http://blog.opensnowmap.org/post/2018/09/21/Comparison-of-Skimap.org-and-OpenStreetMap-data"
-                              >&bullet;&nbsp;Comparison of Skimap.org and OpenStreetMap data&nbsp;&raquo;</a>
+                            <a class="amenuLtEmphasis" target="_blank" 
+                              href="https://blog.opensnowmap.org/opensnowmap-summer-upgrade/"
+                              >&bullet;&nbsp;OpenSnowMap summer upgrade&nbsp;&raquo;</a>
                             <br/>
                             <a class="amenuLt" target="_blank" 
-                              href="http://blog.opensnowmap.org/post/2018/08/24/Ski-pistes-mapping-2018%21"
-                              >&bullet;&nbsp;Ski pistes mapping 2018&nbsp;&raquo;</a>
+                              href="https://blog.opensnowmap.org/opensnowmap-donation-drive-winter-2020-2021/"
+                              >&bullet;&nbsp;Donation drive winter 2020/2021 !&nbsp;&raquo;</a>
                             <br/>
                             <a class="amenuLt" target="_blank" 
                               href="http://blog.opensnowmap.org/"
@@ -429,6 +429,7 @@
                                 <tr>
                                     <div class="ButtonStatic ButtonMap float-left" >
                                     <img src="pics/changes_legend.png"></img>
+                                    <a href="http://www.opensnowmap.org/qa/Pistes_changes/web/" target="_blank">View changes &raquo;</a>
                                     </div>
                                 </tr>
                         </table>
@@ -464,7 +465,7 @@
 						
 						<hr class="hrmenu">
 						
-						<p><a id="permalink.offseter" target="blank" href="">
+						<p><a onclick="openOffseter();return false;" target="blank" href="">
 							<img id="offseter_pic" class="float-left" src="pics/offseter-48.png"></a>
 						<span class="i18n" i18nText="offseter_explain">xxxx</span></p>
 						<br class="clear" />
@@ -686,21 +687,11 @@
 			
 			
 		<div id="attributions">
-			&#169;<a href="http://www.openstreetmap.org" target="blank">
-			Openstreetmap.org</a> &amp; contributors. 
-<!--
-            - 
--->
-<!--
-			Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>
-				<img src="pics/mq_logo_xs.png">
--->
-			</br> 
-			MODIS/Terra Snow Cover 8-day by 
-				<a href="http://nsidc.org/" target="blank">NSDIC</a> - 
-			ASTER GDEM is a product </br> 
-			of METI and NASA - SRTM V4 thanks to <a href="http://srtm.csi.cgiar.org" target="_blank">CGIAR-CSI</a>
-			- EU-DEM produced  </br> using Copernicus data and information funded by the European Union.
+				&#169;<a href="http://www.openstreetmap.org" target="blank" class="black">
+				OpenStreetMap.org</a> -
+				<a href="https://asterweb.jpl.nasa.gov" target="_blank" class="black">ASTER</a> -
+				<a href="http://www2.jpl.nasa.gov/srtm/" target="_blank" class="black">SRTM</a>-
+				<a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank" class="black">EUDEM</a>
 		</div>
 		<a id="permalink" href="" 
 			onmouseover="document.images['linkPic'].src='pics/link_hover.png'"

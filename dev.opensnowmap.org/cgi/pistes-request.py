@@ -649,7 +649,7 @@ def makeList(IDS, GEO):
 	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
 	
 	if GEO: geomS=',ST_AsText(ST_buffer(geom,0.01))'
-	else: geomR=''
+	else: geomS=''
 	if GEO: geomR=',ST_AsText(geom)'
 	else: geomR=''
 	if GEO: geomW=',ST_AsText(ST_Collect(ST_LineMerge(linestring)))'
