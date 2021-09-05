@@ -55,7 +55,7 @@ var today=new Date();
 var data = {};
 var BASELAYER = 'snowmap';
 var INIT = false;
-var HDPI = false; //will be turned to true at map_init()
+var HDPI = true; //will be turned to true at map_init()
 var shouldUpdateHashPermalink = true;
 
 // a dummy proxy script is located in the directory to allow use of wfs
@@ -90,6 +90,7 @@ function readHashPermalink() {
     }
     //Then hopefully map_init() will do the job when the map is loaded
 }
+
 var updateHashPermalink = function() {
   
   if (!shouldUpdateHashPermalink) {
@@ -115,6 +116,7 @@ var updateHashPermalink = function() {
     center: center,
     rotation: view.getRotation()
   };
+  document.getElementById('zoom').innerHTML= zoom;
   window.history.pushState(state, 'map', hash);
   //~ document.getElementsByClassName('ol-zoomslider-thumb')[0].innerHTML=zoom;
   return true;
@@ -806,7 +808,6 @@ function page_init(){
     
     });
     
-    updateZoom();
     initFlags();
     get_stats();
     document.getElementById('dailyVector').style.backgroundColor='#FFF';
@@ -877,7 +878,7 @@ function page_init(){
       setBaseLayer();
         };
     document.getElementById('viewSwitch').onclick= function() {
-      HDPI = !HDPI;
+      setHighDpi();
       setBaseLayer();
         };
         
@@ -900,6 +901,9 @@ function page_init(){
         document.getElementById('noVector').style.backgroundColor='#DDD';
         };
         
+    document.getElementById('changesButton').onclick= function() {
+        window.open('http://www.opensnowmap.org/qa/Pistes_changes/web/');
+        };
     document.getElementById('legendButton').onclick= function() { 
         showlegend();
         };
@@ -1758,9 +1762,6 @@ function fillHTMLStats(jsonStats, div, element_type) {
 //======================================================================
 // MAP
 
-function updateZoom() {
-    //~ document.getElementById('zoom').innerHTML= map.getZoom();
-}
 
 function get_osm_url(bounds) {
     var res = this.map.getResolution();
@@ -1795,11 +1796,13 @@ function get_tms_url(bounds) {
 function setHighDpi(){
     if (HDPI){
         document.getElementById('high_dpi').style.backgroundColor='#FFF';
-        document.getElementById('viewSwitchImg').src = 'pics/minus_plus_64.png';
+        document.getElementById('viewSwitchImg').src = 'pics/plus_minus_4_64.svg';
+        document.getElementById('viewSwitchImgMenu').src = 'pics/plus_minus_4_64.svg';
         HDPI = false;
     } else {
         document.getElementById('high_dpi').style.backgroundColor='#DDD';
-        document.getElementById('viewSwitchImg').src = 'pics/plus_minus_64.png';
+        document.getElementById('viewSwitchImg').src = 'pics/minus_plus_4_64.svg';
+        document.getElementById('viewSwitchImgMenu').src = 'pics/minus_plus_4_64.svg';
         HDPI = true;
     }
 }
@@ -2184,7 +2187,8 @@ function map_init(){
         new ol.layer.Tile({
           name: 'osm',
           source: new ol.source.OSM(),
-          visible: false
+          visible: false,
+          attributions: null
         }),
         
         new ol.layer.Tile({
@@ -2240,8 +2244,10 @@ function map_init(){
     target: 'map',
     view:view,
     logo: false,
-    controls: ol.control.defaults(),
-    intercations: ol.interaction.defaults(),
+    controls : ol.control.defaults({
+        attribution : false
+    }),
+    interactions: ol.interaction.defaults(),
     renderer:  ('canvas')
   });
   
@@ -2288,7 +2294,10 @@ function _(s) {
     if (typeof(i18n) == 'undefined' && typeof(i18nDefault) == 'undefined') {
         return s;
     }
-    return i18nDefault[s];
+    if (typeof(i18nDefault[s]) !== 'undefined')
+      return i18nDefault[s];
+    else
+      return s;
 }
 
 function translateDiv(divID) {
