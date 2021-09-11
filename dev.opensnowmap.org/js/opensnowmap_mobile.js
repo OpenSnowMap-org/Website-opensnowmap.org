@@ -41,7 +41,6 @@ var snow_base_layer_HDPI_URL =protocol+"//tiles.opensnowmap.org/base_snow_map_hi
 
 var MARKER=false;
 var LOC=false;
-var LOC_ONCE=false;
 var geoWatchID;
 var zoomBar;
 var map;
@@ -57,7 +56,17 @@ var BASELAYER = 'snowmap';
 var INIT = false;
 var HDPI = true; //will be turned to true at map_init()
 var shouldUpdateHashPermalink = true;
+var geoLoc = null;
 
+var deletedNodesSource = new ol.source.Vector();
+var deletedWaysSource = new ol.source.Vector();
+var deletedRelationsSource = new ol.source.Vector();
+var modifiedNodesSource = new ol.source.Vector();
+var modifiedWaysSource = new ol.source.Vector();
+var modifiedRelationsSource = new ol.source.Vector();
+var addedNodesSource = new ol.source.Vector();
+var addedWaysSource = new ol.source.Vector();
+var addedRelationsSource = new ol.source.Vector();
 // a dummy proxy script is located in the directory to allow use of wfs
 //~ OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
 
@@ -141,8 +150,7 @@ var viewHDPI = new ol.View({
 var view = new ol.View({
   center: ol.proj.fromLonLat(center, 'EPSG:3857'),
   zoom: zoom,
-  constrainResolution: true,
-  zoom: zoom
+  constrainResolution: true
     // default to maxResolution : 40075016.68557849 / 256
 });
 
@@ -236,80 +244,259 @@ function resize_sideBar() {
     //~ }
     //~ return true
 }
-function show_live_edits(when,display) {
-if (display) {
-        var deletedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#FF1200",
-                strokeColor:"#000000"});
-        var deletedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#FF1200",
-                strokeColor:"#000000"});
-        var deletedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#FF120000",
-                strokeColor:"#FF1200"});
-        var modifiedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#FFA600",
-                strokeColor:"#000000"});
-        var modifiedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#FFA600",
-                strokeColor:"#000000"});
-        var modifiedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#FFA60000",
-                strokeColor:"#FFA600"});
-        var addedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#33FF00",
-                strokeColor:"#000000"});
-        var addedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#33FF00",
-                strokeColor:"#000000"});
-        var addedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#33FF0000",
-                strokeColor:"#33FF00"});
+
+function getChangeFiles(file, source)
+{
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", server + file);
+    XMLHttp.setRequestHeader("Content-type", "text/plain; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () { // no way to pass args in the callback
+        if (XMLHttp.readyState == 4) {
+          if(XMLHttp.responseText != "")
+            {
+              var csv = XMLHttp.responseText;
+              var features = [];
+              let prevIndex = csv.indexOf('\n') + 1; // scan past the header line
+			  let curIndex;
+			  while ((curIndex = csv.indexOf('\n', prevIndex)) != -1) 
+			  {
+				line = csv.substr(prevIndex, curIndex - prevIndex).split(',');
+				prevIndex = curIndex + 1;
+
+				coords = ol.proj.fromLonLat([parseFloat(line[1]), parseFloat(line[0])]);
+				if (isNaN(coords[0]) || isNaN(coords[1])) {
+				  // guard against bad data
+				  continue;
+				}
+				  features.push(new ol.Feature({
+				  geometry: new ol.geom.Point(coords)
+				}));
+			  }
+			  source.addFeatures(features);
+        }
+		}
+    };
+    XMLHttp.send();
+    return true;
+}
+function show_live_edits(when) {
+		
+        var deletedNodesStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 2.5,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#FF1200'})
+            })
+            });
+        var deletedWaysStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 4,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#FF1200'})
+            })
+            });
+        var deletedRelationsStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 5.5,
+				stroke: new ol.style.Stroke({
+				  color: '#FF1200',
+				  width: 3,
+				}),
+				fill: new ol.style.Fill({color: '#FF120000'})
+            })
+            });
+        var modifiedNodesStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 2.5,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#FFA600'})
+            })
+            });
+        var modifiedWaysStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 4,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#FFA600'})
+            })
+             });
+        var modifiedRelationsStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 5.5,
+				stroke: new ol.style.Stroke({
+				  color: '#FFA600',
+				  width: 3,
+				}),
+				fill: new ol.style.Fill({color: '#FFA60000'})
+            })
+            });
+        var addedNodesStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 2.5,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#33FF00'})
+            })
+            });
+        var addedWaysStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 4,
+				stroke: new ol.style.Stroke({
+				  color: '#00000000',
+				  width: 0,
+				}),
+				fill: new ol.style.Fill({color: '#33FF00'})
+            })
+			});
+        var addedRelationsStyle = new ol.style.Style({ image:
+			new ol.style.Circle({
+                radius: 5.5,
+				stroke: new ol.style.Stroke({
+				  color: '#33FF00',
+				  width: 3,
+				}),
+				fill: new ol.style.Fill({color: '#33FF0000'})
+            })
+            });
+        
+		styles = [
+			deletedNodesStyle,
+			deletedWaysStyle,
+			deletedRelationsStyle,
+			modifiedNodesStyle,
+			modifiedWaysStyle,
+			modifiedRelationsStyle,
+			addedNodesStyle,
+			addedWaysStyle,
+			addedRelationsStyle];
+			
+		sources = [
+				deletedNodesSource ,
+				deletedWaysSource ,
+				deletedRelationsSource ,
+				modifiedNodesSource ,
+				modifiedWaysSource ,
+				modifiedRelationsSource ,
+				addedNodesSource ,
+				addedWaysSource ,
+				addedRelationsSource ];
+			
+		layerNames = [
+				"deletedNodesLayer" ,
+				"deletedWaysLayer" ,
+				"deletedRelationsLayer" ,
+				"modifiedNodesLayer" ,
+				"modifiedWaysLayer" ,
+				"modifiedRelationsLayer" ,
+				"addedNodesLayer" ,
+				"addedWaysLayer" ,
+				"addedRelationsLayer"];
+			
+        /*
+        deletedNodesStyle
+        deletedWaysStyle
+        deletedRelationsStyle
+        modifiedNodesStyle
+        modifiedWaysStyle
+        modifiedRelationsStyle
+        addedNodesStyle
+        addedWaysStyle
+        addedRelationsStyle
+        * */
+        for (i=0; i<9; i++) {
+			map.removeLayer(getLayerByName(layerNames[i]));
+			sources[i].clear({fast:true});
+		}
+			
         if (when == "daily") {
-            
-            var DailyaddedRelationsLayer = new OpenLayers.Layer.Vector("DailyaddedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedRelationsLayer]);
-            var DailymodifiedRelationsLayer = new OpenLayers.Layer.Vector("DailymodifiedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+			
+				
+			files = ["data/daily_nodes_deleted.csv",
+				"data/daily_ways_deleted.csv",
+				"data/daily_relations_deleted.csv",
+				"data/daily_nodes_modified.csv",
+				"data/daily_ways_modified.csv",
+				"data/daily_relations_modified.csv",
+				"data/daily_nodes_added.csv",
+				"data/daily_ways_added.csv",
+				"data/daily_relations_added.csv"];
+			
+			for (i=0; i<9; i++) { 
+				map.addLayer(
+					new ol.layer.Vector({
+						name: layerNames[9-i], 
+						source: sources[9-i],
+						style: styles[9-i],
+						declutter: false
+					})
+				);
+			}
+			for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
+		}
+        if (when == "weekly") {
+				
+			files = ["data/weekly_nodes_deleted.csv",
+				"data/weekly_ways_deleted.csv",
+				"data/weekly_relations_deleted.csv",
+				"data/weekly_nodes_modified.csv",
+				"data/weekly_ways_modified.csv",
+				"data/weekly_relations_modified.csv",
+				"data/weekly_nodes_added.csv",
+				"data/weekly_ways_added.csv",
+				"data/weekly_relations_added.csv"];
+			
+			for (i=0; i<9; i++) { 
+				map.addLayer(
+					new ol.layer.Vector({
+						name: layerNames[9-i], 
+						source: sources[9-i],
+						style: styles[9-i],
+						declutter: false
+					})
+				);
+			}
+			for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
+		}
+		if (when == "none") {
+			// layers already removed
+			}
+}
+            /*
+            var DailymodifiedRelationsLayer = new ol.layer.Vector.VectorLayer("DailymodifiedRelationsLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_relations_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedRelationsStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailymodifiedRelationsLayer]);
-            var DailydeletedRelationsLayer = new OpenLayers.Layer.Vector("DailydeletedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailydeletedRelationsLayer = new ol.layer.Vector.VectorLayer("DailydeletedRelationsLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_relations_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedRelationsStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
@@ -318,40 +505,40 @@ if (display) {
             
             
             
-            var DailyaddedWaysLayer = new OpenLayers.Layer.Vector("DailyaddedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailyaddedWaysLayer = new ol.layer.Vector.VectorLayer("DailyaddedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_ways_added.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': addedWaysStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailyaddedWaysLayer]);
-            var DailymodifiedWaysLayer = new OpenLayers.Layer.Vector("DailymodifiedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailymodifiedWaysLayer = new ol.layer.Vector.VectorLayer("DailymodifiedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_ways_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedWaysStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailymodifiedWaysLayer]);
-            var DailydeletedWaysLayer = new OpenLayers.Layer.Vector("DailydeletedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailydeletedWaysLayer = new ol.layer.Vector.VectorLayer("DailydeletedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_ways_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedWaysStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
@@ -360,82 +547,82 @@ if (display) {
             
             
             
-            var DailyaddedNodesLayer = new OpenLayers.Layer.Vector("DailyaddedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailyaddedNodesLayer = new ol.layer.Vector.VectorLayer("DailyaddedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_nodes_added.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': addedNodesStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailyaddedNodesLayer]);
-            var DailymodifiedNodesLayer = new OpenLayers.Layer.Vector("DailymodifiedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailymodifiedNodesLayer = new ol.layer.Vector.VectorLayer("DailymodifiedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_nodes_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedNodesStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailymodifiedNodesLayer]);
-            var DailydeletedNodesLayer = new OpenLayers.Layer.Vector("DailydeletedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var DailydeletedNodesLayer = new ol.layer.Vector.VectorLayer("DailydeletedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/daily_nodes_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedNodesStyle
                         }), group: 'daily',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([DailydeletedNodesLayer]);
-        }
-        if (when == "weekly") {
+        
+       if (when == "weekly") {
             
-            var WeeklyaddedRelationsLayer = new OpenLayers.Layer.Vector("WeeklyaddedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklyaddedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedRelationsLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_relations_added.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': addedRelationsStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklyaddedRelationsLayer]);
-            var WeeklymodifiedRelationsLayer = new OpenLayers.Layer.Vector("WeeklymodifiedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklymodifiedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedRelationsLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_relations_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedRelationsStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklymodifiedRelationsLayer]);
-            var WeeklydeletedRelationsLayer = new OpenLayers.Layer.Vector("WeeklydeletedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklydeletedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedRelationsLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_relations_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedRelationsStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
@@ -444,40 +631,40 @@ if (display) {
             
             
             
-            var WeeklyaddedWaysLayer = new OpenLayers.Layer.Vector("WeeklyaddedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklyaddedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_ways_added.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': addedWaysStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklyaddedWaysLayer]);
-            var WeeklymodifiedWaysLayer = new OpenLayers.Layer.Vector("WeeklymodifiedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklymodifiedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_ways_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedWaysStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklymodifiedWaysLayer]);
-            var WeeklydeletedWaysLayer = new OpenLayers.Layer.Vector("WeeklydeletedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklydeletedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedWaysLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_ways_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedWaysStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
@@ -486,40 +673,40 @@ if (display) {
             
             
             
-            var WeeklyaddedNodesLayer = new OpenLayers.Layer.Vector("WeeklyaddedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklyaddedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_nodes_added.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': addedNodesStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklyaddedNodesLayer]);
-            var WeeklymodifiedNodesLayer = new OpenLayers.Layer.Vector("WeeklymodifiedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklymodifiedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_nodes_modified.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': modifiedNodesStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
                     });
             map.addLayers([WeeklymodifiedNodesLayer]);
-            var WeeklydeletedNodesLayer = new OpenLayers.Layer.Vector("WeeklydeletedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
+            var WeeklydeletedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedNodesLayer", {
+
+
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: "data/weekly_nodes_deleted.csv",
                             format: new OpenLayers.Format.Text()
                         }),
-                        styleMap: new OpenLayers.StyleMap({
+                        styleMap: new ol.style.StyleMap({
                             'default': deletedNodesStyle
                         }), group: 'weekly',
                         projection: new OpenLayers.Projection("EPSG:4326")
@@ -527,14 +714,14 @@ if (display) {
             map.addLayers([WeeklydeletedNodesLayer]);
         }
         //~ if (when == "monthly") {
-            //~ var MonthlyLayer = new OpenLayers.Layer.Vector("Monthly", {
+            //~ var MonthlyLayer = new ol.layer.Vector.VectorLayer("Monthly", {
                         //~ strategies: [new OpenLayers.Strategy.Fixed(),
                                     //~ new OpenLayers.Strategy.Cluster()],
                         //~ protocol: new OpenLayers.Protocol.HTTP({
                             //~ url: "data/monthly.tsv",
                             //~ format: new OpenLayers.Format.Text()
                         //~ }),
-                        //~ styleMap: new OpenLayers.StyleMap({
+                        //~ styleMap: new ol.style.StyleMap({
                             //~ 'default': DeletedNodesStyle
                         //~ }),
                         //~ projection: new OpenLayers.Projection("EPSG:4326")
@@ -560,8 +747,9 @@ if (display) {
             document.getElementById('dailyVector').style.backgroundColor='#FFF';
             document.getElementById('weekVector').style.backgroundColor='#FFF';
             document.getElementById('noVector').style.backgroundColor='#DDD';
-            }
-    }
+            }*/
+var closeContent =function() {
+	closecontent();
 }
 function closecontent(){
     document.getElementById('content').style.display="none";
@@ -715,36 +903,32 @@ function hideexcept(div) {
 // LOCATION
 function toggleLocation() {
     if (LOC) {
-        navigator.geolocation.clearWatch(geoWatchID);
+        geoLoc.setTracking(false);
         LOC=false;
-        LOC_ONCE=false;
         document.getElementById('location').style.backgroundColor='#FAFAFA';
     } 
     else {
-        if (navigator.geolocation){
-            LOC=true;
-            geoWatchID = navigator.geolocation.watchPosition(showLocation,errorLocation,{
-                enableHighAccuracy: true, maximumAge: 300000, timeout: 20000,frequency: 15000});
-        }
+		geoLoc=null;
+        geoLoc = new ol.Geolocation({
+			tracking: true,
+		  // enableHighAccuracy must be set to true to have the heading value.
+			trackingOptions: {
+				enableHighAccuracy: true,
+				},
+			projection: map.getView().getProjection(),
+		});
+			
+		geoLoc.on('change', function () { 
+			map.getView().setCenter(geoLoc.getPosition());
+			if (map.getView().getZoom() < 12)
+				{map.getView().setZoom(12);}
+		});
+        LOC=true;
+        document.getElementById('location').style.backgroundColor='#8F8F8F';
     }
-}
-function showLocation(position) {
-    document.getElementById('location').style.backgroundColor='#DDD';
-  var latitude = position.coords.latitude;
-  var longitude = position.coords.longitude;
-  //alert("Latitude : " + latitude + " Longitude: " + longitude);
-  var nlonLat = new OpenLayers.LonLat(longitude, latitude).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  if (LOC_ONCE) {
-      map.setCenter(nlonLat, map.getZoom());
-    }
-  else {
-    map.setCenter(nlonLat, 16);
-    LOC_ONCE=true;
-  }
 }
 function errorLocation(error) {
     alert(error.message);
-    navigator.geolocation.clearWatch(geoWatchID);
     LOC=false;
     document.getElementById('location').style.backgroundColor='#FAFAFA';
 }
@@ -883,19 +1067,19 @@ function page_init(){
         };
         
     document.getElementById('dailyVector').onclick= function() {
-        show_live_edits('daily',true);
+        show_live_edits('daily');
         document.getElementById('dailyVector').style.backgroundColor='#DDD';
         document.getElementById('weekVector').style.backgroundColor='#FFF';
         document.getElementById('noVector').style.backgroundColor='#FFF';
         };
     document.getElementById('weekVector').onclick= function() {
-        show_live_edits('weekly',true);
+        show_live_edits('weekly');
         document.getElementById('dailyVector').style.backgroundColor='#FFF';
         document.getElementById('weekVector').style.backgroundColor='#DDD';
         document.getElementById('noVector').style.backgroundColor='#FFF';
         };
     document.getElementById('noVector').onclick= function() {
-        show_live_edits('none',false);
+        show_live_edits('none');
         document.getElementById('dailyVector').style.backgroundColor='#FFF';
         document.getElementById('weekVector').style.backgroundColor='#FFF';
         document.getElementById('noVector').style.backgroundColor='#DDD';
@@ -2122,7 +2306,7 @@ function map_init(){
             zoomInId: "customZoomIn",
             zoomOutId: "customZoomOut"
         }),
-        new OpenLayers.Control.LayerSwitcher()
+        new OpenLayers.Control.layerSwitcher()
         ],
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
         maxResolution: 156543.0399,
@@ -2247,13 +2431,14 @@ function map_init(){
     controls : ol.control.defaults({
         attribution : false
     }),
-    interactions: ol.interaction.defaults(),
+    interactions: ol.interaction.defaults({altShiftDragRotate: false,pinchRotate:false}),
     renderer:  ('canvas')
   });
   
   setBaseLayer();
   map.on('moveend', updateHashPermalink);
   map.on('precompose', setCanvasScale ); // needed when we resize window
+  map.on('click', closeContent);
 
 }
 
