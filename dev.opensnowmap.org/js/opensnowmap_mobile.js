@@ -57,6 +57,9 @@ var INIT = false;
 var HDPI = true; //will be turned to true at map_init()
 var shouldUpdateHashPermalink = true;
 var geoLoc = null;
+var modifyPoints;
+var drawPoints;
+var QUERYMODE = false;
 
 var deletedNodesSource = new ol.source.Vector();
 var deletedWaysSource = new ol.source.Vector();
@@ -258,154 +261,154 @@ function getChangeFiles(file, source)
               var csv = XMLHttp.responseText;
               var features = [];
               let prevIndex = csv.indexOf('\n') + 1; // scan past the header line
-			  let curIndex;
-			  while ((curIndex = csv.indexOf('\n', prevIndex)) != -1) 
-			  {
-				line = csv.substr(prevIndex, curIndex - prevIndex).split(',');
-				prevIndex = curIndex + 1;
+        let curIndex;
+        while ((curIndex = csv.indexOf('\n', prevIndex)) != -1) 
+        {
+        line = csv.substr(prevIndex, curIndex - prevIndex).split(',');
+        prevIndex = curIndex + 1;
 
-				coords = ol.proj.fromLonLat([parseFloat(line[1]), parseFloat(line[0])]);
-				if (isNaN(coords[0]) || isNaN(coords[1])) {
-				  // guard against bad data
-				  continue;
-				}
-				  features.push(new ol.Feature({
-				  geometry: new ol.geom.Point(coords)
-				}));
-			  }
-			  source.addFeatures(features);
+        coords = ol.proj.fromLonLat([parseFloat(line[1]), parseFloat(line[0])]);
+        if (isNaN(coords[0]) || isNaN(coords[1])) {
+          // guard against bad data
+          continue;
         }
-		}
+          features.push(new ol.Feature({
+          geometry: new ol.geom.Point(coords)
+        }));
+        }
+        source.addFeatures(features);
+        }
+    }
     };
     XMLHttp.send();
     return true;
 }
 function show_live_edits(when) {
-		
+    
         var deletedNodesStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 2.5,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#FF1200'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#FF1200'})
             })
             });
         var deletedWaysStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 4,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#FF1200'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#FF1200'})
             })
             });
         var deletedRelationsStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 5.5,
-				stroke: new ol.style.Stroke({
-				  color: '#FF1200',
-				  width: 3,
-				}),
-				fill: new ol.style.Fill({color: '#FF120000'})
+        stroke: new ol.style.Stroke({
+          color: '#FF1200',
+          width: 3,
+        }),
+        fill: new ol.style.Fill({color: '#FF120000'})
             })
             });
         var modifiedNodesStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 2.5,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#FFA600'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#FFA600'})
             })
             });
         var modifiedWaysStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 4,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#FFA600'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#FFA600'})
             })
              });
         var modifiedRelationsStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 5.5,
-				stroke: new ol.style.Stroke({
-				  color: '#FFA600',
-				  width: 3,
-				}),
-				fill: new ol.style.Fill({color: '#FFA60000'})
+        stroke: new ol.style.Stroke({
+          color: '#FFA600',
+          width: 3,
+        }),
+        fill: new ol.style.Fill({color: '#FFA60000'})
             })
             });
         var addedNodesStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 2.5,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#33FF00'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#33FF00'})
             })
             });
         var addedWaysStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 4,
-				stroke: new ol.style.Stroke({
-				  color: '#00000000',
-				  width: 0,
-				}),
-				fill: new ol.style.Fill({color: '#33FF00'})
+        stroke: new ol.style.Stroke({
+          color: '#00000000',
+          width: 0,
+        }),
+        fill: new ol.style.Fill({color: '#33FF00'})
             })
-			});
+      });
         var addedRelationsStyle = new ol.style.Style({ image:
-			new ol.style.Circle({
+      new ol.style.Circle({
                 radius: 5.5,
-				stroke: new ol.style.Stroke({
-				  color: '#33FF00',
-				  width: 3,
-				}),
-				fill: new ol.style.Fill({color: '#33FF0000'})
+        stroke: new ol.style.Stroke({
+          color: '#33FF00',
+          width: 3,
+        }),
+        fill: new ol.style.Fill({color: '#33FF0000'})
             })
             });
         
-		styles = [
-			deletedNodesStyle,
-			deletedWaysStyle,
-			deletedRelationsStyle,
-			modifiedNodesStyle,
-			modifiedWaysStyle,
-			modifiedRelationsStyle,
-			addedNodesStyle,
-			addedWaysStyle,
-			addedRelationsStyle];
-			
-		sources = [
-				deletedNodesSource ,
-				deletedWaysSource ,
-				deletedRelationsSource ,
-				modifiedNodesSource ,
-				modifiedWaysSource ,
-				modifiedRelationsSource ,
-				addedNodesSource ,
-				addedWaysSource ,
-				addedRelationsSource ];
-			
-		layerNames = [
-				"deletedNodesLayer" ,
-				"deletedWaysLayer" ,
-				"deletedRelationsLayer" ,
-				"modifiedNodesLayer" ,
-				"modifiedWaysLayer" ,
-				"modifiedRelationsLayer" ,
-				"addedNodesLayer" ,
-				"addedWaysLayer" ,
-				"addedRelationsLayer"];
-			
+    styles = [
+      deletedNodesStyle,
+      deletedWaysStyle,
+      deletedRelationsStyle,
+      modifiedNodesStyle,
+      modifiedWaysStyle,
+      modifiedRelationsStyle,
+      addedNodesStyle,
+      addedWaysStyle,
+      addedRelationsStyle];
+      
+    sources = [
+        deletedNodesSource ,
+        deletedWaysSource ,
+        deletedRelationsSource ,
+        modifiedNodesSource ,
+        modifiedWaysSource ,
+        modifiedRelationsSource ,
+        addedNodesSource ,
+        addedWaysSource ,
+        addedRelationsSource ];
+      
+    layerNames = [
+        "deletedNodesLayer" ,
+        "deletedWaysLayer" ,
+        "deletedRelationsLayer" ,
+        "modifiedNodesLayer" ,
+        "modifiedWaysLayer" ,
+        "modifiedRelationsLayer" ,
+        "addedNodesLayer" ,
+        "addedWaysLayer" ,
+        "addedRelationsLayer"];
+      
         /*
         deletedNodesStyle
         deletedWaysStyle
@@ -418,62 +421,62 @@ function show_live_edits(when) {
         addedRelationsStyle
         * */
         for (i=0; i<9; i++) {
-			map.removeLayer(getLayerByName(layerNames[i]));
-			sources[i].clear({fast:true});
-		}
-			
+      map.removeLayer(getLayerByName(layerNames[i]));
+      sources[i].clear({fast:true});
+    }
+      
         if (when == "daily") {
-			
-				
-			files = ["data/daily_nodes_deleted.csv",
-				"data/daily_ways_deleted.csv",
-				"data/daily_relations_deleted.csv",
-				"data/daily_nodes_modified.csv",
-				"data/daily_ways_modified.csv",
-				"data/daily_relations_modified.csv",
-				"data/daily_nodes_added.csv",
-				"data/daily_ways_added.csv",
-				"data/daily_relations_added.csv"];
-			
-			for (i=0; i<9; i++) { 
-				map.addLayer(
-					new ol.layer.Vector({
-						name: layerNames[9-i], 
-						source: sources[9-i],
-						style: styles[9-i],
-						declutter: false
-					})
-				);
-			}
-			for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
-		}
+      
+        
+      files = ["data/daily_nodes_deleted.csv",
+        "data/daily_ways_deleted.csv",
+        "data/daily_relations_deleted.csv",
+        "data/daily_nodes_modified.csv",
+        "data/daily_ways_modified.csv",
+        "data/daily_relations_modified.csv",
+        "data/daily_nodes_added.csv",
+        "data/daily_ways_added.csv",
+        "data/daily_relations_added.csv"];
+      
+      for (i=0; i<9; i++) { 
+        map.addLayer(
+          new ol.layer.Vector({
+            name: layerNames[9-i], 
+            source: sources[9-i],
+            style: styles[9-i],
+            declutter: false
+          })
+        );
+      }
+      for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
+    }
         if (when == "weekly") {
-				
-			files = ["data/weekly_nodes_deleted.csv",
-				"data/weekly_ways_deleted.csv",
-				"data/weekly_relations_deleted.csv",
-				"data/weekly_nodes_modified.csv",
-				"data/weekly_ways_modified.csv",
-				"data/weekly_relations_modified.csv",
-				"data/weekly_nodes_added.csv",
-				"data/weekly_ways_added.csv",
-				"data/weekly_relations_added.csv"];
-			
-			for (i=0; i<9; i++) { 
-				map.addLayer(
-					new ol.layer.Vector({
-						name: layerNames[9-i], 
-						source: sources[9-i],
-						style: styles[9-i],
-						declutter: false
-					})
-				);
-			}
-			for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
-		}
-		if (when == "none") {
-			// layers already removed
-			}
+        
+      files = ["data/weekly_nodes_deleted.csv",
+        "data/weekly_ways_deleted.csv",
+        "data/weekly_relations_deleted.csv",
+        "data/weekly_nodes_modified.csv",
+        "data/weekly_ways_modified.csv",
+        "data/weekly_relations_modified.csv",
+        "data/weekly_nodes_added.csv",
+        "data/weekly_ways_added.csv",
+        "data/weekly_relations_added.csv"];
+      
+      for (i=0; i<9; i++) { 
+        map.addLayer(
+          new ol.layer.Vector({
+            name: layerNames[9-i], 
+            source: sources[9-i],
+            style: styles[9-i],
+            declutter: false
+          })
+        );
+      }
+      for (i=0; i<9; i++) { getChangeFiles(files[i], sources[i]);}
+    }
+    if (when == "none") {
+      // layers already removed
+      }
 }
             /*
             var DailymodifiedRelationsLayer = new ol.layer.Vector.VectorLayer("DailymodifiedRelationsLayer", {
@@ -749,10 +752,12 @@ function show_live_edits(when) {
             document.getElementById('noVector').style.backgroundColor='#DDD';
             }*/
 var closeContent =function() {
-	closecontent();
+  closecontent();
 }
 function closecontent(){
-    document.getElementById('content').style.display="none";
+    if (!QUERYMODE) {
+      document.getElementById('content').style.display="none";
+    }
 }
 function showsearch() {
     document.getElementById('content').style.display='inline';
@@ -908,21 +913,21 @@ function toggleLocation() {
         document.getElementById('location').style.backgroundColor='#FAFAFA';
     } 
     else {
-		geoLoc=null;
+    geoLoc=null;
         geoLoc = new ol.Geolocation({
-			tracking: true,
-		  // enableHighAccuracy must be set to true to have the heading value.
-			trackingOptions: {
-				enableHighAccuracy: true,
-				},
-			projection: map.getView().getProjection(),
-		});
-			
-		geoLoc.on('change', function () { 
-			map.getView().setCenter(geoLoc.getPosition());
-			if (map.getView().getZoom() < 12)
-				{map.getView().setZoom(12);}
-		});
+      tracking: true,
+      // enableHighAccuracy must be set to true to have the heading value.
+      trackingOptions: {
+        enableHighAccuracy: true,
+        },
+      projection: map.getView().getProjection(),
+    });
+      
+    geoLoc.on('change', function () { 
+      map.getView().setCenter(geoLoc.getPosition());
+      if (map.getView().getZoom() < 12)
+        {map.getView().setZoom(12);}
+    });
         LOC=true;
         document.getElementById('location').style.backgroundColor='#8F8F8F';
     }
@@ -1020,6 +1025,12 @@ function page_init(){
         };
     document.getElementById('dolistViewport').onclick= function() {
         getTopoByViewport();
+        };
+    document.getElementById('doQueryPistes').onclick= function() {
+        queryPistes();
+        };
+    document.getElementById('doQueryPistesButton').onclick= function() {
+        queryPistes();
         };
     document.getElementById('mobileswitch').onclick= function() {
         document.cookie='version=mobile';
@@ -1127,10 +1138,10 @@ function zoomToElement(osm_id, type) {
     if (!element) {return false;}
 
     var bbox = element.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
-	var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
-	var newExtent;
-	newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
-	map.getView().fit(newExtent);
+  var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
 }
 function highlightElement(osm_id, type){
     
@@ -1146,10 +1157,10 @@ function highlightElement(osm_id, type){
     if (! element) {return false;}
     
     var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
-	var newExtent;
-	newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
-	map.getView().fit(newExtent);    
+  var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
+  map.getView().fit(newExtent);    
     //~ var encPol= new OpenLayers.Format.EncodedPolyline();
     //~ var geometry=element.geometry;
     //~ var features=[];
@@ -1187,10 +1198,10 @@ function highlightParentSite(osm_id,r){
     if (! parent) {return false;}
     
     var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
-	var newExtent;
-	newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
-	map.getView().fit(newExtent);    
+  var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
+  map.getView().fit(newExtent);    
     //~ var encPol= new OpenLayers.Format.EncodedPolyline();
     //~ var geometry=parent.geometry;
     //~ var features=[];
@@ -1224,10 +1235,10 @@ function highlightParentRoute(osm_id,r){
     if (! parent) {return false;}
     
     var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-	var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
-	var newExtent;
-	newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
-	map.getView().fit(newExtent);    
+  var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
+  map.getView().fit(newExtent);    
     //~ var encPol= new OpenLayers.Format.EncodedPolyline();
     //~ var geometry=parent.geometry;
     //~ var features=[];
@@ -1258,10 +1269,10 @@ function zoomToParentSite(osm_id,r) {
     if (!parent) {return false;}
 
     var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
-	var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
-	var newExtent;
-	newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
-	map.getView().fit(newExtent);
+  var bounds = [bbox[0],bbox[1],bbox[2],bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326','EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
     //~ var encPol= new OpenLayers.Format.EncodedPolyline();
     //~ var geometry=parent.geometry;
     //~ var features=[];
@@ -1419,6 +1430,122 @@ function getTopoByViewport() { //DONE in pisteList
     XMLHttp.send();
     return true;
 }
+  var Pointsfeatures = new ol.Collection();
+  var sourcePoints = new ol.source.Vector({features: Pointsfeatures})
+// Vector controls for routing
+  var modifyPoints; // Control to move points
+  var drawPoints; // Control to add points
+  var pointID = 0;
+function queryPistes() { //DONE in pisteList
+  if (!QUERYMODE) {
+    QUERYMODE=true;
+      
+    // Layer where the user add routing points
+    var pointsLayer = new ol.layer.Vector({
+      source: sourcePoints, name: 'pointsLayer',
+      //~ style: PointStyleFunction
+        
+    });
+    map.addLayer(pointsLayer)
+    
+    //allow user to move points
+    // modifyPoints after modifyLines for it to handle a point drag 
+    // event instead of the later
+    modifyPoints = new ol.interaction.Modify({
+      features: Pointsfeatures,
+        //~ style : PointHighlightStyleFunction,
+        pixelTolerance : 20
+    });
+    map.addInteraction(modifyPoints);
+    // snap and move the popup control when a point is moved
+    modifyPoints.on('modifyend', function (event) {
+      var coord = event.mapBrowserEvent.coordinate;
+      map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
+        
+        var type = feature.getProperties().type;
+        snap(feature,'modifypointend');
+        feature.setProperties({'isSnapped': true});
+      });
+    });
+
+    //When adding a point, add an ID
+    drawPoints = new ol.interaction.Draw({
+      features: Pointsfeatures,
+      type: /** @type {ol.geom.GeometryType} */ ('Point')
+    });
+      
+    drawPoints.on('drawend', function (event) {
+      //event.stopPropagation(); useless to avoid modifyend event
+      pointID = pointID + 1;
+      event.feature.setProperties({'id': pointID, 'type': "queryPoint"});
+      
+      // remove previous points
+      pointsLayer.getSource().forEachFeature( function(feature) {
+      if (feature.id != pointID) {
+        pointsLayer.getSource().removeFeature(feature);
+        }
+      });
+      
+      snap(event.feature,'drawpointend');
+      event.feature.setProperties({'isSnapped': true}); // used to avoid snapping on modifyend
+      var coord =event.feature.getGeometry().getCoordinates();
+          
+      /* sometimes a point was modifyed just after being drawn, to fix
+          * Possible cause: request aborted, then onRouteFail()
+          * Fixed in not sending routing call when one is running. 
+          * Fix fail if route fail and another point is selected before 
+          * routefail request finish*/
+    });
+    map.addInteraction(drawPoints);
+    
+    drawPoints.setActive(true)
+    modifyPoints.setActive(true)
+  }
+  else {
+    getLayerByName('pointsLayer').getSource().clear();
+    map.removeLayer(getLayerByName('pointsLayer'));
+    pointID= 0;
+    drawPoints.setActive(false);
+    modifyPoints.setActive(false);
+    map.removeInteraction(drawPoints);
+    map.removeInteraction(modifyPoints);
+    
+    QUERYMODE=false;
+  }
+
+}
+function snap(point,what) {
+  // snap the drawn point to a piste with a server call
+  // replace getClosestPoint
+  
+  document.getElementById("waiterResults").style.display='inline';
+  var coords = point.getGeometry().getCoordinates();
+  
+  var ll = ol.proj.toLonLat(coords,'EPSG:3857');
+  var q = server+"request?geo=true&list=true&closest="+ll[0]+','+ll[1];
+  var XMLHttpSnap = new XMLHttpRequest();
+  
+  XMLHttpSnap.open("GET", q);
+  XMLHttpSnap.setRequestHeader("Content-type", "application/json; charset=utf-8");
+  
+  XMLHttpSnap.onreadystatechange= function () {
+    if (XMLHttpSnap.readyState == 4) {
+      
+      document.getElementById("waiterResults").style.display='none';
+      var resp=XMLHttpSnap.responseText;
+      jsonPisteList = JSON.parse(resp);
+      ll = [jsonPisteList.snap.lon, jsonPisteList.snap.lat];
+      llm = ol.proj.fromLonLat(ll,'EPSG:3857');
+            point.setProperties({'isSnapped': true}); // used to avoid snapping on modifyend
+      point.getGeometry().setCoordinates(llm);
+            
+      console.log("snapped "+point.getProperties().id);
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  }
+  XMLHttpSnap.send();
+  return true;
+}
 function getByName(name) {
     document.getElementById("waiterResults").style.display='inline';
     document.getElementById('piste_search_results').innerHTML='';
@@ -1502,7 +1629,7 @@ function encpolArray2WKT(encpol) {
             var linestring = wkt.writeFeature(feature,{projection :'EPSG:4326'});
             wktGeom += linestring.replace('LINESTRING', '') + ',';
             g=feature.getGeometry();
-			l += ol.sphere.getLength(g, {projection :'EPSG:4326'}) /1000;
+      l += ol.sphere.getLength(g, {projection :'EPSG:4326'}) /1000;
         }
         wktGeom = wktGeom.substring(0, wktGeom.length - 1) + ')';
     }
@@ -1588,9 +1715,9 @@ function showHTMLPistesList(Div) {
             sitediv.onclick = function () {
                 zoomToElement(this.getAttribute('osm_id'), 'sites');
 
-						var center = map.getView().getCenter();
-						var resolution = map.getView().getResolution();
-						map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
+            var center = map.getView().getCenter();
+            var resolution = map.getView().getResolution();
+            map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
                 //deHighlight();
             };
             Div.appendChild(sitediv);
@@ -1681,18 +1808,18 @@ function showHTMLPistesList(Div) {
                 zoomToElement(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes');
                 
 
-						var center = map.getView().getCenter();
-						var resolution = map.getView().getResolution();
-						map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
+            var center = map.getView().getCenter();
+            var resolution = map.getView().getResolution();
+            map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
                 var profileDiv = this.parentNode.parentNode.getElementsByClassName("profile")[0];
                 showPisteProfile(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes',profileDiv, this.parentNode.parentNode.getAttribute('element_color'));
             };
 
-            pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
-            /*onclick = function (e) {
-                showExtLink(this.parentNode, this.parentNode.getAttribute('osm_id')
-                    , this.parentNode.getAttribute('element_type'));
-            };*/
+            //pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
+            pistediv.getElementsByClassName("moreInfoButton")[0].onclick = function (e) {
+                showExtLink(this.parentNode, this.parentNode.parentNode.getAttribute('osm_id')
+                    , this.parentNode.parentNode.getAttribute('element_type'));
+            };
 
             pistediv.getElementsByClassName("getMemberListButton")[0].style.display = 'none';
 
@@ -1708,9 +1835,9 @@ function showHTMLPistesList(Div) {
             buttondiv.onclick = function () {
                 zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
 
-						var center = map.getView().getCenter();
-						var resolution = map.getView().getResolution();
-						map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
+            var center = map.getView().getCenter();
+            var resolution = map.getView().getResolution();
+            map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
                 //deHighlight();
             };
             Div.appendChild(pistediv);
@@ -1802,9 +1929,9 @@ function showHTMLPistesList(Div) {
 
                     insitediv.onclick = function () {
                         zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
-						var center = map.getView().getCenter();
-						var resolution = map.getView().getResolution();
-						map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
+            var center = map.getView().getCenter();
+            var resolution = map.getView().getResolution();
+            map.getView().setCenter([center[0] - 105*resolution, center[1] ]);
                         //deHighlight();
                         getMembersById(this.getAttribute('parent_site_id'));
                     };
@@ -1878,6 +2005,51 @@ function showHTMLPistesList(Div) {
     }
 
 }
+function showExtLink(div, ids, element_type) {
+
+    var child = div.getElementsByClassName('elementExtLink')[0];
+    if (child === undefined) {
+
+        ids = ids.split('_');
+
+        for (k = 0; k < ids.length; k++) {
+            var id = ids[k];
+            
+            var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
+            linkdiv.removeAttribute("id");
+            div.appendChild(linkdiv);
+            linkdiv.className.replace('shown', 'hidden');
+            
+            if (element_type == 'relation') {
+                linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden', 'shown');
+                linkdiv.getElementsByClassName('analyse')[0].style.display = 'inline';
+            }
+            spans = linkdiv.getElementsByClassName('data');
+            for (i = 0; i < spans.length; i++) {
+                var data = spans[i].getAttribute('dataText');
+
+                if (data == 'siteUrl'){
+                    spans[i].href = protocol+"//openstreetmap.org/browse/" + element_type + "/" + id;
+                }
+                if (data == 'siteId'){
+                    spans[i].innerHTML = id;
+                }
+
+                if (data == 'siteType'){
+                    spans[i].innerHTML = element_type; //way or relation
+                }
+                if (data == 'analyseUrl'){
+                    spans[i].href = "http://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
+                }
+            }
+
+        }
+
+    } else {
+        child.parentNode.removeChild(child);
+    }
+}
+
 function showSiteStats(div, id, element_type) { // fix for normal ways
 
     var child = div.getElementsByClassName('siteStats')[0];
@@ -2289,7 +2461,7 @@ function setBaseLayer() {
 }
 
 function map_init(){
-	/*
+  /*
     map = new OpenLayers.Map ("map", {
     zoomMethod: null,
     panMethod: null,
