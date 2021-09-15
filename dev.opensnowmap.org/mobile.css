@@ -300,10 +300,13 @@ div.olMapViewport {
     margin: 0px;
     padding:0px;
     font-size:1em;
+  border: 1px solid #EEEEEE;
 }
 .pisteListButton{
     background-color:#FFFFFF;
+/*
     border: 0px solid grey;
+*/
     padding: 2px;
     margin: 0px;
     -moz-border-radius:4px;
@@ -311,7 +314,9 @@ div.olMapViewport {
 }
 .pisteListButtonStatic{
     background-color:#FFFFFF;
+/*
     border: 0px solid grey;
+*/
     padding: 2px;
     margin: 0px;
     -moz-border-radius:4px;
@@ -324,16 +329,22 @@ div.olMapViewport {
     background-color:#CCCCCC;
 }
 .inRouteElement{
-  font-size: 0.8em;
+  font-size: 1em;
   font-style:oblique;
-  margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 5px;
+  border: 1px solid #EEEEEE;
+/*
   float:left
+*/
 }
 .inSiteElement{
-  font-size: 0.8em;
+  font-size: 1em;
   font-style:oblique;
-  margin: 0px 0px 0px 30px;
-  float:right
+  margin: 0px 0px 0px 5px;
+  border: 1px solid #EEEEEE;
+/*
+  float:left
+*/
 }
 
 .elementExtLink{
@@ -356,9 +367,10 @@ div.olMapViewport {
 .getProfileButton, .getMemberListButton, .moreInfoButton{
 float:right;
 }
-  .flagMenuImg {vertical-align: middle;}
+.flagMenuImg {vertical-align: middle;}
 
 .textImg {vertical-align:middle;}
+
 #piste_search_results{
     font-size: 0.7em;}
 #nominatim_results{
@@ -393,11 +405,27 @@ body {font-size: 1em;}
 }
 */
 #search_input{width: 150px;}
+/*
 #listViewportButton{width: 150px;}
+*/
 .profilePic {
 border: 2px solid #efefef;
 padding: 2px 2px 2px 2px;
 display: block;
 margin-right:auto;
 margin-left:auto;
+}
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+.blink-image {
+    animation: blink normal 3s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }

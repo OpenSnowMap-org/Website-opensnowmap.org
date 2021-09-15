@@ -513,287 +513,14 @@ function show_live_edits(when) {
     // layers already removed
   }
 }
-/*
-            var DailymodifiedRelationsLayer = new ol.layer.Vector.VectorLayer("DailymodifiedRelationsLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedRelationsLayer]);
-            var DailydeletedRelationsLayer = new ol.layer.Vector.VectorLayer("DailydeletedRelationsLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedRelationsLayer]);
-            
-            
-            
-            var DailyaddedWaysLayer = new ol.layer.Vector.VectorLayer("DailyaddedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': addedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedWaysLayer]);
-            var DailymodifiedWaysLayer = new ol.layer.Vector.VectorLayer("DailymodifiedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedWaysLayer]);
-            var DailydeletedWaysLayer = new ol.layer.Vector.VectorLayer("DailydeletedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedWaysLayer]);
-            
-            
-            
-            var DailyaddedNodesLayer = new ol.layer.Vector.VectorLayer("DailyaddedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': addedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedNodesLayer]);
-            var DailymodifiedNodesLayer = new ol.layer.Vector.VectorLayer("DailymodifiedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedNodesLayer]);
-            var DailydeletedNodesLayer = new ol.layer.Vector.VectorLayer("DailydeletedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedNodesLayer]);
-        
-       if (when == "weekly") {
-            
-            var WeeklyaddedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedRelationsLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': addedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedRelationsLayer]);
-            var WeeklymodifiedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedRelationsLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedRelationsLayer]);
-            var WeeklydeletedRelationsLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedRelationsLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedRelationsLayer]);
-            
-            
-            
-            var WeeklyaddedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': addedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedWaysLayer]);
-            var WeeklymodifiedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedWaysLayer]);
-            var WeeklydeletedWaysLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedWaysLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedWaysLayer]);
-            
-            
-            
-            var WeeklyaddedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklyaddedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': addedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedNodesLayer]);
-            var WeeklymodifiedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklymodifiedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': modifiedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedNodesLayer]);
-            var WeeklydeletedNodesLayer = new ol.layer.Vector.VectorLayer("WeeklydeletedNodesLayer", {
-
-
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new ol.style.StyleMap({
-                            'default': deletedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedNodesLayer]);
-        }
-        //~ if (when == "monthly") {
-            //~ var MonthlyLayer = new ol.layer.Vector.VectorLayer("Monthly", {
-                        //~ strategies: [new OpenLayers.Strategy.Fixed(),
-                                    //~ new OpenLayers.Strategy.Cluster()],
-                        //~ protocol: new OpenLayers.Protocol.HTTP({
-                            //~ url: "data/monthly.tsv",
-                            //~ format: new OpenLayers.Format.Text()
-                        //~ }),
-                        //~ styleMap: new ol.style.StyleMap({
-                            //~ 'default': DeletedNodesStyle
-                        //~ }),
-                        //~ projection: new OpenLayers.Projection("EPSG:4326")
-                    //~ });
-            //~ map.addLayers([MonthlyLayer]);
-        //~ }
-    } else {
-        if (when == "daily") {
-            var layers = map.getLayersBy('group','daily');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            }
-        if (when == "weekly") {
-            var layers = map.getLayersBy('group','weekly');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            }
-        if (when == "none") {
-            var layers = map.getLayersBy('group','daily');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            
-            layers = map.getLayersBy('group','weekly');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            
-            document.getElementById('dailyVector').style.backgroundColor='#FFF';
-            document.getElementById('weekVector').style.backgroundColor='#FFF';
-            document.getElementById('noVector').style.backgroundColor='#DDD';
-            }*/
 var closeContent = function() {
-  closecontent();
+  if(!QUERYMODE) {
+    closecontent();
+  }
 }
 
 function closecontent() {
-  if (!QUERYMODE) {
     document.getElementById('content').style.display = "none";
-  }
 }
 
 function showsearch() {
@@ -955,12 +682,16 @@ function hideexcept(div) {
 //======================================================================
 // LOCATION
 function toggleLocation() {
+  document.getElementById('location').style.backgroundColor = '#FDFDFD';
   if (LOC) {
     geoLoc.setTracking(false);
     LOC = false;
-    document.getElementById('location').style.backgroundColor = '#FAFAFA';
+    document.getElementById('locationSwitchImg').src = 'pics/localisation_thin.svg';
+    document.getElementById('locationSwitchImg').classList.remove("blink-image");
   } else {
+    LOC = true;
     geoLoc = null;
+    
     geoLoc = new ol.Geolocation({
       tracking: true,
       // enableHighAccuracy must be set to true to have the heading value.
@@ -969,22 +700,24 @@ function toggleLocation() {
       },
       projection: map.getView().getProjection(),
     });
+    document.getElementById('locationSwitchImg').src = "pics/snake_transparent.gif";
 
-    geoLoc.on('change', function() {
+    geoLoc.on('change', function() {      
       map.getView().setCenter(geoLoc.getPosition());
       if (map.getView().getZoom() < 12) {
         map.getView().setZoom(12);
       }
+      LOC = true;
+      document.getElementById('locationSwitchImg').src = 'pics/localisation_blue_thin.svg';
+      document.getElementById('locationSwitchImg').classList.add("blink-image");
     });
-    LOC = true;
-    document.getElementById('location').style.backgroundColor = '#8F8F8F';
+    geoLoc.on('error', function(error) {
+      document.getElementById('locationSwitchImg').src = 'pics/localisation_red_thin.svg';
+      alert(error.message);
+      LOC = false;
+      document.getElementById('locationSwitchImg').classList.remove("blink-image");
+    });
   }
-}
-
-function errorLocation(error) {
-  alert(error.message);
-  LOC = false;
-  document.getElementById('location').style.backgroundColor = '#FAFAFA';
 }
 
 //======================================================================
@@ -1173,8 +906,11 @@ function page_init() {
 //======================================================================
 // NOMINATIM
 function setCenterMap(nlon, nlat, zoom) {
-  nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  map.setCenter(nlonLat, zoom);
+  //~ nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+  //~ map.setCenter(nlonLat, zoom);
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat([nlon,nlat], 'EPSG:4326'), 'EPSG:3857')
+  map.getView().setCenter(c);
+  map.getView().setZoom(zoom);
   //document.getElementById('content').style.display='none';
 }
 
@@ -1219,24 +955,6 @@ function highlightElement(osm_id, type) {
   var newExtent;
   newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
   map.getView().fit(newExtent);
-  //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-  //~ var geometry=element.geometry;
-  //~ var features=[];
-  //~ for (g in geometry) {
-  //~ var escaped=geometry[g];
-  //~ 
-  //~ if (type=='sites'){encPol.geometryType='polygon';}
-  //~ else {encPol.geometryType='linestring';}
-  //~ var feature = encPol.read(escaped);
-  //~ 
-  //~ if (type=='sites'){feature.attributes.polygon=true;}
-  //~ 
-  //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  //~ features.push(feature);
-  //~ }
-  //~ 
-  //~ highlightLayer.destroyFeatures();
-  //~ highlightLayer.addFeatures(features);
 
 }
 
@@ -1265,20 +983,6 @@ function highlightParentSite(osm_id, r) {
   var newExtent;
   newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
   map.getView().fit(newExtent);
-  //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-  //~ var geometry=parent.geometry;
-  //~ var features=[];
-  //~ for (g in geometry) {
-  //~ var escaped=geometry[g];
-  //~ encPol.geometryType='polygon';
-  //~ var feature = encPol.read(escaped);
-  //~ feature.attributes.polygon=true;
-  //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  //~ features.push(feature);
-  //~ }
-  //~ 
-  //~ highlightLayer.destroyFeatures();
-  //~ highlightLayer.addFeatures(features);
 
 }
 
@@ -1307,18 +1011,6 @@ function highlightParentRoute(osm_id, r) {
   var newExtent;
   newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
   map.getView().fit(newExtent);
-  //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-  //~ var geometry=parent.geometry;
-  //~ var features=[];
-  //~ for (g in geometry) {
-  //~ var escaped=geometry[g];
-  //~ var feature = encPol.read(escaped);
-  //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  //~ features.push(feature);
-  //~ }
-  //~ 
-  //~ highlightLayer.destroyFeatures();
-  //~ highlightLayer.addFeatures(features);
 
 }
 
@@ -1346,20 +1038,7 @@ function zoomToParentSite(osm_id, r) {
   var newExtent;
   newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
   map.getView().fit(newExtent);
-  //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-  //~ var geometry=parent.geometry;
-  //~ var features=[];
-  //~ for (g in geometry) {
-  //~ var escaped=geometry[g];
-  //~ encPol.geometryType='polygon';
-  //~ var feature = encPol.read(escaped);
-  //~ feature.attributes.polygon=true;
-  //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  //~ features.push(feature);
-  //~ }
-  //~
-  //~ highlightLayer.destroyFeatures();
-  //~ highlightLayer.addFeatures(features);
+
 
 }
 
@@ -1506,6 +1185,35 @@ function getTopoByViewport() { //DONE in pisteList
   XMLHttp.send();
   return true;
 }
+function getTopoById(ids) { //DONE in pisteList
+  document.getElementById("waiterResults").style.display = 'inline';
+
+
+  var list = document.getElementsByClassName('nominatimLi')[0];
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  } //clear previous list
+  document.getElementById('piste_search_results').innerHTML = '';
+
+  var q = server + "request?geo=true&topo=true&ids=" + ids;
+  var XMLHttp = new XMLHttpRequest();
+
+  //PisteAPIXHR.push(XMLHttp);
+
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var resp = XMLHttp.responseText;
+      jsonPisteList = JSON.parse(resp);
+      document.getElementById("waiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
 var Pointsfeatures = new ol.Collection();
 var sourcePoints = new ol.source.Vector({
   features: Pointsfeatures
@@ -1518,6 +1226,10 @@ var pointID = 0;
 function queryPistes() { //DONE in pisteList
   if (!QUERYMODE) {
     QUERYMODE = true;
+    document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
+    document.getElementById('searchButtonImg').src = 'pics/query_blue.svg';
+    document.getElementById('searchButtonImg').classList.add("blink-image");
+    document.getElementById('querySwitchImg').classList.add("blink-image");
 
     // Layer where the user add routing points
     var pointsLayer = new ol.layer.Vector({
@@ -1588,14 +1300,20 @@ function queryPistes() { //DONE in pisteList
     drawPoints.setActive(true)
     modifyPoints.setActive(true)
   } else {
-    getLayerByName('pointsLayer').getSource().clear();
-    map.removeLayer(getLayerByName('pointsLayer'));
-    pointID = 0;
-    drawPoints.setActive(false);
-    modifyPoints.setActive(false);
-    map.removeInteraction(drawPoints);
-    map.removeInteraction(modifyPoints);
-
+    if (getLayerByName('pointsLayer')) {
+      getLayerByName('pointsLayer').getSource().clear();
+      map.removeLayer(getLayerByName('pointsLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    
+    document.getElementById('querySwitchImg').src = 'pics/query.svg';
+    document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
+    document.getElementById('searchButtonImg').classList.remove("blink-image");
+    document.getElementById('querySwitchImg').classList.remove("blink-image");
     QUERYMODE = false;
   }
 
@@ -1628,7 +1346,7 @@ function snap(point, what) {
       }); // used to avoid snapping on modifyend
       point.getGeometry().setCoordinates(llm);
 
-      console.log("snapped " + point.getProperties().id);
+      //~ console.log("snapped " + point.getProperties().id);
       showHTMLPistesList(document.getElementById('piste_search_results'));
     }
   }
@@ -2077,6 +1795,8 @@ function showHTMLPistesList(Div) {
           }
 
           routeName = piste.in_routes[r].name;
+          osm_ids = piste.in_routes[r].id;
+          element_type = piste.in_routes[r].type;
           inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
 
           inroutediv.removeAttribute("id");
@@ -2093,7 +1813,8 @@ function showHTMLPistesList(Div) {
           };*/
 
           inroutediv.onclick = function() {
-            showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+            //~ showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+            getTopoById(this.getAttribute('osm_id'));
             //deHighlight();
           };
           footer.appendChild(inroutediv);
@@ -2592,75 +2313,6 @@ function setBaseLayer() {
 }
 
 function map_init() {
-  /*
-    map = new OpenLayers.Map ("map", {
-    zoomMethod: null,
-    panMethod: null,
-    controls:[
-        new OpenLayers.Control.TouchNavigation({
-                dragPanOptions: {
-                    enableKinetic: true
-                },
-                pinchZoomOptions: {
-                preserveCenter: true
-                }
-        }),
-        new OpenLayers.Control.Zoom({
-            zoomInId: "customZoomIn",
-            zoomOutId: "customZoomOut"
-        }),
-        new OpenLayers.Control.layerSwitcher()
-        ],
-        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-        maxResolution: 156543.0399,
-        numZoomLevels: 19,
-        units: 'm',
-        projection: new OpenLayers.Projection("EPSG:900913"),
-        displayProjection: new OpenLayers.Projection("EPSG:4326")
-    } );
-    
-    document.getElementsByClassName('olMapViewport')[0].addEventListener('touchstart', function(e){
-        closecontent();
-    });
-    permalink_simple = new OpenLayers.Control.Permalink("permalink",
-    server+'mobile.html',{'createParams': permalink0Args});
-    map.addControl(permalink_simple);
-    
-    //baseLayers();
-    
-    setHighDpi();
-    setBaseLayer(BASELAYER);
-    
-    map.events.on({ "movestart": function (e) {
-        updateZoom();
-        //~ closecontent();
-    }
-    });
-    map.events.on({ "zoomend": function (e) {
-        updateZoom();
-        //~ closecontent();
-    }
-    });
-    map.events.on({ "click": function (e) {
-        closecontent();
-    }
-    });
-
-    //################################
-    var lonLat = new OpenLayers.LonLat(lon, lat).transform(
-        new OpenLayers.Projection("EPSG:4326"),
-        new OpenLayers.Projection("EPSG:900913"));
-    map.setCenter (lonLat, zoom); 
-    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.top=0;
-    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.left=0;
-    // map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
-    map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
-    if (MARKER) {
-        markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) ;
-        var markers = new OpenLayers.Layer.Markers( "Markers" );
-        map.addLayer(markers);
-        markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
-    }*/
   map = new ol.Map({
     layers: [
       new ol.layer.Tile({

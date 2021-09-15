@@ -52,10 +52,10 @@
           <img class="button-img"  src="pics/menu_thin_64.png"/>
         </div>
         <div id="location" class="fastclick Button float-left iconButton noBorder" >
-          <img class="button-img" src="pics/localisation_thin_64.png"/>
+          <img id="locationSwitchImg" class="button-img" src="pics/localisation_thin.svg"/>
         </div>
         <div id="searchButton" class="fastclick Button float-left iconButton noBorder">
-          <img class="button-img"  src="pics/search_thin_64.png"/>
+          <img id="searchButtonImg" class="button-img"  src="pics/search_thin_64.png"/>
         </div>
         <div id="viewSwitch" class="fastclick Button float-left iconButton noBorder">
           <img id="viewSwitchImg" class="button-img"  src="pics/minus_plus_5_64.svg"/>
@@ -77,19 +77,26 @@
             <form name="search" class="float-left">
               <input id="search_input" type="text" name="nom_search" autofocus>
             </form>
+            
             <div class="clear"></div>
-            <div id="dolistViewport" class="fastclick Button float-left iconButton">
-              <img class="button-img"  src="pics/list_50.png"/>
-            </div>
-            <div id="listViewportButton" class="Button fastclick float-left textButton" >
-              <span class="i18n" i18nText="list_pistes-tooltip"></span>
-            </div>
-            <div id="doQueryPistes" class="Button fastclick float-left iconButton">
-              <img class="button-img"  src="pics/select_thin_64.png"/>
-            </div>
-            <div id="doQueryPistesButton" class="Button fastclick float-left textButton" >
-              <span class="i18n" i18nText="interactive-tooltip"></span>
-            </div>
+            <table>
+              <tr><td style="text-align: center;vertical-align: top;">
+                <div id="dolistViewport" class="fastclick Button iconButton">
+                  <img class="button-img"  src="pics/list_50.png"/>
+                </div>
+                <div id="listViewportButton" class="Button fastclick textButton" style="font-size: 0.7em;">
+                  <span class="i18n" i18nText="list_pistes-tooltip"></span>
+              </div>
+              </td><td style="text-align: center;vertical-align: top;">
+                <div id="doQueryPistes" class="Button fastclick iconButton">
+                  <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
+                </div>
+                <div id="doQueryPistesButton" class="Button fastclick textButton"  style="font-size: 0.7em;">
+                  <span class="i18n" i18nText="interactive-tooltip"></span>
+                </div>
+              </td></tr>
+            </table>
+            
             <div class="clear"></div>
           </div>
           <div class="clear"></div>
@@ -99,7 +106,8 @@
             <div id="waiterResults" class="hidden">
               <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
             </div>
-            <div id="piste_search_results"></div>
+            <div id="piste_search_results">
+            </div>
             <div id="waiterNominatim" class="hidden">
               <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
             </div>
@@ -262,7 +270,7 @@
       <div class="hidden">
         <div class="siteStats pisteListButtonStatic" id="siteStatsProto">
           <hr class="superlight"/>
-          <div class="stats hidden">
+          <div class="stats">
             <table>
               <tbody>
                 <tr>
@@ -341,76 +349,86 @@
         <hr class="light" id="hrLightProto"/>
         <hr class="superlight" id="hrSuperLightProto"/>
         <div class="clear" id="clearProto"></div>
-        <div class="pisteListElement" id="pisteListElementProto">
-          <!-- Buttons -->
-          <div class="pisteListButton">
-            &nbsp;
-            <div class="pisteIconDiv">
-              <img  src="pics/alpine.png"/>
-              <img  src="pics/nordic.png"/>
-            </div>
-            &nbsp;
-            <div class="float-left">
-              &nbsp;
-              <span class="routeColorSpan">
-              <b>●</b>
-              </span>
-              &nbsp;
-              <span class="pisteNameSpan">
-              <font>Piste</font>
-              </span>
-              <b><span class="siteNameSpan">
-              Site
-              </span></b>
-              &nbsp;
-              <div class="diffInfos float-right">
-                (
-                <span class="difficultySpan">
-                <font>difficulty</font>
-                </span>
-                <span class="difficultyColorSpan">
-                <b style="color:green;">&nbsp;●&nbsp;</b>
-                </span>
-                )
-              </div>
-            </div>
+      <div class="pisteListElement" id="pisteListElementProto">
+        <!-- Buttons -->
+        <div class="pisteListButton">
+          &nbsp;
+          <div class="pisteIconDiv">
+            <img  src="pics/alpine.png"/><!--      <img  src="pics/nordic.png"/>-->
           </div>
-          <div class="clear"></div>
-          <!-- Buttons -->
-          <div class="pisteListElementFooter">
-            <div class="Button getProfileButton">
-              <img src="pics/profile-flat22.png"/>
-            </div>
-            <div  class="Button moreInfoButton">
-              <img src="pics/info-flat22.png"/>
-            </div>
-            <div  class="Button getMemberListButton">
-              <img src="pics/list-flat22.png"/>
-            </div>
+          &nbsp;
+          
+          <div class="Button getProfileButton float-left">
+            <img src="pics/profile-flat22.png"/>
           </div>
-          <div class="profile"></div>
-          <div class="clear"></div>
-        </div>
-        <div class="pisteListElement">
-          <!-- style display -->
-          <div  class="inRouteElement pisteListButton" id="inRouteElementProto">
+          <div  class="Button moreInfoButton float-left">
+            <img src="pics/info-flat22.png"/>
+          </div>
+          <div  class="Button getMemberListButton float-left">
+            <img src="pics/list-flat22.png"/>
+          </div>
+          
+          <div class="float-left">
             &nbsp;
             <span class="routeColorSpan">
             <b>●</b>
             </span>
             &nbsp;
-            <span class="routeNameSpan">
-            <font>Route</font>
+            <span class="pisteNameSpan">
+            <font>Piste </font>
             </span>
-            <img class="textImg" src="pics/profile-flat22.png"/>
+            <b><span class="siteNameSpan">
+            Site
+            </span></b>
+            &nbsp;
           </div>
-          <div class="inSiteElement pisteListButton" id="inSiteElementProto">
-            <b><span class="siteNameSpan">Metabief - Mont d'or</span></b>
-            <img class="textImg" src="pics/list-flat22.png"/>
+          <div class="diffInfos float-left">
+            (
+            <span class="difficultySpan">
+            <font>difficulty</font>
+            </span>
+            <span class="difficultyColorSpan">
+            <b style="color:green;">&nbsp;●&nbsp;</b>
+            </span>
+            )
           </div>
         </div>
+        <div class="clear"></div>
+        <!-- Buttons -->
+        <div class="pisteListElementFooter">
+<!--
+          <div class="Button getProfileButton">
+            <img src="pics/profile-flat22.png"/>
+          </div>
+          <div  class="Button moreInfoButton">
+            <img src="pics/info-flat22.png"/>
+          </div>
+          <div  class="Button getMemberListButton">
+            <img src="pics/list-flat22.png"/>
+          </div>
+-->
+        </div>
+        <div class="profile"></div>
+        <div class="clear"></div>
       </div>
-      <!--PROTOS-->
+      <div class="pisteListElement">
+        <!-- style display -->
+        <div  class="inRouteElement pisteListButton" id="inRouteElementProto">
+          <img class="textImg" src="pics/info-flat22.png"/>
+          <span class="routeColorSpan">
+          <b>●</b>
+          </span>
+          &nbsp;
+          <span class="routeNameSpan">
+          <font>Route</font>
+          </span>
+        </div>
+        <div class="inSiteElement pisteListButton" id="inSiteElementProto">
+          <img class="textImg" src="pics/list-flat22.png"/>
+          <b><span class="siteNameSpan">Metabief - Mont d'or</span></b><br/>
+        </div>
+      </div>      </div>
+          <!--PROTOS-->
       <div id="map">
         <!--
           <div id="customZoom">
