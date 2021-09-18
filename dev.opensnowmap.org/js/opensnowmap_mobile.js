@@ -1456,6 +1456,8 @@ function nominatimSearch(name) {
 }
 
 function SearchByName(name) {
+  document.getElementById('body').focus(); // close keyboard on android
+  document.getElementById('search_input').blur(); // close keyboard on android
   if (name === '') {
     return false;
   }
