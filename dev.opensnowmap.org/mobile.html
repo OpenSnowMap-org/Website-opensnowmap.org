@@ -43,9 +43,6 @@
         ski session.
       </p>
     </div>
-    <div style="display:none">
-      <a id ="permalink" href=""></a>
-    </div>
     <div id="page">
       <div id = "header">
         <div id="menuButton" class="menuButton fastclick Button float-left iconButton noBorder" >
@@ -71,27 +68,31 @@
         <div class="clear"></div>
         <div id="search">
           <div id="search_header">
+            <div id="doClearSearch" class="fastclick Button float-left iconButton">
+              <img class="button-img"  src="pics/close_64.svg" />
+            </div>
             <div id="doSearch" class="fastclick Button float-left iconButton">
-              <img class="button-img"  src="pics/search_thin_64.png"/>
+              <img class="button-img"  src="pics/search_thin_64.png" />
             </div>
             <form name="search" class="float-left">
               <input id="search_input" type="text" name="nom_search" autofocus>
             </form>
-            
+            <hr class="hrmenu"/>
             <div class="clear"></div>
             <table>
               <tr><td style="text-align: center;vertical-align: top;">
-                <div id="dolistViewport" class="fastclick Button iconButton">
+                <div id="dolistViewport" class="fastclick Button iconButton" style="margin: auto;">
                   <img class="button-img"  src="pics/list_50.png"/>
                 </div>
-                <div id="listViewportButton" class="Button fastclick textButton" style="font-size: 0.7em;">
+                <div id="listViewportButton" class="Button fastclick textButton" style="font-size: 0.7em;text-align: center;">
                   <span class="i18n" i18nText="list_pistes-tooltip"></span>
               </div>
-              </td><td style="text-align: center;vertical-align: top;">
-                <div id="doQueryPistes" class="Button fastclick iconButton">
+              </td><td style="text-align: center;vertical-align: top;
+              border-left-style:solid;border-left-width: 1px;border-left-color: #EEEEEE;">
+                <div id="doQueryPistes" class="Button fastclick iconButton" style="margin: auto;">
                   <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
                 </div>
-                <div id="doQueryPistesButton" class="Button fastclick textButton"  style="font-size: 0.7em;">
+                <div id="doQueryPistesButton" class="Button fastclick textButton"  style="font-size: 0.7em;text-align: center;">
                   <span class="i18n" i18nText="interactive-tooltip"></span>
                 </div>
               </td></tr>
@@ -112,7 +113,7 @@
               <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
             </div>
             <div id="nominatim_results">
-              <ul class="nominatimLi"></ul>
+              <ul class="nominatimLi" id="nominatimLi"></ul>
               <div id="nominatim_results_footer"></div>
             </div>
           </div>
@@ -147,11 +148,11 @@
             <img src="pics/changes_legend.png" style="margin-left: 20px;margin-bottom: 5px;"/>
             <hr class="hrmenu"/>
             <div id="dailyVector" class="Button fastclick textButtonDropDown" >
-              <span class="i18n toCaps" i18nText="yesterday"></span>
+              <span class="i18n" i18nText="yesterday"></span>
             </div>
             <hr class="hrmenu"/>
             <div id="weekVector" class="Button fastclick textButtonDropDown"  >
-              <span class="i18n toCaps" i18nText="weekly"></span>
+              <span class="i18n" i18nText="weekly"></span>
             </div>
             <hr class="hrmenu"/>
             <div id="noVector" class="Button fastclick textButtonDropDown" >
@@ -159,7 +160,7 @@
             </div>
             <hr class="hrmenu"/>
             <div id="changesButton" class="Button fastclick textButtonDropDown" >
-              <span class="i18n toCaps" i18nText="View changes &raquo;"></span>
+              <span class="i18n" i18nText="View changes &raquo;"></span>
             </div>
             <div class="clear"></div>
           </div>
@@ -197,17 +198,23 @@
             class="fastclick Button float-left iconButton" >
             <img class="button-img" src="pics/desktop_thin_64.png"/>
           </div>
-          <div id="permalinkButton" 
+          <div id="shareLinkButton" 
             class="fastclick Button float-left iconButton" >
-            <img class="button-img"  src="pics/link_50.png"/>
+            <img class="button-img"  src="pics/share.svg"/>
           </div>
-          <div id="permalink.marker" 
+          <div id="setMarker" 
             class="fastclick Button float-left iconButton" >
             <img class="button-img"  src="pics/marker_50.png"/>
           </div>
           <div id="langs" 
             class="fastclick Button  float-left iconButton iconButton">
             <img class="flagMenuImg" src="pics/flags/fra.png"/>
+          </div>
+          <div class="clear"></div>
+          <div id="copyLink" class="hidden">
+            <form>
+            <input id="linkText" type="text" name="linkText" onfocus="this.select()" >
+            </form>
           </div>
           <div class="clear"></div>
           <hr class="hrmenu"/>
