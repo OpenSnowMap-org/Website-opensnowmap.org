@@ -151,13 +151,15 @@ var viewHDPI = new ol.View({
   zoom: zoom,
   constrainResolution: true,
   zoom: zoom,
-  maxResolution: 40075016.68557849 / 384
+  maxResolution: 40075016.68557849 / 384,
+  maxZoom: 18
 });
 
 var view = new ol.View({
   center: ol.proj.fromLonLat(center, 'EPSG:3857'),
   zoom: zoom,
-  constrainResolution: true
+  constrainResolution: true,
+  maxZoom: 18
   // default to maxResolution : 40075016.68557849 / 256
 });
 
@@ -2124,14 +2126,16 @@ function map_init() {
         source: new ol.source.XYZ({
           url: "http://tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'osm',
         source: new ol.source.OSM(),
         visible: false,
-        attributions: null
+        attributions: null,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
@@ -2139,7 +2143,8 @@ function map_init() {
         source: new ol.source.XYZ({
           url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
@@ -2147,7 +2152,8 @@ function map_init() {
         source: new ol.source.XYZ({
           url: "http://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
@@ -2157,13 +2163,15 @@ function map_init() {
           tileSize: 384,
           tilePixelRatio: 1
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'osm_HiDPI',
         source: new ol.source.OSM(),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
@@ -2171,7 +2179,8 @@ function map_init() {
         source: new ol.source.XYZ({
           url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
@@ -2181,7 +2190,8 @@ function map_init() {
           tileSize: 384,
           tilePixelRatio: 1
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       })
     ],
     target: 'map',
