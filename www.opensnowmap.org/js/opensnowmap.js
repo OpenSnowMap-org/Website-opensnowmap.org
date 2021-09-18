@@ -33,9 +33,9 @@ if (!window.location.host) {
 }
 if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
 
-var pistes_and_relief_overlay_URL=protocol+"//tiles7.opensnowmap.org/pistes-relief/";
-var pistes_only_overlay_URL=protocol+"//tiles7.opensnowmap.org/pistes/";
-var snow_base_layer_URL =protocol+"//tiles7.opensnowmap.org/base_snow_map/";
+var pistes_and_relief_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes-relief/";
+var pistes_only_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes/";
+var snow_base_layer_URL =protocol+"//tiles.opensnowmap.org/base_snow_map/";
 
 var mode = "raster";
 var EXT_MENU = true;

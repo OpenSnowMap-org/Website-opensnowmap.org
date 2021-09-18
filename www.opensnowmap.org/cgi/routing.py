@@ -35,7 +35,7 @@ def application(environ,start_response):
 		xml=xmlRoute(data, coords)
 	
 	status = '200 OK'
-	s.seek(0)
+	#~ s.seek(0)
 	response_body= xml
 	response_headers = [('Content-Type', 'application/xml'),('Content-Length', str(len(response_body)))]
 	start_response(status, response_headers)
