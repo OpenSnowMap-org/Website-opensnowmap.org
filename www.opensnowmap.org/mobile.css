@@ -4,7 +4,7 @@ body{
     padding:0px;
     font-family:sans-serif;
     font-size: 0.9em;
-    font-weight: 400;
+    font-weight: 300;
     width: 100%; height:100%;
     color: #505050
    }
@@ -25,7 +25,7 @@ a:link, a:visited {
     }
     
 a.amenu:link, a.amenu:visited {
-        font-weight: 600;
+        font-weight: 500;
         color: #444444;
         font-size: 1em;
         text-decoration: none;
@@ -35,18 +35,29 @@ a.amenuLtEmphasis {
         color: #FF7800;
         font-size: 1em;
         text-decoration: none;
-        font-weight: 800;
+        font-weight: 500;
         margin: 0px
     }
 select, option, input{
         background-color: #FFFFFF;
-        width: 140px;
-        font-size: 1em;
+        width: 150px;
+		font-size: 0.9em;
+		font-weight: 300;
         border: 1px solid #CCCCCC;
         text-align: left;
         margin: 5px 5px 5px 5px;
 }
-.hrmenu{border: 0; width: 100%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+.toCaps{text-transform: uppercase;}
+.hrmenu{
+   border: 0; 
+   width: 100%;
+   height: 1px;
+   color: #EEEEEE;
+   background-color: #EEEEEE;
+   line-height: 2px;
+   margin-top: 0px;
+   margin-bottom: 0px;
+   }
 hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
 hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
@@ -98,47 +109,44 @@ color: black;
 #zoom{
     position: absolute;
     top:68px;
-    right: 15px;
-    width: 24px;
+    right: 6px;
+    width: 34px;
     font-size: 0.8em;
     text-align: center;
     vertical-align: center;
     color: #222;
-    background-color: #FFF;
-    opacity: 0.5;
-    border: 1px solid #111;
-    border-radius: 3px;
+    font-weight: 400;
+    background-color: rgba(255,255,255,.4);
+    opacity: 0.7;
+/*
+    border: 1px solid #aaa;
+*/
+    border-radius: 4px;
     opacity: 0.5;
     z-index: 1000;
 }
-#customZoom {
-    z-index: 1001;
-    position: absolute;
-    top: 8px;
-    right: 41px;
+
+#map .ol-zoom {
+    left: unset;
+    right: 6px;
+    top:6px;
+    padding: 2px;
 }
-#customZoom a {
-    text-decoration: none;
-    position: absolute;
-    display: block;
-    text-align: center;
-    vertical-align: center;
+#map .ol-zoom-out{
     color: #222;
     background-color: #FFF;
-    opacity: 0.5;
-    border: 1px solid #111;
-    border-radius: 3px;
-    width: 24px;
-    line-height: 24px;
-    height:24px;
-    font-size: 1.2em;
+    right: 41px;
+    width: 28px;
+    height:28px;
 }
-#customZoom a:hover {
-    background: #036;
+#map .ol-zoom-in{
+    color: #222;
+    background-color: #FFF;
+    right: 41px;
+    width: 28px;
+    height:28px;
 }
-#customZoomOut {
-    top: 28px;
-}
+
 #content-control {
     width: 100%;
     background-color:#FFF;
@@ -159,35 +167,12 @@ position: absolute;
     height: 40px;
     vertical-align: center;
     background-color:#FFF;
-    background-image: url('pics/opensnowmap_title_thin_420.png');
+    background-image: url('pics/opensnowmap_title_thin_420.svg');
     background-repeat: no-repeat;
     background-position: right center;
     background-attachment: scroll;
     background-size: 200px;
     
-}
-#swbg {
-    background-color:#FFF;
-    width: 21px;height: 12px;
-    margin-top: 6px;
-    border-radius:8px;
-    border: 2px solid black;
-}
-#sw {
-position: relative;
-    background-color:#FFF;
-    width: 12px;height: 12px;
-    top:-2px;
-    margin-left: -2px;
-    border-radius:8px;
-    border: 2px solid black;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    color: #7D7D7D;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 12px;
 }
 .Button {
     background-color:#FDFDFD;
@@ -250,7 +235,7 @@ position: relative;
     margin-left:15px;
 }
 .textButton{
-    font-weight: 500;
+    font-weight: 300;
     color: #444444;
     font-size: 0.8em;
     text-decoration: none;
@@ -266,7 +251,7 @@ position: relative;
     text-align:left;
 }
 .textButtonDropDown{
-    font-weight: 500;
+    font-weight: 300;
     color: #444444;
     font-size: 0.8em;
     text-decoration: none;
@@ -325,10 +310,13 @@ div.olMapViewport {
     margin: 0px;
     padding:0px;
     font-size:1em;
+  border: 1px solid #EEEEEE;
 }
 .pisteListButton{
     background-color:#FFFFFF;
+/*
     border: 0px solid grey;
+*/
     padding: 2px;
     margin: 0px;
     -moz-border-radius:4px;
@@ -336,7 +324,9 @@ div.olMapViewport {
 }
 .pisteListButtonStatic{
     background-color:#FFFFFF;
+/*
     border: 0px solid grey;
+*/
     padding: 2px;
     margin: 0px;
     -moz-border-radius:4px;
@@ -349,16 +339,22 @@ div.olMapViewport {
     background-color:#CCCCCC;
 }
 .inRouteElement{
-  font-size: 0.8em;
+  font-size: 1em;
   font-style:oblique;
-  margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 5px;
+  border: 1px solid #EEEEEE;
+/*
   float:left
+*/
 }
 .inSiteElement{
-  font-size: 0.8em;
+  font-size: 1em;
   font-style:oblique;
-  margin: 0px 0px 0px 30px;
-  float:right
+  margin: 0px 0px 0px 5px;
+  border: 1px solid #EEEEEE;
+/*
+  float:left
+*/
 }
 
 .elementExtLink{
@@ -381,30 +377,26 @@ div.olMapViewport {
 .getProfileButton, .getMemberListButton, .moreInfoButton{
 float:right;
 }
-  .flagMenuImg {vertical-align: middle;}
+.flagMenuImg {vertical-align: middle;}
 
 .textImg {vertical-align:middle;}
-#piste_search_results{
-    font-size: 0.7em;}
-#nominatim_results{
-    font-size: 0.7em;}
+
 #content {
         position: fixed;
         top: 40px;
+/*
         bottom: 0px;
+*/
         left: 0px;
         right:10px;
         padding: 0px 10px 10px 10px;
-/*
-        -moz-border-radius:6px;
-        border-radius:6px;
-*/
         border-style: solid;
         border-color: #AAAAAA;
         border-width: 0px 1px 1px 1px;
         background-color: #FFF;
         z-index: 1000;
         overflow: auto;
+        max-height: calc(100vh - 40px);
      }
 
 body {font-size: 1em;}
@@ -413,16 +405,34 @@ body {font-size: 1em;}
   #header{height: 38px;background-size: 200px;}
   #content-control {height: 36px;}
   #map {top: 38px;}
+  #search_header {margin:-5px;}
 
+#piste_search_results{
+    font-size: 0.7em;}
+#nominatim_results{
+    font-size: 0.7em;}
+#search_input{width: 120px;}
 /*
-}
-*/
-#search_input{width: 150px;}
 #listViewportButton{width: 150px;}
+*/
 .profilePic {
 border: 2px solid #efefef;
 padding: 2px 2px 2px 2px;
 display: block;
 margin-right:auto;
 margin-left:auto;
+}
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+.blink-image {
+    animation: blink normal 3s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }

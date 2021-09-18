@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.660377"
-     inkscape:cx="9.5118003"
-     inkscape:cy="31.535242"
+     inkscape:cx="12.942221"
+     inkscape:cy="31.1922"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -101,7 +101,7 @@
     </g>
     <g
        id="g984"
-       transform="rotate(-180,9.6638305,287.33597)">
+       transform="rotate(-180,9.9284138,287.33597)">
       <path
          style="fill:#000000;stroke:#000000;stroke-width:0.06614583;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 11.773958,285.22603 -3e-6,3.75117 -3.7511583,-3.75117 z"
@@ -118,7 +118,7 @@
     </g>
     <g
        style="stroke-width:0.05278423;stroke-miterlimit:4;stroke-dasharray:none"
-       transform="matrix(-0.88610043,0.88610163,0.88610043,0.88610163,-249.99118,29.234365)"
+       transform="matrix(-0.88610043,0.88610163,0.88610043,0.88610163,-249.46201,30.292699)"
        id="g865">
       <path
          inkscape:connector-curvature="0"
@@ -135,7 +135,7 @@
     </g>
     <g
        style="stroke-width:0.05278423;stroke-miterlimit:4;stroke-dasharray:none"
-       transform="matrix(0.88610043,-0.88610163,-0.88610043,-0.88610163,264.01409,550.74269)"
+       transform="matrix(0.88610043,-0.88610163,-0.88610043,-0.88610163,263.48492,550.74269)"
        id="g877">
       <path
          inkscape:connector-curvature="0"
@@ -153,7 +153,7 @@
     <g
        style="stroke-width:0.05278423;stroke-miterlimit:4;stroke-dasharray:none"
        id="g883"
-       transform="matrix(0.88610043,0.88610163,-0.88610043,0.88610163,264.0141,29.234365)">
+       transform="matrix(0.88610043,0.88610163,-0.88610043,0.88610163,263.48493,30.292699)">
       <path
          style="fill:#000000;stroke:#000000;stroke-width:0.05278423;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 2.1166668,292.76666 2.1166667,2.11667 H 0 Z"

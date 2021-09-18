@@ -16,1087 +16,1948 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-if (location.protocol != 'https:')
-{
-    protocol = 'http:';
-} else
-{
-    protocol = 'https:';
+if (location.protocol != 'https:') {
+  protocol = 'http:';
+} else {
+  protocol = 'https:';
 }
 
-var server = protocol+"//" + window.location.host + "/";
+var server = protocol + "//" + window.location.host + "/";
 if (!window.location.host) {
-    server = window.location.pathname.replace("index.html", '');
-    server=window.location.pathname.replace("mobile.html",'');
+  server = window.location.pathname.replace("index.html", '');
+  server = window.location.pathname.replace("mobile.html", '');
 }
-if (server.search('home') != -1){ server = protocol+"//beta.opensnowmap.org/";}
+if (server.search('home') != -1) {
+  server = protocol + "//www.opensnowmap.org/";
+}
 
 
-var pistes_and_relief_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes-relief/";
-var pistes_only_overlay_HDPI_URL=protocol+"//tiles.opensnowmap.org/pistes-high-dpi/";
-var pistes_only_overlay_URL=protocol+"//tiles.opensnowmap.org/pistes/";
-var snow_base_layer_URL =protocol+"//tiles.opensnowmap.org/base_snow_map/";
-var snow_base_layer_HDPI_URL =protocol+"//tiles.opensnowmap.org/base_snow_map_high_dpi/";
+var pistes_and_relief_overlay_URL = protocol + "//tiles.opensnowmap.org/pistes-relief/";
+var pistes_only_overlay_HDPI_URL = protocol + "//tiles.opensnowmap.org/pistes-high-dpi/";
+var pistes_only_overlay_URL = protocol + "//tiles.opensnowmap.org/pistes/";
+var snow_base_layer_URL = protocol + "//tiles.opensnowmap.org/base_snow_map/";
+var snow_base_layer_HDPI_URL = protocol + "//tiles.opensnowmap.org/base_snow_map_high_dpi/";
 
 
-var MARKER=false;
-var LOC=false;
-var LOC_ONCE=false;
-var geoWatchID;
-var zoomBar;
+var MARKER = false;
+var LOC = false;
 var map;
-var lat=0;
-var lon=0;
-var zoom=1;//2
-var position;
+var lat = 30;
+var lon = 0;
+var zoom = 1; //2
+var center = ol.proj.toLonLat([lon, lat], 'EPSG:4326');
 var lengthes;
-var today=new Date();
 var data = {};
-var BASELAYER = 'snowbase';
-var INIT = false;
-var HDPI = false; //will be turned to true at map_init()
+var BASELAYER = 'snowmap';
+var HDPI = true; //will be turned to true at map_init()
+var shouldUpdateHashPermalink = true;
+var geoLoc = null;
+var modifyPoints;
+var drawPoints;
+var QUERYMODE = false;
 
+var deletedNodesSource = new ol.source.Vector();
+var deletedWaysSource = new ol.source.Vector();
+var deletedRelationsSource = new ol.source.Vector();
+var modifiedNodesSource = new ol.source.Vector();
+var modifiedWaysSource = new ol.source.Vector();
+var modifiedRelationsSource = new ol.source.Vector();
+var addedNodesSource = new ol.source.Vector();
+var addedWaysSource = new ol.source.Vector();
+var addedRelationsSource = new ol.source.Vector();
 // a dummy proxy script is located in the directory to allow use of wfs
-OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
+//~ OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
+
+// Permalink and URL handling
+if (window.location.hash !== '') {
+  readHashPermalink();
+}
+
+function readHashPermalink() {
+
+  var hash = window.location.hash.replace('#map=', '')
+  while (hash.search('&') > -1) {
+    hash = hash.replace('&', '/');
+  }
+  var parts = hash.split('/');
+  if (parts.length >= 4) {
+    zoom = parseInt(parts[0], 10);
+    center = [
+      parseFloat(parts[1]),
+      parseFloat(parts[2]),
+      parseFloat(parts[3])
+    ];
+    center = ol.proj.toLonLat(center, 'EPSG:4326');
+
+    parts.forEach(function(part) {
+      if (part.search('m=true') > -1) {
+        MARKER = true;
+      }
+      if (part.search('b=snowmap') > -1) {
+        BASELAYER = 'snowmap';
+      }
+      if (part.search('b=osm') > -1) {
+        BASELAYER = 'osm';
+      }
+      if (part.search('h=true') > -1) {
+        HDPI = true;
+      }
+    });
+  }
+  //Then hopefully map_init() will do the job when the map is loaded
+}
+
+var updateHashPermalink = function() {
+
+  if (!shouldUpdateHashPermalink) {
+    // do not update the URL when the view was changed in the 'popstate' handler
+    shouldUpdateHashPermalink = true;
+    return;
+  }
+
+  var view = map.getView();
+  var zoom = view.getZoom();
+  var center = view.getCenter();
+
+  center = ol.proj.fromLonLat(ol.proj.toLonLat(center, 'EPSG:3857'), 'EPSG:4326')
+  var hash = '#map=' +
+    zoom + '/' +
+    Math.round(center[0] * 1000) / 1000 + '/' +
+    Math.round(center[1] * 1000) / 1000 +
+    '&b=' + BASELAYER +
+    '&m=' + MARKER +
+    '&h=' + HDPI;
+  var state = {
+    zoom: zoom,
+    center: center,
+    rotation: view.getRotation()
+  };
+  document.getElementById('zoom').innerHTML = zoom;
+  window.history.pushState(state, 'map', hash);
+  //~ document.getElementsByClassName('ol-zoomslider-thumb')[0].innerHTML=zoom;
+  return true;
+};
+
+var extent = ol.proj.get('EPSG:3857').getExtent();
+var tileSizePixels = 384;
+var tileSizeMtrs = ol.extent.getWidth(extent) / 384;
+var resolutions = [];
+for (var i = -1; i <= 20; i++) {
+  resolutions[i] = tileSizeMtrs / (Math.pow(2, i));
+}
+
+var viewHDPI = new ol.View({
+  center: ol.proj.fromLonLat(center, 'EPSG:3857'),
+  zoom: zoom,
+  constrainResolution: true,
+  zoom: zoom,
+  maxResolution: 40075016.68557849 / 384
+});
+
+var view = new ol.View({
+  center: ol.proj.fromLonLat(center, 'EPSG:3857'),
+  zoom: zoom,
+  constrainResolution: true
+  // default to maxResolution : 40075016.68557849 / 256
+});
 
 var icon = {
-"downhill":'pics/alpine.png',
-"cable_car":'pics/cable_car.png',
-"chair_lift":'pics/chair_lift.png',
-"drag_lift":'pics/drag_lift.png',
-"funicular":'pics/funicular.png',
-"gondola":'pics/gondola.png',
-"jump":'pics/jump.png',
-"magic_carpet":'pics/magic_carpet.png',
-"mixed_lift":'pics/mixed_lift.png',
-"nordic":'pics/nordic.png',
-"skitour":'pics/skitour.png',
-"hike":'pics/snowshoe.png',
-"t-bar":'pics/drag_lift.png',
-"j-bar":'pics/drag_lift.png',
-"platter":'pics/drag_lift.png',
-"rope_tow":'pics/drag_lift.png',
-"station":'pics/station.png',
-"playground":'pics/playground.png',
-"sled":'pics/sled.png',
-"sleigh":'pics/sleigh.png',
-"snow_park":'pics/snow_park.png',
-"ski_jump":'pics/jump.png'
+  "downhill": 'pics/alpine.png',
+  "cable_car": 'pics/cable_car.png',
+  "chair_lift": 'pics/chair_lift.png',
+  "drag_lift": 'pics/drag_lift.png',
+  "funicular": 'pics/funicular.png',
+  "gondola": 'pics/gondola.png',
+  "jump": 'pics/jump.png',
+  "magic_carpet": 'pics/magic_carpet.png',
+  "mixed_lift": 'pics/mixed_lift.png',
+  "nordic": 'pics/nordic.png',
+  "skitour": 'pics/skitour.png',
+  "hike": 'pics/snowshoe.png',
+  "t-bar": 'pics/drag_lift.png',
+  "j-bar": 'pics/drag_lift.png',
+  "platter": 'pics/drag_lift.png',
+  "rope_tow": 'pics/drag_lift.png',
+  "station": 'pics/station.png',
+  "playground": 'pics/playground.png',
+  "sled": 'pics/sled.png',
+  "sleigh": 'pics/sleigh.png',
+  "snow_park": 'pics/snow_park.png',
+  "ski_jump": 'pics/jump.png'
 
 };
 var diffcolor = {
-"novice":'green',
-"easy":'blue',
-"intermediate":'red',
-"advanced":'black',
-"expert":'orange',
-"freeride":'E9C900'
+  "novice": 'green',
+  "easy": 'blue',
+  "intermediate": 'red',
+  "advanced": 'black',
+  "expert": 'orange',
+  "freeride": 'E9C900'
 };
 var diffcolorUS = {
-"novice":'green',
-"easy":'green',
-"intermediate":'blue',
-"advanced":'black',
-"expert":'black',
-"freeride":'#E9C900'
+  "novice": 'green',
+  "easy": 'green',
+  "intermediate": 'blue',
+  "advanced": 'black',
+  "expert": 'black',
+  "freeride": '#E9C900'
 };
 
-function getWinHeight(){
-      var myWidth = 0, myHeight = 0;
-      if( typeof( window.innerWidth ) == 'number' ) {
-        //Non-IE
-        myWidth = window.innerWidth;
-        myHeight = window.innerHeight;
-      } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-        //IE 6+ in 'standards compliant mode'
-        myWidth = document.documentElement.clientWidth;
-        myHeight = document.documentElement.clientHeight;
-      } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-        //IE 4 compatible
-        myWidth = document.body.clientWidth;
-        myHeight = document.body.clientHeight;
-      }
-    return parseInt(myHeight);
-}
-function resize_sideBar() {
-    //~ if (SIDEBARSIZE=='full'){
-        //~ document.getElementById('sideBar').style.height= (getWinHeight() - 80)+"px";
-        //~ document.getElementById('sideBarContent').style.height= (getWinHeight() - 103-5)+"px";
-    //~ } else {
-        //~ document.getElementById('sideBar').style.display='inline';
-        //~ document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
-        //~ document.getElementById('sideBarContent').style.display='inline';
-        //~ document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
-    //~ }
-    //~ return true
-}
-function show_live_edits(when,display) {
-if (display) {
-        var deletedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#FF1200",
-                strokeColor:"#000000"});
-        var deletedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#FF1200",
-                strokeColor:"#000000"});
-        var deletedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#FF120000",
-                strokeColor:"#FF1200"});
-        var modifiedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#FFA600",
-                strokeColor:"#000000"});
-        var modifiedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#FFA600",
-                strokeColor:"#000000"});
-        var modifiedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#FFA60000",
-                strokeColor:"#FFA600"});
-        var addedNodesStyle = new OpenLayers.Style({
-                pointRadius: 2.5,strokeWidth: 0,
-                fillColor: "#33FF00",
-                strokeColor:"#000000"});
-        var addedWaysStyle = new OpenLayers.Style({
-                pointRadius: 4,strokeWidth: 0,
-                fillColor: "#33FF00",
-                strokeColor:"#000000"});
-        var addedRelationsStyle = new OpenLayers.Style({
-                pointRadius: 5.5,strokeWidth: 3,
-                fillColor: "#33FF0000",
-                strokeColor:"#33FF00"});
-        if (when == "daily") {
-            
-            var DailyaddedRelationsLayer = new OpenLayers.Layer.Vector("DailyaddedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedRelationsLayer]);
-            var DailymodifiedRelationsLayer = new OpenLayers.Layer.Vector("DailymodifiedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedRelationsLayer]);
-            var DailydeletedRelationsLayer = new OpenLayers.Layer.Vector("DailydeletedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_relations_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedRelationsStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedRelationsLayer]);
-            
-            
-            
-            var DailyaddedWaysLayer = new OpenLayers.Layer.Vector("DailyaddedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedWaysLayer]);
-            var DailymodifiedWaysLayer = new OpenLayers.Layer.Vector("DailymodifiedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedWaysLayer]);
-            var DailydeletedWaysLayer = new OpenLayers.Layer.Vector("DailydeletedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_ways_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedWaysStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedWaysLayer]);
-            
-            
-            
-            var DailyaddedNodesLayer = new OpenLayers.Layer.Vector("DailyaddedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailyaddedNodesLayer]);
-            var DailymodifiedNodesLayer = new OpenLayers.Layer.Vector("DailymodifiedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailymodifiedNodesLayer]);
-            var DailydeletedNodesLayer = new OpenLayers.Layer.Vector("DailydeletedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/daily_nodes_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedNodesStyle
-                        }), group: 'daily',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([DailydeletedNodesLayer]);
-        }
-        if (when == "weekly") {
-            
-            var WeeklyaddedRelationsLayer = new OpenLayers.Layer.Vector("WeeklyaddedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedRelationsLayer]);
-            var WeeklymodifiedRelationsLayer = new OpenLayers.Layer.Vector("WeeklymodifiedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedRelationsLayer]);
-            var WeeklydeletedRelationsLayer = new OpenLayers.Layer.Vector("WeeklydeletedRelationsLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_relations_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedRelationsStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedRelationsLayer]);
-            
-            
-            
-            var WeeklyaddedWaysLayer = new OpenLayers.Layer.Vector("WeeklyaddedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedWaysLayer]);
-            var WeeklymodifiedWaysLayer = new OpenLayers.Layer.Vector("WeeklymodifiedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedWaysLayer]);
-            var WeeklydeletedWaysLayer = new OpenLayers.Layer.Vector("WeeklydeletedWaysLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_ways_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedWaysStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedWaysLayer]);
-            
-            
-            
-            var WeeklyaddedNodesLayer = new OpenLayers.Layer.Vector("WeeklyaddedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_added.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': addedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklyaddedNodesLayer]);
-            var WeeklymodifiedNodesLayer = new OpenLayers.Layer.Vector("WeeklymodifiedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_modified.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': modifiedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklymodifiedNodesLayer]);
-            var WeeklydeletedNodesLayer = new OpenLayers.Layer.Vector("WeeklydeletedNodesLayer", {
-                        strategies: [new OpenLayers.Strategy.Fixed(),
-                                    new OpenLayers.Strategy.Cluster()],
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: "data/weekly_nodes_deleted.csv",
-                            format: new OpenLayers.Format.Text()
-                        }),
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': deletedNodesStyle
-                        }), group: 'weekly',
-                        projection: new OpenLayers.Projection("EPSG:4326")
-                    });
-            map.addLayers([WeeklydeletedNodesLayer]);
-        }
-        //~ if (when == "monthly") {
-            //~ var MonthlyLayer = new OpenLayers.Layer.Vector("Monthly", {
-                        //~ strategies: [new OpenLayers.Strategy.Fixed(),
-                                    //~ new OpenLayers.Strategy.Cluster()],
-                        //~ protocol: new OpenLayers.Protocol.HTTP({
-                            //~ url: "data/monthly.tsv",
-                            //~ format: new OpenLayers.Format.Text()
-                        //~ }),
-                        //~ styleMap: new OpenLayers.StyleMap({
-                            //~ 'default': DeletedNodesStyle
-                        //~ }),
-                        //~ projection: new OpenLayers.Projection("EPSG:4326")
-                    //~ });
-            //~ map.addLayers([MonthlyLayer]);
-        //~ }
-    } else {
-        if (when == "daily") {
-            var layers = map.getLayersBy('group','daily');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            }
-        if (when == "weekly") {
-            var layers = map.getLayersBy('group','weekly');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            }
-        if (when == "none") {
-            var layers = map.getLayersBy('group','daily');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            
-            layers = map.getLayersBy('group','weekly');
-            for (l = 0; l < layers.length; l++){layers[l].destroy();}
-            
-            document.getElementById('dailyVector').style.backgroundColor='#FFF';
-            document.getElementById('weekVector').style.backgroundColor='#FFF';
-            document.getElementById('noVector').style.backgroundColor='#DDD';
-            }
+var setCanvasScale = function(evt) {
+  if (BASELAYER == 'osm' && HDPI) {
+    if (map.getViewport().getElementsByTagName('canvas')[0]) {
+      var w = Math.floor((map.getViewport().getElementsByTagName('canvas')[0].width - 1) / 4);
+      var h = Math.floor((map.getViewport().getElementsByTagName('canvas')[0].height - 1) / 4);
+      map.getViewport().getElementsByTagName('canvas')[0].getContext("2d").setTransform(1.5, 0, 0, 1.5, -w, -h);
     }
+  } else {
+    if (map.getViewport().getElementsByTagName('canvas')[0])
+      map.getViewport().getElementsByTagName('canvas')[0].getContext("2d").setTransform(1, 0, 0, 1, 0, 0);
+  }
+  map.render();
+  return true;
+};
+
+function getWinHeight() {
+  var myWidth = 0,
+    myHeight = 0;
+  if (typeof(window.innerWidth) == 'number') {
+    //Non-IE
+    myWidth = window.innerWidth;
+    myHeight = window.innerHeight;
+  } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
+    //IE 6+ in 'standards compliant mode'
+    myWidth = document.documentElement.clientWidth;
+    myHeight = document.documentElement.clientHeight;
+  } else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
+    //IE 4 compatible
+    myWidth = document.body.clientWidth;
+    myHeight = document.body.clientHeight;
+  }
+  return parseInt(myHeight);
 }
-function closecontent(){
-    document.getElementById('content').style.display="none";
+
+function resize_sideBar() {
+  //~ if (SIDEBARSIZE=='full'){
+  //~ document.getElementById('sideBar').style.height= (getWinHeight() - 80)+"px";
+  //~ document.getElementById('sideBarContent').style.height= (getWinHeight() - 103-5)+"px";
+  //~ } else {
+  //~ document.getElementById('sideBar').style.display='inline';
+  //~ document.getElementById('sideBar').style.height=SIDEBARSIZE+'px';
+  //~ document.getElementById('sideBarContent').style.display='inline';
+  //~ document.getElementById('sideBarContent').style.height=SIDEBARSIZE-33+'px';
+  //~ }
+  //~ return true
+}
+
+function getChangeFiles(file, source) {
+  var XMLHttp = new XMLHttpRequest();
+  XMLHttp.open("GET", server + file);
+  XMLHttp.setRequestHeader("Content-type", "text/plain; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() { // no way to pass args in the callback
+    if (XMLHttp.readyState == 4) {
+      if (XMLHttp.responseText != "") {
+        var csv = XMLHttp.responseText;
+        var features = [];
+        let prevIndex = csv.indexOf('\n') + 1; // scan past the header line
+        let curIndex;
+        while ((curIndex = csv.indexOf('\n', prevIndex)) != -1) {
+          line = csv.substr(prevIndex, curIndex - prevIndex).split(',');
+          prevIndex = curIndex + 1;
+
+          coords = ol.proj.fromLonLat([parseFloat(line[1]), parseFloat(line[0])]);
+          if (isNaN(coords[0]) || isNaN(coords[1])) {
+            // guard against bad data
+            continue;
+          }
+          features.push(new ol.Feature({
+            geometry: new ol.geom.Point(coords)
+          }));
+        }
+        source.addFeatures(features);
+      }
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
+
+function show_live_edits(when) {
+
+  var deletedNodesStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 2.5,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FF1200'
+      })
+    })
+  });
+  var deletedWaysStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 4,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FF1200'
+      })
+    })
+  });
+  var deletedRelationsStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 5.5,
+      stroke: new ol.style.Stroke({
+        color: '#FF1200',
+        width: 3,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FF120000'
+      })
+    })
+  });
+  var modifiedNodesStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 2.5,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FFA600'
+      })
+    })
+  });
+  var modifiedWaysStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 4,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FFA600'
+      })
+    })
+  });
+  var modifiedRelationsStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 5.5,
+      stroke: new ol.style.Stroke({
+        color: '#FFA600',
+        width: 3,
+      }),
+      fill: new ol.style.Fill({
+        color: '#FFA60000'
+      })
+    })
+  });
+  var addedNodesStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 2.5,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#33FF00'
+      })
+    })
+  });
+  var addedWaysStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 4,
+      stroke: new ol.style.Stroke({
+        color: '#00000000',
+        width: 0,
+      }),
+      fill: new ol.style.Fill({
+        color: '#33FF00'
+      })
+    })
+  });
+  var addedRelationsStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 5.5,
+      stroke: new ol.style.Stroke({
+        color: '#33FF00',
+        width: 3,
+      }),
+      fill: new ol.style.Fill({
+        color: '#33FF0000'
+      })
+    })
+  });
+
+  styles = [
+    deletedNodesStyle,
+    deletedWaysStyle,
+    deletedRelationsStyle,
+    modifiedNodesStyle,
+    modifiedWaysStyle,
+    modifiedRelationsStyle,
+    addedNodesStyle,
+    addedWaysStyle,
+    addedRelationsStyle
+  ];
+
+  sources = [
+    deletedNodesSource,
+    deletedWaysSource,
+    deletedRelationsSource,
+    modifiedNodesSource,
+    modifiedWaysSource,
+    modifiedRelationsSource,
+    addedNodesSource,
+    addedWaysSource,
+    addedRelationsSource
+  ];
+
+  layerNames = [
+    "deletedNodesLayer",
+    "deletedWaysLayer",
+    "deletedRelationsLayer",
+    "modifiedNodesLayer",
+    "modifiedWaysLayer",
+    "modifiedRelationsLayer",
+    "addedNodesLayer",
+    "addedWaysLayer",
+    "addedRelationsLayer"
+  ];
+
+  /*
+  deletedNodesStyle
+  deletedWaysStyle
+  deletedRelationsStyle
+  modifiedNodesStyle
+  modifiedWaysStyle
+  modifiedRelationsStyle
+  addedNodesStyle
+  addedWaysStyle
+  addedRelationsStyle
+  * */
+  for (i = 0; i < 9; i++) {
+    map.removeLayer(getLayerByName(layerNames[i]));
+    sources[i].clear({
+      fast: true
+    });
+  }
+
+  if (when == "daily") {
+
+
+    files = ["data/daily_nodes_deleted.csv",
+      "data/daily_ways_deleted.csv",
+      "data/daily_relations_deleted.csv",
+      "data/daily_nodes_modified.csv",
+      "data/daily_ways_modified.csv",
+      "data/daily_relations_modified.csv",
+      "data/daily_nodes_added.csv",
+      "data/daily_ways_added.csv",
+      "data/daily_relations_added.csv"
+    ];
+
+    for (i = 0; i < 9; i++) {
+      map.addLayer(
+        new ol.layer.Vector({
+          name: layerNames[9 - i],
+          source: sources[9 - i],
+          style: styles[9 - i],
+          declutter: false
+        })
+      );
+    }
+    for (i = 0; i < 9; i++) {
+      getChangeFiles(files[i], sources[i]);
+    }
+  }
+  if (when == "weekly") {
+
+    files = ["data/weekly_nodes_deleted.csv",
+      "data/weekly_ways_deleted.csv",
+      "data/weekly_relations_deleted.csv",
+      "data/weekly_nodes_modified.csv",
+      "data/weekly_ways_modified.csv",
+      "data/weekly_relations_modified.csv",
+      "data/weekly_nodes_added.csv",
+      "data/weekly_ways_added.csv",
+      "data/weekly_relations_added.csv"
+    ];
+
+    for (i = 0; i < 9; i++) {
+      map.addLayer(
+        new ol.layer.Vector({
+          name: layerNames[9 - i],
+          source: sources[9 - i],
+          style: styles[9 - i],
+          declutter: false
+        })
+      );
+    }
+    for (i = 0; i < 9; i++) {
+      getChangeFiles(files[i], sources[i]);
+    }
+  }
+  if (when == "none") {
+    // layers already removed
+  }
+}
+var closeContent = function() {
+  if(!QUERYMODE) {
+    closecontent();
+  }
+}
+
+function closecontent() {
+    document.getElementById('content').style.display = "none";
+}
+
+function clearResultList() {
+  document.getElementById('piste_search_results').innerHTML = '';
+  document.getElementById('nominatimLi').innerHTML = '';
+  
 }
 function showsearch() {
-    document.getElementById('content').style.display='inline';
-    hideexcept('search');
-    document.getElementById('search').style.display='inline';
-    document.getElementById('content_title').innerHTML='&nbsp;'+_('search_results');
-    document.getElementById('content').scrollTop = 0;
+  document.getElementById('content').style.display = 'inline';
+  hideexcept('search');
+  document.getElementById('search').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('search_results');
+  document.getElementById('content').scrollTop = 0;
+  //~ document.getElementById('search_input').focus();
 }
+
 function showMapSettings() {
-    var dd= document.getElementsByClassName('menuDropDownContent');
-    var content = document.getElementById('mapSettingsDropDownContent');
-    
-    if (content.style.display=='none')
-    {
-        for (var d =0; d<dd.length; d++)
-            dd[d].style.display='none';
-        content.style.display='inline';
-    }
-    else
-      content.style.display='none';
-    return true;
+  var dd = document.getElementsByClassName('menuDropDownContent');
+  var content = document.getElementById('mapSettingsDropDownContent');
+
+  if (content.style.display == 'none') {
+    for (var d = 0; d < dd.length; d++)
+      dd[d].style.display = 'none';
+    content.style.display = 'inline';
+  } else
+    content.style.display = 'none';
+  return true;
 }
+
 function showLastEditsSettings() {
-    var dd= document.getElementsByClassName('menuDropDownContent');
-    var content = document.getElementById('lastEditsDropDownContent');
-    
-    if (content.style.display=='none')
-    {
-        for (var d =0; d<dd.length; d++)
-            dd[d].style.display='none';
-        content.style.display='inline';
-    }
-    else
-      content.style.display='none';
-    return true;
-        
+  var dd = document.getElementsByClassName('menuDropDownContent');
+  var content = document.getElementById('lastEditsDropDownContent');
+
+  if (content.style.display == 'none') {
+    for (var d = 0; d < dd.length; d++)
+      dd[d].style.display = 'none';
+    content.style.display = 'inline';
+  } else
+    content.style.display = 'none';
+  return true;
+
 }
+
 function showmenu() {
-    hideexcept('menu');
-    document.getElementById('menu').style.display='inline';
-    document.getElementById('content').style.display='inline';
-    document.getElementById('content_title').innerHTML='';
-    document.getElementById('content').scrollTop = 0;
-    
+  hideexcept('menu');
+  document.getElementById('menu').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '';
+  document.getElementById('content').scrollTop = 0;
+
 }
+
 function showlegend() {
-    hideexcept('legend');
-    document.getElementById('legend').style.display='inline';
-    document.getElementById('content').style.display='inline';
-    document.getElementById('content_title').innerHTML='&nbsp;'+_('MAP_KEY').replace('<br/>',' ');
-    document.getElementById('content').scrollTop = 0;
+  hideexcept('legend');
+  document.getElementById('legend').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('MAP_KEY').replace('<br/>', ' ');
+  document.getElementById('content').scrollTop = 0;
 }
+
 function showabout() {
-    hideexcept('about');
-    var aboutDiv = document.getElementById('about');
-    aboutDiv.style.display='inline';
-    document.getElementById('content').style.maxWidth="80%";
-    document.getElementById('content').style.width="80%";
+  hideexcept('about');
+  var aboutDiv = document.getElementById('about');
+  aboutDiv.style.display = 'inline';
+  document.getElementById('content').style.maxWidth = "80%";
+  document.getElementById('content').style.width = "80%";
 
-    var XMLHttp = new XMLHttpRequest();
-    url = server + 'iframes/about.' + iframelocale + '.html';
-    XMLHttp.open("GET", url);
-    XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
+  var XMLHttp = new XMLHttpRequest();
+  url = server + 'iframes/about.' + iframelocale + '.html';
+  XMLHttp.open("GET", url);
+  XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
 
-    XMLHttp.onreadystatechange = function () {
-        if (XMLHttp.readyState == 4) {
-            //var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      //var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
 
-            var content = XMLHttp.responseText;
-            content = content.replace('**update**', data.date)
-            .replace('**nordic**', data.nordic)
-            .replace('**downhill**', data.downhill)
-            .replace('**aerialway**', data.aerialway)
-            .replace('**skitour**', data.skitour)
-            .replace('**sled**', data.sled)
-            .replace('**snowshoeing**', data.snowshoeing);
-            aboutDiv.innerHTML = content;
-            
-    document.getElementById('content_title').innerHTML='&nbsp;'+_('ABOUT');
-    document.getElementById('about').innerHTML = content;
-    document.getElementById('about').style.display='inline';
-    document.getElementById('content').style.display='inline';
-    document.getElementById('content').scrollTop = 0;
-            //aboutDiv.style.display='inline';
-            //cacheInHistory(aboutDiv);
-        }
-    };
-    XMLHttp.send();
-    //~ return true;
-    //~ var content = get_page(url).replace('**update**',update)
-    //~ .replace('**nordic**',lengthes.nordic)
-    //~ .replace('**downhill**',lengthes.downhill)
-    //~ .replace('**aerialway**',lengthes.aerialway)
-    //~ .replace('**skitour**',lengthes.skitour)
-    //~ .replace('**sled**',lengthes.sled)
-    //~ .replace('**snowshoeing**',lengthes.snowshoeing);
+      var content = XMLHttp.responseText;
+      content = content.replace('**update**', data.date)
+        .replace('**nordic**', data.nordic)
+        .replace('**downhill**', data.downhill)
+        .replace('**aerialway**', data.aerialway)
+        .replace('**skitour**', data.skitour)
+        .replace('**sled**', data.sled)
+        .replace('**snowshoeing**', data.snowshoeing);
+      aboutDiv.innerHTML = content;
+
+      document.getElementById('content_title').innerHTML = '&nbsp;' + _('ABOUT');
+      document.getElementById('about').innerHTML = content;
+      document.getElementById('about').style.display = 'inline';
+      document.getElementById('content').style.display = 'inline';
+      document.getElementById('content').scrollTop = 0;
+      //aboutDiv.style.display='inline';
+      //cacheInHistory(aboutDiv);
+    }
+  };
+  XMLHttp.send();
+  //~ return true;
+  //~ var content = get_page(url).replace('**update**',update)
+  //~ .replace('**nordic**',lengthes.nordic)
+  //~ .replace('**downhill**',lengthes.downhill)
+  //~ .replace('**aerialway**',lengthes.aerialway)
+  //~ .replace('**skitour**',lengthes.skitour)
+  //~ .replace('**sled**',lengthes.sled)
+  //~ .replace('**snowshoeing**',lengthes.snowshoeing);
 }
 
 function show_languages() {
-    hideexcept('languages');
-    document.getElementById('languages').style.display='inline';
-    
-    var languageDiv = document.getElementById('languages');
-    languageDiv.innerHTML='';
+  hideexcept('languages');
+  document.getElementById('languages').style.display = 'inline';
 
-    for (l = 0; l < locs.length; l++){
+  var languageDiv = document.getElementById('languages');
+  languageDiv.innerHTML = '';
 
-        var flagdiv = document.getElementById('flagsLinksProto').cloneNode(true);
-        while (flagdiv.firstChild) {
-            flagdiv.removeChild(flagdiv.firstChild);
-        } //clear previous list
+  for (l = 0; l < locs.length; l++) {
 
-        flagdiv.removeAttribute("id");
-        flagdiv.setAttribute('loc', locs[l]);
+    var flagdiv = document.getElementById('flagsLinksProto').cloneNode(true);
+    while (flagdiv.firstChild) {
+      flagdiv.removeChild(flagdiv.firstChild);
+    } //clear previous list
 
-        flagdiv.onclick = function () {
-            setlanguage(this.getAttribute('loc'));
-        };
+    flagdiv.removeAttribute("id");
+    flagdiv.setAttribute('loc', locs[l]);
 
-        var img2 = document.createElement('img');
-        img2.src = 'pics/flags/' + locs[l] + '.png';
-        img2.className = ('flagMenuImg');
-        flagdiv.appendChild(img2);
+    flagdiv.onclick = function() {
+      setlanguage(this.getAttribute('loc'));
+    };
 
-        var link = document.createElement('a');
-        link.innerHTML = '&nbsp;' + eval(locs[l]).lang;
-        flagdiv.appendChild(link);
+    var img2 = document.createElement('img');
+    img2.src = 'pics/flags/' + locs[l] + '.png';
+    img2.className = ('flagMenuImg');
+    flagdiv.appendChild(img2);
 
-        languageDiv.appendChild(flagdiv);
-        var cleardiv = document.getElementById('clearProto').cloneNode(true);
-        cleardiv.removeAttribute("id");
-        languageDiv.appendChild(cleardiv);
-        }
-    
+    var link = document.createElement('a');
+    link.innerHTML = '&nbsp;' + eval(locs[l]).lang;
+    flagdiv.appendChild(link);
+
+    languageDiv.appendChild(flagdiv);
+    var cleardiv = document.getElementById('clearProto').cloneNode(true);
+    cleardiv.removeAttribute("id");
+    languageDiv.appendChild(cleardiv);
+  }
+
 }
 
 function hideexcept(div) {
-    document.getElementById('content').style.maxWidth="210px";
-    if (div != 'menu') {document.getElementById('menu').style.display='none';}
-    if (div != 'search') {document.getElementById('search').style.display='none';}
-    if (div != 'legend') {document.getElementById('legend').style.display='none';}
-    if (div != 'about') {document.getElementById('about').style.display='none';}
-    if (div != 'languages') {document.getElementById('languages').style.display='none';}
+  document.getElementById('content').style.maxWidth = "210px";
+  if (div != 'menu') {
+    document.getElementById('menu').style.display = 'none';
+  }
+  if (div != 'search') {
+    document.getElementById('search').style.display = 'none';
+  }
+  if (div != 'legend') {
+    document.getElementById('legend').style.display = 'none';
+  }
+  if (div != 'about') {
+    document.getElementById('about').style.display = 'none';
+  }
+  if (div != 'languages') {
+    document.getElementById('languages').style.display = 'none';
+  }
 }
 
 //======================================================================
 // LOCATION
 function toggleLocation() {
-    if (LOC) {
-        navigator.geolocation.clearWatch(geoWatchID);
-        LOC=false;
-        LOC_ONCE=false;
-        document.getElementById('location').style.backgroundColor='#FAFAFA';
-    } 
-    else {
-        if (navigator.geolocation){
-            LOC=true;
-            geoWatchID = navigator.geolocation.watchPosition(showLocation,errorLocation,{
-                enableHighAccuracy: true, maximumAge: 300000, timeout: 20000,frequency: 15000});
-        }
-    }
-}
-function showLocation(position) {
-    document.getElementById('location').style.backgroundColor='#DDD';
-  var latitude = position.coords.latitude;
-  var longitude = position.coords.longitude;
-  //alert("Latitude : " + latitude + " Longitude: " + longitude);
-  var nlonLat = new OpenLayers.LonLat(longitude, latitude).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-  if (LOC_ONCE) {
-      map.setCenter(nlonLat, map.getZoom());
-    }
-  else {
-    map.setCenter(nlonLat, 16);
-    LOC_ONCE=true;
+  document.getElementById('location').style.backgroundColor = '#FDFDFD';
+  if (LOC) {
+    geoLoc.setTracking(false);
+    LOC = false;
+    document.getElementById('locationSwitchImg').src = 'pics/localisation_thin.svg';
+    document.getElementById('locationSwitchImg').classList.remove("blink-image");
+  } else {
+    LOC = true;
+    geoLoc = null;
+    
+    geoLoc = new ol.Geolocation({
+      tracking: true,
+      // enableHighAccuracy must be set to true to have the heading value.
+      trackingOptions: {
+        enableHighAccuracy: true,
+      },
+      projection: map.getView().getProjection(),
+    });
+    document.getElementById('locationSwitchImg').src = "pics/snake_transparent.gif";
+
+    geoLoc.on('change', function() {      
+      map.getView().setCenter(geoLoc.getPosition());
+      if (map.getView().getZoom() < 12) {
+        map.getView().setZoom(12);
+      }
+      LOC = true;
+      document.getElementById('locationSwitchImg').src = 'pics/localisation_blue_thin.svg';
+      document.getElementById('locationSwitchImg').classList.add("blink-image");
+    });
+    geoLoc.on('error', function(error) {
+      document.getElementById('locationSwitchImg').src = 'pics/localisation_red_thin.svg';
+      alert(error.message);
+      LOC = false;
+      document.getElementById('locationSwitchImg').classList.remove("blink-image");
+    });
   }
-}
-function errorLocation(error) {
-    alert(error.message);
-    navigator.geolocation.clearWatch(geoWatchID);
-    LOC=false;
-    document.getElementById('location').style.backgroundColor='#FAFAFA';
 }
 
 //======================================================================
 // INIT
 document.onkeydown = checkKey;
-document.onkeypress = stopRKey; 
+document.onkeypress = stopRKey;
 
 // register 'enter' and 'esc' keyboard hit
 function checkKey(e) {
-    var keynum;
-    if (window.event) {keynum = window.event.keyCode;} //IE
-    else if (e) {
-        keynum = e.which;
-        if (keynum === undefined)
-        {
-        e.preventDefault();
-        keynum = e.keyCode;
-        }
+  var keynum;
+  if (window.event) {
+    keynum = window.event.keyCode;
+  } //IE
+  else if (e) {
+    keynum = e.which;
+    if (keynum === undefined) {
+      e.preventDefault();
+      keynum = e.keyCode;
     }
-    if(keynum == 13) {
-        // fires nominatim search
-        SearchByName(document.search.nom_search.value);
-        }
+  }
+  if (keynum == 13) {
+    // fires nominatim search
+    SearchByName(document.search.nom_search.value);
+  }
 }
 
 function stopRKey(evt) {
-    // disable the enter key action in a form.
+  // disable the enter key action in a form.
   evt = (evt) ? evt : ((event) ? event : null);
   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
+  if ((evt.keyCode == 13) && (node.type == "text")) {
+    return false;
+  }
 }
+
 function get_stats() {
-    var XMLHttp = new XMLHttpRequest();
-    XMLHttp.open("GET", server + 'data/stats.json');
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+  var XMLHttp = new XMLHttpRequest();
+  XMLHttp.open("GET", server + 'data/stats.json');
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
-    XMLHttp.onreadystatechange = function () {
-        if (XMLHttp.readyState == 4) {
-            var lengthes = JSON.parse(XMLHttp.responseText);
-            for (k = 0; k < Object.keys(lengthes).length; k++) {
-                data[Object.keys(lengthes)[k]] = lengthes[Object.keys(lengthes)[k]];
-            }
-            
-            fillData('menu');
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      if (XMLHttp.responseText != "") {
+        var lengthes = JSON.parse(XMLHttp.responseText);
+        for (k = 0; k < Object.keys(lengthes).length; k++) {
+          data[Object.keys(lengthes)[k]] = lengthes[Object.keys(lengthes)[k]];
         }
-    };
-    XMLHttp.send();
-    return true;
+
+        fillData('menu');
+      }
+    }
+  };
+  XMLHttp.send();
+  return true;
 
 }
 
-function page_init(){
-    document.addEventListener('DOMContentLoaded', function () {
+function page_init() {
+  document.addEventListener('DOMContentLoaded', function() {
     var button = document.querySelector(".fastclick");
     new FastClick(document.body);
-    
-    });
-    
-    updateZoom();
-    initFlags();
-    get_stats();
-    document.getElementById('dailyVector').style.backgroundColor='#FFF';
-    document.getElementById('weekVector').style.backgroundColor='#FFF';
-    document.getElementById('noVector').style.backgroundColor='#DDD';
-    
-    document.getElementById('menuButton').onclick= function() {
-        showmenu();
-        };
-    document.getElementById('location').onclick= function() {
-        closecontent();
-        toggleLocation();
-        };
-    document.getElementById('searchButton').onclick= function() {
-        showsearch();
-    };
-    
-    document.getElementById('reduceButton').onclick= function() {
-        closecontent();
-    };
-    document.getElementById('doSearch').onclick= function() {
-        SearchByName(document.search.nom_search.value);
-        };
-    document.getElementById('listViewportButton').onclick= function() {
-        getTopoByViewport();
-        };
-    document.getElementById('dolistViewport').onclick= function() {
-        getTopoByViewport();
-        };
-    document.getElementById('mobileswitch').onclick= function() {
-        document.cookie='version=mobile';
-        };
-    document.getElementById('desktopswitch').onclick= function() {
-        document.cookie='version=desktop';
-        window.open(document.getElementById('permalink').href.replace('mobile','index'));
-        };
-    
-    document.getElementById('permalinkButton').onclick= function() {
-        location.href=document.getElementById('permalink').href;
-        };
-    document.getElementById('permalink.marker').onclick= function() {
-        location.href=document.getElementById('permalink').href+'&marker=true';
-        };
-    document.getElementById('langs').onclick= function() {
-        show_languages();
-        };
-        
-    var dd= document.getElementsByClassName('menuDropDownContent');
-    for (var d =0; d<dd.length; d++)
-        dd[d].style.display='none';
-        
-    document.getElementById('mapSettingsDropDown').onclick= function() {
-        showMapSettings();
-        };
-    document.getElementById('lastEditsDropDown').onclick= function() {
-        showLastEditsSettings();
-        };
-    document.getElementById('OSMBaseLAyer').onclick= function() {
-        setBaseLayer('osm');
-        };
-    document.getElementById('SnowBaseLAyer').onclick= function() {
-        setBaseLayer('snowbase');
-        };
-    document.getElementById('high_dpi').onclick= function() {
-        setHighDpi();
-        };
-    document.getElementById('viewSwitch').onclick= function() {
-        setHighDpi();
-        };
-        
-    document.getElementById('dailyVector').onclick= function() {
-        show_live_edits('daily',true);
-        document.getElementById('dailyVector').style.backgroundColor='#DDD';
-        document.getElementById('weekVector').style.backgroundColor='#FFF';
-        document.getElementById('noVector').style.backgroundColor='#FFF';
-        };
-    document.getElementById('weekVector').onclick= function() {
-        show_live_edits('weekly',true);
-        document.getElementById('dailyVector').style.backgroundColor='#FFF';
-        document.getElementById('weekVector').style.backgroundColor='#DDD';
-        document.getElementById('noVector').style.backgroundColor='#FFF';
-        };
-    document.getElementById('noVector').onclick= function() {
-        show_live_edits('none',false);
-        document.getElementById('dailyVector').style.backgroundColor='#FFF';
-        document.getElementById('weekVector').style.backgroundColor='#FFF';
-        document.getElementById('noVector').style.backgroundColor='#DDD';
-        };
-        
-    document.getElementById('legendButton').onclick= function() { 
-        showlegend();
-        };
-    document.getElementById('blogButton').onclick= function() {
-        window.open('http://blog.opensnowmap.org');
-        };
-    document.getElementById('dataButton').onclick= function() {
-        window.open('iframes/data.html');
-        };
-    document.getElementById('aboutButton').onclick= function() {
-        showabout();
-        };
-    document.getElementById('donateButton').onclick= function() {
-        window.open('iframes/donate.html');
-        };
-        
-    translateDiv('body');
+
+  });
+
+  initFlags();
+  get_stats();
+  document.getElementById('dailyVector').style.backgroundColor = '#FFF';
+  document.getElementById('weekVector').style.backgroundColor = '#FFF';
+  document.getElementById('noVector').style.backgroundColor = '#DDD';
+
+  document.getElementById('menuButton').onclick = function() {
+    showmenu();
+  };
+  document.getElementById('location').onclick = function() {
+    closecontent();
+    toggleLocation();
+  };
+  document.getElementById('searchButton').onclick = function() {
+    showsearch();
+  };
+
+  document.getElementById('reduceButton').onclick = function() {
+    closecontent();
+  };
+  document.getElementById('doSearch').onclick = function() {
+    SearchByName(document.search.nom_search.value);
+  };
+  document.getElementById('doClearSearch').onclick = function() {
+    clearResultList();
+  };
+  document.getElementById('listViewportButton').onclick = function() {
+    getTopoByViewport();
+  };
+  document.getElementById('dolistViewport').onclick = function() {
+    getTopoByViewport();
+  };
+  document.getElementById('doQueryPistes').onclick = function() {
+    queryPistes();
+  };
+  document.getElementById('doQueryPistesButton').onclick = function() {
+    queryPistes();
+  };
+  document.getElementById('mobileswitch').onclick = function() {
+    document.cookie = 'version=mobile';
+  };
+  document.getElementById('desktopswitch').onclick = function() {
+    document.cookie = 'version=desktop';
+    window.open(window.location.href.replace('mobile', 'index'));
+  };
+
+  document.getElementById('shareLinkButton').onclick = function() {
+    document.getElementById('copyLink').style.display='inline';
+    document.getElementById('linkText').value = window.location.href;
+  };
+  document.getElementById('setMarker').onclick = function() {
+    MARKER = !MARKER;
+    setMarker();
+  };
+  document.getElementById('langs').onclick = function() {
+    show_languages();
+  };
+
+  var dd = document.getElementsByClassName('menuDropDownContent');
+  for (var d = 0; d < dd.length; d++)
+    dd[d].style.display = 'none';
+
+  document.getElementById('mapSettingsDropDown').onclick = function() {
+    showMapSettings();
+  };
+  document.getElementById('lastEditsDropDown').onclick = function() {
+    showLastEditsSettings();
+  };
+  document.getElementById('OSMBaseLAyer').onclick = function() {
+    BASELAYER = 'osm';
+    setBaseLayer();
+  };
+  document.getElementById('SnowBaseLAyer').onclick = function() {
+    BASELAYER = 'snowmap';
+    setBaseLayer();
+  };
+  document.getElementById('high_dpi').onclick = function() {
+    setHighDpi();
+    setBaseLayer();
+  };
+  document.getElementById('viewSwitch').onclick = function() {
+    setHighDpi();
+    setBaseLayer();
+  };
+
+  document.getElementById('dailyVector').onclick = function() {
+    show_live_edits('daily');
+    document.getElementById('dailyVector').style.backgroundColor = '#DDD';
+    document.getElementById('weekVector').style.backgroundColor = '#FFF';
+    document.getElementById('noVector').style.backgroundColor = '#FFF';
+  };
+  document.getElementById('weekVector').onclick = function() {
+    show_live_edits('weekly');
+    document.getElementById('dailyVector').style.backgroundColor = '#FFF';
+    document.getElementById('weekVector').style.backgroundColor = '#DDD';
+    document.getElementById('noVector').style.backgroundColor = '#FFF';
+  };
+  document.getElementById('noVector').onclick = function() {
+    show_live_edits('none');
+    document.getElementById('dailyVector').style.backgroundColor = '#FFF';
+    document.getElementById('weekVector').style.backgroundColor = '#FFF';
+    document.getElementById('noVector').style.backgroundColor = '#DDD';
+  };
+
+  document.getElementById('changesButton').onclick = function() {
+    window.open('http://www.opensnowmap.org/qa/Pistes_changes/web/');
+  };
+  document.getElementById('legendButton').onclick = function() {
+    showlegend();
+  };
+  document.getElementById('blogButton').onclick = function() {
+    window.open('http://blog.opensnowmap.org');
+  };
+  document.getElementById('dataButton').onclick = function() {
+    window.open('iframes/data.html');
+  };
+  document.getElementById('aboutButton').onclick = function() {
+    showabout();
+  };
+  document.getElementById('donateButton').onclick = function() {
+    window.open('iframes/donate.html');
+  };
+
+  translateDiv('body');
 }
 
 //======================================================================
 // NOMINATIM
 function setCenterMap(nlon, nlat, zoom) {
-        nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-        map.setCenter(nlonLat, zoom);
-        //document.getElementById('content').style.display='none';
-    }
+  //~ nlonLat = new OpenLayers.LonLat(nlon, nlat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+  //~ map.setCenter(nlonLat, zoom);
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat([nlon,nlat], 'EPSG:4326'), 'EPSG:3857')
+  map.getView().setCenter(c);
+  map.getView().setZoom(zoom);
+  //document.getElementById('content').style.display='none';
+}
+
 function zoomToElement(osm_id, type) {
-    //type is either 'pistes' or 'sites'
-    var element = null;
-    for (p = 0; p < jsonPisteList[type].length; p++) {
-        var ids = jsonPisteList[type][p].ids.join('_').toString();
-        if (ids == osm_id){
-            element = jsonPisteList[type][p];
-            break;
-        }
+  //type is either 'pistes' or 'sites'
+  var element = null;
+  for (p = 0; p < jsonPisteList[type].length; p++) {
+    var ids = jsonPisteList[type][p].ids.join('_').toString();
+    if (ids == osm_id) {
+      element = jsonPisteList[type][p];
+      break;
     }
-    if (!element) {return false;}
+  }
+  if (!element) {
+    return false;
+  }
 
-    var bbox = element.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
-    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:900913')));
+  var bbox = element.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+  var bounds = [bbox[0], bbox[1], bbox[2], bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
+}
+
+function highlightElement(osm_id, type) {
+
+  //type is either 'pistes' or 'sites'
+  var element = null;
+  for (p = 0; p < jsonPisteList[type].length; p++) {
+    var ids = jsonPisteList[type][p].ids.join('_').toString();
+    if (ids == osm_id) {
+      element = jsonPisteList[type][p];
+      break;
+    }
+  }
+  if (!element) {
+    return false;
+  }
+
+  var bbox = element.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+  var bounds = [bbox[0], bbox[1], bbox[2], bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
 
 }
-function highlightElement(osm_id, type){
-    
-    //type is either 'pistes' or 'sites'
-    var element=null;
-    for (p =0; p< jsonPisteList[type].length; p++) {
-        var ids=jsonPisteList[type][p].ids.join('_').toString();
-        if (ids == osm_id ){
-            element=jsonPisteList[type][p];
-            break;
-        }
-    }
-    if (! element) {return false;}
-    
-    var bbox= element.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-    
-    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-    //~ var geometry=element.geometry;
-    //~ var features=[];
-    //~ for (g in geometry) {
-        //~ var escaped=geometry[g];
-        //~ 
-        //~ if (type=='sites'){encPol.geometryType='polygon';}
-        //~ else {encPol.geometryType='linestring';}
-        //~ var feature = encPol.read(escaped);
-        //~ 
-        //~ if (type=='sites'){feature.attributes.polygon=true;}
-        //~ 
-        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-        //~ features.push(feature);
-    //~ }
-    //~ 
-    //~ highlightLayer.destroyFeatures();
-    //~ highlightLayer.addFeatures(features);
-    
-}
-function highlightParentSite(osm_id,r){
-    
-    var piste=null;
-    for (p =0; p< jsonPisteList.pistes.length; p++) {
-        var ids=jsonPisteList.pistes[p].ids.join('_').toString();
-        if (ids == osm_id ){
-            piste=jsonPisteList.pistes[p];
-            break;
-        }
-    }
-    if (! piste) {return false;}
-    
-    var parent=piste.in_sites[r];
-    
-    if (! parent) {return false;}
-    
-    var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-    
-    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-    //~ var geometry=parent.geometry;
-    //~ var features=[];
-    //~ for (g in geometry) {
-        //~ var escaped=geometry[g];
-        //~ encPol.geometryType='polygon';
-        //~ var feature = encPol.read(escaped);
-        //~ feature.attributes.polygon=true;
-        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-        //~ features.push(feature);
-    //~ }
-    //~ 
-    //~ highlightLayer.destroyFeatures();
-    //~ highlightLayer.addFeatures(features);
-    
-}
-function highlightParentRoute(osm_id,r){
-    
-    var piste=null;
-    for (p =0; p< jsonPisteList.pistes.length; p++) {
-        var ids=jsonPisteList.pistes[p].ids.join('_').toString();
-        if (ids == osm_id ){
-            piste=jsonPisteList.pistes[p];
-            break;
-        }
-    }
-    if (! piste) {return false;}
-    
-    var parent=piste.in_routes[r];
-    
-    if (! parent) {return false;}
-    
-    var bbox= parent.bbox.replace('BOX','').replace('(','').replace(')','').replace(' ',',').replace(' ',',').split(',');
-    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'),new OpenLayers.Projection('EPSG:900913')));
-    
-    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-    //~ var geometry=parent.geometry;
-    //~ var features=[];
-    //~ for (g in geometry) {
-        //~ var escaped=geometry[g];
-        //~ var feature = encPol.read(escaped);
-        //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-        //~ features.push(feature);
-    //~ }
-    //~ 
-    //~ highlightLayer.destroyFeatures();
-    //~ highlightLayer.addFeatures(features);
-    
-}
-function zoomToParentSite(osm_id,r) {
-    var piste = null;
-    for (p = 0; p < jsonPisteList.pistes.length; p++) {
-        var ids = jsonPisteList.pistes[p].ids.join('_').toString();
-        if (ids == osm_id){
-            piste = jsonPisteList.pistes[p];
-            break;
-        }
-    }
-    if (!piste) {return false;}
 
-    var parent = piste.in_sites[r];
+function highlightParentSite(osm_id, r) {
 
-    if (!parent) {return false;}
+  var piste = null;
+  for (p = 0; p < jsonPisteList.pistes.length; p++) {
+    var ids = jsonPisteList.pistes[p].ids.join('_').toString();
+    if (ids == osm_id) {
+      piste = jsonPisteList.pistes[p];
+      break;
+    }
+  }
+  if (!piste) {
+    return false;
+  }
 
-    var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
-    bounds = new OpenLayers.Bounds(bbox[0],bbox[1],bbox[2],bbox[3]);
-    map.zoomToExtent(bounds.scale(1.5).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:900913')));
+  var parent = piste.in_sites[r];
 
-    //~ var encPol= new OpenLayers.Format.EncodedPolyline();
-    //~ var geometry=parent.geometry;
-    //~ var features=[];
-    //~ for (g in geometry) {
-    //~ var escaped=geometry[g];
-    //~ encPol.geometryType='polygon';
-    //~ var feature = encPol.read(escaped);
-    //~ feature.attributes.polygon=true;
-    //~ feature.geometry.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
-    //~ features.push(feature);
-    //~ }
-    //~
-    //~ highlightLayer.destroyFeatures();
-    //~ highlightLayer.addFeatures(features);
+  if (!parent) {
+    return false;
+  }
+
+  var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+  var bounds = [bbox[0], bbox[1], bbox[2], bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
 
 }
+
+function highlightParentRoute(osm_id, r) {
+
+  var piste = null;
+  for (p = 0; p < jsonPisteList.pistes.length; p++) {
+    var ids = jsonPisteList.pistes[p].ids.join('_').toString();
+    if (ids == osm_id) {
+      piste = jsonPisteList.pistes[p];
+      break;
+    }
+  }
+  if (!piste) {
+    return false;
+  }
+
+  var parent = piste.in_routes[r];
+
+  if (!parent) {
+    return false;
+  }
+
+  var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+  var bounds = [bbox[0], bbox[1], bbox[2], bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
+
+}
+
+function zoomToParentSite(osm_id, r) {
+  var piste = null;
+  for (p = 0; p < jsonPisteList.pistes.length; p++) {
+    var ids = jsonPisteList.pistes[p].ids.join('_').toString();
+    if (ids == osm_id) {
+      piste = jsonPisteList.pistes[p];
+      break;
+    }
+  }
+  if (!piste) {
+    return false;
+  }
+
+  var parent = piste.in_sites[r];
+
+  if (!parent) {
+    return false;
+  }
+
+  var bbox = parent.bbox.replace('BOX', '').replace('(', '').replace(')', '').replace(' ', ',').replace(' ', ',').split(',');
+  var bounds = [bbox[0], bbox[1], bbox[2], bbox[3]];
+  var newExtent;
+  newExtent = ol.extent.applyTransform(bounds, ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined);
+  map.getView().fit(newExtent);
+
+
+}
+
 function showPisteProfile(osm_id, type, div, color) {
-    //if (mode == "raster") {infoMode();}
-    var parent;
-    var alreadyShown = div.getElementsByClassName('profilePic');
-    if (alreadyShown.length >0) { // hide existing profile and exit
-        while (alreadyShown.length > 0) {
-            parent = alreadyShown[alreadyShown.length-1].parentNode;
-            parent.removeChild(alreadyShown[alreadyShown.length-1]);
-        }
-        return true;
+  //if (mode == "raster") {infoMode();}
+  var parent;
+  var alreadyShown = div.getElementsByClassName('profilePic');
+  if (alreadyShown.length > 0) { // hide existing profile and exit
+    while (alreadyShown.length > 0) {
+      parent = alreadyShown[alreadyShown.length - 1].parentNode;
+      parent.removeChild(alreadyShown[alreadyShown.length - 1]);
     }
-    var pics = document.getElementsByClassName('profilePic');
-    while (pics.length > 0) { // hide any existing profiles in the list
-        parent = pics[pics.length-1].parentNode;
-        parent.removeChild(pics[pics.length-1]);
-    }
-    
-    var waiter = document.getElementById('waiterProto').cloneNode(true);
-    div.appendChild(waiter);
-    waiter.className = waiter.className.replace('hidden', 'shown');
-    
-    //type is either 'pistes' or 'sites'
-    var element = null;
-    for (p = 0; p < jsonPisteList[type].length; p++) {
-        var ids = jsonPisteList[type][p].ids.join('_').toString();
-        if (ids == osm_id){
-            element = jsonPisteList[type][p];
-            break;
-        }
-    }
-    if (!element) {
-        waiter.className = waiter.className.replace('shown', 'hidden');
-        return false;
-    }
-
-    //drawGeomAsRoute(element.geometry, 'piste');
-    var wkt = encpolArray2WKT(element.geometry);
-    var routeLength = wkt.length_km;
-
-// request the elevation profile
-
-    var XMLHttp = new XMLHttpRequest();
-
-    //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
-
-    XMLHttp.open("POST", server + "demrequest?size=small&color="+color);
-    XMLHttp.onreadystatechange = function () {
-        if (XMLHttp.readyState == 4) {
-
-            var profileDiv = div;
-            while (profileDiv.firstChild) {
-                profileDiv.removeChild(profileDiv.firstChild);
-            } //clear previous list
-            waiter.className = waiter.className.replace('shown', 'hidden');
-
-            cleardiv = document.getElementById('clearProto').cloneNode(true);
-            cleardiv.removeAttribute("id");      
-            
-            var l = document.createElement('span');
-            l.innerHTML = parseFloat(routeLength).toFixed(1)+'&nbsp;km';
-            
-            var img = document.createElement('img');
-            img.src = server+'tmp/' + XMLHttp.responseText+'-3d.png';
-            var img2 = document.createElement('img');
-            img2.src = server+'tmp/' + XMLHttp.responseText+'-2d.png';
-            var img3 = document.createElement('img');
-            img3.src = server+'tmp/' + XMLHttp.responseText+'-ele.png';
-            
-            //document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
-            //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
-            profileDiv.appendChild(cleardiv);      
-            profileDiv.appendChild(l);
-            profileDiv.appendChild(img);
-            profileDiv.appendChild(img2);
-            profileDiv.appendChild(img3);
-        }
-    };
-    XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    //XMLHttp.setRequestHeader("Content-length", wktroute.length);
-    //XMLHttp.setRequestHeader("Connection", "close");
-
-    XMLHttp.send(wkt.geom);
     return true;
+  }
+  var pics = document.getElementsByClassName('profilePic');
+  while (pics.length > 0) { // hide any existing profiles in the list
+    parent = pics[pics.length - 1].parentNode;
+    parent.removeChild(pics[pics.length - 1]);
+  }
+
+  var waiter = document.getElementById('waiterProto').cloneNode(true);
+  div.appendChild(waiter);
+  waiter.className = waiter.className.replace('hidden', 'shown');
+
+  //type is either 'pistes' or 'sites'
+  var element = null;
+  for (p = 0; p < jsonPisteList[type].length; p++) {
+    var ids = jsonPisteList[type][p].ids.join('_').toString();
+    if (ids == osm_id) {
+      element = jsonPisteList[type][p];
+      break;
+    }
+  }
+  if (!element) {
+    waiter.className = waiter.className.replace('shown', 'hidden');
+    return false;
+  }
+
+  //drawGeomAsRoute(element.geometry, 'piste');
+  var wkt = encpolArray2WKT(element.geometry);
+  var routeLength = wkt.length_km;
+
+  // request the elevation profile
+
+  var XMLHttp = new XMLHttpRequest();
+
+  //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+
+  XMLHttp.open("POST", server + "demrequest?size=small&color=" + color);
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+
+      var profileDiv = div;
+      while (profileDiv.firstChild) {
+        profileDiv.removeChild(profileDiv.firstChild);
+      } //clear previous list
+      waiter.className = waiter.className.replace('shown', 'hidden');
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+
+      var l = document.createElement('span');
+      l.innerHTML = parseFloat(routeLength).toFixed(1) + '&nbsp;km';
+
+      var img = document.createElement('img');
+      img.src = server + 'tmp/' + XMLHttp.responseText + '-3d.png';
+      var img2 = document.createElement('img');
+      img2.src = server + 'tmp/' + XMLHttp.responseText + '-2d.png';
+      var img3 = document.createElement('img');
+      img3.src = server + 'tmp/' + XMLHttp.responseText + '-ele.png';
+
+      //document.getElementById('profileWaiter').className = document.getElementById('profileWaiter').className.replace('shown', 'hidden');
+      //document.getElementById('route_profile').className = document.getElementById('route_profile').className.replace('hidden', 'shown');
+      profileDiv.appendChild(cleardiv);
+      profileDiv.appendChild(l);
+      profileDiv.appendChild(img);
+      profileDiv.appendChild(img2);
+      profileDiv.appendChild(img3);
+    }
+  };
+  XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  //XMLHttp.setRequestHeader("Content-length", wktroute.length);
+  //XMLHttp.setRequestHeader("Connection", "close");
+
+  XMLHttp.send(wkt.geom);
+  return true;
 }
+
 function getMembersById(id) {
-    document.getElementById("waiterResults").style.display='inline';
-    
+  document.getElementById("waiterResults").style.display = 'inline';
 
-    var list = document.getElementsByClassName('nominatimLi')[0];
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
-    } //clear previous list
-    document.getElementById('piste_search_results').innerHTML='';
-    
-    var q = server+"request?geo=true&list=true&sort_alpha=true&group=true&members="+id;
-    var XMLHttp = new XMLHttpRequest();
-    XMLHttp.open("GET", q);
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-    
-    XMLHttp.onreadystatechange= function () {
-        if (XMLHttp.readyState == 4) {
-            var resp=XMLHttp.responseText;
-            jsonPisteList = JSON.parse(resp);
-            document.getElementById("waiterResults").style.display='none';
-            showHTMLPistesList(document.getElementById('piste_search_results'));
-        }
-    };
-    XMLHttp.send();
+
+  var list = document.getElementsByClassName('nominatimLi')[0];
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  } //clear previous list
+  document.getElementById('piste_search_results').innerHTML = '';
+
+  var q = server + "request?geo=true&list=true&sort_alpha=true&group=true&members=" + id;
+  var XMLHttp = new XMLHttpRequest();
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var resp = XMLHttp.responseText;
+      jsonPisteList = JSON.parse(resp);
+      document.getElementById("waiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  };
+  XMLHttp.send();
 }
+
 function getTopoByViewport() { //DONE in pisteList
-    document.getElementById("waiterResults").style.display='inline';
-    
+  document.getElementById("waiterResults").style.display = 'inline';
 
-    var list = document.getElementsByClassName('nominatimLi')[0];
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
-    } //clear previous list
-    document.getElementById('piste_search_results').innerHTML='';
-    
 
-    var bb = map.getExtent().transform(
-        new OpenLayers.Projection("EPSG:900913"),
-        new OpenLayers.Projection("EPSG:4326"));
-    var q = server + "request?group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb.left + ',' + bb.top + ',' + bb.right + ',' + bb.bottom;
+  var list = document.getElementsByClassName('nominatimLi')[0];
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  } //clear previous list
+  document.getElementById('piste_search_results').innerHTML = '';
+
+
+
+  var bb = ol.extent.applyTransform(map.getView().calculateExtent(), ol.proj.getTransform('EPSG:3857', 'EPSG:4326'), undefined);
+  var q = server + "request?group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
+  var XMLHttp = new XMLHttpRequest();
+
+  //PisteAPIXHR.push(XMLHttp);
+
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var resp = XMLHttp.responseText;
+      jsonPisteList = JSON.parse(resp);
+      document.getElementById("waiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
+
+function getTopoById(ids) { //DONE in pisteList
+  document.getElementById("waiterResults").style.display = 'inline';
+
+
+  var list = document.getElementsByClassName('nominatimLi')[0];
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  } //clear previous list
+  document.getElementById('piste_search_results').innerHTML = '';
+
+  var q = server + "request?geo=true&topo=true&ids=" + ids;
+  var XMLHttp = new XMLHttpRequest();
+
+  //PisteAPIXHR.push(XMLHttp);
+
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var resp = XMLHttp.responseText;
+      jsonPisteList = JSON.parse(resp);
+      document.getElementById("waiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
+
+var Pointsfeatures = new ol.Collection();
+var sourcePoints = new ol.source.Vector({
+  features: Pointsfeatures
+})
+// Vector controls for routing
+var modifyPoints; // Control to move points
+var drawPoints; // Control to add points
+var pointID = 0;
+function setMarker(){
+  if (MARKER) {
+    window.location.hash.replace('m=false', 'm=true');
+    window.location.replace(window.location.href.replace('m=false', 'm=true'));
+    
+    var iconFeature = new ol.Feature({
+    geometry: new ol.geom.Point(map.getView().getCenter()),
+    name: 'Marker'
+    });
+    
+    var iconStyle = new ol.style.Style({
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      opacity: 0.75,
+      src: 'pics/marker.png'
+    }))
+    });
+    
+    iconFeature.setStyle(iconStyle);
+    
+    var vectorSource = new ol.source.Vector({
+    features: [iconFeature]
+    });
+    
+    var markerLayer = new ol.layer.Vector({
+    source: vectorSource,
+    name: 'Marker'
+    });
+    
+    map.addLayer(markerLayer);
+  } else {
+    window.location.hash.replace('m=true', 'm=false');
+    window.location.replace(window.location.href.replace('m=true', 'm=false'));
+    if (getLayerByName('Marker')) {
+      getLayerByName('Marker').getSource().clear();
+      map.removeLayer(getLayerByName('Marker'));
+    }
+  }
+  
+}
+function queryPistes() { //DONE in pisteList
+  if (!QUERYMODE) {
+    QUERYMODE = true;
+    document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
+    document.getElementById('searchButtonImg').src = 'pics/query_blue.svg';
+    document.getElementById('searchButtonImg').classList.add("blink-image");
+    document.getElementById('querySwitchImg').classList.add("blink-image");
+
+    // Layer where the user add routing points
+    var pointsLayer = new ol.layer.Vector({
+      source: sourcePoints,
+      name: 'pointsLayer',
+      //~ style: PointStyleFunction
+
+    });
+    map.addLayer(pointsLayer)
+
+    //allow user to move points
+    // modifyPoints after modifyLines for it to handle a point drag 
+    // event instead of the later
+    modifyPoints = new ol.interaction.Modify({
+      features: Pointsfeatures,
+      //~ style : PointHighlightStyleFunction,
+      pixelTolerance: 20
+    });
+    map.addInteraction(modifyPoints);
+    // snap and move the popup control when a point is moved
+    modifyPoints.on('modifyend', function(event) {
+      var coord = event.mapBrowserEvent.coordinate;
+      map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
+
+        var type = feature.getProperties().type;
+        snap(feature, 'modifypointend');
+        feature.setProperties({
+          'isSnapped': true
+        });
+      });
+    });
+
+    //When adding a point, add an ID
+    drawPoints = new ol.interaction.Draw({
+      features: Pointsfeatures,
+      type: /** @type {ol.geom.GeometryType} */ ('Point')
+    });
+
+    drawPoints.on('drawend', function(event) {
+      //event.stopPropagation(); useless to avoid modifyend event
+      pointID = pointID + 1;
+      event.feature.setProperties({
+        'id': pointID,
+        'type': "queryPoint"
+      });
+
+      // remove previous points
+      pointsLayer.getSource().forEachFeature(function(feature) {
+        if (feature.id != pointID) {
+          pointsLayer.getSource().removeFeature(feature);
+        }
+      });
+
+      snap(event.feature, 'drawpointend');
+      event.feature.setProperties({
+        'isSnapped': true
+      }); // used to avoid snapping on modifyend
+      var coord = event.feature.getGeometry().getCoordinates();
+
+      /* sometimes a point was modifyed just after being drawn, to fix
+       * Possible cause: request aborted, then onRouteFail()
+       * Fixed in not sending routing call when one is running. 
+       * Fix fail if route fail and another point is selected before 
+       * routefail request finish*/
+    });
+    map.addInteraction(drawPoints);
+
+    drawPoints.setActive(true)
+    modifyPoints.setActive(true)
+  } else {
+    if (getLayerByName('pointsLayer')) {
+      getLayerByName('pointsLayer').getSource().clear();
+      map.removeLayer(getLayerByName('pointsLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    
+    document.getElementById('querySwitchImg').src = 'pics/query.svg';
+    document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
+    document.getElementById('searchButtonImg').classList.remove("blink-image");
+    document.getElementById('querySwitchImg').classList.remove("blink-image");
+    QUERYMODE = false;
+  }
+
+}
+
+function snap(point, what) {
+  // snap the drawn point to a piste with a server call
+  // replace getClosestPoint
+
+  document.getElementById("waiterResults").style.display = 'inline';
+  var coords = point.getGeometry().getCoordinates();
+
+  var ll = ol.proj.toLonLat(coords, 'EPSG:3857');
+  var q = server + "request?geo=true&list=true&closest=" + ll[0] + ',' + ll[1];
+  var XMLHttpSnap = new XMLHttpRequest();
+
+  XMLHttpSnap.open("GET", q);
+  XMLHttpSnap.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttpSnap.onreadystatechange = function() {
+    if (XMLHttpSnap.readyState == 4) {
+
+      document.getElementById("waiterResults").style.display = 'none';
+      var resp = XMLHttpSnap.responseText;
+      jsonPisteList = JSON.parse(resp);
+      ll = [jsonPisteList.snap.lon, jsonPisteList.snap.lat];
+      llm = ol.proj.fromLonLat(ll, 'EPSG:3857');
+      point.setProperties({
+        'isSnapped': true
+      }); // used to avoid snapping on modifyend
+      point.getGeometry().setCoordinates(llm);
+
+      //~ console.log("snapped " + point.getProperties().id);
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  }
+  XMLHttpSnap.send();
+  return true;
+}
+
+function getByName(name) {
+  document.getElementById("waiterResults").style.display = 'inline';
+  document.getElementById('piste_search_results').innerHTML = '';
+  var q = server + "request?group=true&geo=true&list=true&name=" + name;
+  var XMLHttp = new XMLHttpRequest();
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var resp = XMLHttp.responseText;
+      jsonPisteList = JSON.parse(resp);
+      document.getElementById("waiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
+
+function nominatimSearch(name) {
+  document.getElementById("waiterNominatim").style.display = 'inline';
+  var list = document.getElementsByClassName('nominatimLi')[0];
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  } //clear previous list
+  var q = server + 'nominatim?format=json&place=' + name;
+  var XMLHttp = new XMLHttpRequest();
+  XMLHttp.open("GET", q);
+  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+      var nom = JSON.parse(XMLHttp.responseText);
+      document.getElementById("waiterNominatim").style.display = 'none';
+
+      var Ul = document.getElementsByClassName('nominatimLi')[0];
+      for (var i = 0; i < nom.length; i++) {
+        var resultli = document.getElementById('nominatim_result_list_proto').cloneNode(true);
+        resultli.removeAttribute("id");
+        resultli.setAttribute('lon', nom[i].lon);
+        resultli.setAttribute('lat', nom[i].lat);
+        resultli.onclick = function() {
+          setCenterMap(this.getAttribute('lon'), this.getAttribute('lat'), 14);
+        };
+        resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
+        Ul.appendChild(resultli);
+      }
+    }
+  };
+  XMLHttp.send();
+  return true;
+}
+
+function SearchByName(name) {
+  document.getElementById('body').focus(); // close keyboard on android
+  document.getElementById('search_input').blur(); // close keyboard on android
+  if (name === '') {
+    return false;
+  }
+
+  document.search.nom_search.value = '';
+  getByName(name);
+  nominatimSearch(name);
+}
+
+function encpolArray2WKT(encpol) {
+  var wktGeom;
+  var l = 0;
+  //var encPol = new OpenLayers.Format.EncodedPolyline();
+  //encPol.geometryType = 'linestring';
+  var encPol = new ol.format.Polyline();
+  var wkt = new ol.format.WKT();
+  //~ encpol = encpol.readFeatures(encpol);
+
+  //var wkt = new OpenLayers.Format.WKT();
+  var wkt;
+  var feature;
+  if (encpol.length == 1) {
+    var feature = encPol.readFeatures(encpol[0])[0];
+    wktGeom = wkt.writeFeature(feature, {
+      projection: 'EPSG:4326'
+    });
+    g = feature.getGeometry();
+    l += ol.sphere.getLength(g, {
+      projection: 'EPSG:4326'
+    }) / 1000;
+  } else if (encpol.length > 1) {
+    wktGeom = 'MULTILINESTRING(';
+    for (i = 0; i < encpol.length; i++) {
+      feature = encPol.readFeatures(encpol[i])[0];
+      var linestring = wkt.writeFeature(feature, {
+        projection: 'EPSG:4326'
+      });
+      wktGeom += linestring.replace('LINESTRING', '') + ',';
+      g = feature.getGeometry();
+      l += ol.sphere.getLength(g, {
+        projection: 'EPSG:4326'
+      }) / 1000;
+    }
+    wktGeom = wktGeom.substring(0, wktGeom.length - 1) + ')';
+  }
+
+  return {
+    geom: wktGeom,
+    length_km: l
+  };
+}
+
+function showHTMLPistesList(Div) {
+
+  while (Div.firstChild) {
+    Div.removeChild(Div.firstChild);
+  } //clear previous list
+  var site, piste, index;
+  var name, osm_id, element_type, types, difficulty, marker, routeName, siteId, siteName;
+  var sitediv, pistediv, spans, span, pic, picDiv, hrDiv, hrsDiv, cleardiv, buttonDiv, inroutediv, insitediv, footer;
+
+  if (jsonPisteList.sites !== null) {
+
+    for (p = 0; p < jsonPisteList.sites.length; p++) {
+
+
+      site = jsonPisteList.sites[p];
+      index = site.result_index;
+
+
+      //console.log('ids: ' + site.ids);
+      osm_id = site.ids.join('_').toString(); // What to do with that '_' for sites ??
+
+      name = site.name;
+      if (name == ' ') {
+        name = ' x ';
+      }
+
+      element_type = '';
+
+      if (site.type) {
+        element_type = site.type;
+      }
+
+      sitediv = document.getElementById('pisteListElementProto').cloneNode(true);
+
+      sitediv.removeAttribute("id");
+      sitediv.setAttribute('osm_id', osm_id);
+      sitediv.setAttribute('element_type', element_type);
+
+      sitediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
+
+      sitediv.getElementsByClassName("moreInfoButton")[0].onclick = function(e) {
+        showSiteStats(this.parentNode.parentNode,
+          this.parentNode.parentNode.getAttribute('osm_id'),
+          this.parentNode.parentNode.getAttribute('element_type'));
+      };
+
+      sitediv.getElementsByClassName("getMemberListButton")[0].onclick = function(e) {
+        getMembersById(this.parentNode.parentNode.getAttribute('osm_id'));
+      };
+
+      /*sitediv.onmouseout = function () {
+          deHighlight();
+      };
+
+      sitediv.onmouseover = function () {
+          highlightElement(this.getAttribute('osm_id'), 'sites');
+      };*/
+
+      sitediv.onclick = function() {
+        zoomToElement(this.getAttribute('osm_id'), 'sites');
+
+        var center = map.getView().getCenter();
+        var resolution = map.getView().getResolution();
+        map.getView().setCenter([center[0] - 105 * resolution, center[1]]);
+        //deHighlight();
+      };
+      Div.appendChild(sitediv);
+
+      spans = sitediv.getElementsByTagName('span');
+      for (i = 0; i < spans.length; i++) {
+        span = spans[i];
+        if (span.className == "routeColorSpan") {
+          span.style.display = 'none';
+        }
+        if (span.className == "pisteNameSpan") {
+          span.style.display = 'none';
+        }
+        if (span.className == "siteNameSpan") {
+          span.innerHTML = name; //+' '+osm_id;
+        }
+        if (span.className == "difficultySpan") {
+          span.style.display = 'none';
+        }
+        if (span.className == "difficultyColorSpan") {
+          span.style.display = 'none';
+        }
+      }
+
+
+      picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
+      picDiv.innerHTML = '';
+      if (site.pistetype) {
+        types = '';
+        types = site.pistetype.split(';');
+        for (t = 0; t < types.length; t++) {
+          pic = icon[types[t]];
+          if (pic) {
+            img = document.createElement('img');
+            img.src = pic;
+            img.className = 'pisteIcon';
+            picDiv.appendChild(img);
+          }
+        }
+      }
+
+      sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+      Div.appendChild(cleardiv);
+
+      hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+      hrDiv.removeAttribute("id");
+      Div.appendChild(hrDiv);
+
+    }
+  }
+
+
+  if (jsonPisteList.pistes !== null) {
+
+    for (p = 0; p < jsonPisteList.pistes.length; p++) {
+      piste = jsonPisteList.pistes[p];
+
+      osm_ids = piste.ids.join('_').toString();
+
+      if (piste.type) {
+        element_type = piste.type;
+      }
+      color = '';
+      if (piste.color) {
+        color = piste.color;
+      }
+
+      lon = piste.center[0];
+      lat = piste.center[1];
+
+      difficulty = '';
+      if (piste.difficulty) {
+        difficulty = piste.difficulty;
+      }
+
+      name = piste.name;
+      if (name == ' ') {
+        name = ' - ';
+      }
+
+      pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
+
+      pistediv.removeAttribute("id");
+
+
+      pistediv.setAttribute('osm_id', osm_ids);
+      pistediv.setAttribute('element_type', element_type);
+      if (color !== '') {
+        pistediv.setAttribute('element_color', escape(color));
+      } else {
+        if (lat > 0 && lon < -40) {
+          pistediv.setAttribute('element_color', escape(diffcolorUS[piste.difficulty]));
+        } else {
+          pistediv.setAttribute('element_color', escape(diffcolor[piste.difficulty]));
+        }
+      }
+
+      pistediv.getElementsByClassName("getProfileButton")[0].onclick = function(e) {
+        zoomToElement(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes');
+
+
+        var center = map.getView().getCenter();
+        var resolution = map.getView().getResolution();
+        map.getView().setCenter([center[0] - 105 * resolution, center[1]]);
+        var profileDiv = this.parentNode.parentNode.getElementsByClassName("profile")[0];
+        showPisteProfile(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes', profileDiv, this.parentNode.parentNode.getAttribute('element_color'));
+      };
+
+      //pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
+      pistediv.getElementsByClassName("moreInfoButton")[0].onclick = function(e) {
+        showExtLink(this.parentNode, this.parentNode.parentNode.getAttribute('osm_id'), this.parentNode.parentNode.getAttribute('element_type'));
+      };
+
+      pistediv.getElementsByClassName("getMemberListButton")[0].style.display = 'none';
+
+      buttondiv = pistediv.getElementsByClassName("pisteListButton")[0];
+      /*buttondiv.onmouseout = function () {
+          deHighlight();
+      };*/
+
+      /*buttondiv.onmouseover = function () {
+          highlightElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+      };*/
+
+      buttondiv.onclick = function() {
+        zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
+
+        var center = map.getView().getCenter();
+        var resolution = map.getView().getResolution();
+        map.getView().setCenter([center[0] - 105 * resolution, center[1]]);
+        //deHighlight();
+      };
+      Div.appendChild(pistediv);
+
+      footer = pistediv.getElementsByClassName("pisteListElementFooter")[0];
+      spans = pistediv.getElementsByTagName('span');
+      for (i = 0; i < spans.length; i++) {
+        span = spans[i];
+        if (span.className == "routeColorSpan") {
+          if (piste.color) {
+            span.style.color = piste.color;
+          } else {
+            span.style.display = 'none';
+          }
+        }
+        if (span.className == "pisteNameSpan") {
+          span.innerHTML = name;
+        }
+        if (span.className == "siteNameSpan") {
+          span.style.display = 'none';
+        }
+        if (span.className == "difficultySpan") {
+          span.innerHTML = _(piste.difficulty);
+        }
+        if (span.className == "difficultyColorSpan") {
+          if (piste.difficulty) {
+            marker = '&#9679;';
+            if (piste.difficulty == 'freeride') {
+              marker = '!';
+            }
+            if (lat > 0 && lon < -40) {
+              if (piste.difficulty == 'expert') {
+                marker = '&diams;&diams;';
+              }
+              if (piste.difficulty == 'advanced') {
+                marker = '&diams;';
+              }
+              if (piste.difficulty == 'freeride') {
+                marker = '!!';
+              }
+              span.style.color = diffcolorUS[piste.difficulty];
+            } else {
+              span.style.color = diffcolor[piste.difficulty];
+            }
+            span.innerHTML = marker;
+
+          } else {
+            span.style.display = 'none';
+          }
+        }
+      }
+
+
+      picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
+      picDiv.innerHTML = '';
+      pic = null;
+      if (piste.pistetype) {
+        pic = icon[piste.pistetype];
+      } else {
+        pic = icon[piste.aerialway];
+      }
+      if (pic) {
+        img = document.createElement('img');
+        img.src = pic;
+        img.className = 'pisteIcon';
+        picDiv.appendChild(img);
+      }
+
+      if (!piste.pistetype) {
+        pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+      }
+      if (piste.difficulty && piste.difficulty.split(',').length > 1) {
+        pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
+      }
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+      pistediv.appendChild(cleardiv);
+      hrsDiv = document.getElementById('hrSuperLightProto').cloneNode(true);
+      hrsDiv.removeAttribute("id");
+      pistediv.appendChild(hrsDiv);
+
+
+      // parent sites
+      if (piste.in_sites.length !== 0) {
+
+        for (r = 0; r < piste.in_sites.length; r++) {
+          siteId = piste.in_sites[r].id;
+          siteName = piste.in_sites[r].name;
+          insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
+
+          insitediv.removeAttribute("id");
+          insitediv.setAttribute('osm_id', osm_ids);
+          insitediv.setAttribute('parent_site_id', siteId);
+          insitediv.setAttribute('element_type', element_type);
+          insitediv.setAttribute('r', r);
+
+          /*insitediv.onmouseout = function () {
+              //deHighlight();
+          };
+
+          insitediv.onmouseover = function () {
+              highlightParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+          };*/
+
+          insitediv.onclick = function() {
+            zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
+            var center = map.getView().getCenter();
+            var resolution = map.getView().getResolution();
+            map.getView().setCenter([center[0] - 105 * resolution, center[1]]);
+            //deHighlight();
+            getMembersById(this.getAttribute('parent_site_id'));
+          };
+          footer.appendChild(insitediv);
+          spans = pistediv.getElementsByTagName('span');
+          for (i = 0; i < spans.length; i++) {
+            span = spans[i];
+            if (span.className == "siteNameSpan") {
+              span.innerHTML = siteName;
+            }
+          }
+        }
+      }
+
+      // parent routes
+      if (piste.in_routes.length !== 0) {
+
+        for (r = 0; r < piste.in_routes.length; r++) {
+
+          color = '';
+          if (piste.in_routes[r].color) {
+            color = piste.in_routes[r].color;
+          } else {
+            color = diffcolor[piste.in_routes[r].difficulty];
+          }
+
+          routeName = piste.in_routes[r].name;
+          osm_ids = piste.in_routes[r].id;
+          element_type = piste.in_routes[r].type;
+          inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
+
+          inroutediv.removeAttribute("id");
+          inroutediv.setAttribute('osm_id', osm_ids);
+          inroutediv.setAttribute('element_type', element_type);
+          inroutediv.setAttribute('r', r);
+
+          /*inroutediv.onmouseout = function () {
+              //deHighlight();
+          };
+
+          inroutediv.onmouseover = function () {
+              highlightParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+          };*/
+
+          inroutediv.onclick = function() {
+            //~ showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
+            getTopoById(this.getAttribute('osm_id'));
+            //deHighlight();
+          };
+          footer.appendChild(inroutediv);
+
+          spans = inroutediv.getElementsByTagName('span');
+          for (i = 0; i < spans.length; i++) {
+            span = spans[i];
+            if (span.className == "routeNameSpan") {
+              span.innerHTML = routeName;
+            }
+            if (span.className == "routeColorSpan") {
+              if (color !== '') {
+                span.style.color = color;
+              } else {
+                span.style.display = 'none';
+              }
+            }
+          }
+
+        }
+
+
+      }
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+      Div.appendChild(cleardiv);
+
+      hrDiv = document.getElementById('hrLightProto').cloneNode(true);
+      hrDiv.removeAttribute("id");
+      Div.appendChild(hrDiv);
+
+    } // end for
+
+  }
+
+}
+
+function showExtLink(div, ids, element_type) {
+
+  var child = div.getElementsByClassName('elementExtLink')[0];
+  if (child === undefined) {
+
+    ids = ids.split('_');
+
+    for (k = 0; k < ids.length; k++) {
+      var id = ids[k];
+
+      var linkdiv = document.getElementById('elementExtLinkProto').cloneNode(true);
+      linkdiv.removeAttribute("id");
+      div.appendChild(linkdiv);
+      linkdiv.className.replace('shown', 'hidden');
+
+      if (element_type == 'relation') {
+        linkdiv.getElementsByClassName('analyse')[0].className.replace('hidden', 'shown');
+        linkdiv.getElementsByClassName('analyse')[0].style.display = 'inline';
+      }
+      spans = linkdiv.getElementsByClassName('data');
+      for (i = 0; i < spans.length; i++) {
+        var data = spans[i].getAttribute('dataText');
+
+        if (data == 'siteUrl') {
+          spans[i].href = protocol + "//openstreetmap.org/browse/" + element_type + "/" + id;
+        }
+        if (data == 'siteId') {
+          spans[i].innerHTML = id;
+        }
+
+        if (data == 'siteType') {
+          spans[i].innerHTML = element_type; //way or relation
+        }
+        if (data == 'analyseUrl') {
+          spans[i].href = "http://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
+        }
+      }
+
+    }
+
+  } else {
+    child.parentNode.removeChild(child);
+  }
+}
+
+function showSiteStats(div, id, element_type) { // fix for normal ways
+
+  var child = div.getElementsByClassName('siteStats')[0];
+  if (child === undefined) {
+    var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
+    statsdiv.removeAttribute("id");
+    div.appendChild(statsdiv);
+
+    //abortXHR('PisteAPI'); // abort another request if any
+
+    var q = server + "request?site-stats=" + id;
     var XMLHttp = new XMLHttpRequest();
 
     //PisteAPIXHR.push(XMLHttp);
@@ -1104,877 +1965,250 @@ function getTopoByViewport() { //DONE in pisteList
     XMLHttp.open("GET", q);
     XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
-    XMLHttp.onreadystatechange = function () {
-        if (XMLHttp.readyState == 4) {
-            var resp = XMLHttp.responseText;
-            jsonPisteList = JSON.parse(resp);
-            document.getElementById("waiterResults").style.display='none';
-            showHTMLPistesList(document.getElementById('piste_search_results'));
-        }
+    XMLHttp.onreadystatechange = function() {
+      if (XMLHttp.readyState == 4) {
+        var resp = XMLHttp.responseText;
+        var jsonStats = JSON.parse(resp);
+        statsdiv.getElementsByClassName('stats')[0].className.replace('hidden', 'shown');
+
+        fillHTMLStats(jsonStats, statsdiv, id, element_type);
+      }
     };
     XMLHttp.send();
-    return true;
+  } else {
+    child.parentNode.removeChild(child);
+  }
 }
-function getByName(name) {
-    document.getElementById("waiterResults").style.display='inline';
-    document.getElementById('piste_search_results').innerHTML='';
-    var q = server+"request?group=true&geo=true&list=true&name="+name;
-    var XMLHttp = new XMLHttpRequest();
-    XMLHttp.open("GET", q);
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-    
-    XMLHttp.onreadystatechange= function () {
-        if (XMLHttp.readyState == 4) {
-            var resp=XMLHttp.responseText;
-            jsonPisteList = JSON.parse(resp);
-            document.getElementById("waiterResults").style.display='none';
-            showHTMLPistesList(document.getElementById('piste_search_results'));
-        }
-    };
-    XMLHttp.send();
-    return true;
-}
-function nominatimSearch(name) {
-    document.getElementById("waiterNominatim").style.display='inline';
-    var list = document.getElementsByClassName('nominatimLi')[0];
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
-    } //clear previous list
-    var q = server+'nominatim?format=json&place='+name;
-    var XMLHttp = new XMLHttpRequest();
-    XMLHttp.open("GET", q);
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-    
-    XMLHttp.onreadystatechange= function () {
-        if (XMLHttp.readyState == 4) {
-            var nom = JSON.parse(XMLHttp.responseText);
-            document.getElementById("waiterNominatim").style.display='none';
-            
-            var Ul = document.getElementsByClassName('nominatimLi')[0];
-            for (var i = 0;i < nom.length;i++) {
-                var resultli = document.getElementById('nominatim_result_list_proto').cloneNode(true);
-                resultli.removeAttribute("id");
-                resultli.setAttribute('lon', nom[i].lon);
-                resultli.setAttribute('lat', nom[i].lat);
-                resultli.onclick = function () {
-                    setCenterMap(this.getAttribute('lon'), this.getAttribute('lat'), 14);
-                };
-                resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
-                Ul.appendChild(resultli);
-            }
-        }
-    };
-    XMLHttp.send();
-    return true;
-}
-function SearchByName(name) {
-    if (name === '') {return false;}
-    
-    document.search.nom_search.value='';
-    getByName(name);
-    nominatimSearch(name);
-}
-function encpolArray2WKT(encpol) {
-    var wktGeom;
-    var l = 0;
-    var encPol = new OpenLayers.Format.EncodedPolyline();
-    encPol.geometryType = 'linestring';
 
-    var wkt = new OpenLayers.Format.WKT();
-    var feature;
-    if (encpol.length == 1) {
-        feature = encPol.read(encpol[0]);
-        wktGeom = wkt.write(feature);
-        l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
-    } else if (encpol.length > 1) {
-        wktGeom = 'MULTILINESTRING(';
-        for (i = 0; i < encpol.length; i++) {
-            feature = encPol.read(encpol[i]);
-            var linestring = wkt.write(feature);
-            wktGeom += linestring.replace('LINESTRING', '') + ',';
-            l += feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:4326")) / 1000;
-        }
-        wktGeom = wktGeom.substring(0, wktGeom.length - 1) + ')';
-    }
-
-    return {geom: wktGeom, length_km: l};
-}
-function showHTMLPistesList(Div) {
-
-    while (Div.firstChild) {
-        Div.removeChild(Div.firstChild);
-    } //clear previous list
-    var site
-    , piste
-    , index;
-    var name
-    ,osm_id
-    ,element_type
-    ,types
-    ,difficulty
-    ,marker
-    ,routeName
-    ,siteId
-    ,siteName;
-    var sitediv
-    ,pistediv
-    ,spans
-    ,span
-    ,pic
-    ,picDiv
-    ,hrDiv
-    ,hrsDiv
-    ,cleardiv
-    ,buttonDiv
-    ,inroutediv
-    ,insitediv
-    ,footer;
-
-    if (jsonPisteList.sites !== null) {
-
-        for (p = 0 ; p < jsonPisteList.sites.length; p++) {
-
-
-            site = jsonPisteList.sites[p];
-            index = site.result_index;
-
-
-            //console.log('ids: ' + site.ids);
-            osm_id = site.ids.join('_').toString(); // What to do with that '_' for sites ??
-
-            name = site.name;
-            if (name == ' '){name = ' x ';}
-
-            element_type = '';
-
-            if (site.type) {element_type = site.type;}
-
-            sitediv = document.getElementById('pisteListElementProto').cloneNode(true);
-
-            sitediv.removeAttribute("id");
-            sitediv.setAttribute('osm_id', osm_id);
-            sitediv.setAttribute('element_type', element_type);
-
-            sitediv.getElementsByClassName("getProfileButton")[0].style.display = 'none';
-
-            sitediv.getElementsByClassName("moreInfoButton")[0].onclick = function (e) {
-                showSiteStats(this.parentNode.parentNode,
-                    this.parentNode.parentNode.getAttribute('osm_id'),
-                    this.parentNode.parentNode.getAttribute('element_type'));
-            };
-
-            sitediv.getElementsByClassName("getMemberListButton")[0].onclick = function (e) {
-                getMembersById(this.parentNode.parentNode.getAttribute('osm_id'));
-            };
-
-            /*sitediv.onmouseout = function () {
-                deHighlight();
-            };
-
-            sitediv.onmouseover = function () {
-                highlightElement(this.getAttribute('osm_id'), 'sites');
-            };*/
-
-            sitediv.onclick = function () {
-                zoomToElement(this.getAttribute('osm_id'), 'sites');
-                map.moveByPx(-105,0);
-                //deHighlight();
-            };
-            Div.appendChild(sitediv);
-
-            spans = sitediv.getElementsByTagName('span');
-            for (i = 0; i < spans.length; i++) {
-                span = spans[i];
-                if (span.className == "routeColorSpan") {span.style.display = 'none';}
-                if (span.className == "pisteNameSpan") {span.style.display = 'none';}
-                if (span.className == "siteNameSpan") {
-                    span.innerHTML = name;//+' '+osm_id;
-                }
-                if (span.className == "difficultySpan") {span.style.display = 'none';}
-                if (span.className == "difficultyColorSpan") {span.style.display = 'none';}
-            }
-
-
-            picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
-            picDiv.innerHTML = '';
-            if (site.pistetype) {
-                types = '';
-                types = site.pistetype.split(';');
-                for (t = 0; t < types.length; t++) {
-                    pic = icon[types[t]];
-                    if (pic) {
-                        img = document.createElement('img');
-                        img.src = pic;
-                        img.className = 'pisteIcon';
-                        picDiv.appendChild(img);
-                    }
-                }
-            }
-
-            sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
-
-            cleardiv = document.getElementById('clearProto').cloneNode(true);
-            cleardiv.removeAttribute("id");
-            Div.appendChild(cleardiv);
-            
-            hrDiv = document.getElementById('hrLightProto').cloneNode(true);
-            hrDiv.removeAttribute("id");
-            Div.appendChild(hrDiv);
-
-        }
-    }
-    
-    
-    if (jsonPisteList.pistes !== null) {
-
-        for (p = 0; p < jsonPisteList.pistes.length; p++) {
-            piste = jsonPisteList.pistes[p];
-
-            osm_ids = piste.ids.join('_').toString();
-
-            if (piste.type) {element_type = piste.type;}
-            color = '';
-            if (piste.color) {
-                color = piste.color;
-            }
-
-            lon = piste.center[0];
-            lat = piste.center[1];
-
-            difficulty = '';
-            if (piste.difficulty) {difficulty = piste.difficulty;}
-
-            name = piste.name;
-            if (name == ' '){name = ' - ';}
-
-            pistediv = document.getElementById('pisteListElementProto').cloneNode(true);
-
-            pistediv.removeAttribute("id");
-            
-            
-            pistediv.setAttribute('osm_id', osm_ids);
-            pistediv.setAttribute('element_type', element_type);
-            if (color !== '') {
-                pistediv.setAttribute('element_color', escape(color));
-            } else {
-                if (lat > 0 && lon < -40) {
-                    pistediv.setAttribute('element_color', escape(diffcolorUS[piste.difficulty]));
-                } else {
-                    pistediv.setAttribute('element_color', escape(diffcolor[piste.difficulty]));
-                }
-            }
-
-            pistediv.getElementsByClassName("getProfileButton")[0].onclick = function (e) {
-                zoomToElement(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes');
-                
-                map.moveByPx(-105,0);
-                var profileDiv = this.parentNode.parentNode.getElementsByClassName("profile")[0];
-                showPisteProfile(this.parentNode.parentNode.getAttribute('osm_id'), 'pistes',profileDiv, this.parentNode.parentNode.getAttribute('element_color'));
-            };
-
-            pistediv.getElementsByClassName("moreInfoButton")[0].style.display = 'none';
-            /*onclick = function (e) {
-                showExtLink(this.parentNode, this.parentNode.getAttribute('osm_id')
-                    , this.parentNode.getAttribute('element_type'));
-            };*/
-
-            pistediv.getElementsByClassName("getMemberListButton")[0].style.display = 'none';
-
-            buttondiv = pistediv.getElementsByClassName("pisteListButton")[0];
-            /*buttondiv.onmouseout = function () {
-                deHighlight();
-            };*/
-
-            /*buttondiv.onmouseover = function () {
-                highlightElement(this.parentNode.getAttribute('osm_id'), 'pistes');
-            };*/
-
-            buttondiv.onclick = function () {
-                zoomToElement(this.parentNode.getAttribute('osm_id'), 'pistes');
-                map.moveByPx(-105,0);
-                //deHighlight();
-            };
-            Div.appendChild(pistediv);
-
-            footer = pistediv.getElementsByClassName("pisteListElementFooter")[0];
-            spans = pistediv.getElementsByTagName('span');
-            for (i = 0; i < spans.length; i++) {
-                span = spans[i];
-                if (span.className == "routeColorSpan") {
-                    if (piste.color) {span.style.color = piste.color;} else {span.style.display = 'none';}
-                }
-                if (span.className == "pisteNameSpan") {
-                    span.innerHTML = name;
-                }
-                if (span.className == "siteNameSpan") {span.style.display = 'none';}
-                if (span.className == "difficultySpan") {
-                    span.innerHTML = _(piste.difficulty);
-                }
-                if (span.className == "difficultyColorSpan") {
-                    if (piste.difficulty) {
-                        marker = '&#9679;';
-                        if (piste.difficulty == 'freeride') {marker = '!';}
-                        if (lat > 0 && lon < -40) {
-                            if (piste.difficulty == 'expert') {marker = '&diams;&diams;';}
-                            if (piste.difficulty == 'advanced') {marker = '&diams;';}
-                            if (piste.difficulty == 'freeride') {marker = '!!';}
-                            span.style.color = diffcolorUS[piste.difficulty];
-                        } else {
-                            span.style.color = diffcolor[piste.difficulty];
-                        }
-                        span.innerHTML = marker;
-
-                    } else {span.style.display = 'none';}
-                }
-            }
-
-
-            picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
-            picDiv.innerHTML = '';
-            pic = null;
-            if (piste.pistetype) {
-                pic = icon[piste.pistetype];
-            } else {
-                pic = icon[piste.aerialway];
-            }
-            if (pic) {
-                img = document.createElement('img');
-                img.src = pic;
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-            }
-
-            if (!piste.pistetype) {
-                pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
-            }
-            if (piste.difficulty && piste.difficulty.split(',').length > 1) {
-                pistediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
-            }
-            
-            cleardiv = document.getElementById('clearProto').cloneNode(true);
-            cleardiv.removeAttribute("id");
-            pistediv.appendChild(cleardiv);
-            hrsDiv = document.getElementById('hrSuperLightProto').cloneNode(true);
-            hrsDiv.removeAttribute("id");
-            pistediv.appendChild(hrsDiv);
-            
-
-            // parent sites
-            if (piste.in_sites.length !== 0) {
-
-                for (r = 0; r < piste.in_sites.length; r++) {
-                    siteId = piste.in_sites[r].id;
-                    siteName = piste.in_sites[r].name;
-                    insitediv = document.getElementById('inSiteElementProto').cloneNode(true);
-
-                    insitediv.removeAttribute("id");
-                    insitediv.setAttribute('osm_id', osm_ids);
-                    insitediv.setAttribute('parent_site_id', siteId);
-                    insitediv.setAttribute('element_type', element_type);
-                    insitediv.setAttribute('r', r);
-
-                    /*insitediv.onmouseout = function () {
-                        //deHighlight();
-                    };
-
-                    insitediv.onmouseover = function () {
-                        highlightParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
-                    };*/
-
-                    insitediv.onclick = function () {
-                        zoomToParentSite(this.getAttribute('osm_id'), this.getAttribute('r'));
-                        map.moveByPx(-105,0);
-                        //deHighlight();
-                        getMembersById(this.getAttribute('parent_site_id'));
-                    };
-                    footer.appendChild(insitediv);
-                    spans = pistediv.getElementsByTagName('span');
-                    for (i = 0; i < spans.length; i++) {
-                        span = spans[i];
-                        if (span.className == "siteNameSpan") {
-                            span.innerHTML = siteName;
-                        }
-                    }
-                }
-            }
-            
-            // parent routes
-            if (piste.in_routes.length !== 0) {
-
-                for (r = 0; r < piste.in_routes.length; r++) {
-
-                    color = '';
-                    if (piste.in_routes[r].color) {color = piste.in_routes[r].color;} else {color = diffcolor[piste.in_routes[r].difficulty];}
-
-                    routeName = piste.in_routes[r].name;
-                    inroutediv = document.getElementById('inRouteElementProto').cloneNode(true);
-
-                    inroutediv.removeAttribute("id");
-                    inroutediv.setAttribute('osm_id', osm_ids);
-                    inroutediv.setAttribute('element_type', element_type);
-                    inroutediv.setAttribute('r', r);
-
-                    /*inroutediv.onmouseout = function () {
-                        //deHighlight();
-                    };
-
-                    inroutediv.onmouseover = function () {
-                        highlightParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
-                    };*/
-
-                    inroutediv.onclick = function () {
-                        showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
-                        //deHighlight();
-                    };
-                    footer.appendChild(inroutediv);
-
-                    spans = inroutediv.getElementsByTagName('span');
-                    for (i = 0; i < spans.length; i++) {
-                        span = spans[i];
-                        if (span.className == "routeNameSpan") {
-                            span.innerHTML = routeName;
-                        }
-                        if (span.className == "routeColorSpan") {
-                            if (color !== '') {span.style.color = color;} else {span.style.display = 'none';}
-                        }
-                    }
-
-                }
-
-
-            }
-
-            cleardiv = document.getElementById('clearProto').cloneNode(true);
-            cleardiv.removeAttribute("id");
-            Div.appendChild(cleardiv);
-
-            hrDiv = document.getElementById('hrLightProto').cloneNode(true);
-            hrDiv.removeAttribute("id");
-            Div.appendChild(hrDiv);
-
-        } // end for
-
-    }
-
-}
-function showSiteStats(div, id, element_type) { // fix for normal ways
-
-    var child = div.getElementsByClassName('siteStats')[0];
-    if (child === undefined) {
-        var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
-        statsdiv.removeAttribute("id");
-        div.appendChild(statsdiv);
-        
-        //abortXHR('PisteAPI'); // abort another request if any
-
-        var q = server + "request?site-stats=" + id;
-        var XMLHttp = new XMLHttpRequest();
-
-        //PisteAPIXHR.push(XMLHttp);
-
-        XMLHttp.open("GET", q);
-        XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-        XMLHttp.onreadystatechange = function () {
-            if (XMLHttp.readyState == 4) {
-                var resp = XMLHttp.responseText;
-                var jsonStats = JSON.parse(resp);
-                statsdiv.getElementsByClassName('stats')[0].className.replace('hidden', 'shown');
-
-                fillHTMLStats(jsonStats, statsdiv, id, element_type);
-            }
-        };
-        XMLHttp.send();
-    } else {
-        child.parentNode.removeChild(child);
-    }
-}
 function fillHTMLStats(jsonStats, div, element_type) {
 
 
-    spans = div.getElementsByClassName('data');
-    for (i = 0; i < spans.length; i++) {
-        var data = spans[i].getAttribute('dataText');
-        if (jsonStats.site !== null) {
-            if (['downhill','nordic','skitour','sled','lifts','hike'].indexOf(data) != -1) {
-                spans[i].innerHTML = (parseFloat(jsonStats[data]) / 1000).toFixed(1);
-            }
-            if (['snow_park','jump','playground','sleigh','ice_skate'].indexOf(data) != -1){
-                if (jsonStats[data] !== 0) {
-                    spans[i].innerHTML = '&#9679;';
-                    spans[i].style.color = 'green';
-                } else {
-                    spans[i].innerHTML = 'x';
-                    spans[i].style.color = 'red';
-                }
-            }
+  spans = div.getElementsByClassName('data');
+  for (i = 0; i < spans.length; i++) {
+    var data = spans[i].getAttribute('dataText');
+    if (jsonStats.site !== null) {
+      if (['downhill', 'nordic', 'skitour', 'sled', 'lifts', 'hike'].indexOf(data) != -1) {
+        spans[i].innerHTML = (parseFloat(jsonStats[data]) / 1000).toFixed(1);
+      }
+      if (['snow_park', 'jump', 'playground', 'sleigh', 'ice_skate'].indexOf(data) != -1) {
+        if (jsonStats[data] !== 0) {
+          spans[i].innerHTML = '&#9679;';
+          spans[i].style.color = 'green';
+        } else {
+          spans[i].innerHTML = 'x';
+          spans[i].style.color = 'red';
         }
-        if (data == 'siteUrl'){
-            spans[i].href = protocol+"//openstreetmap.org/browse/" + element_type + "/" + id;
-        }
-        if (data == 'siteId'){
-            spans[i].innerHTML = id;
-        }
-        if (data == 'siteType'){
-            spans[i].innerHTML = element_type; //way or relation
-        }
+      }
     }
+    if (data == 'siteUrl') {
+      spans[i].href = protocol + "//openstreetmap.org/browse/" + element_type + "/" + id;
+    }
+    if (data == 'siteId') {
+      spans[i].innerHTML = id;
+    }
+    if (data == 'siteType') {
+      spans[i].innerHTML = element_type; //way or relation
+    }
+  }
 
 }
 
 //======================================================================
 // MAP
 
-// Redirect permalink
-if (location.search !== "") {
-    readPermalink(location.search);
-}
-function readPermalink(link) {
-    //?zoom=13&lat=46.82272&lon=6.87183&layers=B0TT
-    var x = link.substr(1).split("&");
-    for (var i = 0; i < x.length; i++)
-    {
-        if (x[i].split("=")[0] == 'zoom') {zoom = x[i].split("=")[1];}
-        if (x[i].split("=")[0] == 'lon') {lon = x[i].split("=")[1];}
-        if (x[i].split("=")[0] == 'lat') {lat = x[i].split("=")[1];}
-        if (x[i].split("=")[0] == 'layers') {BASELAYER = x[i].split("=")[1];}
-        if (x[i].split("=")[0] == 'marker' && x[i].split("=")[1] == 'true') { MARKER = true;}
-    }
-    //Then hopefully map_init() will do the job when the map is loaded
-}
-function updateZoom() {
-    document.getElementById('zoom').innerHTML= map.getZoom();
+function setHighDpi() {
+  if (HDPI) {
+    document.getElementById('high_dpi').style.backgroundColor = '#FFF';
+    document.getElementById('viewSwitchImg').src = 'pics/plus_minus_5_64.svg';
+    document.getElementById('viewSwitchImgMenu').src = 'pics/plus_minus_5_64.svg';
+    HDPI = false;
+  } else {
+    document.getElementById('high_dpi').style.backgroundColor = '#DDD';
+    document.getElementById('viewSwitchImg').src = 'pics/minus_plus_5_64.svg';
+    document.getElementById('viewSwitchImgMenu').src = 'pics/minus_plus_5_64.svg';
+    HDPI = true;
+  }
 }
 
-function get_osm_url(bounds) {
-    var res = this.map.getResolution();
-    var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-    var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
-    var z = this.map.getZoom();
-    var limit = Math.pow(2, z);
+function setBaseLayer() {
+  var c = map.getView().getCenter();
+  var z = map.getView().getZoom();
+  //Switch base layer
+  if (BASELAYER == 'osm' && !HDPI) {
+    getLayerByName('osm').setVisible(true);
+    getLayerByName('snowmap').setVisible(false);
+    getLayerByName('pistes&relief').setVisible(true);
+    getLayerByName('pistes').setVisible(false);
+    getLayerByName('osm_HiDPI').setVisible(false);
+    getLayerByName('snowmap_HiDPI').setVisible(false);
+    getLayerByName('pistes&relief_HiDPI').setVisible(false);
+    getLayerByName('pistes_HiDPI').setVisible(false);
+    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#FFF';
+    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#DDD';
+    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='none';
+    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='underline';
+    //~ document.getElementById('switch_to_HDPI').style.textDecoration='none';
+    map.setView(view);
+  }
+  if (BASELAYER == 'snowmap' && !HDPI) {
+    getLayerByName('osm').setVisible(false);
+    getLayerByName('snowmap').setVisible(true);
+    getLayerByName('pistes&relief').setVisible(false);
+    getLayerByName('pistes').setVisible(true);
+    getLayerByName('osm_HiDPI').setVisible(false);
+    getLayerByName('snowmap_HiDPI').setVisible(false);
+    getLayerByName('pistes&relief_HiDPI').setVisible(false);
+    getLayerByName('pistes_HiDPI').setVisible(false);
+    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#DDD';
+    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#FFF';
+    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='underline';
+    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='none';
+    //~ document.getElementById('switch_to_HDPI').style.textDecoration='none';
+    map.setView(view);
+  }
+  if (BASELAYER == 'osm' && HDPI) {
+    getLayerByName('osm_HiDPI').setVisible(true);
+    getLayerByName('snowmap_HiDPI').setVisible(false);
+    getLayerByName('pistes&relief_HiDPI').setVisible(true);
+    getLayerByName('pistes_HiDPI').setVisible(false);
+    getLayerByName('osm').setVisible(false);
+    getLayerByName('snowmap').setVisible(false);
+    getLayerByName('pistes&relief').setVisible(false);
+    getLayerByName('pistes').setVisible(false);
+    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#FFF';
+    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#DDD';
+    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='none';
+    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='underline';
+    //~ document.getElementById('switch_to_HDPI').style.textDecoration='underline';
+    map.setView(view);
+  }
+  if (BASELAYER == 'snowmap' && HDPI) {
+    getLayerByName('osm_HiDPI').setVisible(false);
+    getLayerByName('snowmap_HiDPI').setVisible(true);
+    getLayerByName('pistes&relief_HiDPI').setVisible(false);
+    getLayerByName('pistes_HiDPI').setVisible(true);
+    getLayerByName('osm').setVisible(false);
+    getLayerByName('snowmap').setVisible(false);
+    getLayerByName('pistes&relief').setVisible(false);
+    getLayerByName('pistes').setVisible(false);
+    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#DDD';
+    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#FFF';
+    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='underline';
+    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='none';
+    //~ document.getElementById('switch_to_HDPI').style.textDecoration='underline';
+    map.setView(viewHDPI);
+  }
+  map.getView().setCenter(c);
+  map.getView().setZoom(z);
+  //~ updatePermalink();
+  //~ map.render();
+  // forces redraw of element above the map after scaling, still something bad with zooms on mobile
+  //~ document.getElementById("header").style.zIndex=10;
+  //~ document.getElementById("map").style.zIndex=0;
+  //~ document.getElementById("customZoom").style.zIndex=1001;
+  //~ document.getElementById("customZoomIn").style.zIndex=1002;
+  //~ document.getElementById("customZoomOut").style.zIndex=1002;
 
-    if (y < 0 || y >= limit) {
-        return OpenLayers.Util.getImagesLocation() + "404.png";
-    } else {
-        x = ((x % limit) + limit) % limit;
-        return this.url + z + "/" + x + "/" + y + ".png";
-    }
-}
-function get_tms_url(bounds) {
-        var res = this.map.getResolution();
-        var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-        var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
-        var z = this.map.getZoom();
-        var limit = Math.pow(2, z);
-        //if (mapBounds.intersectsBounds( bounds ) && z >= mapMinZoom && z <= mapMaxZoom ) {
-      if (y < 0 || y >= limit)
-        {
-          return null;
-        }
-      else
-        {
-          return this.url + z + "/" + x + "/" + y + ".png"; 
-        }
-    } 
-function setHighDpi(){
-    if (HDPI){
-        document.getElementById('high_dpi').style.backgroundColor='#FFF';
-        document.getElementById('viewSwitchImg').src = 'pics/minus_plus_64.png';
-        HDPI = false;
-    } else {
-        document.getElementById('high_dpi').style.backgroundColor='#DDD';
-        document.getElementById('viewSwitchImg').src = 'pics/plus_minus_64.png';
-        HDPI = true;
-    }
-    setBaseLayer(BASELAYER);
-}
-function removeLayerByName(name){
-    while (map.getLayersByName(name).length >0){
-        map.removeLayer(map.getLayersByName(name)[0]);
-    }
-}
-function setBaseLayer(baseLayer) {
-    removeLayerByName("OSM");
-    removeLayerByName("SnowBase");
-    removeLayerByName("PistesAndReliefTiles");
-    removeLayerByName("PistesOnlyTiles");
-    
-    if (baseLayer == "osm") {
-        
-        document.getElementById('SnowBaseLAyer').style.backgroundColor='#FFF';
-        document.getElementById('OSMBaseLAyer').style.backgroundColor='#DDD';
-        
-        var arrayOSM = [protocol+"//a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            protocol+"//b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-            protocol+"//c.tile.openstreetmap.org/${z}/${x}/${y}.png"];
-        var mapnik = new OpenLayers.Layer.OSM("OSM",arrayOSM,
-            {   visibility: true,
-                isBaseLayer: true,
-                transitionEffect: null
-            });
-        map.addLayer(mapnik);
-        
-        var PistesAndReliefTiles = new OpenLayers.Layer.XYZ("PistesAndReliefTiles",
-        pistes_and_relief_overlay_URL,{
-            getURL: get_osm_url, 
-            isBaseLayer: false,
-            numZoomLevels: 19,
-            visibility: true,
-            opacity: 0.95,
-            transitionEffect: null
-            });
-        map.addLayer(PistesAndReliefTiles);
-            
-        if (HDPI){
-            try{
-                map.getViewport().style.transform = 'scale(1.5)';
-                }catch(err){console.log(err.message);}
-        } else {
-            try{
-                map.getViewport().style.transform = 'scale(1)';
-                }catch(err){console.log(err.message);}
-        }
-        
-        BASELAYER = 'osm';
-    }
-    if (baseLayer == "snowbase") {
-        
-        document.getElementById('SnowBaseLAyer').style.backgroundColor='#DDD';
-        document.getElementById('OSMBaseLAyer').style.backgroundColor='#FFF';
-        
-        if (HDPI){
-            var arraySnowBase = [snow_base_layer_HDPI_URL+"${z}/${x}/${y}.png"];
-            var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
-                arraySnowBase,
-                {   visibility: true,
-                    isBaseLayer: true,                    
-                    //tileSize: new OpenLayers.Size(512,512),
-                    transitionEffect: null
-                });
-            map.addLayer(snowbaseLayer);
-            
-            var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
-            pistes_only_overlay_HDPI_URL,{
-                    getURL: get_osm_url, 
-                    isBaseLayer: false,
-                    numZoomLevels: 19,
-                    visibility: true,
-                    opacity: 0.95,
-                    minResolution: 0.001,
-                    maxResolution: 500,
-                //tileSize: new OpenLayers.Size(512,512),
-                    transitionEffect: null
-                });
-            map.addLayer(PistesOnlyTiles);
-            
-            try{
-                map.getViewport().style.transform = 'scale(1.5)';
-                }catch(err){console.log(err.message);}
-        } else {
-            var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
-            var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
-                arraySnowBase,
-                {   visibility: true,
-                    isBaseLayer: true,
-                    transitionEffect: null
-                });
-            map.addLayer(snowbaseLayer);
-            
-            var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
-            pistes_only_overlay_URL,{
-                    getURL: get_osm_url, 
-                    isBaseLayer: false,
-                    numZoomLevels: 19,
-                    visibility: true,
-                    opacity: 0.95,
-                    minResolution: 0.001,
-                    maxResolution: 500,
-                    transitionEffect: null
-                });
-            map.addLayer(PistesOnlyTiles);
-            
-            try{
-                map.getViewport().style.transform = 'scale(1)';
-                }catch(err){console.log(err.message);}
-        }
-        BASELAYER = 'snowbase';
-    }
-    // forces redraw of element above the map after scaling, still something bad with zooms on mobile
-    document.getElementById("header").style.zIndex=10;
-    document.getElementById("map").style.zIndex=0;
-    document.getElementById("customZoom").style.zIndex=1001;
-    document.getElementById("customZoomIn").style.zIndex=1002;
-    document.getElementById("customZoomOut").style.zIndex=1002;
-
-    var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
-    for (p = 0; p < permalinks.length; p++){
-        permalinks[p].updateLink();
-    }
-    show_live_edits('none',false);
-}
-function baseLayers() {
-    // Default to SnowBaseLayer
-        if (HDPI){
-            
-            var arraySnowBase = [snow_base_layer_HDPI_URL+"${z}/${x}/${y}.png"];
-            var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
-                arraySnowBase,
-                {   visibility: true,
-                    isBaseLayer: true,                    
-                    //tileSize: new OpenLayers.Size(512,512),
-                    transitionEffect: null
-                });
-            map.addLayer(snowbaseLayer);
-            
-
-                var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
-                pistes_only_overlay_HDPI_URL,{
-                        getURL: get_osm_url, 
-                        isBaseLayer: false,
-                        numZoomLevels: 19,
-                        visibility: true,
-                        opacity: 0.95,
-                        minResolution: 0.001,
-                        maxResolution: 500,
-                    //tileSize: new OpenLayers.Size(512,512),
-                        transitionEffect: null
-                    });
-                map.addLayer(PistesOnlyTiles);
-
-            
-            try{
-                document.getElementsByClassName("olMapViewport")[0].style.transform = 'scale(1.5)';
-                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;
-                
-                }catch(err){console.log(err.message);}
-        } else {
-            
-            var arraySnowBase = [snow_base_layer_URL+"${z}/${x}/${y}.png"];
-            var snowbaseLayer = new OpenLayers.Layer.OSM("SnowBase",
-                arraySnowBase,
-                {   visibility: true,
-                    isBaseLayer: true,
-                    transitionEffect: null
-                });
-            map.addLayer(snowbaseLayer);
-            
-
-                var PistesOnlyTiles = new OpenLayers.Layer.XYZ("PistesOnlyTiles",
-                pistes_only_overlay_URL,{
-                        getURL: get_osm_url, 
-                        isBaseLayer: false,
-                        numZoomLevels: 19,
-                        visibility: true,
-                        opacity: 0.95,
-                        minResolution: 0.001,
-                        maxResolution: 500,
-                        transitionEffect: null
-                    });
-                map.addLayer(PistesOnlyTiles);
-               
-            
-            try{
-                document.getElementById("map").style.transform = 'scale(1)';
-                                document.getElementById("header").style.zIndex=10;
-                document.getElementById("map").style.zIndex=0;;
-                }catch(err){console.log(err.message);}
-        }
-
-}
-function permalink3Args() {
-    var args = 
-        OpenLayers.Control.Permalink.prototype.createParams.apply(
-            this, arguments
-        );
-    args.marker = 'true';
-    args.layers = BASELAYER;
-    return args;
-}
-function permalink0Args() {
-    var args = 
-        OpenLayers.Control.Permalink.prototype.createParams.apply(
-            this, arguments
-        );
-    
-    args.layers = BASELAYER;
-    return args;
+  //~ var permalinks = map.getControlsByClass("OpenLayers.Control.Permalink");
+  //~ for (p = 0; p < permalinks.length; p++){
+  //~ permalinks[p].updateLink();
+  //~ }
+  //~ show_live_edits('none',false);
 }
 
-function map_init(){
-    map = new OpenLayers.Map ("map", {
-    zoomMethod: null,
-    panMethod: null,
-    controls:[
-        new OpenLayers.Control.TouchNavigation({
-                dragPanOptions: {
-                    enableKinetic: true
-                },
-                pinchZoomOptions: {
-                preserveCenter: true
-                }
+function map_init() {
+  map = new ol.Map({
+    layers: [
+      new ol.layer.Tile({
+        name: 'snowmap',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
         }),
-        new OpenLayers.Control.Zoom({
-            zoomInId: "customZoomIn",
-            zoomOutId: "customZoomOut"
-        }),
-        new OpenLayers.Control.LayerSwitcher()
-        ],
-        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-        maxResolution: 156543.0399,
-        numZoomLevels: 19,
-        units: 'm',
-        projection: new OpenLayers.Projection("EPSG:900913"),
-        displayProjection: new OpenLayers.Projection("EPSG:4326")
-    } );
-    
-    document.getElementsByClassName('olMapViewport')[0].addEventListener('touchstart', function(e){
-        closecontent();
-    });
-    permalink_simple = new OpenLayers.Control.Permalink("permalink",
-    server+'mobile.html',{'createParams': permalink0Args});
-    map.addControl(permalink_simple);
-    
-    //baseLayers();
-    
-    setHighDpi();
-    setBaseLayer(BASELAYER);
-    
-    map.events.on({ "movestart": function (e) {
-        updateZoom();
-        //~ closecontent();
-    }
-    });
-    map.events.on({ "zoomend": function (e) {
-        updateZoom();
-        //~ closecontent();
-    }
-    });
-    map.events.on({ "click": function (e) {
-        closecontent();
-    }
-    });
+        visible: false
+      }),
 
-    //################################
-    var lonLat = new OpenLayers.LonLat(lon, lat).transform(
-        new OpenLayers.Projection("EPSG:4326"),
-        new OpenLayers.Projection("EPSG:900913"));
-    map.setCenter (lonLat, zoom); 
-    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.top=0;
-    //map.getControlsByClass("OpenLayers.Control.PanZoomBar")[0].div.style.left=0;
-    // map.setCenter moved after the strategy.bbox, otherwise it won't load the wfs layer at first load
-    map.getControlsByClass("OpenLayers.Control.Permalink")[0].updateLink();
-    if (MARKER) {
-        markerIcon = new OpenLayers.Icon('pics/marker.png',new OpenLayers.Size(20,25),new OpenLayers.Pixel(-12,-30)) ;
-        var markers = new OpenLayers.Layer.Markers( "Markers" );
-        map.addLayer(markers);
-        markers.addMarker(new OpenLayers.Marker(map.getCenter(), markerIcon));
-    }
+      new ol.layer.Tile({
+        name: 'osm',
+        source: new ol.source.OSM(),
+        visible: false,
+        attributions: null
+      }),
+
+      new ol.layer.Tile({
+        name: 'pistes&relief',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+        }),
+        visible: false
+      }),
+
+      new ol.layer.Tile({
+        name: 'pistes',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
+        }),
+        visible: false
+      }),
+
+      new ol.layer.Tile({
+        name: 'snowmap_HiDPI',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png?debug1",
+          tileSize: 384,
+          tilePixelRatio: 1
+        }),
+        visible: false
+      }),
+
+      new ol.layer.Tile({
+        name: 'osm_HiDPI',
+        source: new ol.source.OSM(),
+        visible: false
+      }),
+
+      new ol.layer.Tile({
+        name: 'pistes&relief_HiDPI',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+        }),
+        visible: false
+      }),
+
+      new ol.layer.Tile({
+        name: 'pistes_HiDPI',
+        source: new ol.source.XYZ({
+          url: "http://tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png",
+          tileSize: 384,
+          tilePixelRatio: 1
+        }),
+        visible: false
+      })
+    ],
+    target: 'map',
+    view: view,
+    logo: false,
+    controls: ol.control.defaults({
+      attribution: false
+    }),
+    interactions: ol.interaction.defaults({
+      altShiftDragRotate: false,
+      pinchRotate: false
+    }),
+    renderer: ('canvas')
+  });
+
+  setBaseLayer();
+  //~ setMarker();
+  map.on('moveend', updateHashPermalink);
+  map.on('precompose', setCanvasScale); // needed when we resize window
+  map.on('click', closeContent);
+  if (MARKER) {setMarker();}
+
 }
 
 //======================================================================
 // I18N
-var locs = ["ast","cze","deu","eng","spa","cat","fin","fra","hun","ita","jpa","nld","nno","rus","swe","ukr"];
+var locs = ["ast", "cze", "deu", "eng", "spa", "cat", "fin", "fra", "hun", "ita", "jpa", "nld", "nno", "rus", "swe", "ukr"];
 var iloc = 0;
 var locale;
 var iframelocale;
@@ -1984,53 +2218,65 @@ locale = "eng"; //set default
 
 // Get the locale first: from localstorage if set
 if (localStorage.l10n) {
-    locale = localStorage.l10n;
+  locale = localStorage.l10n;
 }
 // No localstorage, check for browser locale
 //else {locale = get_locale().split('-')[0];} //return only 'en' from 'en-us'
 
 for (i = 0; i < locs.length; i++) {
-    found = false;
-    if (locale == locs[i]) {found = true; break;}
+  found = false;
+  if (locale == locs[i]) {
+    found = true;
+    break;
+  }
 }
-if (!found) {locale = 'eng';}
+if (!found) {
+  locale = 'eng';
+}
 
 // only a few iframe content pages are translated:
-if (locale != 'eng' && locale != 'fra') { iframelocale = 'eng';} else { iframelocale = locale;}
+if (locale != 'eng' && locale != 'fra') {
+  iframelocale = 'eng';
+} else {
+  iframelocale = locale;
+}
 
 var i18n = eval(locale);
 var i18nDefault = eng;
 
 // Translating function
 function _(s) {
-    if (typeof(i18n) !== 'undefined' && i18n[s] && i18n[s] !== '') {
-        return i18n[s];
-    }
-    if (typeof(i18n) == 'undefined' && typeof(i18nDefault) == 'undefined') {
-        return s;
-    }
+  if (typeof(i18n) !== 'undefined' && i18n[s] && i18n[s] !== '') {
+    return i18n[s];
+  }
+  if (typeof(i18n) == 'undefined' && typeof(i18nDefault) == 'undefined') {
+    return s;
+  }
+  if (typeof(i18nDefault[s]) !== 'undefined')
     return i18nDefault[s];
+  else
+    return s;
 }
 
 function translateDiv(divID) {
-    var div = document.getElementById(divID);
-    var elements = div.getElementsByClassName('i18n');
-    for (i = 0; i < elements.length; i++) {
-        elements[i].innerHTML = _(elements[i].getAttribute('i18nText'));
-    }
-    return true;
+  var div = document.getElementById(divID);
+  var elements = div.getElementsByClassName('i18n');
+  for (i = 0; i < elements.length; i++) {
+    elements[i].innerHTML = _(elements[i].getAttribute('i18nText'));
+  }
+  return true;
 }
 
 function fillData(divID) {
-    var div = document.getElementById(divID);
-    var elements = div.getElementsByClassName('data');
-    for (i = 0; i < elements.length; i++) {
-        elements[i].innerHTML = data[elements[i].getAttribute('dataText')];
-        if (elements[i].getAttribute('dataText') == 'date'){
-            elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0];
-        }
+  var div = document.getElementById(divID);
+  var elements = div.getElementsByClassName('data');
+  for (i = 0; i < elements.length; i++) {
+    elements[i].innerHTML = data[elements[i].getAttribute('dataText')];
+    if (elements[i].getAttribute('dataText') == 'date') {
+      elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0];
     }
-    return true;
+  }
+  return true;
 }
 // this get the browser install language, not the one set in preference
 /*function get_locale() {
@@ -2061,25 +2307,57 @@ function fillData(divID) {
 
 //set the language in a localstorage, then reload
 function setlanguage(what) {
-    for (i = 0; i < locs.length; i++) {
-        found = false;
-        if (what == locs[i]) {found = true; locale=what; break;}
+  for (i = 0; i < locs.length; i++) {
+    found = false;
+    if (what == locs[i]) {
+      found = true;
+      locale = what;
+      break;
     }
-    if (!found) {locale = 'eng';}
-    localStorage.l10n = locale;
-    i18n = eval(locale);
-    if (locale != 'eng' && locale != 'fra') { iframelocale = 'eng';} else { iframelocale = locale;}
-    translateDiv('body');
-    initFlags();
-    //close_sideBar();
-    showmenu();
+  }
+  if (!found) {
+    locale = 'eng';
+  }
+  localStorage.l10n = locale;
+  i18n = eval(locale);
+  if (locale != 'eng' && locale != 'fra') {
+    iframelocale = 'eng';
+  } else {
+    iframelocale = locale;
+  }
+  translateDiv('body');
+  initFlags();
+  //close_sideBar();
+  showmenu();
 }
 // Set flag button
 function initFlags() {
-    var img = document.createElement('img');
-    img.src = 'pics/flags/' + locale + '.png';
-    img.className = ('flagMenuImg');
-    document.getElementById('langs').innerHTML='';
-    document.getElementById('langs').appendChild(img);
+  var img = document.createElement('img');
+  img.src = 'pics/flags/' + locale + '.png';
+  img.className = ('flagMenuImg');
+  document.getElementById('langs').innerHTML = '';
+  document.getElementById('langs').appendChild(img);
+}
+//--------------
+// Utilities
+//--------------
+
+function getLayerByName(name) {
+  var l = null;
+  map.getLayers().forEach(function(layer) {
+    if (layer.get('name') == name) {
+      l = layer;
+    }
+  });
+  return l
 }
 
+function getOverlayByName(name) {
+  var l = null;
+  map.getOverlays().forEach(function(overlay) {
+    if (overlay.get('name') == name) {
+      l = overlay;
+    }
+  });
+  return l
+}
