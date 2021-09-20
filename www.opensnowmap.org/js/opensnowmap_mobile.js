@@ -826,7 +826,8 @@ function page_init() {
   };
   document.getElementById('desktopswitch').onclick = function() {
     document.cookie = 'version=desktop';
-    window.open(window.location.href.replace('mobile', 'index'));
+    url=window.location.href.replace('mobile', 'index');
+    window.open(server+'index.html');
   };
 
   document.getElementById('shareLinkButton').onclick = function() {
@@ -2124,7 +2125,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'snowmap',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -2141,7 +2142,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes&relief',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -2150,7 +2151,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
+          url: protocol + "//tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -2159,7 +2160,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'snowmap_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png",
           tileSize: 384,
           tilePixelRatio: 1
         }),
@@ -2177,7 +2178,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes&relief_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -2186,7 +2187,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png",
+          url: protocol + "//tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png",
           tileSize: 384,
           tilePixelRatio: 1
         }),
