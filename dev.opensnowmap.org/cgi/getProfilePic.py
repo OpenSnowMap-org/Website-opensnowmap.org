@@ -27,7 +27,7 @@ tracks= [{'lat': 46.83028, 'dist': 0, 'lon': 6.44719, 'ele': 1095.3285854152914}
 import matplotlib
 matplotlib.use('Agg')
 
-import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 import sys
 #from lxml import etree
 import math
@@ -57,7 +57,7 @@ import numpy as np
 if os.path.isdir("/home/website"):
 	SRTMFilesDir='/home/website/DEM/tiles/'
 else:
-	SRTMFilesDir='/home/admin/DEM2/tiles/'
+	SRTMFilesDir='/home/admin/SSD/DEM/'
 PIL_images_dir = '/var/www/tmp/' 
 #TODO:
 # Clean and master the elevation code

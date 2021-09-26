@@ -95,6 +95,14 @@
                 <div id="doQueryPistesButton" class="Button fastclick textButton"  style="font-size: 0.7em;text-align: center;">
                   <span class="i18n" i18nText="interactive-tooltip"></span>
                 </div>
+              </td><td style="text-align: center;vertical-align: top;
+              border-left-style:solid;border-left-width: 1px;border-left-color: #EEEEEE;">
+                <div id="doRoute" class="Button fastclick iconButton" style="margin: auto;">
+                  <img id="routeSwitchImg" class="button-img"  src="pics/route.svg"/>
+                </div>
+                <div id="doRouteButton" class="Button fastclick textButton"  style="font-size: 0.7em;text-align: center;">
+                  <span class="i18n" i18nText="routing_title"></span>
+                </div>
               </td></tr>
             </table>
             
@@ -106,6 +114,8 @@
             <!-- divs to display search results -->
             <div id="waiterResults" class="hidden">
               <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+            </div>
+            <div id="topo_header">
             </div>
             <div id="piste_search_results">
             </div>
@@ -191,13 +201,17 @@
           </div>
           <div class="clear"></div>
           <hr class="hrmenu"/>
+<!--
           <div id="mobileswitch" class="fastclick Button float-left iconButton">
             <img class="button-img" src="pics/mobile_thin_64.png"/>
           </div>
+-->
+<!--
           <div id="desktopswitch" 
             class="fastclick Button float-left iconButton" >
             <img class="button-img" src="pics/desktop_thin_64.png"/>
           </div>
+-->
           <div id="shareLinkButton" 
             class="fastclick Button float-left iconButton" >
             <img class="button-img"  src="pics/share.svg"/>
@@ -205,6 +219,14 @@
           <div id="setMarker" 
             class="fastclick Button float-left iconButton" >
             <img class="button-img"  src="pics/marker_50.png"/>
+          </div>
+          <div id=" " 
+            class="fastclick Button float-left iconButton" >
+            <img class="button-img"  src="pics/route.svg"/>
+          </div>
+          <div id=" " 
+            class="fastclick Button float-left iconButton" >
+            <img class="button-img"  src="pics/query.svg"/>
           </div>
           <div id="langs" 
             class="fastclick Button  float-left iconButton iconButton">
@@ -275,6 +297,42 @@
       <!-- content -->
       <!--PROTOS-->
       <div class="hidden">
+        <div id="imgSliderProto" class="imgSlider">
+          <div class="slides">
+            <div id="slide-1">
+              <img id="elePic" src="http://www.opensnowmap.org/tmp/profile45306-ele.png">
+            </div>
+            <div id="slide-2">
+              <img id="2dPic" src="http://www.opensnowmap.org/tmp/profile45306-3d.png">
+            </div>
+            <div id="slide-3">
+              <img id="3dPic" src="http://www.opensnowmap.org/tmp/profile45306-2d.png">
+            </div>
+          </div>
+          <a href="#slide-1">&nbsp;1&nbsp;</a>
+          <a href="#slide-2">&nbsp;2&nbsp;</a>
+          <a href="#slide-3">&nbsp;3&nbsp;</a>
+        </div>
+        <div id="popup">
+			  <div id="overlay_content">
+				  <div class="overlay_close" id="close_popup" 
+					onmouseover="document.images['close_popup'].src='pics/minimize_vertical_22_hover.png'"
+					onmouseout="document.images['close_popup'].src='pics/minimize_vertical_22.png'">
+					<img name="close_popup" src="pics/minimize_vertical_22.png">
+				  </div>
+				  
+				  <div class="overlay_controls" id="delete_all"
+					onmouseover="document.images['binAll'].src='pics/bin_22_hover.png'"
+					onmouseout="document.images['binAll'].src='pics/bin_22.png'">
+					<img name="binAll" src="pics/bin_22.png">
+				  </div>
+				  <div class="overlay_controls" id="delete_point"
+					onmouseover="document.images['bin'].src='pics/delete_point_22_hover.png'"
+					onmouseout="document.images['bin'].src='pics/delete_point_22.png'">
+					<img name="bin" src="pics/delete_point_22.png">
+				  </div>
+		  </div>
+        </div>
         <div class="siteStats pisteListButtonStatic" id="siteStatsProto">
           <hr class="superlight"/>
           <div class="stats">

@@ -28,7 +28,7 @@ if (!window.location.host) {
   server = window.location.pathname.replace("mobile.html", '');
 }
 if (server.search('home') != -1) {
-  server = protocol + "//beta.opensnowmap.org/";
+  server = protocol + "//www.opensnowmap.org/";
 }
 
 
@@ -55,6 +55,8 @@ var geoLoc = null;
 var modifyPoints;
 var drawPoints;
 var QUERYMODE = false;
+var ROUTEMODE = false;
+var pointID=0;
 
 var deletedNodesSource = new ol.source.Vector();
 var deletedWaysSource = new ol.source.Vector();
@@ -151,13 +153,15 @@ var viewHDPI = new ol.View({
   zoom: zoom,
   constrainResolution: true,
   zoom: zoom,
-  maxResolution: 40075016.68557849 / 384
+  maxResolution: 40075016.68557849 / 384,
+  maxZoom: 18
 });
 
 var view = new ol.View({
   center: ol.proj.fromLonLat(center, 'EPSG:3857'),
   zoom: zoom,
-  constrainResolution: true
+  constrainResolution: true,
+  maxZoom: 18
   // default to maxResolution : 40075016.68557849 / 256
 });
 
@@ -508,7 +512,7 @@ function show_live_edits(when) {
   }
 }
 var closeContent = function() {
-  if(!QUERYMODE) {
+  if(!QUERYMODE && !ROUTEMODE) {
     closecontent();
   }
 }
@@ -521,6 +525,23 @@ function clearResultList() {
   document.getElementById('piste_search_results').innerHTML = '';
   document.getElementById('nominatimLi').innerHTML = '';
   
+}
+function toggleQueriesHints(){
+  if (document.getElementById('doRouteButton').style.display == 'none')
+    document.getElementById('doRouteButton').style.display = 'block';
+  else
+    document.getElementById('doRouteButton').style.display = 'none';
+  if (document.getElementById('doQueryPistesButton').style.display == 'none')
+    document.getElementById('doQueryPistesButton').style.display = 'block';
+  else
+    document.getElementById('doQueryPistesButton').style.display = 'none';
+  if (document.getElementById('listViewportButton').style.display == 'none')
+    document.getElementById('listViewportButton').style.display = 'block';
+  else
+    document.getElementById('listViewportButton').style.display = 'none';
+    
+    
+    
 }
 function showsearch() {
   document.getElementById('content').style.display = 'inline';
@@ -819,13 +840,20 @@ function page_init() {
   document.getElementById('doQueryPistesButton').onclick = function() {
     queryPistes();
   };
-  document.getElementById('mobileswitch').onclick = function() {
-    document.cookie = 'version=mobile';
+  document.getElementById('doRouteButton').onclick = function() {
+    Route();
   };
-  document.getElementById('desktopswitch').onclick = function() {
-    document.cookie = 'version=desktop';
-    window.open(window.location.href.replace('mobile', 'index'));
+  document.getElementById('doRoute').onclick = function() {
+    Route();
   };
+  //~ document.getElementById('mobileswitch').onclick = function() {
+    //~ document.cookie = 'version=mobile';
+  //~ };
+  //~ document.getElementById('desktopswitch').onclick = function() {
+    //~ document.cookie = 'version=desktop';
+    //~ url=window.location.href.replace('mobile', 'index');
+    //~ window.open(server+'index.html');
+  //~ };
 
   document.getElementById('shareLinkButton').onclick = function() {
     document.getElementById('copyLink').style.display='inline';
@@ -903,6 +931,20 @@ function page_init() {
   document.getElementById('donateButton').onclick = function() {
     window.open('iframes/donate.html');
   };
+  // Control elements for routing
+  document.getElementById('close_popup').addEventListener('click', function(e) {
+    getOverlayByName('delete').setPosition([null,null]); // hide overlay
+  }, false);
+  document.getElementById('delete_point').addEventListener('click', function(e) {
+    var id= getOverlayByName('delete').getProperties().pointID; 
+    removePointById(id);
+    getOverlayByName('delete').setPosition([null,null]);// hide overlay
+  }, false);
+  document.getElementById('delete_all').addEventListener('click', function(e) {
+    abortXHR('Route'); // We re-route on removing points
+    clearRoute();
+    getOverlayByName('delete').setPosition([null,null]);// hide overlay
+  }, false);
 
   translateDiv('body');
 }
@@ -1130,7 +1172,59 @@ function showPisteProfile(osm_id, type, div, color) {
   XMLHttp.send(wkt.geom);
   return true;
 }
+function showRouteProfile(wkt, div, color) {
+  var parent;
+  var alreadyShown = div.getElementsByClassName('imgSlider');
+  if (alreadyShown.length > 0) { // hide existing profile and exit
+    while (alreadyShown.length > 0) {
+      parent = alreadyShown[alreadyShown.length - 1].parentNode;
+      parent.removeChild(alreadyShown[alreadyShown.length - 1]);
+    }
+    return true;
+  }
 
+  var waiter = document.getElementById('waiterProto').cloneNode(true);
+  div.appendChild(waiter);
+  waiter.className = waiter.className.replace('hidden', 'shown');
+  
+  // request the elevation profile
+  var XMLHttp = new XMLHttpRequest();
+
+  //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
+
+  XMLHttp.open("POST", server + "demrequest?size=small&color=" + color);
+  XMLHttp.onreadystatechange = function() {
+    if (XMLHttp.readyState == 4) {
+
+      var profileDiv = div;
+      while (profileDiv.firstChild) {
+        profileDiv.removeChild(profileDiv.firstChild);
+      } //clear previous list
+      waiter.className = waiter.className.replace('shown', 'hidden');
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+      
+      slider = document.getElementById('imgSliderProto').cloneNode(true);
+      profileDiv.appendChild(cleardiv);
+      profileDiv.appendChild(slider);
+      
+      var img = document.getElementById('elePic');
+      img.src = server + 'tmp/' + XMLHttp.responseText + '-ele.png';
+      var img2 = document.getElementById('2dPic');
+      img2.src = server + 'tmp/' + XMLHttp.responseText + '-2d.png';
+      var img3 = document.getElementById('3dPic');
+      img3.src = server + 'tmp/' + XMLHttp.responseText + '-3d.png';
+      
+    }
+  };
+  XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  //XMLHttp.setRequestHeader("Content-length", wktroute.length);
+  //XMLHttp.setRequestHeader("Connection", "close");
+
+  XMLHttp.send(wkt);
+  return true;
+}
 function getMembersById(id) {
   document.getElementById("waiterResults").style.display = 'inline';
 
@@ -1180,14 +1274,38 @@ function getTopoByViewport() { //DONE in pisteList
 
   XMLHttp.onreadystatechange = function() {
     if (XMLHttp.readyState == 4) {
+      document.getElementById("waiterResults").style.display = 'none';
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
-      document.getElementById("waiterResults").style.display = 'none';
       showHTMLPistesList(document.getElementById('piste_search_results'));
     }
   };
   XMLHttp.send();
   return true;
+}
+function getRouteTopoByWaysId(ids,routeLength, routeWKT) {//DONE in pisteList
+    //close_sideBar();
+    document.getElementById("waiterResults").style.display = 'inline';
+    abortXHR('PisteAPI'); // abort another request if any
+
+    var q = server + "request?geo=true&topo=true&ids_ways=" + ids;
+    var XMLHttp = new XMLHttpRequest();
+
+    PisteAPIXHR.push(XMLHttp);
+
+    XMLHttp.open("GET", q);
+    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+    XMLHttp.onreadystatechange = function () {
+        if (XMLHttp.readyState == 4) {
+            document.getElementById("waiterResults").style.display = 'none';
+            var resp = XMLHttp.responseText;
+            jsonPisteList = JSON.parse(resp);
+            showHTMLRoute(document.getElementById('piste_search_results'),routeLength, routeWKT)
+        }
+    };
+    XMLHttp.send();
+    return true;
 }
 
 function getTopoById(ids) { //DONE in pisteList
@@ -1224,10 +1342,24 @@ var Pointsfeatures = new ol.Collection();
 var sourcePoints = new ol.source.Vector({
   features: Pointsfeatures
 })
+/*sourcePoints.on('addfeature', function(event) {
+  var d = event.feature.getProperties().duplicate;
+  var id = event.feature.getProperties().id;
+  if (d) {
+    //sourcePoints.removeFeature(event.feature); // doesn't work
+    //removePointById(id);
+    //do something
+  }
+});*/
+var Linesfeatures = new ol.Collection();
+var sourceLines = new ol.source.Vector({features: Linesfeatures})
 // Vector controls for routing
 var modifyPoints; // Control to move points
 var drawPoints; // Control to add points
+var snapPoints;
 var pointID = 0;
+var RouteXHR =[];
+var PisteAPIXHR =[];
 function setMarker(){
   if (MARKER) {
     window.location.hash.replace('m=false', 'm=true');
@@ -1270,20 +1402,434 @@ function setMarker(){
   }
   
 }
+function Route() { //DONE in pisteList
+  if (!ROUTEMODE) {
+    ROUTEMODE = true;
+    // remove query mode features
+    if (getLayerByName('pointsLayer')) {
+      getLayerByName('pointsLayer').getSource().clear();
+      map.removeLayer(getLayerByName('pointsLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    QUERYMODE = false;
+    document.getElementById('querySwitchImg').src = 'pics/query.svg';
+    document.getElementById('querySwitchImg').classList.remove("blink-image");
+    document.getElementById('routeSwitchImg').src = 'pics/route_blue.svg';
+    document.getElementById('routeSwitchImg').classList.add("blink-image");
+    document.getElementById('searchButtonImg').src = 'pics/route_blue.svg';
+    document.getElementById('searchButtonImg').classList.add("blink-image");
+    
+    // Create popup control to modify points
+    
+    document.getElementById('overlay_content').style.display='block';
+    var popup = new ol.Overlay({
+      element: document.getElementById('popup'),
+    });
+    popup.setPosition([null,null]);
+    popup.set('name', 'delete');
+    map.addOverlay(popup);
+    
+    // Layer where the user add routing points
+    var pointsLayer = new ol.layer.Vector({
+      source: sourcePoints,
+      name: 'pointsLayer',
+      style:new ol.style.Style({
+                
+                image: new ol.style.Circle({
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 2
+                        }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(200, 200, 255, 0.5)'
+                        }),
+                    radius: 8,
+                    })
+                }),
+    });
+    map.addLayer(pointsLayer)
+
+  // Layer where the app add calculated routes
+    var linesLayer = new ol.layer.Vector({
+      source: sourceLines, name: 'linesLayer',
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'rgba(0, 0, 0, 0.7)',
+          width: 3,
+          lineCap: 'butt',
+          lineDash: [8,6]
+        }),
+        fill: new ol.style.Fill({
+          color: 'rgba(0, 0, 255, 0.1)'
+        }),
+      image: new ol.style.Circle({
+          stroke: new ol.style.Stroke({
+            color: 'black',
+            width: 2
+          }),
+          fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0.5)'
+          }),
+        radius: 6
+        })
+      
+      }),
+    });
+    
+    map.addLayer(linesLayer);
+    
+    //allow for adding a point along a route
+    modifyLines = new ol.interaction.Modify({
+      features: Linesfeatures
+    });
+    map.addInteraction(modifyLines);
+    // Insert the new point, snap it and show a popup control
+    modifyLines.on('modifyend', function (event) {
+      var coord = event.mapBrowserEvent.coordinate;
+      map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
+        
+        var id = feature.getProperties().id;
+        var type = feature.getProperties().type;
+        
+        if (type == "routeLine") {
+          pointID, point = insertPointAt(feature,id, coord);
+          snap(point,'modifylineend');
+          coord =point.getGeometry().getCoordinates()
+          popup.setPosition(coord);
+          popup.set('pointID',pointID);
+          
+        }
+      });
+    });
+    
+    //allow user to move points
+    // modifyPoints after modifyLines for it to handle a point drag 
+    // event instead of the later
+    modifyPoints = new ol.interaction.Modify({
+      features: Pointsfeatures,
+      style : new ol.style.Style({
+                image: new ol.style.Circle({
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 2
+                        }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(200, 200, 255, 0.5)'
+                        }),
+                    radius: 16
+                    })
+                }),
+      pixelTolerance: 20
+    });
+    map.addInteraction(modifyPoints);
+    // snap and move the popup control when a point is moved
+    modifyPoints.on('modifyend', function(event) {
+      var coord = event.mapBrowserEvent.coordinate;
+      map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
+        var type = feature.getProperties().type;
+        snap(feature, 'modifypointend');
+        feature.setProperties({
+          'isSnapped': true
+        });
+        popup.setPosition(coord);
+      });
+    });
+
+    //When adding a point, add an ID
+    drawPoints = new ol.interaction.Draw({
+      features: Pointsfeatures,
+      type: /** @type {ol.geom.GeometryType} */ ('Point')
+    });
+
+    drawPoints.on('drawend', function(event) {
+      var coord = event.feature.getGeometry().getCoordinates();
+      // don't add point if too close to an existing one
+      var pixelCoord = map.getPixelFromCoordinate(coord);
+      /*map.forEachFeatureAtPixel(pixelCoord, function(feature, layer) {
+        var type = feature.getProperties().type;
+        if (type=="routePoint") {
+              event.feature.setProperties({
+                'duplicate': true // will be removedon source.on('addfeature')
+              }); 
+            }
+      });*/
+      
+      //event.stopPropagation(); useless to avoid modifyend event
+      popup.setPosition([null,null]);
+      pointID = pointID + 1;
+      event.feature.setProperties({
+        'id': pointID,
+        'type': "routePoint"
+      });
+      snap(event.feature, 'drawpointend');
+      event.feature.setProperties({
+        'isSnapped': true
+      }); // used to avoid snapping on modifyend
+      popup.setPosition(coord);
+      popup.set('pointID',pointID);
+      /* sometimes a point was modifyed just after being drawn, to fix
+       * Possible cause: request aborted, then onRouteFail()
+       * Fixed in not sending routing call when one is running. 
+       * Fix fail if route fail and another point is selected before 
+       * routefail request finish*/
+     
+    });
+    map.addInteraction(drawPoints);
+    
+    snapPoints = new ol.interaction.Snap({
+      source: sourcePoints,
+      pixelTolerance:20,
+    });
+    map.addInteraction(snapPoints);
+    
+    drawPoints.setActive(true)
+    modifyPoints.setActive(true)
+  } else {
+    abortXHR('Route');
+    if (getLayerByName('pointsLayer')) {
+      getLayerByName('pointsLayer').getSource().clear();
+      map.removeLayer(getLayerByName('pointsLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    if (getLayerByName('linesLayer')) {
+      getLayerByName('linesLayer').getSource().clear();
+      map.removeLayer(getLayerByName('linesLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    if (getOverlayByName('delete')) {
+      document.getElementById('overlay_content').style.display='none';
+      //map.removeOverlay(getOverlayByName('delete'));
+    }
+    document.getElementById('routeSwitchImg').src = 'pics/route.svg';
+    document.getElementById('routeSwitchImg').classList.remove("blink-image");
+    document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
+    document.getElementById('searchButtonImg').classList.remove("blink-image");
+    ROUTEMODE = false;
+  }
+
+}
+function requestRoute(point) {
+  // The modified or added point is passed as argument to handle route fail
+    
+  Linesfeatures.clear();
+  var lineID = 0;
+  var points=sourcePoints.getFeatures();
+  if (points.length <= 1) {return true;}
+  
+  var lls={};
+  var lonlats=[];
+  var thisPoint=point;
+    pointids = "";
+  // Create an array with routing points coords, then build the query
+  for (f in points) {
+      if (! points[f].getProperties().isSnapped) 
+      {
+          // We don't want routing to fail
+          return true;
+      }
+      var coords = points[f].getGeometry().getCoordinates();
+      var wgs84= ol.proj.toLonLat(coords,'EPSG:3857');
+      lls[points[f].getProperties().id]=[wgs84[0],wgs84[1]];
+      
+      var lonlat={};
+      lonlat['lon']=lls[points[f].getProperties().id][0];
+      lonlat['lat']=lls[points[f].getProperties().id][1];
+      lonlats.push(lonlat);
+            pointids += points[f].getProperties().id+", ";
+  }
+  console.log("routing "+pointids);
+  if (point) {console.log("   after"+point.getProperties().id);}
+    
+  var query = '';
+  for (pt in lonlats) {
+    query = query + lonlats[pt].lat + ';' +lonlats[pt].lon + ',';
+  };
+  
+  var XMLHttpRoute = new XMLHttpRequest();
+  RouteXHR.push(XMLHttpRoute);
+  
+  XMLHttpRoute.open("GET", "https://www.opensnowmap.org/"+'routing?' + query);
+  XMLHttpRoute.onreadystatechange= function () {
+    if (XMLHttpRoute.readyState == 4) {
+      
+      var responseXML=XMLHttpRoute.responseXML;
+      if (responseXML==null){
+        onRouteFail(point);
+        return null;
+      }
+      if (responseXML.getElementsByTagName('wkt')[0]!=null) {
+        var routeWKT = getNodeText(responseXML.getElementsByTagName('wkt')[0]);
+        
+                /*show_profile();*/
+         var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
+         var routeLength = getNodeText(responseXML.getElementsByTagName('length')[0]);
+         getRouteTopoByWaysId(routeIds, routeLength, routeWKT);
+          
+        // show route
+        var format = new ol.format.WKT();
+        var route3857 = format.readFeature(routeWKT);
+        var line;
+        var segment;
+        for (i=0 ; i < route3857.getGeometry().getLineStrings().length; i++) 
+                {
+          line =route3857.getGeometry().getLineStrings()[i]
+          line.transform('EPSG:4326', 'EPSG:3857');
+          segment = new ol.Feature({geometry: line});
+          segment.setProperties({'id': lineID, 'type': "routeLine"});
+          Linesfeatures.push(segment);
+          lineID += 1;
+        }
+        return true;
+      }
+      else {
+        onRouteFail(point);
+        return null;
+        }
+      }
+    }
+  XMLHttpRoute.send();
+  return true;
+}
+function clearRoute(){
+    if (getLayerByName('pointsLayer')) {
+    getLayerByName('pointsLayer').getSource().clear();
+    pointID = 0;
+  }
+  if (getLayerByName('linesLayer')) {
+    getLayerByName('linesLayer').getSource().clear();
+  }
+}
+function onRouteFail(point) {
+  // If routing fails, clear failing point and recalculate
+  if (point) {
+    Linesfeatures.clear();
+        console.log("Routing failed, removing "+point.getProperties().id);
+    Pointsfeatures.remove(point);
+    //~ getOverlayByName('delete').setPosition([null,null]);
+    requestRoute();
+  } else {
+        // then we clear highest point id, something went bad
+        var points=sourcePoints.getFeatures();
+        var point;
+        var maxid=0;
+        for (f in points) 
+        {
+            if (points[f].getProperties().id >= maxid)
+            {
+                maxid = points[f].id ;
+                point=points[f];
+            }
+        }
+        if (point)
+        {
+            Linesfeatures.clear();
+            Pointsfeatures.remove(point);
+            //~ getOverlayByName('delete').setPosition([null,null]);
+            requestRoute();
+        }
+    }
+  
+}
+function insertPointAt(line, id, coord) {
+  // insert a routing point along a route
+  var idx = id+1;
+  var pt = new ol.geom.Point(coord);
+  var ptft = new ol.Feature(pt);
+  pointID = pointID + 1;
+  ptft.setProperties({'id': pointID, 'type': "routePoint"});
+  Pointsfeatures.insertAt(idx, ptft);
+  return pointID, ptft
+}
+function removePointById(selectedpointID) {
+  // Remove the selected point
+  var features = sourcePoints.getFeatures();
+  if (features != null && features.length > 0) {
+    for (x in features) {
+      var properties = features[x].getProperties();
+      var id = properties.id;
+      if (id == selectedpointID) {
+        sourcePoints.removeFeature(features[x]);
+        break;
+      }
+    }
+  }
+  // re-route on remaing points
+  if (features != null && features.length > 1) {
+    var lastpointID;
+    var lastPoint;
+    for (x in features) {
+      var properties = features[x].getProperties();
+      var id = properties.id;
+      if (id > lastpointID) {
+        lastPoint = features[x];
+      }
+    }
+    requestRoute(lastPoint);
+  }
+}
 function queryPistes() { //DONE in pisteList
   if (!QUERYMODE) {
     QUERYMODE = true;
+    // remove route mode features
+    if (getLayerByName('pointsLayer')) {
+      getLayerByName('pointsLayer').getSource().clear();
+      map.removeLayer(getLayerByName('pointsLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    if (getLayerByName('linesLayer')) {
+      getLayerByName('linesLayer').getSource().clear();
+      map.removeLayer(getLayerByName('linesLayer'));
+      pointID = 0;
+      drawPoints.setActive(false);
+      modifyPoints.setActive(false);
+      map.removeInteraction(drawPoints);
+      map.removeInteraction(modifyPoints);
+    }
+    if (getOverlayByName('delete')) {
+      document.getElementById('overlay_content').style.display='none';
+      //map.removeOverlay(getOverlayByName('delete'));
+    }
+    ROUTEMODE = false;
+    document.getElementById('routeSwitchImg').src = 'pics/route.svg';
+    document.getElementById('routeSwitchImg').classList.remove("blink-image");
     document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
+    document.getElementById('querySwitchImg').classList.add("blink-image");
     document.getElementById('searchButtonImg').src = 'pics/query_blue.svg';
     document.getElementById('searchButtonImg').classList.add("blink-image");
-    document.getElementById('querySwitchImg').classList.add("blink-image");
 
     // Layer where the user add routing points
     var pointsLayer = new ol.layer.Vector({
       source: sourcePoints,
       name: 'pointsLayer',
-      //~ style: PointStyleFunction
-
+      style:new ol.style.Style({
+                
+                image: new ol.style.Circle({
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 2
+                        }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(200, 200, 255, 0.5)'
+                        }),
+                    radius: 8,
+                    })
+                }),
     });
     map.addLayer(pointsLayer)
 
@@ -1292,16 +1838,25 @@ function queryPistes() { //DONE in pisteList
     // event instead of the later
     modifyPoints = new ol.interaction.Modify({
       features: Pointsfeatures,
-      //~ style : PointHighlightStyleFunction,
-      pixelTolerance: 20
+      style : new ol.style.Style({
+                image: new ol.style.Circle({
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 2
+                        }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(200, 200, 255, 0.5)'
+                        }),
+                    radius: 16
+                    })
+                }),
+      pixelTolerance: 40
     });
     map.addInteraction(modifyPoints);
     // snap and move the popup control when a point is moved
     modifyPoints.on('modifyend', function(event) {
       var coord = event.mapBrowserEvent.coordinate;
       map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
-
-        var type = feature.getProperties().type;
         snap(feature, 'modifypointend');
         feature.setProperties({
           'isSnapped': true
@@ -1343,7 +1898,7 @@ function queryPistes() { //DONE in pisteList
        * routefail request finish*/
     });
     map.addInteraction(drawPoints);
-
+    
     drawPoints.setActive(true)
     modifyPoints.setActive(true)
   } else {
@@ -1358,9 +1913,9 @@ function queryPistes() { //DONE in pisteList
     }
     
     document.getElementById('querySwitchImg').src = 'pics/query.svg';
+    document.getElementById('querySwitchImg').classList.remove("blink-image");
     document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
     document.getElementById('searchButtonImg').classList.remove("blink-image");
-    document.getElementById('querySwitchImg').classList.remove("blink-image");
     QUERYMODE = false;
   }
 
@@ -1369,7 +1924,7 @@ function queryPistes() { //DONE in pisteList
 function snap(point, what) {
   // snap the drawn point to a piste with a server call
   // replace getClosestPoint
-
+  while (document.getElementById("piste_search_results").firstChild) {document.getElementById("piste_search_results").removeChild(document.getElementById("piste_search_results").firstChild);}
   document.getElementById("waiterResults").style.display = 'inline';
   var coords = point.getGeometry().getCoordinates();
 
@@ -1395,6 +1950,15 @@ function snap(point, what) {
 
       //~ console.log("snapped " + point.getProperties().id);
       showHTMLPistesList(document.getElementById('piste_search_results'));
+      // move the popup control close to the point
+      var popup = getOverlayByName('delete');
+      if (popup) {
+        popup.set('pointID',point.get('id'));
+        popup.setPosition(llm);
+      }
+      if (ROUTEMODE) {
+        requestRoute(point);
+      }
     }
   }
   XMLHttpSnap.send();
@@ -1508,6 +2072,27 @@ function encpolArray2WKT(encpol) {
     geom: wktGeom,
     length_km: l
   };
+}
+
+function showHTMLRoute(Div,routeLength, routeWKT) {
+  while (Div.firstChild) {
+    Div.removeChild(Div.firstChild);
+  } //clear previous list
+  var header = document.createElement("div");
+  var title = document.createElement("H1");
+  title.innerHTML= _("routing_title") + " - " + parseFloat(routeLength).toFixed(1) + " km";
+  header.appendChild(title);
+  Div.appendChild(header);
+  
+  var pics = document.createElement("div");
+  Div.appendChild(pics);
+  
+  var list = document.createElement("div");
+  Div.appendChild(list);
+  
+  
+  showHTMLPistesList(list);
+  showRouteProfile(routeWKT, pics, 'black')
 }
 
 function showHTMLPistesList(Div) {
@@ -2122,66 +2707,74 @@ function map_init() {
       new ol.layer.Tile({
         name: 'snowmap',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'osm',
         source: new ol.source.OSM(),
         visible: false,
-        attributions: null
+        attributions: null,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'pistes&relief',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'pistes',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
+          url: protocol + "//tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'snowmap_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png?debug1",
           tileSize: 384,
           tilePixelRatio: 1
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'osm_HiDPI',
         source: new ol.source.OSM(),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'pistes&relief_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       }),
 
       new ol.layer.Tile({
         name: 'pistes_HiDPI',
         source: new ol.source.XYZ({
-          url: "http://tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png",
+          url: protocol + "//tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png?debug1",
           tileSize: 384,
           tilePixelRatio: 1
         }),
-        visible: false
+        visible: false,
+        maxZoom: 18
       })
     ],
     target: 'map',
@@ -2360,4 +2953,24 @@ function getOverlayByName(name) {
     }
   });
   return l
+}
+function getNodeText(node) {
+  //workaround for browser limit to 4096 char in xml nodeValue
+  var r = "";
+  for (var x = 0;x < node.childNodes.length; x++) {
+    r = r + node.childNodes[x].nodeValue;
+  }
+  return r;
+}
+function abortXHR(type) {
+  // Abort ongoing requests before sending a new one
+  // Failing this, long requests results would be displayed over newer faster
+  // ones.
+  if (type == 'Route') {
+    for (var i = 0; i < RouteXHR.length; i++) {
+      RouteXHR[i].abort();
+    }
+    RouteXHR.length = 0;
+  }
+  return true;
 }

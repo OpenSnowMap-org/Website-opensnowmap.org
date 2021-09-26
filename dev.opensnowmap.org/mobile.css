@@ -436,3 +436,41 @@ margin-left:auto;
 .blink-image {
     animation: blink normal 3s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
+#popup {
+	font-size: 11pt;
+	font-weight: bold;
+	text-shadow: black 0.1em 0.1em 0.2em;
+}
+.overlay_controls {
+	/*border-radius:3px;*/
+	float: right;
+    margin: 2px 2px 2px 2px;
+    /*border: 1px solid #AAAAAA;*/
+    /*background-color: rgba(255,255,255, 0.7);*/
+    
+}
+.overlay_close {
+	float: right;
+    margin: 2px -2px 2px 2px;
+}
+#overlay_content {
+
+	background-color: rgba(33,33,33, 0.65);
+	border-radius:3px;
+	float: right;
+    margin: -13px 0px 0px 16px;
+}
+.imgSlider {
+  width: 200px;
+  text-align: center;
+  overflow: hidden;
+}
+.slides {
+  display: flex;
+  
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+}
