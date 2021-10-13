@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="20"
+   height="20"
+   id="svg7151"
+   version="1.1"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="sleigh_20.svg"
+   viewBox="0 0 18.749999 18.749999">
+  <defs
+     id="defs7153" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="15.839192"
+     inkscape:cx="-2.3712781"
+     inkscape:cy="12.427526"
+     inkscape:document-units="px"
+     inkscape:current-layer="g7170"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1870"
+     inkscape:window-height="1016"
+     inkscape:window-x="50"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7156">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-475.6875,-489.375)">
+    <g
+       id="g7170"
+       transform="matrix(0.30434783,0,0,0.30434783,330.51359,353.88438)">
+      <path
+         sodipodi:nodetypes="ccccccccccc"
+         inkscape:connector-curvature="0"
+         id="path6713-9-9"
+         d="m 531.76816,470.18558 1.7037,3.25489 c -14.87522,-2.21008 -26.4314,-4.08259 -41.35035,-5.96517 l -0.0315,-5.99462 h -3.07178 v 24.34152 h -12.01825 v 4.66264 c 0,0 30.79653,-0.18847 49.64817,0 16.48205,0.44311 13.12261,-16.48591 6.5263,-20.94841 z"
+         style="display:inline;opacity:0.95;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1" />
+    </g>
+  </g>
+</svg>

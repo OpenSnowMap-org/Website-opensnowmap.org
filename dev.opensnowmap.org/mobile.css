@@ -146,12 +146,6 @@ color: black;
     width: 28px;
     height:28px;
 }
-
-#content-control {
-    width: 100%;
-    background-color:#FFF;
-    line-height: 1.8;
-}
 .closebox {float: right;}
 #header{
 position: absolute;
@@ -164,10 +158,10 @@ position: absolute;
     font-size: 0.75em;
     color: #050505;
     width: 100%;
-    height: 40px;
+    height: 38px;
     vertical-align: center;
     background-color:#FFF;
-    background-image: url('pics/opensnowmap_title_thin_420.svg');
+    background-image: url('pics/opensnowmap_title_thin_350.svg');
     background-repeat: no-repeat;
     background-position: right center;
     background-attachment: scroll;
@@ -227,10 +221,7 @@ position: absolute;
 */
   }
 .flagMenuImg {margin: 8px 5px 8px 5px;width: 20px;}
-.reduceButton{
-    right: 0px;
-    margin-right:-10px;
-}
+
 .menuButton {
     margin-left:15px;
 }
@@ -305,6 +296,41 @@ div.olMapViewport {
 */
 
 /*                  Piste list                       */
+.singlePiste{
+  font-size:1.2em;
+  border: 1px solid #EEEEEE;
+}
+.singlePisteHeader{
+/*
+  background-color: darkgreen;
+*/
+}
+.singlePisteLongName {
+  font-weight:600;
+}
+.singlePisteShortName {
+  font-weight:600;
+}
+.singlePisteLeft{
+  float: left;
+  width: 40px;
+/*
+  background-color: blue;
+*/
+}
+.singlePisteRight{
+  float: left;
+  width: 150px;
+/*
+  background-color: yellow;
+*/
+}
+.singlePisteFooter{
+/*
+  background-color: teal;
+*/
+}
+
 .pisteListElement{
     background-color:#FFF;
     margin: 0px;
@@ -380,30 +406,55 @@ float:right;
 .flagMenuImg {vertical-align: middle;}
 
 .textImg {vertical-align:middle;}
-
-#content {
+#content-outer {
         position: fixed;
-        top: 40px;
-/*
-        bottom: 0px;
-*/
+        top: 38px;
         left: 0px;
         right:10px;
+        z-index: 1000;
+        max-height: calc(100vh - 40px);
+}
+#content {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+/*
+        right:10px;
+*/
         padding: 0px 10px 10px 10px;
         border-style: solid;
         border-color: #AAAAAA;
         border-width: 0px 1px 1px 1px;
         background-color: #FFF;
-        z-index: 1000;
         overflow: auto;
         max-height: calc(100vh - 40px);
+        max-width: calc(100% - 30px);
+        width: calc(100% - 30px);
+        z-index: 1;
+/*
+        max-width:210px;width:210px;top: 39px;
+*/
+        
      }
-
+#content-control {
+  position: absolute;
+  right: -14px;
+  top: 30px;
+  height: 60px;
+  border-style: solid;
+  border-color: #AAAAAA;
+  border-width: 1px 1px 1px 0px;
+  border-radius: 6px;
+  background-color: #FFF;
+  z-index: -1;
+}
+#reduceButton{
+  position: relative;
+  top: 15px;
+}
 body {font-size: 1em;}
-  #content {max-width:210px;width:210px;top: 39px;}
   #titleimg {width: 200px;} 
-  #header{height: 38px;background-size: 200px;}
-  #content-control {height: 36px;}
+
   #map {top: 38px;}
   #search_header {margin:-5px;}
 
@@ -436,30 +487,45 @@ margin-left:auto;
 .blink-image {
     animation: blink normal 3s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
-#popup {
-	font-size: 11pt;
-	font-weight: bold;
-	text-shadow: black 0.1em 0.1em 0.2em;
-}
-.overlay_controls {
-	/*border-radius:3px;*/
-	float: right;
-    margin: 2px 2px 2px 2px;
-    /*border: 1px solid #AAAAAA;*/
-    /*background-color: rgba(255,255,255, 0.7);*/
-    
-}
-.overlay_close {
-	float: right;
-    margin: 2px -2px 2px 2px;
-}
-#overlay_content {
-
-	background-color: rgba(33,33,33, 0.65);
-	border-radius:3px;
-	float: right;
-    margin: -13px 0px 0px 16px;
-}
+/* overlay routing contols */
+    .overlayImg {
+      height: 1.5em;
+      margin: 0.2em;
+    }
+    .overlay_controls {
+      margin: 0em0.2em 0em 0.2em;
+      height: 1.9em;
+      width: 1.9em;
+      background-color: rgba(230, 235, 255, 0.7);
+      border-radius:0.95em;
+    }
+    .overlay_close {
+      height: 1.6em;
+      float: right;
+      border-left: 1px solid black;
+    }
+    #overlay_content {
+	display: block;
+    }
+    #close_popup {
+		display: block;
+		position: absolute;
+		top: 0.5em;
+		left: 3em;
+	}
+    #delete_all {
+		display: block;
+		position: absolute;
+		top: 2.4em;
+		left: 2.4em;
+	}
+    #delete_point {
+		display: block;
+		position: absolute;
+		top: 3em;
+		left: 0.5em;
+	}
+/* elevation profile min-gallery */
 .imgSlider {
   width: 200px;
   text-align: center;

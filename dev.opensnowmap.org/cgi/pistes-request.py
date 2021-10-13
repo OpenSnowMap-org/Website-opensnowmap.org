@@ -450,6 +450,7 @@ def queryClosest(center):
 	
 	cur.execute("""
 	SELECT id FROM ways 
+	WHERE (tags->'piste:type' is not null) OR (tags->'aerialway' is not null) 
 	ORDER BY 
 	ST_Distance(linestring, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
