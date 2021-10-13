@@ -552,10 +552,10 @@ function clearResultList() {
   
 }
 function toggleQueriesHints(){
-  if (document.getElementById('doRouteButton').style.display == 'none')
-    document.getElementById('doRouteButton').style.display = 'block';
+  if (document.getElementById('dorouteButton').style.display == 'none')
+    document.getElementById('dorouteButton').style.display = 'block';
   else
-    document.getElementById('doRouteButton').style.display = 'none';
+    document.getElementById('dorouteButton').style.display = 'none';
   if (document.getElementById('doQueryPistesButton').style.display == 'none')
     document.getElementById('doQueryPistesButton').style.display = 'block';
   else
@@ -655,7 +655,7 @@ function showquery() {
   document.getElementById('content-outer').style.display = 'inline';
   document.getElementById('content').style.display = 'inline';
   document.getElementById('content-control').style.display = 'inline';
-  document.getElementById('content_title').innerHTML = '&nbsp;' + _('Pistes_information');
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('Query_pistes_title');
   document.getElementById('content-outer').scrollTop = 0;
 }
 
@@ -665,7 +665,7 @@ function showpisteList() {
   document.getElementById('content-outer').style.display = 'inline';
   document.getElementById('content').style.display = 'inline';
   document.getElementById('content-control').style.display = 'inline';
-  document.getElementById('content_title').innerHTML = '&nbsp;' + _('List_pistes');
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('List_pistes_title');
   document.getElementById('content-outer').scrollTop = 0;
 }
 function showabout() {
@@ -1004,7 +1004,11 @@ function page_init() {
   };
   document.getElementById('queryMenuButton').onclick = function() {
     showquery();
-    queryPistes();
+    if (!QUERYMODE) {queryPistes();}
+  };
+  document.getElementById('queryButtonHeader').onclick = function() {
+    showquery();
+    if (!QUERYMODE) {queryPistes();}
   };
   document.getElementById('pisteListMenuButton').onclick = function() {
     showpisteList();
@@ -1012,7 +1016,11 @@ function page_init() {
   };
   document.getElementById('routingMenuButton').onclick = function() {
     showroute();
-    Route();
+    if (!ROUTEMODE) {Route();}
+  };
+  document.getElementById('routingButtonHeader').onclick = function() {
+    showroute();
+    if (!ROUTEMODE) {Route();}
   };
   document.getElementById('legendButton').onclick = function() {
     showlegend();
@@ -1695,12 +1703,20 @@ function Route() { //DONE in pisteList
     document.getElementById('querySwitchImg').classList.remove("blink-image");
     document.getElementById('routeSwitchImg').src = 'pics/route_blue.svg';
     document.getElementById('routeSwitchImg').classList.add("blink-image");
-    document.getElementById('routeButtonHeaderImg').src = 'pics/route_blue.svg';
-    document.getElementById('routeButtonHeaderImg').classList.add("blink-image");
-    document.getElementById('routeButtonHeader').style.display='block';
+    document.getElementById('routingButtonHeaderImg').src = 'pics/route_blue.svg';
+    document.getElementById('routingButtonHeaderImg').classList.add("blink-image");
+    document.getElementById('routingButtonHeader').style.display='block';
     document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
     document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
     document.getElementById('queryButtonHeader').style.display='none';
+    
+    if (BASELAYER == 'osm' && HDPI) {
+      // avoid this baselayer when draw interactions are there
+      // still lacking user feedback
+      BASELAYER = "snowmap";
+      HDPI = true;
+      setBaseLayer();
+    }
     
     // Create popup control to modify points
     
@@ -1800,9 +1816,9 @@ function Route() { //DONE in pisteList
     }
     document.getElementById('routeSwitchImg').src = 'pics/route.svg';
     document.getElementById('routeSwitchImg').classList.remove("blink-image");
-    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routingButtonHeader').style.display='none';
     document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
     document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
     document.getElementById('queryButtonHeader').style.display='none';
@@ -2009,13 +2025,21 @@ function queryPistes() { //DONE in pisteList
     document.getElementById('routeSwitchImg').classList.remove("blink-image");
     document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
     document.getElementById('querySwitchImg').classList.add("blink-image");
-    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routingButtonHeader').style.display='none';
     document.getElementById('queryButtonHeaderImg').src = 'pics/query_blue.svg';
     document.getElementById('queryButtonHeaderImg').classList.add("blink-image");
     document.getElementById('queryButtonHeader').style.display='block';
-
+    
+    if (BASELAYER == 'osm' && HDPI) {
+      // avoid this baselayer when draw interactions are there
+      // still lacking user feedback
+      BASELAYER = "snowmap";
+      HDPI = true;
+      setBaseLayer();
+    }
+    
     // Layer where the user add routing points
     var pointsLayer = new ol.layer.Vector({
       source: sourcePoints,
@@ -2120,9 +2144,9 @@ function queryPistes() { //DONE in pisteList
     
     document.getElementById('querySwitchImg').src = 'pics/query.svg';
     document.getElementById('querySwitchImg').classList.remove("blink-image");
-    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routingButtonHeader').style.display='none';
     document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
     document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
     document.getElementById('queryButtonHeader').style.display='none';
@@ -3298,6 +3322,17 @@ function setHighDpi() {
 function setBaseLayer() {
   var c = map.getView().getCenter();
   var z = map.getView().getZoom();
+  var prevent_OSM_HDPI= false;
+  
+  if (getLayerByName("pointsLayer")) 
+  {
+    // avoid this baselayer when draw interactions are there
+    // still lacking user feedback
+    if (BASELAYER == 'osm' && HDPI) {
+      BASELAYER = "snowmap";
+      HDPI = true;
+    }
+  }
   //Switch base layer
   if (BASELAYER == 'osm' && !HDPI) {
     getLayerByName('osm').setVisible(true);
@@ -3315,23 +3350,7 @@ function setBaseLayer() {
     //~ document.getElementById('switch_to_HDPI').style.textDecoration='none';
     map.setView(view);
   }
-  if (BASELAYER == 'snowmap' && !HDPI) {
-    getLayerByName('osm').setVisible(false);
-    getLayerByName('snowmap').setVisible(true);
-    getLayerByName('pistes&relief').setVisible(false);
-    getLayerByName('pistes').setVisible(true);
-    getLayerByName('osm_HiDPI').setVisible(false);
-    getLayerByName('snowmap_HiDPI').setVisible(false);
-    getLayerByName('pistes&relief_HiDPI').setVisible(false);
-    getLayerByName('pistes_HiDPI').setVisible(false);
-    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#DDD';
-    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#FFF';
-    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='underline';
-    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='none';
-    //~ document.getElementById('switch_to_HDPI').style.textDecoration='none';
-    map.setView(view);
-  }
-  if (BASELAYER == 'osm' && HDPI) {
+  else if (BASELAYER == 'osm' && HDPI) {
     getLayerByName('osm_HiDPI').setVisible(true);
     getLayerByName('snowmap_HiDPI').setVisible(false);
     getLayerByName('pistes&relief_HiDPI').setVisible(true);
@@ -3347,7 +3366,7 @@ function setBaseLayer() {
     //~ document.getElementById('switch_to_HDPI').style.textDecoration='underline';
     map.setView(view);
   }
-  if (BASELAYER == 'snowmap' && HDPI) {
+  else if (BASELAYER == 'snowmap' && HDPI) {
     getLayerByName('osm_HiDPI').setVisible(false);
     getLayerByName('snowmap_HiDPI').setVisible(true);
     getLayerByName('pistes&relief_HiDPI').setVisible(false);
@@ -3362,6 +3381,24 @@ function setBaseLayer() {
     //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='none';
     //~ document.getElementById('switch_to_HDPI').style.textDecoration='underline';
     map.setView(viewHDPI);
+  }
+  else { //BASELAYER == 'snowmap' && !HDPI
+    BASELAYER ='snowmap';
+    HDPI = false;
+    getLayerByName('osm').setVisible(false);
+    getLayerByName('snowmap').setVisible(true);
+    getLayerByName('pistes&relief').setVisible(false);
+    getLayerByName('pistes').setVisible(true);
+    getLayerByName('osm_HiDPI').setVisible(false);
+    getLayerByName('snowmap_HiDPI').setVisible(false);
+    getLayerByName('pistes&relief_HiDPI').setVisible(false);
+    getLayerByName('pistes_HiDPI').setVisible(false);
+    document.getElementById('SnowBaseLAyer').style.backgroundColor = '#DDD';
+    document.getElementById('OSMBaseLAyer').style.backgroundColor = '#FFF';
+    //~ document.getElementById('switch_to_snowmap_base_layer').style.textDecoration='underline';
+    //~ document.getElementById('switch_to_osm_base_layer').style.textDecoration='none';
+    //~ document.getElementById('switch_to_HDPI').style.textDecoration='none';
+    map.setView(view);
   }
   map.getView().setCenter(c);
   map.getView().setZoom(z);

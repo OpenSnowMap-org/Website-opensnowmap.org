@@ -455,7 +455,10 @@ var eng = {
 "FORUM": "FORUM",
 "BLOG" : "BLOG",
 "DATA": "DATA",
-"TOPO": "TOPO"
+"TOPO": "TOPO",
+"Query_pistes_title": "Get information on pistes",
+"List_pistes_title": "List the pistes on the map",
+"routing_tooltip":"Click on a piste to add, insert and move waypoint to create your routeat will."
 }
 var nld = {
 "menu-donate": "DONEREN",

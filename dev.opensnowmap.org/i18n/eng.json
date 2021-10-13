@@ -50,7 +50,7 @@
 "weekly": "weekly",
 "monthly": "monthly (big)",
 "vector_help": "Choose interactive map for further functionality: display information on pistes, trace elevation profile, ...",
-"interactive-tooltip": "Click on a piste: display information on pistes, trace elevation profile, ...",
+"interactive-tooltip": "Click on a piste to display more information, trace elevation profile, ...",
 "search-tooltip": "Search for a place or a piste",
 "lang-tooltip": "Change language",
 "settings-tooltip": "Change map background, check latest added pistes, ...",
@@ -61,7 +61,7 @@
 "print-tooltip": "Print a map in pdf",
 "edit-tooltip": "Access tools to add or modify a piste in the map",
 "data-tooltip": "Download ski pistes data",
-"list_pistes-tooltip": "List the ski pistes currently in the viewport",
+"list_pistes-tooltip": "List the ski pistes and resorts currently in the viewport",
 "offseter_explain": "You can also adjust the visibility of the colored pistes on www.opensnowmap.org",
 "MAP_KEY": "LEGEND",
 "ABOUT": "ABOUT",
@@ -72,5 +72,8 @@
 "FORUM": "FORUM",
 "BLOG" : "BLOG",
 "DATA": "DATA",
-"TOPO": "TOPO"
+"TOPO": "TOPO",
+"Query_pistes_title": "Get information on pistes",
+"List_pistes_title": "List the pistes on the map",
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
 }
