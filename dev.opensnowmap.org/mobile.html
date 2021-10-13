@@ -51,81 +51,24 @@
         <div id="location" class="fastclick Button float-left iconButton noBorder" >
           <img id="locationSwitchImg" class="button-img" src="pics/localisation_thin.svg"/>
         </div>
-        <div id="searchButton" class="fastclick Button float-left iconButton noBorder">
-          <img id="searchButtonImg" class="button-img"  src="pics/search_thin_64.png"/>
-        </div>
         <div id="viewSwitch" class="fastclick Button float-left iconButton noBorder">
           <img id="viewSwitchImg" class="button-img"  src="pics/minus_plus_5_64.svg"/>
+        </div>
+        <div id="searchButtonHeader" class="fastclick Button float-left iconButton noBorder">
+          <img id="searchButtonHeaderImg" class="button-img"  src="pics/search_thin_aligned.svg"/>
+        </div>
+        <div id="routeButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="routeButtonHeaderImg" class="button-img"  src="pics/route.svg"/>
+        </div>
+        <div id="queryButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="queryButtonHeaderImg" class="button-img"  src="pics/query.svg"/>
         </div>
       </div>
       <div id="content-outer" style="display:none">
 
         <div id="content" style="display:none"> <!-- -->
-          <div id="content_title"></div>
+          <div id="content_title" class="toCaps"></div>
           <div class="clear"></div>
-          <div id="search">
-            <div id="search_header">
-              <div id="doClearSearch" class="fastclick Button float-left iconButton">
-                <img class="button-img"  src="pics/close_64.svg" />
-              </div>
-              <div id="doSearch" class="fastclick Button float-left iconButton">
-                <img class="button-img"  src="pics/search_thin_64.png" />
-              </div>
-              <form name="search" class="float-left">
-                <input id="search_input" type="text" name="nom_search" autofocus>
-              </form>
-              <hr class="hrmenu"/>
-              <div class="clear"></div>
-              <table>
-                <tr><td style="text-align: center;vertical-align: top;">
-                  <div id="dolistViewport" class="fastclick Button iconButton" style="margin: auto;">
-                    <img class="button-img"  src="pics/list_50.png"/>
-                  </div>
-                  <div id="listViewportButton" class="Button fastclick textButton" style="font-size: 0.7em;text-align: center;">
-                    <span class="i18n" i18nText="list_pistes-tooltip"></span>
-                </div>
-                </td><td style="text-align: center;vertical-align: top;
-                border-left-style:solid;border-left-width: 1px;border-left-color: #EEEEEE;">
-                  <div id="doQueryPistes" class="Button fastclick iconButton" style="margin: auto;">
-                    <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
-                  </div>
-                  <div id="doQueryPistesButton" class="Button fastclick textButton"  style="font-size: 0.7em;text-align: center;">
-                    <span class="i18n" i18nText="interactive-tooltip"></span>
-                  </div>
-                </td><td style="text-align: center;vertical-align: top;
-                border-left-style:solid;border-left-width: 1px;border-left-color: #EEEEEE;">
-                  <div id="doRoute" class="Button fastclick iconButton" style="margin: auto;">
-                    <img id="routeSwitchImg" class="button-img"  src="pics/route.svg"/>
-                  </div>
-                  <div id="doRouteButton" class="Button fastclick textButton"  style="font-size: 0.7em;text-align: center;">
-                    <span class="i18n" i18nText="routing_title"></span>
-                  </div>
-                </td></tr>
-              </table>
-              <div class="clear"></div>
-            </div>
-            <div class="clear"></div>
-            <hr class="hrmenu"/>
-            <div id="search_results">
-              <!-- divs to display search results -->
-              <div id="waiterResults" class="hidden">
-                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
-              </div>
-              <div id="topo_header">
-              </div>
-              <div id="piste_search_results">
-          <div class="routeHeader" id="routeHeaderProto"> Parcours     17 km</div>
-          <div class="clear"></div>
-              </div>
-              <div id="waiterNominatim" class="hidden">
-                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
-              </div>
-              <div id="nominatim_results">
-                <ul class="nominatimLi" id="nominatimLi"></ul>
-                <div id="nominatim_results_footer"></div>
-              </div>
-            </div>
-          </div>
           <div id="menu">
             <hr class="hrmenu"/>
             <div id="mapSettingsDropDown" class="Button fastclick textButton">
@@ -165,6 +108,10 @@
             <div id="queryMenuButton" class="Button fastclick textButton">
               <img src="pics/query.svg" style="height: 20px; vertical-align:sub"/>
               <span class="i18n toCaps" i18nText="Pistes_information"></span>
+            </div>
+            <div id="pisteListMenuButton" class="Button fastclick textButton">
+              <img src="pics/list.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="List_pistes"></span>
             </div>
             <div class="clear"></div>
             <hr class="hrmenu"/>
@@ -288,6 +235,92 @@
                 <a class="amenuLt" target="_blank" 
                   href="http://blog.opensnowmap.org/"
                   >&bullet;&nbsp;...&nbsp;&raquo;</a>
+            </div>
+          </div>
+          <div id="search">
+            <div id="search_header">
+              <div id="doClearSearch" class="fastclick Button float-left iconButton">
+                <img class="button-img"  src="pics/close_64.svg" />
+              </div>
+              <div id="doSearch" class="fastclick Button float-left iconButton">
+                <img class="button-img"  src="pics/search_thin_64.png" />
+              </div>
+              <form name="search" class="float-left">
+                <input id="search_input" type="text" name="nom_search" autofocus>
+              </form>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="search_results">
+              <!-- divs to display search results -->
+              <div id="searchWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+              <div id="topo_header">
+              </div>
+              <div id="piste_search_results">
+              </div>
+              <div id="waiterNominatim" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+              <div id="nominatim_results">
+                <ul class="nominatimLi" id="nominatimLi"></ul>
+                <div id="nominatim_results_footer"></div>
+              </div>
+            </div>
+          </div>
+          <div id="route">
+            <div id="route_header">
+                  <div id="doRoute" class="Button fastclick iconButton float-left" style="margin: auto;">
+                    <img id="routeSwitchImg" class="button-img"  src="pics/route.svg"/>
+                  </div>
+                  <div id="doRouteButton" class="Button fastclick textButton float-left"  style="font-size: 0.7em;text-align: center;">
+                    <span class="i18n" i18nText="routing_title"></span>
+                  </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+              <div id="routeWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="route_results">
+              <!-- divs to display search results -->
+            </div>
+          </div>
+          <div id="query">
+            <div id="query_header">
+                  <div id="doQueryPistes" class="Button fastclick iconButton float-left" style="margin: auto;">
+                    <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
+                  </div>
+                  <div id="doQueryPistesButton" class="Button fastclick textButton float-left"  style="font-size: 0.7em;text-align: center;">
+                    <span class="i18n" i18nText="interactive-tooltip"></span>
+                  </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+              <div id="queryWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="query_results">
+              <!-- divs to display search results -->
+            </div>
+          </div>
+          <div id="pisteList">
+            <div id="pisteList_header">
+                  <div id="dolistViewport" class="fastclick Button iconButton float-left" style="margin: auto;">
+                    <img class="button-img"  src="pics/list_50.png"/>
+                  </div>
+                  <div id="listViewportButton" class="Button fastclick textButton float-left" style="font-size: 0.7em;text-align: center;">
+                    <span class="i18n" i18nText="list_pistes-tooltip"></span>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+              <div id="listWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="pisteList_results">
+              <!-- divs to display search results -->
             </div>
           </div>
           <div id="legend">

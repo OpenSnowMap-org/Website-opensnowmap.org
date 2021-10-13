@@ -545,17 +545,6 @@ function show_live_edits(when) {
     // layers already removed
   }
 }
-var closeContent = function() {
-  if(!QUERYMODE && !ROUTEMODE) {
-    closecontent();
-  }
-}
-
-function closecontent() {
-    document.getElementById('content-outer').style.display = "none";
-    document.getElementById('content').style.display = "none";
-    document.getElementById('content-control').style.display = "none";
-}
 
 function clearResultList() {
   document.getElementById('piste_search_results').innerHTML = '';
@@ -579,15 +568,17 @@ function toggleQueriesHints(){
     
     
 }
-function showsearch() {
-  document.getElementById('content-outer').style.display = 'inline';
-  document.getElementById('content').style.display = 'inline';
-  document.getElementById('content-control').style.display = 'inline';
-  hideexcept('search');
-  document.getElementById('search').style.display = 'inline';
-  document.getElementById('content_title').innerHTML = '&nbsp;' + _('search_results');
-  document.getElementById('content-outer').scrollTop = 0;
-  //~ document.getElementById('search_input').focus();
+
+var closeContent = function() {
+  if(!QUERYMODE && !ROUTEMODE) {
+    closecontent();
+  }
+}
+
+function closecontent() {
+    document.getElementById('content-outer').style.display = "none";
+    document.getElementById('content').style.display = "none";
+    document.getElementById('content-control').style.display = "none";
 }
 
 function showMapSettings() {
@@ -637,7 +628,46 @@ function showlegend() {
   document.getElementById('content_title').innerHTML = '&nbsp;' + _('MAP_KEY').replace('<br/>', ' ');
   document.getElementById('content-outer').scrollTop = 0;
 }
+function showsearch() {
+  hideexcept('search');
+  document.getElementById('search').style.display = 'inline';
+  document.getElementById('content-outer').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content-control').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = ''
+  document.getElementById('content-outer').scrollTop = 0;
+  //~ document.getElementById('search_input').focus();
+}
 
+function showroute() {
+  hideexcept('route');
+  document.getElementById('route').style.display = 'inline';
+  document.getElementById('content-outer').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content-control').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('routing_title');
+  document.getElementById('content-outer').scrollTop = 0;
+}
+
+function showquery() {
+  hideexcept('query');
+  document.getElementById('query').style.display = 'inline';
+  document.getElementById('content-outer').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content-control').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('Pistes_information');
+  document.getElementById('content-outer').scrollTop = 0;
+}
+
+function showpisteList() {
+  hideexcept('pisteList');
+  document.getElementById('pisteList').style.display = 'inline';
+  document.getElementById('content-outer').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content-control').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('List_pistes');
+  document.getElementById('content-outer').scrollTop = 0;
+}
 function showabout() {
   hideexcept('about');
   var aboutDiv = document.getElementById('about');
@@ -731,6 +761,15 @@ function hideexcept(div) {
   }
   if (div != 'search') {
     document.getElementById('search').style.display = 'none';
+  }
+  if (div != 'query') {
+    document.getElementById('query').style.display = 'none';
+  }
+  if (div != 'route') {
+    document.getElementById('route').style.display = 'none';
+  }
+  if (div != 'pisteList') {
+    document.getElementById('pisteList').style.display = 'none';
   }
   if (div != 'legend') {
     document.getElementById('legend').style.display = 'none';
@@ -859,7 +898,7 @@ function page_init() {
     closecontent();
     toggleLocation();
   };
-  document.getElementById('searchButton').onclick = function() {
+  document.getElementById('searchButtonHeader').onclick = function() {
     showsearch();
   };
 
@@ -959,6 +998,21 @@ function page_init() {
 
   document.getElementById('changesButton').onclick = function() {
     window.open('http://www.opensnowmap.org/qa/Pistes_changes/web/');
+  };
+  document.getElementById('searchMenuButton').onclick = function() {
+    showsearch();
+  };
+  document.getElementById('queryMenuButton').onclick = function() {
+    showquery();
+    queryPistes();
+  };
+  document.getElementById('pisteListMenuButton').onclick = function() {
+    showpisteList();
+    getTopoByViewport();
+  };
+  document.getElementById('routingMenuButton').onclick = function() {
+    showroute();
+    Route();
   };
   document.getElementById('legendButton').onclick = function() {
     showlegend();
@@ -1294,7 +1348,7 @@ function getMembersById(id) {
 }
 
 function getTopoByViewport() { //DONE in pisteList
-  document.getElementById("waiterResults").style.display = 'inline';
+  document.getElementById("listWaiterResults").style.display = 'inline';
 
 
   var list = document.getElementsByClassName('nominatimLi')[0];
@@ -1316,18 +1370,18 @@ function getTopoByViewport() { //DONE in pisteList
 
   XMLHttp.onreadystatechange = function() {
     if (XMLHttp.readyState == 4) {
-      document.getElementById("waiterResults").style.display = 'none';
+      document.getElementById("listWaiterResults").style.display = 'none';
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
-      showHTMLPistesList(document.getElementById('piste_search_results'));
+      showHTMLPistesList(document.getElementById('pisteList_results'));
     }
   };
   XMLHttp.send();
   return true;
 }
-function getRouteTopoByWaysId(ids,routeLength, routeWKT) {//DONE in pisteList
+function getRouteTopoByWaysId(ids,routeLength, routeWKT) {
     //close_sideBar();
-    document.getElementById("waiterResults").style.display = 'inline';
+    document.getElementById("routeWaiterResults").style.display = 'inline';
     abortXHR('PisteAPI'); // abort another request if any
 
     var q = server + "request?geo=true&topo=true&ids_ways=" + ids;
@@ -1340,10 +1394,10 @@ function getRouteTopoByWaysId(ids,routeLength, routeWKT) {//DONE in pisteList
 
     XMLHttp.onreadystatechange = function () {
         if (XMLHttp.readyState == 4) {
-            document.getElementById("waiterResults").style.display = 'none';
+            document.getElementById("routeWaiterResults").style.display = 'none';
             var resp = XMLHttp.responseText;
             jsonPisteList = JSON.parse(resp);
-            showHTMLRoute(document.getElementById('piste_search_results'),routeLength, routeWKT)
+            showHTMLRoute(document.getElementById('route_results'),routeLength, routeWKT)
         }
     };
     XMLHttp.send();
@@ -1351,7 +1405,7 @@ function getRouteTopoByWaysId(ids,routeLength, routeWKT) {//DONE in pisteList
 }
 
 function getTopoById(ids) { //DONE in pisteList
-  document.getElementById("waiterResults").style.display = 'inline';
+  document.getElementById("queryWaiterResults").style.display = 'inline';
 
 
   var list = document.getElementsByClassName('nominatimLi')[0];
@@ -1372,7 +1426,7 @@ function getTopoById(ids) { //DONE in pisteList
     if (XMLHttp.readyState == 4) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
-      document.getElementById("waiterResults").style.display = 'none';
+      document.getElementById("queryWaiterResults").style.display = 'none';
       showHTMLPistesList(document.getElementById('piste_search_results'));
     }
   };
@@ -1641,8 +1695,12 @@ function Route() { //DONE in pisteList
     document.getElementById('querySwitchImg').classList.remove("blink-image");
     document.getElementById('routeSwitchImg').src = 'pics/route_blue.svg';
     document.getElementById('routeSwitchImg').classList.add("blink-image");
-    document.getElementById('searchButtonImg').src = 'pics/route_blue.svg';
-    document.getElementById('searchButtonImg').classList.add("blink-image");
+    document.getElementById('routeButtonHeaderImg').src = 'pics/route_blue.svg';
+    document.getElementById('routeButtonHeaderImg').classList.add("blink-image");
+    document.getElementById('routeButtonHeader').style.display='block';
+    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
+    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('queryButtonHeader').style.display='none';
     
     // Create popup control to modify points
     
@@ -1742,8 +1800,12 @@ function Route() { //DONE in pisteList
     }
     document.getElementById('routeSwitchImg').src = 'pics/route.svg';
     document.getElementById('routeSwitchImg').classList.remove("blink-image");
-    document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
-    document.getElementById('searchButtonImg').classList.remove("blink-image");
+    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
+    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('queryButtonHeader').style.display='none';
     ROUTEMODE = false;
   }
 
@@ -1925,36 +1987,34 @@ function RouteRemovePointById(selectedpointID) {
 function queryPistes() { //DONE in pisteList
   if (!QUERYMODE) {
     QUERYMODE = true;
+    ROUTEMODE = false;
     // remove route mode features
     if (getLayerByName('pointsLayer')) {
       getLayerByName('pointsLayer').getSource().clear();
       map.removeLayer(getLayerByName('pointsLayer'));
       pointID = 0;
-      drawPoints.setActive(false);
-      modifyPoints.setActive(false);
-      map.removeInteraction(drawPoints);
-      map.removeInteraction(modifyPoints);
+      map.removeInteraction(routeIteraction);
     }
     if (getLayerByName('linesLayer')) {
       getLayerByName('linesLayer').getSource().clear();
       map.removeLayer(getLayerByName('linesLayer'));
-      pointID = 0;
-      drawPoints.setActive(false);
-      modifyPoints.setActive(false);
-      map.removeInteraction(drawPoints);
-      map.removeInteraction(modifyPoints);
+      lineID = 0;
+      map.removeInteraction(routeIteraction);
     }
     if (getOverlayByName('deletePoint')) {
       document.getElementById('overlay_content').style.display='none';
       //map.removeOverlay(getOverlayByName('delete'));
     }
-    ROUTEMODE = false;
     document.getElementById('routeSwitchImg').src = 'pics/route.svg';
     document.getElementById('routeSwitchImg').classList.remove("blink-image");
     document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
     document.getElementById('querySwitchImg').classList.add("blink-image");
-    document.getElementById('searchButtonImg').src = 'pics/query_blue.svg';
-    document.getElementById('searchButtonImg').classList.add("blink-image");
+    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('queryButtonHeaderImg').src = 'pics/query_blue.svg';
+    document.getElementById('queryButtonHeaderImg').classList.add("blink-image");
+    document.getElementById('queryButtonHeader').style.display='block';
 
     // Layer where the user add routing points
     var pointsLayer = new ol.layer.Vector({
@@ -2060,18 +2120,30 @@ function queryPistes() { //DONE in pisteList
     
     document.getElementById('querySwitchImg').src = 'pics/query.svg';
     document.getElementById('querySwitchImg').classList.remove("blink-image");
-    document.getElementById('searchButtonImg').src = 'pics/search_thin_64.png';
-    document.getElementById('searchButtonImg').classList.remove("blink-image");
+    document.getElementById('routeButtonHeaderImg').src = 'pics/route.svg';
+    document.getElementById('routeButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('routeButtonHeader').style.display='none';
+    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
+    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
+    document.getElementById('queryButtonHeader').style.display='none';
     QUERYMODE = false;
   }
 
 }
 
 function RouteSnap(point) {
-  while (document.getElementById("piste_search_results").firstChild) {
-    document.getElementById("piste_search_results").removeChild(document.getElementById("piste_search_results").firstChild);
-    }
-  document.getElementById("waiterResults").style.display = 'inline';
+  if (ROUTEMODE) {
+    while (document.getElementById("route_results").firstChild) {
+      document.getElementById("route_results").removeChild(document.getElementById("route_results").firstChild);
+      }
+    document.getElementById("routeWaiterResults").style.display = 'inline';
+  }
+  else {
+    while (document.getElementById("query_results").firstChild) {
+      document.getElementById("query_results").removeChild(document.getElementById("query_results").firstChild);
+      }
+    document.getElementById("queryWaiterResults").style.display = 'inline';
+  }
   // count all routablepoints so that we can route when they're sanpped - useless ?
   /*var routableCnt=0;
   for (f in routeSourcePoints.getFeatures()) {
@@ -2096,7 +2168,10 @@ function RouteSnap(point) {
       return response.json();
     })
     .then(function(json) {
-      document.getElementById("waiterResults").style.display = 'none';
+      if (ROUTEMODE)
+        document.getElementById("routeWaiterResults").style.display = 'none';
+      else
+        document.getElementById("queryWaiterResults").style.display = 'none';
       jsonPisteList = json;
       /* snap point*/
       ll = [json.snap.lon, json.snap.lat];
@@ -2105,10 +2180,15 @@ function RouteSnap(point) {
         'isSnapped': true
       }); 
       point.getGeometry().setCoordinates(llm); // We assign sanpped point coordinates but snap last point here
-      getOverlayByName("deletePoint").setPosition(llm);
+      if (getOverlayByName("deletePoint")) {getOverlayByName("deletePoint").setPosition(llm);}
       RouteReStyle();
       
-      showHTMLPistesList(document.getElementById('piste_search_results'));
+      if (ROUTEMODE) {
+        showHTMLPistesList(document.getElementById('route_results'));
+      }
+      else {
+        showHTMLPistesList(document.getElementById('query_results'));
+      }
       
       return true
     })
@@ -2126,7 +2206,7 @@ function RouteSnap(point) {
 }
 
 function getByName(name) {
-  document.getElementById("waiterResults").style.display = 'inline';
+  document.getElementById("searchWaiterResults").style.display = 'inline';
   document.getElementById('piste_search_results').innerHTML = '';
   var q = server + "request?group=true&geo=true&list=true&name=" + name;
   var XMLHttp = new XMLHttpRequest();
@@ -2137,7 +2217,7 @@ function getByName(name) {
     if (XMLHttp.readyState == 4) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
-      document.getElementById("waiterResults").style.display = 'none';
+      document.getElementById("searchWaiterResults").style.display = 'none';
       showHTMLPistesList(document.getElementById('piste_search_results'));
     }
   };

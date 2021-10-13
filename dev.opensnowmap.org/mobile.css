@@ -297,13 +297,10 @@ div.olMapViewport {
 
 /*                  Piste list                       */
 .singlePiste{
-  font-size:1.2em;
+font-size: 0.9em;
   border: 1px solid #EEEEEE;
 }
 .singlePisteHeader{
-/*
-  background-color: darkgreen;
-*/
 }
 .singlePisteLongName {
   font-weight:600;
@@ -314,28 +311,19 @@ div.olMapViewport {
 .singlePisteLeft{
   float: left;
   width: 40px;
-/*
-  background-color: blue;
-*/
 }
 .singlePisteRight{
   float: left;
   width: 150px;
-/*
-  background-color: yellow;
-*/
 }
 .singlePisteFooter{
-/*
-  background-color: teal;
-*/
 }
 
 .pisteListElement{
     background-color:#FFF;
     margin: 0px;
     padding:0px;
-    font-size:1em;
+    font-size:0.9em;
   border: 1px solid #EEEEEE;
 }
 .pisteListButton{
@@ -439,7 +427,7 @@ float:right;
 #content-control {
   position: absolute;
   right: -14px;
-  top: 30px;
+  top: 25px;
   height: 60px;
   border-style: solid;
   border-color: #AAAAAA;
@@ -452,7 +440,7 @@ float:right;
   position: relative;
   top: 15px;
 }
-body {font-size: 1em;}
+
   #titleimg {width: 200px;} 
 
   #map {top: 38px;}
