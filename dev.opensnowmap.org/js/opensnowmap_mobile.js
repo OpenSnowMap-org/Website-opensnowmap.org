@@ -49,7 +49,7 @@ var center = ol.proj.toLonLat([lon, lat], 'EPSG:4326');
 var lengthes;
 var data = {};
 var BASELAYER = 'snowmap';
-var HDPI = true; //will be turned to true at map_init()
+var HDPI = false; 
 var shouldUpdateHashPermalink = true;
 var geoLoc = null;
 /* piste query */
