@@ -213,6 +213,11 @@ position: absolute;
 */
     padding: 2px 2px 2px 2px;
 }
+.iconButtonHint{
+   width: 160px;
+   font-size: 0.7em;
+   text-align: center;
+}
 
 .button-img {  
       width: 26px;
@@ -428,7 +433,7 @@ float:right;
   position: absolute;
   right: -14px;
   top: 25px;
-  height: 60px;
+  height: 70px;
   border-style: solid;
   border-color: #AAAAAA;
   border-width: 1px 1px 1px 0px;
@@ -441,15 +446,29 @@ float:right;
   top: 15px;
 }
 
+#content-control-closed {
+  position: fixed;
+  left: -10px;
+  padding-left: 10px;
+  top: 63px;
+  height: 70px;
+  border-style: solid;
+  border-color: #AAAAAA;
+  border-width: 1px 1px 1px 0px;
+  border-radius: 6px;
+  background-color: #FFF;
+  z-index: 999;
+  
+}
   #titleimg {width: 200px;} 
 
   #map {top: 38px;}
   #search_header {margin:-5px;}
 
 #piste_search_results{
-    font-size: 0.7em;}
+    }
 #nominatim_results{
-    font-size: 0.7em;}
+    }
 #search_input{width: 120px;}
 /*
 #listViewportButton{width: 150px;}

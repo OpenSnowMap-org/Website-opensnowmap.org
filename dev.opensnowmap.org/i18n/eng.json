@@ -51,7 +51,7 @@
 "monthly": "monthly (big)",
 "vector_help": "Choose interactive map for further functionality: display information on pistes, trace elevation profile, ...",
 "interactive-tooltip": "Click on a piste to display more information, trace elevation profile, ...",
-"search-tooltip": "Search for a place or a piste",
+"search-tooltip": "Search for a place, a resort or a piste",
 "lang-tooltip": "Change language",
 "settings-tooltip": "Change map background, check latest added pistes, ...",
 "mobile-tooltip": "Open mobile version",
@@ -73,6 +73,7 @@
 "BLOG" : "BLOG",
 "DATA": "DATA",
 "TOPO": "TOPO",
+"Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
 "routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."

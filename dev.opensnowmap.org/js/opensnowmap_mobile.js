@@ -53,6 +53,7 @@ var HDPI = true; //will be turned to true at map_init()
 var shouldUpdateHashPermalink = true;
 var geoLoc = null;
 /* piste query */
+var PISTELISTMODE = false;
 var QUERYMODE = false;
 var modifyPoints;
 var drawPoints;
@@ -578,7 +579,13 @@ var closeContent = function() {
 function closecontent() {
     document.getElementById('content-outer').style.display = "none";
     document.getElementById('content').style.display = "none";
-    document.getElementById('content-control').style.display = "none";
+    if (ROUTEMODE) {
+      document.getElementById('content-control-closed').style.display = "inline";
+    } else if (QUERYMODE) {
+      document.getElementById('content-control-closed').style.display = "inline";
+    } else {
+      document.getElementById('content-control-closed').style.display = "none";      
+    }
 }
 
 function showMapSettings() {
@@ -634,7 +641,7 @@ function showsearch() {
   document.getElementById('content-outer').style.display = 'inline';
   document.getElementById('content').style.display = 'inline';
   document.getElementById('content-control').style.display = 'inline';
-  document.getElementById('content_title').innerHTML = ''
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('Search_title');
   document.getElementById('content-outer').scrollTop = 0;
   //~ document.getElementById('search_input').focus();
 }
@@ -755,6 +762,7 @@ function show_languages() {
 }
 
 function hideexcept(div) {
+  PISTELISTMODE =true;
   document.getElementById('content-outer').style.maxWidth = "240px";
   if (div != 'menu') {
     document.getElementById('menu').style.display = 'none';
@@ -769,6 +777,7 @@ function hideexcept(div) {
     document.getElementById('route').style.display = 'none';
   }
   if (div != 'pisteList') {
+    PISTELISTMODE =false;
     document.getElementById('pisteList').style.display = 'none';
   }
   if (div != 'legend') {
@@ -1002,25 +1011,21 @@ function page_init() {
   document.getElementById('searchMenuButton').onclick = function() {
     showsearch();
   };
-  document.getElementById('queryMenuButton').onclick = function() {
-    showquery();
-    if (!QUERYMODE) {queryPistes();}
-  };
-  document.getElementById('queryButtonHeader').onclick = function() {
-    showquery();
-    if (!QUERYMODE) {queryPistes();}
-  };
-  document.getElementById('pisteListMenuButton').onclick = function() {
-    showpisteList();
-    getTopoByViewport();
-  };
   document.getElementById('routingMenuButton').onclick = function() {
     showroute();
     if (!ROUTEMODE) {Route();}
   };
-  document.getElementById('routingButtonHeader').onclick = function() {
-    showroute();
-    if (!ROUTEMODE) {Route();}
+  document.getElementById('queryMenuButton').onclick = function() {
+    showquery();
+    if (!QUERYMODE) {queryPistes();}
+  };
+  document.getElementById('content-control-closed').onclick = function() {
+    if (QUERYMODE) {showquery();}
+    if (ROUTEMODE) {showroute();}
+  };
+  document.getElementById('pisteListMenuButton').onclick = function() {
+    showpisteList();
+    getTopoByViewport();
   };
   document.getElementById('legendButton').onclick = function() {
     showlegend();
@@ -1330,8 +1335,13 @@ function showRouteProfile(wkt, div, color) {
   return true;
 }
 function getMembersById(id) {
-  document.getElementById("waiterResults").style.display = 'inline';
-
+  if (QUERYMODE) {
+    document.getElementById("queryWaiterResults").style.display = 'inline';
+  } else if (PISTELISTMODE) {
+    document.getElementById("listWaiterResults").style.display = 'inline';
+  } else {
+    document.getElementById("searchWaiterResults").style.display = 'inline';
+  }
 
   var list = document.getElementsByClassName('nominatimLi')[0];
   while (list.firstChild) {
@@ -1348,8 +1358,17 @@ function getMembersById(id) {
     if (XMLHttp.readyState == 4) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
-      document.getElementById("waiterResults").style.display = 'none';
-      showHTMLPistesList(document.getElementById('piste_search_results'));
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      if (QUERYMODE) {
+        document.getElementById("queryWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('query_results'));
+      } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('pisteList_results'));
+      } else {
+        document.getElementById("searchWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('piste_search_results'));
+      }
     }
   };
   XMLHttp.send();
@@ -1435,7 +1454,13 @@ function getTopoById(ids) { //DONE in pisteList
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
       document.getElementById("queryWaiterResults").style.display = 'none';
-      showHTMLPistesList(document.getElementById('piste_search_results'));
+      if (QUERYMODE) {
+        showHTMLPistesList(document.getElementById('query_results'));
+      } else if (PISTELISTMODE) {
+        showHTMLPistesList(document.getElementById('pisteList_results'));
+      } else {
+        showHTMLPistesList(document.getElementById('piste_search_results'));
+      }
     }
   };
   XMLHttp.send();
@@ -1684,6 +1709,7 @@ function RouteOnUp(evt) {
 }
 
 function Route() { //DONE in pisteList
+  
   if (!ROUTEMODE) {
     ROUTEMODE = true;
     pointID = 0;
@@ -2001,6 +2027,7 @@ function RouteRemovePointById(selectedpointID) {
   
 }
 function queryPistes() { //DONE in pisteList
+  
   if (!QUERYMODE) {
     QUERYMODE = true;
     ROUTEMODE = false;
@@ -2399,7 +2426,7 @@ function showHTMLRouteList(Div) {
       }
       
       // NAME DISPLAY
-      var limitShort =17;
+      var limitShort =18;
       var lengthLong =0;
       var char=0;
       nameHTML = "";

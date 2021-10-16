@@ -72,5 +72,9 @@
 "FORUM": "FORUM",
 "BLOG" : "BLOG",
 "DATA": "DATA",
-"TOPO": ""
+"TOPO": "",
+"Search_title": "Recherche",
+"Query_pistes_title": "Informations sur les pistes",
+"List_pistes_title": "Lister les pistes visibles",
+"routing_tooltip":"Cliquez sur une piste pour ajouter, insérer et déplacer des points de passage et construire votre parcours."
 }

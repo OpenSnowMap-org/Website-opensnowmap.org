@@ -57,15 +57,8 @@
         <div id="searchButtonHeader" class="fastclick Button float-left iconButton noBorder">
           <img id="searchButtonHeaderImg" class="button-img"  src="pics/search_thin_aligned.svg"/>
         </div>
-        <div id="routingButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
-          <img id="routingButtonHeaderImg" class="button-img"  src="pics/route.svg"/>
-        </div>
-        <div id="queryButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
-          <img id="queryButtonHeaderImg" class="button-img"  src="pics/query.svg"/>
-        </div>
       </div>
       <div id="content-outer" style="display:none">
-
         <div id="content" style="display:none"> <!-- -->
           <div id="content_title" class="toCaps"></div>
           <div class="clear"></div>
@@ -95,7 +88,7 @@
             <hr class="hrmenu"/>
             <div id="searchMenuButton" class="Button fastclick textButton">
               <img src="pics/search_thin_aligned.svg" style="height: 20px; vertical-align:sub"/>
-              <span class="i18n toCaps" i18nText="search"></span>
+              <span class="i18n toCaps" i18nText="Search_title"></span>
             </div>
             <div class="clear"></div>
             <hr class="hrmenu"/>
@@ -238,6 +231,7 @@
             </div>
           </div>
           <div id="search">
+            <hr class="hr"/>
             <div id="search_header">
               <div id="doClearSearch" class="fastclick Button float-left iconButton">
                 <img class="button-img"  src="pics/close_64.svg" />
@@ -248,9 +242,13 @@
               <form name="search" class="float-left">
                 <input id="search_input" type="text" name="nom_search" autofocus>
               </form>
+              <div class="clear"></div>
+              <div id="search_tooltip" class="Button fastclick textButton float-left iconButtonHint" >
+                <span class="i18n" i18nText="search-tooltip"></span>
+              </div>
             </div>
             <div class="clear"></div>
-            <hr class="hrmenu"/>
+            <hr class="hr"/>
             <div id="search_results">
               <!-- divs to display search results -->
               <div id="searchWaiterResults" class="hidden">
@@ -267,20 +265,22 @@
                 <ul class="nominatimLi" id="nominatimLi"></ul>
                 <div id="nominatim_results_footer"></div>
               </div>
+              <br/>
             </div>
           </div>
           <div id="route">
+            <hr class="hr"/>
             <div id="route_header">
                   <div id="doRoute" class="Button fastclick iconButton float-left" style="margin: auto;">
                     <img id="routeSwitchImg" class="button-img"  src="pics/route.svg"/>
                   </div>
-                  <div id="doRouteButton" class="Button fastclick textButton float-left"  style="font-size: 0.7em;text-align: center;">
+                  <div id="doRouteButton" class="Button fastclick textButton float-left iconButtonHint" >
                     <span class="i18n" i18nText="routing_tooltip"></span>
                   </div>
             </div>
             <div class="clear"></div>
-            <hr class="hrmenu"/>
-              <div id="routeWaiterResults" class="hidden">
+            <hr class="hr"/>
+            <div id="routeWaiterResults" class="hidden">
                 <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
               </div>
             <div id="route_results">
@@ -288,16 +288,17 @@
             </div>
           </div>
           <div id="query">
+            <hr class="hr"/>
             <div id="query_header">
                   <div id="doQueryPistes" class="Button fastclick iconButton float-left" style="margin: auto;">
                     <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
                   </div>
-                  <div id="doQueryPistesButton" class="Button fastclick textButton float-left"  style="font-size: 0.7em;text-align: center;">
+                  <div id="doQueryPistesButton" class="Button fastclick textButton float-left iconButtonHint" >
                     <span class="i18n" i18nText="interactive-tooltip"></span>
                   </div>
             </div>
             <div class="clear"></div>
-            <hr class="hrmenu"/>
+            <hr class="hr"/>
               <div id="queryWaiterResults" class="hidden">
                 <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
               </div>
@@ -306,16 +307,17 @@
             </div>
           </div>
           <div id="pisteList">
+            <hr class="hr"/>
             <div id="pisteList_header">
                   <div id="dolistViewport" class="fastclick Button iconButton float-left" style="margin: auto;">
                     <img class="button-img"  src="pics/list_50.png"/>
                   </div>
-                  <div id="listViewportButton" class="Button fastclick textButton float-left" style="font-size: 0.7em;text-align: center;">
+                  <div id="listViewportButton" class="Button fastclick textButton float-left iconButtonHint" >
                     <span class="i18n" i18nText="list_pistes-tooltip"></span>
                 </div>
             </div>
             <div class="clear"></div>
-            <hr class="hrmenu"/>
+            <hr class="hr"/>
               <div id="listWaiterResults" class="hidden">
                 <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
               </div>
@@ -344,6 +346,17 @@
         </div>
       </div>
       <!-- content -->
+      <div id="content-control-closed" class="hidden">
+        <div id="expandButton" class="">
+          <img class="button-img" src="pics/expand_thin_64.png">
+        </div>
+        <div id="routingButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="routingButtonHeaderImg" class="button-img"  src="pics/route.svg"/>
+        </div>
+        <div id="queryButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="queryButtonHeaderImg" class="button-img"  src="pics/query.svg"/>
+        </div>
+      </div>
       <!--PROTOS-->
       <div class="hidden">
         <div id="imgSliderProto" class="imgSlider">
@@ -585,7 +598,7 @@
           <b><span class="siteNameSpan">Metabief - Mont d'or</span></b><br/>
         </div>
       </div>      </div>
-          <!--PROTOS-->
+      <!--PROTOS-->
       <div id="map">
         <!--
           <div id="customZoom">

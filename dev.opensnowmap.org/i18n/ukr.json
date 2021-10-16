@@ -72,5 +72,9 @@
 "FORUM": "ФОРУМ",
 "BLOG" : "БЛОҐ",
 "DATA": "ДАНІ",
-"TOPO": ""
+"TOPO": "",
+"Search_title": "Search",
+"Query_pistes_title": "Get information on pistes",
+"List_pistes_title": "List the pistes on the map",
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
 }
