@@ -1006,7 +1006,7 @@ function page_init() {
   };
 
   document.getElementById('changesButton').onclick = function() {
-    window.open('http://www.opensnowmap.org/qa/Pistes_changes/web/');
+    window.open('https://www.opensnowmap.org/qa/Pistes_changes/web/');
   };
   document.getElementById('searchMenuButton').onclick = function() {
     showsearch();
@@ -1031,7 +1031,7 @@ function page_init() {
     showlegend();
   };
   document.getElementById('blogButton').onclick = function() {
-    window.open('http://blog.opensnowmap.org');
+    window.open('https://blog.opensnowmap.org');
   };
   document.getElementById('dataButton').onclick = function() {
     window.open('iframes/data.html');
@@ -1563,7 +1563,7 @@ function RouteReStyle(){
          };
     }
   }
-  console.log("max point id "+ max);
+  //~ console.log("max point id "+ max);
   routeSourcePoints.forEachFeature( function(f) {
     if (f.getProperties().type == "wayPoint" 
         && f.getProperties().routable){
@@ -1593,7 +1593,7 @@ function RouteStopDown(evt) {
 }
 function RouteOnDown(evt) {
   RouteInteractionDragOrigin_=evt.pixel;
-  console.log('tapped !', RouteInteractionDragOrigin_);
+  //~ console.log('tapped !', RouteInteractionDragOrigin_);
   // record feature under mouse if any to be able to drag it
   var feature = map.forEachFeatureAtPixel(
             evt.pixel,
@@ -1638,7 +1638,7 @@ function RouteOnDown(evt) {
 }
 function RouteOnDrag(evt) {
   // move the feature from the position recorded at handleDownEvent
-  console.log('dragged !');
+  //~ console.log('dragged !');
   var deltaX = evt.coordinate[0] - RouteInteractionDragCoordinate_[0];
   var deltaY = evt.coordinate[1] - RouteInteractionDragCoordinate_[1];
   if (RouteInteractionDraggableFeature_) {
@@ -1653,7 +1653,7 @@ function RouteOnDrag(evt) {
   //~ console.log(deltaX, deltaY, RouteInteractionPanning_);
 }
 function RouteOnMove(evt) {
-  console.log('moved !');
+  //~ console.log('moved !');
 }
 function RouteOnUp(evt) {
   
@@ -1886,10 +1886,10 @@ function requestRoute(thisPoint) {
         pointids += points[f].getProperties().id+", ";
       }
   }
-  console.log("routing "+pointids);
-  if (thisPoint) {console.log("   after"+thisPoint.getProperties().id);}
+  //~ console.log("routing "+pointids);
+  //~ if (thisPoint) {console.log("   after"+thisPoint.getProperties().id);}
   
-  var query = "https://www.opensnowmap.org/"+'routing?';
+  var query = server +'routing?';
   for (pt in lonlats) {
     query = query + lonlats[pt].lat + ';' +lonlats[pt].lon + ',';
   };
@@ -1967,7 +1967,7 @@ function RouteClear(){
 
 function RouteInsertPointAt(line, coord) {
   // insert a routing point along a route
-  console.log("insert at" + line.getProperties().id);
+  //~ console.log("insert at" + line.getProperties().id);
   var idx = line.getProperties().id + 1;
   var pt = new ol.geom.Point(coord);
   var ptft = new ol.Feature(pt);
@@ -2207,7 +2207,7 @@ function RouteSnap(point) {
   if (!point.getProperties().isSnapped && point.getProperties().routable) {
     var coords = point.getGeometry().getCoordinates();
     var ll = ol.proj.toLonLat(coords, 'EPSG:3857');
-    var q = "https://www.opensnowmap.org/" 
+    var q = server  
           + "request?geo=true&list=true&closest=" 
           + ll[0] + ',' + ll[1];
           
@@ -3252,7 +3252,7 @@ function showExtLink(div, ids, element_type) {
           spans[i].innerHTML = element_type; //way or relation
         }
         if (data == 'analyseUrl') {
-          spans[i].href = "http://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
+          spans[i].href = "https://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
         }
       }
 
