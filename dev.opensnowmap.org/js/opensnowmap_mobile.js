@@ -3356,8 +3356,8 @@ function setBaseLayer() {
     // avoid this baselayer when draw interactions are there
     // still lacking user feedback
     if (BASELAYER == 'osm' && HDPI) {
-      BASELAYER = "snowmap";
-      HDPI = true;
+      BASELAYER = "osm";
+      HDPI = false;
     }
   }
   //Switch base layer
