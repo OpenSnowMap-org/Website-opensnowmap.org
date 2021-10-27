@@ -3131,103 +3131,105 @@ function showHTMLPistesList(Div) {
           //PISTE:DIFFICULTY DISPLAY
           marker ='';
           color= 'black';
-          if (piste.pistetype.indexOf("downhill") > -1) {
-            if (piste.difficulty) {
-              marker = '&#9679;'; // bullet
-              if (piste.difficulty == 'novice' ){
-                marker = '&#9679;'; 
-                color = diffcolor[piste.difficulty];
-              }
-              else if (piste.difficulty == 'easy' ){
-                marker = '&#9679;'; 
-                color = diffcolor[piste.difficulty];
-              }
-              else if (piste.difficulty == 'intermediate' ){
-                marker = '&#9679;'; 
-                color = diffcolor[piste.difficulty];
-              }
-              else if (piste.difficulty == 'advanced' ){
-                marker = '&#9679;'; 
-                color = diffcolor[piste.difficulty];
-              }
-              else if (piste.difficulty == 'expert' ){
-                marker = '&#9888;'; // warning
-                color = diffcolor[piste.difficulty];
-              }
-              else if (piste.difficulty == 'freeride' ){
-                marker = '&#9888;'; // warning
-                color = diffcolor[piste.difficulty];
-              }
-              else {
-                marker = '?'; // Question mark
-                color ='black';
-              }
-              
-              if (lat > 0 && lon < -40) {
+          if (piste.pistetype) {
+            if (piste.pistetype.indexOf("downhill") > -1) {
+              if (piste.difficulty) {
+                marker = '&#9679;'; // bullet
                 if (piste.difficulty == 'novice' ){
                   marker = '&#9679;'; 
-                  color = diffcolorUS[piste.difficulty];
+                  color = diffcolor[piste.difficulty];
                 }
                 else if (piste.difficulty == 'easy' ){
                   marker = '&#9679;'; 
-                  color = diffcolorUS[piste.difficulty];
+                  color = diffcolor[piste.difficulty];
                 }
                 else if (piste.difficulty == 'intermediate' ){
                   marker = '&#9679;'; 
-                  color = diffcolorUS[piste.difficulty];
+                  color = diffcolor[piste.difficulty];
                 }
                 else if (piste.difficulty == 'advanced' ){
-                  marker = '&diams;';
-                  color = diffcolorUS[piste.difficulty];
+                  marker = '&#9679;'; 
+                  color = diffcolor[piste.difficulty];
                 }
                 else if (piste.difficulty == 'expert' ){
-                  marker = '&diams;&diams;';
-                  color = diffcolorUS[piste.difficulty];
+                  marker = '&#9888;'; // warning
+                  color = diffcolor[piste.difficulty];
                 }
                 else if (piste.difficulty == 'freeride' ){
                   marker = '&#9888;'; // warning
-                  color = diffcolorUS[piste.difficulty];
+                  color = diffcolor[piste.difficulty];
                 }
                 else {
                   marker = '?'; // Question mark
                   color ='black';
                 }
-              }
-            } 
-          }
-          if (piste.pistetype.indexOf("nordic") > -1) {
-            marker = '?'; // Question mark
-            color ='black';
-            if (piste.difficulty) {
-              if (piste.difficulty == 'novice' ){
-                marker = ''; // warning
-                color ='black';
-              }
-              else if (piste.difficulty == 'easy' ){
-                marker = ''; // warning
-                color ='black';
-              }
-              else if (piste.difficulty == 'intermediate' ){
-                marker = '&#9888;'; // warning
-                color ='black';
-              }
-              else if (piste.difficulty == 'advanced' ){
-                marker = '&#9888;'; // warning
-                color = 'red';
-              }
-              else if (piste.difficulty == 'expert' ){
-                marker = '&#9888;'; // warning
-                color = 'red';
-              }
-              else if (piste.difficulty == 'freeride' ){
-                marker = '&#9888;'; // warning
-                color = 'red';
-              }
-              else {
-                marker = '?'; // Question mark
-                color ='black';
-              }
-            } 
+                
+                if (lat > 0 && lon < -40) {
+                  if (piste.difficulty == 'novice' ){
+                    marker = '&#9679;'; 
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else if (piste.difficulty == 'easy' ){
+                    marker = '&#9679;'; 
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else if (piste.difficulty == 'intermediate' ){
+                    marker = '&#9679;'; 
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else if (piste.difficulty == 'advanced' ){
+                    marker = '&diams;';
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else if (piste.difficulty == 'expert' ){
+                    marker = '&diams;&diams;';
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else if (piste.difficulty == 'freeride' ){
+                    marker = '&#9888;'; // warning
+                    color = diffcolorUS[piste.difficulty];
+                  }
+                  else {
+                    marker = '?'; // Question mark
+                    color ='black';
+                  }
+                }
+              } 
+            }
+            if (piste.pistetype.indexOf("nordic") > -1) {
+              marker = '?'; // Question mark
+              color ='black';
+              if (piste.difficulty) {
+                if (piste.difficulty == 'novice' ){
+                  marker = ''; // warning
+                  color ='black';
+                }
+                else if (piste.difficulty == 'easy' ){
+                  marker = ''; // warning
+                  color ='black';
+                }
+                else if (piste.difficulty == 'intermediate' ){
+                  marker = '&#9888;'; // warning
+                  color ='black';
+                }
+                else if (piste.difficulty == 'advanced' ){
+                  marker = '&#9888;'; // warning
+                  color = 'red';
+                }
+                else if (piste.difficulty == 'expert' ){
+                  marker = '&#9888;'; // warning
+                  color = 'red';
+                }
+                else if (piste.difficulty == 'freeride' ){
+                  marker = '&#9888;'; // warning
+                  color = 'red';
+                }
+                else {
+                  marker = '?'; // Question mark
+                  color ='black';
+                }
+              } 
+            }
           }
           span.style.color = color;
           span.innerHTML = marker;
