@@ -1006,7 +1006,7 @@ function page_init() {
   };
 
   document.getElementById('changesButton').onclick = function() {
-    window.open('http://www.opensnowmap.org/qa/Pistes_changes/web/');
+    window.open('https://www.opensnowmap.org/qa/Pistes_changes/web/');
   };
   document.getElementById('searchMenuButton').onclick = function() {
     showsearch();
@@ -1031,7 +1031,7 @@ function page_init() {
     showlegend();
   };
   document.getElementById('blogButton').onclick = function() {
-    window.open('http://blog.opensnowmap.org');
+    window.open('https://blog.opensnowmap.org');
   };
   document.getElementById('dataButton').onclick = function() {
     window.open('iframes/data.html');
@@ -3443,7 +3443,7 @@ function showExtLink(div, ids, element_type) {
           spans[i].innerHTML = element_type; //way or relation
         }
         if (data == 'analyseUrl') {
-          spans[i].href = "http://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
+          spans[i].href = "https://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
         }
       }
 
