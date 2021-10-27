@@ -2843,6 +2843,7 @@ function showHTMLRouteList(Div) {
     }
     Div.appendChild(document.createElement('br')); 
     Div.appendChild(document.createElement('br'));
+    Div.appendChild(document.createElement('br'));
   }
 }
 function toggleShort(div) {
