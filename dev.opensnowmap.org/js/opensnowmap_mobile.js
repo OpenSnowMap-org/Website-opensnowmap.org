@@ -2456,10 +2456,10 @@ function showHTMLRouteList(Div) {
           color = diffcolor[piste.difficulty];
         }
         if (marker) {
-          nameHTML += marker +"&nbsp;";
+          nameHTML += marker +" ";
           nameHTML += piste.name;
         } else if (color) {
-          nameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span><span>";
+          nameHTML += " <span style=\"color:"+color+"\">●</span><span>";
           nameHTML += piste.name;
         }
       } else {
@@ -2479,7 +2479,7 @@ function showHTMLRouteList(Div) {
             color = diffcolor[piste.in_routes[r].difficulty];
           }
           routeName = piste.in_routes[r].name;
-          nameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span><span>"+routeName+"</span>";
+          nameHTML += " <span style=\"color:"+color+"\">●</span><span>"+routeName+"</span>";
           lengthLong += 2 + routeName.length;
           shortNameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span>";
           char += 2;
