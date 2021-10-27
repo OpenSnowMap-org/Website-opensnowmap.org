@@ -2003,6 +2003,9 @@ function RouteRemovePointById(selectedpointID) {
       }
     }
   }
+  if (getOverlayByName('deletePoint')) {
+    getOverlayByName('deletePoint').setPosition(undefined);
+  }
   var i = 0;
   //re-number features
   var features=routeSourcePoints.getFeatures();
@@ -2011,9 +2014,9 @@ function RouteRemovePointById(selectedpointID) {
       i+=1;
   }
   i = 0;
-  features=routeSourceLines.getFeatures();
+  var lines=routeSourceLines.getFeatures();
   for (f in features) {
-      features[f].setProperties({'id': i});
+      lines[f].setProperties({'id': i});
       i+=1;
   }
   RouteReStyle();
