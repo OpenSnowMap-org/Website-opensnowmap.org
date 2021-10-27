@@ -2520,38 +2520,28 @@ function showHTMLRouteList(Div) {
               if (g.indexOf("classic") > -1) {
                 img = document.createElement('img');
                 img.src = icon["classic"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
               if (g.indexOf("skating") > -1) {
                 img = document.createElement('img');
                 img.src = icon["skating"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
               if (g.indexOf("backcountry") > -1) {
                 img = document.createElement('img');
                 img.src = icon["crosscountry"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
               if (g.indexOf("scooter") > -1) {
                 img = document.createElement('img');
                 img.src = icon["crosscountry"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
             }
             if (! done) {
               img = document.createElement('img');
               img.src = icon["nordic"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
 
@@ -2561,24 +2551,18 @@ function showHTMLRouteList(Div) {
               if (g.indexOf("classic") > -1) {
                 img = document.createElement('img');
                 img.src = icon["hike"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
               if (g.indexOf("backcountry") > -1) {
                 img = document.createElement('img');
                 img.src = icon["snowshoe"];
-                img.className = 'pisteIcon';
-                picDiv.appendChild(img);
-                done = true;
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
             }
             if (! done) {
               img = document.createElement('img');
               img.src = icon["snowshoe"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
             
@@ -2587,9 +2571,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["downhill"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("skitour") > -1) {
@@ -2597,9 +2579,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["skitour"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("playground") > -1) {
@@ -2607,9 +2587,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["playground"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("sled") > -1) {
@@ -2617,9 +2595,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["sled"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("sleigh") > -1) {
@@ -2627,9 +2603,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["sleigh"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("snow_park") > -1) {
@@ -2637,9 +2611,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["snow_park"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("ski_jump") > -1) {
@@ -2647,9 +2619,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["ski_jump"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("cable_car") > -1) {
@@ -2657,9 +2627,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["cable_car"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("chair_lift") > -1) {
@@ -2667,9 +2635,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["chair_lift"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("drag_lift") > -1) {
@@ -2677,9 +2643,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["drag_lift"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("funicular") > -1) {
@@ -2687,9 +2651,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["funicular"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("gondola") > -1) {
@@ -2697,9 +2659,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["gondola"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("jump") > -1) {
@@ -2707,9 +2667,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["ski_jump"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("magic_carpet") > -1) {
@@ -2717,9 +2675,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["magic_carpet"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("mixed_lift") > -1) {
@@ -2727,9 +2683,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["mixed_lift"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("t-bar") > -1) {
@@ -2737,9 +2691,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["t-bar"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("j-bar") > -1) {
@@ -2747,9 +2699,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["j-bar"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("platter") > -1) {
@@ -2757,9 +2707,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["platter"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
           if (t.indexOf("rope_tow") > -1) {
@@ -2767,9 +2715,7 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["rope_tow"];
-              img.className = 'pisteIcon';
-              picDiv.appendChild(img);
-              done = true;
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
         
@@ -2895,6 +2841,8 @@ function showHTMLRouteList(Div) {
       
       Div.appendChild(pisteHTML);
     }
+    Div.appendChild(document.createElement('br')); 
+    Div.appendChild(document.createElement('br'));
   }
 }
 function toggleShort(div) {
