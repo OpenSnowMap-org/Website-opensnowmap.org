@@ -2726,7 +2726,7 @@ function showHTMLRouteList(Div) {
       if (piste.difficulty) {
         diffHTML += _(piste.difficulty);
       }
-      marker ='';
+      marker =_('difficulty')+' ?';
       if (pistetype.indexOf("downhill") > -1) {
         if (piste.difficulty) {
           marker = '&#9679;'; // bullet
@@ -2756,7 +2756,7 @@ function showHTMLRouteList(Div) {
             color = diffcolor[piste.difficulty];
           }
           else {
-            marker = '?'; // Question mark
+            marker = _('difficulty')+' ?'; // Question mark
             color ='black';
           }
           
@@ -2787,14 +2787,14 @@ function showHTMLRouteList(Div) {
               color = diffcolorUS[piste.difficulty];
             }
             else {
-              marker = '?'; // Question mark
+              marker = _('difficulty')+' ?'; // Question mark
               color ='black';
             }
           }
         } 
       }
       if (pistetype.indexOf("nordic") > -1) {
-        marker = '?'; // Question mark
+        marker = _('difficulty')+' ?'; // Question mark
         color ='black';
         if (piste.difficulty) {
           if (piste.difficulty == 'novice' ){
@@ -2822,7 +2822,7 @@ function showHTMLRouteList(Div) {
             color = 'red';
           }
           else {
-            marker = '?'; // Question mark
+            marker = _('difficulty')+' ?'; // Question mark
             color ='black';
           }
         } 
