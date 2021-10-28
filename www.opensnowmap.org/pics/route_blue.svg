@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="53.354622"
+   height="53.354622"
+   viewBox="0 0 14.116744 14.116744"
+   version="1.1"
+   id="svg5509"
+   sodipodi:docname="route_blue.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <defs
+     id="defs5503">
+    <filter
+       inkscape:menu-tooltip="Blur the contents of objects, preserving the outline"
+       inkscape:menu="Blurs"
+       inkscape:label="Blur content"
+       id="filter4158-4"
+       style="color-interpolation-filters:sRGB">
+      <feColorMatrix
+         result="result7"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 "
+         id="feColorMatrix4160-9" />
+      <feGaussianBlur
+         stdDeviation="5"
+         result="result6"
+         id="feGaussianBlur4162-1" />
+      <feComposite
+         result="result91"
+         in="result6"
+         operator="atop"
+         in2="result7"
+         id="feComposite4164-3" />
+      <feComposite
+         operator="in"
+         in2="result91"
+         id="feComposite4166-5" />
+    </filter>
+    <filter
+       inkscape:menu-tooltip="Smooth colorized contour which allows desaturation and hue rotation"
+       inkscape:menu="Blurs"
+       inkscape:label="Fancy blur"
+       id="filter4076-9"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         result="result1"
+         stdDeviation="5"
+         id="feGaussianBlur4078-7" />
+      <feComposite
+         k4="0"
+         k3="0"
+         k1="0"
+         in="result1"
+         k2="2"
+         operator="arithmetic"
+         in2="result1"
+         id="feComposite4080-4" />
+    </filter>
+    <filter
+       inkscape:menu-tooltip="Blur the contents of objects, preserving the outline"
+       inkscape:menu="Blurs"
+       inkscape:label="Blur content"
+       id="filter4158-4-3"
+       style="color-interpolation-filters:sRGB">
+      <feColorMatrix
+         result="result7"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 "
+         id="feColorMatrix4160-9-6" />
+      <feGaussianBlur
+         stdDeviation="5"
+         result="result6"
+         id="feGaussianBlur4162-1-7" />
+      <feComposite
+         result="result91"
+         in="result6"
+         operator="atop"
+         in2="result7"
+         id="feComposite4164-3-5" />
+      <feComposite
+         operator="in"
+         in2="result91"
+         id="feComposite4166-5-3" />
+    </filter>
+    <filter
+       inkscape:menu-tooltip="Smooth colorized contour which allows desaturation and hue rotation"
+       inkscape:menu="Blurs"
+       inkscape:label="Fancy blur"
+       id="filter4076-9-5"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         result="result1"
+         stdDeviation="5"
+         id="feGaussianBlur4078-7-6" />
+      <feComposite
+         k4="0"
+         k3="0"
+         k1="0"
+         in="result1"
+         k2="2"
+         operator="arithmetic"
+         in2="result1"
+         id="feComposite4080-4-2" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.7830427"
+     inkscape:cx="-54.977926"
+     inkscape:cy="33.561648"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px"
+     inkscape:window-width="1870"
+     inkscape:window-height="1016"
+     inkscape:window-x="50"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox="true"
+     inkscape:snap-object-midpoints="true" />
+  <metadata
+     id="metadata5506">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-98.589861,-370.35672)">
+    <path
+       style="fill:none;stroke:#004bb5;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 101.76486,381.29846 c 5.35087,0.32603 13.55271,-2.10018 4.96242,-4.71928 -5.66109,-1.47309 0.95905,-3.14629 2.53452,-3.05282"
+       id="path881"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <circle
+       cy="380.76929"
+       cx="102.29403"
+       id="circle883"
+       style="opacity:1;fill:#004bb5;fill-opacity:1;stroke:none;stroke-width:1.32291663;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       r="2.6458333" />
+    <rect
+       y="373.32791"
+       x="108.76571"
+       height="0.39687496"
+       width="0.99218738"
+       id="rect897"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:1.05833343, 1.05833343;stroke-dashoffset:0;stroke-opacity:1" />
+    <circle
+       style="opacity:1;fill:#004bb5;fill-opacity:1;stroke:none;stroke-width:1.32291663;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle975"
+       cx="109.26181"
+       cy="373.5264"
+       r="1.5875" />
+  </g>
+</svg>
