@@ -27,11 +27,11 @@ for f in files:
 			if k not in KEYS:
 				print k + ' not in en.json !'
 				pdb.set_trace()
-				exit(0)
+				# ~ exit(0)
 		for k in KEYS :
 			if k not in langdict.keys():
 				print k + ' not in '+ filename
-				exit(0)
+				# ~ exit(0)
 		fil.seek(0)
 		content = fil.readlines()
 		content=('').join(content)
