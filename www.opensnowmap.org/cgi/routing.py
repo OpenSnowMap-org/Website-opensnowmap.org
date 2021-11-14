@@ -382,10 +382,10 @@ def info(lat1, lon1):
 	cur.execute("SELECT osm_id, \
 				  ST_Distance( \
 					way, \
-					st_transform(ST_GeometryFromText('POINT(%s %s)', 4326),900913)\
+					st_transform(ST_GeometryFromText('POINT(%s %s)', 4326),3857)\
 				  ) AS dist  \
 				 FROM planet_osm_line   \
-				 WHERE way && st_transform(st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326),900913) and osm_id >0 \
+				 WHERE way && st_transform(st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326),3857) and osm_id >0 \
 				 ORDER BY dist LIMIT 1;" %(lon1, lat1, lon1-box, lat1-box, lon1+box, lat1+box))
 	try: wayid=str(cur.fetchall()[0][0])
 	# maybe there is not pistes nearby
