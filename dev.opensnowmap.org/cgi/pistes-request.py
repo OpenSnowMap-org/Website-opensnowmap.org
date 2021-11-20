@@ -985,7 +985,7 @@ def getSiteStats(ID):
 	stats={}
 	stats['site']=ID
 	
-	sql="""select sum(St_Length_Spheroid(linestring,'SPHEROID["GRS_1980",6378137,298.257222101]'))
+	sql="""select sum(ST_LengthSpheroid(linestring,'SPHEROID["GRS_1980",6378137,298.257222101]'))
 	from (
 		SELECT DISTINCT linestring FROM ways 
 		WHERE id in (
