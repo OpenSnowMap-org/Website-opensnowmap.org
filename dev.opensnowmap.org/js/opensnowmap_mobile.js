@@ -2234,6 +2234,10 @@ function RouteSnap(point) {
         'isSnapped': true
       }); 
       point.getGeometry().setCoordinates(llm); // We assign sanpped point coordinates but snap last point here
+      if (! ol.extent.containsCoordinate(map.getView().calculateExtent(), llm))
+      {
+        map.getView().setCenter(llm);
+      }
       if (getOverlayByName("deletePoint")) {getOverlayByName("deletePoint").setPosition(llm);}
       RouteReStyle();
       
