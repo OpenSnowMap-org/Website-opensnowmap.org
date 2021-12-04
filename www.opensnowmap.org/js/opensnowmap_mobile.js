@@ -615,6 +615,32 @@ function showLastEditsSettings() {
 
 }
 
+function showMapEditSettings() {
+  
+  var dd = document.getElementsByClassName('menuDropDownContent');
+  var content = document.getElementById('mapEditDropDownContent');
+  var link = content.getElementsByClassName('localizedIframe')[0];
+  link.href='iframes/how-to-' + iframelocale + '.html';
+
+  if (content.style.display == 'none') {
+    for (var d = 0; d < dd.length; d++)
+      dd[d].style.display = 'none';
+    content.style.display = 'inline';
+  } else
+    content.style.display = 'none';
+  return true;
+}
+
+function show_printSettings() {
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
+  var hash = "#map="+map.getView().getZoom()+'/'+c[0]+'/'+c[1]+'&base='+BASELAYER;
+    //~ var center = map.getCenter().transform(new OpenLayers.Projection('EPSG:900913'), new OpenLayers.Projection('EPSG:4326'));
+    //~ //#map=4/6/42/0
+    //~ var hash = "#map="+z+'/'+center.lon+'/'+center.lat+'&base='+BASELAYER;
+    console.log(hash);
+  window.open("print.html" + hash, "_blank", "height=480,width=685");
+}
+
 function showmenu() {
   hideexcept('menu');
   document.getElementById('menu').style.display = 'inline';
@@ -955,6 +981,9 @@ function page_init() {
     MARKER = !MARKER;
     setMarker();
   };
+  document.getElementById('printMenuButton').onclick = function() {
+    show_printSettings();
+  };
   document.getElementById('langs').onclick = function() {
     show_languages();
   };
@@ -968,6 +997,9 @@ function page_init() {
   };
   document.getElementById('lastEditsDropDown').onclick = function() {
     showLastEditsSettings();
+  };
+  document.getElementById('mapEditDropDown').onclick = function() {
+    showMapEditSettings();
   };
   document.getElementById('OSMBaseLAyer').onclick = function() {
     BASELAYER = 'osm';
@@ -1042,6 +1074,28 @@ function page_init() {
   document.getElementById('donateButton').onclick = function() {
     window.open('iframes/donate.html');
   };
+  document.getElementById('legacyButton').onclick = function() {
+    window.open('https://www.opensnowmap.org/legacy.html');
+  };
+  document.getElementById('EditVespucci').onclick = function() {
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
+  var url = "geo:"+c[1]+","+c[0]
+    window.open(url);
+  };
+  document.getElementById('EditId').onclick = function() {
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
+  var url = "https://www.openstreetmap.org/edit?zoom="+map.getView().getZoom()+"&amp;lat="+c[1]+"&amp;lon="+c[0]+"&amp;layers=BTT&amp;editor=id"
+    window.open(url);
+  };
+  document.getElementById('EditJOSM').onclick = function() {
+    josmRemote();
+  };
+  document.getElementById('EditOffset').onclick = function() {
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
+  var hash = "#map="+map.getView().getZoom()+'/'+c[0]+'/'+c[1];
+  window.open("http://www.opensnowmap.org/offseter/index.html" + hash, "_blank");
+  };
+  
   // Control elements for routing
   // Overlay controls
   document.getElementById('close_popup').onclick = function() {
@@ -3595,7 +3649,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'snowmap',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -3612,7 +3666,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes&relief',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -3621,7 +3675,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -3630,7 +3684,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'snowmap_HiDPI',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/base_snow_map_high_dpi/{z}/{x}/{y}.png",
           tileSize: 384,
           tilePixelRatio: 1
         }),
@@ -3648,7 +3702,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes&relief_HiDPI',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/pistes-relief/{z}/{x}/{y}.png",
         }),
         visible: false,
         maxZoom: 18
@@ -3657,7 +3711,7 @@ function map_init() {
       new ol.layer.Tile({
         name: 'pistes_HiDPI',
         source: new ol.source.XYZ({
-          url: protocol + "//tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png?debug1",
+          url: protocol + "//tiles.opensnowmap.org/tiles-pistes-high-dpi/{z}/{x}/{y}.png",
           tileSize: 384,
           tilePixelRatio: 1
         }),
@@ -3861,4 +3915,12 @@ function abortXHR(type) {
     RouteXHR.length = 0;
   }
   return true;
+}
+function josmRemote() {
+    var bb = ol.extent.applyTransform(map.getView().calculateExtent(), ol.proj.getTransform('EPSG:3857', 'EPSG:4326'), undefined);
+    var q = 'http://127.0.0.1:8111/load_and_zoom?left=' + bb[0] + '&top=' + bb[3] + '&right=' + bb[2] + '&bottom=' + bb[1];
+    var XMLHttp = new XMLHttpRequest();
+    XMLHttp.open("GET", q, true);
+    XMLHttp.send();
+
 }

@@ -1,703 +1,664 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
    
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<link rel="icon" type="image/png" href="favicon.png" />
-	<meta http-equiv="content-type" 
-		content="text/html;charset=utf-8" />
-		<title>OpenSnowMap.org</title>
-		<link rel="shortcut icon" href="favicon.ico" />
-		<link rel="stylesheet" href="main.css" media="screen" />
-		<script>var isready= true;</script>
-		<script src="js/json2.js" type="text/javascript"></script> 
-		<script src="i18n/translations.js" type="text/javascript"></script> 
-		<script src="js/OpenLayers-opt.js" type="text/javascript"></script> 
-		<script src="js/OpenStreetMap.js" type="text/javascript"></script>
-		<script src="js/opensnowmap.js" type="text/javascript"></script>
-		<script type="text/javascript">
-		
-		var readyStateCheckInterval = setInterval(function() {
-		    if (window.document.readyState === "complete") {
-		        clearInterval(readyStateCheckInterval);
-		        
-		        map_init(); 
-		        page_init();
-		    }
-		}, 10);
-		
-		</script>
-		
-	</head>
-	<body id="body">
-		<div id="summary" class="hidden">
-		<H1>www.opensnowmap.org</H1>
-		<H2><b>Worldwide ski map </b></H2>
-		<p>La carte de OpenSnowMap.org présente plus de 60'000km de piste de ski alpin, de ski de fond et de remontées mécaniques.
-		 Trouvez les traces les plus proches et étudiez les dénivelés des pistes de ski.</p> 
-		<p> The map on OpenSnowMap.org shows more than 60'000km of downhill or alpine ski pistes, nordic or crosscountry ski pistes and ski lifts.
-		Find the nearest trail on the map and study the elevation profile of your
-		 ski session.</p>
-		</div>
-<!-- The map-->
-		<div id="map">
-			<!-- inside of map div to allow z-indexing under panzoombar -->
-			<div id="helper-centering">
-				<div id="waiter" style="display: none;"><img src="pics/snake_transparent.gif"></div>
-			</div>	   
-		
-		</div>
-<!-- Small control on top-left corner accessible to mobile user-->
-        <div id="mobile-switcher">                
-            <div id="mobileswitch"  href="javascript:void(0);"
-            onmouseover="document.images['mobilePicTop'].src='pics/mobile-22-hover.png';"
-            onmouseout="document.images['mobilePicTop'].src='pics/mobile-22.png';"
-            onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
-                    document.cookie='version=mobile';"
-            class="Button" >
-                <img name="mobilePicTop" src="pics/mobile-22.png">
-<!--
-                <img name="desktopPicTop" src="pics/desktop-22-hover.png">
--->
-                </div>
+  <head>
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="icon" href="favicon.ico"/>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <title>OpenSnowMap.org</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="mobile.css" media="screen" />
+    <link rel="stylesheet" href="js/snowmap-build/ol_snowmap.css" type="text/css"/>
+    <script>var isready= true;</script>
+<!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+<!-- <script src="https://unpkg.com/elm-pep"></script> -->
+<!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+<!--<script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,URL,TextDecoder,Number.isInteger"></script>-->
+    <script src="js/elm-pep.js" type="text/javascript"></script> 
+    <script src="js/polyfill-ol.min.js" type="text/javascript"></script> 
+    <script src="js/json2.js" type="text/javascript"></script> 
+    <script src="i18n/translations.js" type="text/javascript"></script> 
+    <script src="js/snowmap-build/ol_snowmap.js" type="text/javascript"></script> 
+    <script src="js/opensnowmap_mobile.js" type="text/javascript"></script>
+    <script src="js/fastclick.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var readyStateCheckInterval = setInterval(function() {
+        if (window.document.readyState === "complete") {
+          clearInterval(readyStateCheckInterval);
+          
+          map_init(); 
+          page_init();
+        }
+      }, 10);
+      
+    </script>
+  </head>
+  <body id="body">
+    <div id="summary" style="display:none">
+      <H1>www.opensnowmap.org</H1>
+      <H2><b>Worldwide ski map </b></H2>
+      <p>La carte de OpenSnowMap.org présente plus de 60'000km de piste de ski alpin, de ski de fond et de remontées mécaniques.
+        Trouvez les traces les plus proches et étudiez les dénivelés des pistes de ski.
+      </p>
+      <p> The map on OpenSnowMap.org shows more than 60'000km of downhill and crosscountry ski pistes and ski lifts.
+        Find the nearest trail and study the elevation profile of your
+        ski session.
+      </p>
+    </div>
+    <div id="page">
+      <div id = "header">
+        <div id="menuButton" class="menuButton fastclick Button float-left iconButton noBorder" >
+          <img class="button-img"  src="pics/menu_thin_64.png"/>
         </div>
-<!-- Zoom level in PanZoomBar-->
-		<div id="zoom"></div>
+        <div id="location" class="fastclick Button float-left iconButton noBorder" >
+          <img id="locationSwitchImg" class="button-img" src="pics/localisation_thin.svg"/>
+        </div>
+        <div id="viewSwitch" class="fastclick Button float-left iconButton noBorder">
+          <img id="viewSwitchImg" class="button-img"  src="pics/plus_minus_5_64.svg"/>
+        </div>
+        <div id="searchButtonHeader" class="fastclick Button float-left iconButton noBorder">
+          <img id="searchButtonHeaderImg" class="button-img"  src="pics/search_thin_aligned.svg"/>
+        </div>
+      </div>
+      <div id="content-outer" style="display:none">
+        <div id="content" style="display:none"> <!-- -->
+          <div id="content_title" class="toCaps"></div>
+          <div class="clear"></div>
+          <div id="menu">
+            <hr class="hrmenu"/>
+            <div id="mapSettingsDropDown" class="Button fastclick textButton">
+              <img src="pics/map_layers.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="base_map"></span>&nbsp;&#9662;
+            </div>
+            <div id="mapSettingsDropDownContent" class="menuDropDownContent" >
+              <hr class="hrmenu"/>
+              <div id="OSMBaseLAyer"
+                class="Button fastclick textButtonDropDown">
+                OpenStreetMap
+              </div>
+              <hr class="hrmenu"/>
+              <div id="SnowBaseLAyer" class="Button fastclick textButtonDropDown">
+                SnowMap
+              </div>
+              <hr class="hrmenu"/>
+              <div id="high_dpi" class="Button fastclick textButtonDropDown">
+                <span>High DPI</span>
+                <img id="viewSwitchImgMenu"  src="pics/minus_plus_5_64.svg" style="height: 20px; vertical-align:sub"/>
+              </div>
+              <div class="clear"></div>
+            </div>
+            <hr class="hrmenu"/>
+            <div id="searchMenuButton" class="Button fastclick textButton">
+              <img src="pics/search_thin_aligned.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="Search_title"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="routingMenuButton" class="Button fastclick textButton">
+              <img src="pics/route.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="routing_title"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="queryMenuButton" class="Button fastclick textButton">
+              <img src="pics/query.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="Query_pistes_title"></span>
+            </div>
+            <div id="pisteListMenuButton" class="Button fastclick textButton">
+              <img src="pics/list.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="List_pistes_title"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="lastEditsDropDown" class="Button fastclick textButton">
+              <img src="pics/OSM_icon_bw.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n menuInfo toCaps" i18nText="last_edits"></span>&nbsp;&#9662;
+            </div>
+            <div id="lastEditsDropDownContent" class="menuDropDownContent" >
+              <img src="pics/changes_legend.png" style="margin-left: 20px;margin-bottom: 5px;"/>
+              <hr class="hrmenu"/>
+              <div id="dailyVector" class="Button fastclick textButtonDropDown" >
+                <span class="i18n" i18nText="yesterday"></span>
+              </div>
+              <hr class="hrmenu"/>
+              <div id="weekVector" class="Button fastclick textButtonDropDown"  >
+                <span class="i18n" i18nText="weekly"></span>
+              </div>
+              <hr class="hrmenu"/>
+              <div id="noVector" class="Button fastclick textButtonDropDown" >
+                X
+              </div>
+              <hr class="hrmenu"/>
+              <div id="changesButton" class="Button fastclick textButtonDropDown" >
+                <span class="i18n" i18nText="View changes &raquo;"></span>
+              </div>
+              <div class="clear"></div>
+            </div>
+            <div id="mapEditDropDown" class="Button fastclick textButton">
+              <span class="i18n toCaps" i18nText="EDIT"></span>&nbsp;&#9662;
+            </div>
+            <div id="mapEditDropDownContent" class="menuDropDownContent" >
+              <a class="localizedIframe" href="iframes/how-to-eng.html" target="blank">
+                   <span class="i18n" i18ntext="how_to">The absolute beginner guide to map a XC trail</span>&nbsp;&raquo;</a>
+              <hr class="hrmenu"/>
+              <div id="EditVespucci"
+                class="Button fastclick textButtonDropDown">
+                <img id="viewSwitchImgMenu"  src="pics/mobile_thin_64.png" style="height: 20px; vertical-align:sub"/>
+                <span>Vespucci (geo:)</span>
+              </div>
+              <hr class="hrmenu"/>
+              <div id="EditId" class="Button fastclick textButtonDropDown">
+                <img id="viewSwitchImgMenu"  src="pics/desktop_thin_64.png" style="height: 20px; vertical-align:sub"/>
+                <span>Id</span>
+              </div>
+              <hr class="hrmenu"/>
+              <div id="EditJOSM" class="Button fastclick textButtonDropDown">
+                <img id="viewSwitchImgMenu"  src="pics/desktop_thin_64.png" style="height: 20px; vertical-align:sub"/>
+                <span>JOSM</span>
+              </div>
+              <hr class="hrmenu"/>
+              <div id="EditOffset" class="Button fastclick textButtonDropDown">
+                <img id="viewSwitchImgMenu"  src="pics/offseter-48.png" style="height: 20px; vertical-align:sub"/>
+                <span>You can also adjust the visibility of the colored pistes on www.opensnowmap.org</span>
+              </div>
+              <div class="clear"></div>
+            </div>
+            <hr class="hrmenu"/>
 
-		<div id="right-container">
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="legendButton" class="Button fastclick textButton">
+              <span class="i18n toCaps" i18nText="MAP_KEY"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="aboutButton" class="Button fastclick textButton" >
+              <span class="i18n toCaps" i18nText="ABOUT"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="blogButton" class="Button fastclick textButton" >
+              <span class="i18n toCaps" i18nText="BLOG"></span>&nbsp;&raquo;
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="dataButton" class="Button fastclick textButton" >
+              <span class="i18n toCaps" i18nText="DATA"></span>&nbsp;&raquo;
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="donateButton" class="Button fastclick textButton" >
+              <span class="i18n toCaps" i18nText="Donate"></span>&nbsp;&raquo;
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div id="legacyButton" class="Button fastclick textButton" >
+              <span class="i18n toCaps" i18nText="Legacy OpenSnowMap.org"></span>&nbsp;&raquo;
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+  <!--
+            <div id="mobileswitch" class="fastclick Button float-left iconButton">
+              <img class="button-img" src="pics/mobile_thin_64.png"/>
+            </div>
+  -->
+  <!--
+            <div id="desktopswitch" 
+              class="fastclick Button float-left iconButton" >
+              <img class="button-img" src="pics/desktop_thin_64.png"/>
+            </div>
+  -->
+            <div id="shareLinkButton" 
+              class="fastclick Button float-left iconButton" >
+              <img class="button-img"  src="pics/share.svg"/>
+            </div>
+            <div id="setMarker" 
+              class="fastclick Button float-left iconButton" >
+              <img class="button-img"  src="pics/marker_50.png"/>
+            </div>
+            <div id="printMenuButton" 
+              class="fastclick Button  float-left iconButton iconButton">
+              <img class="button-img" src="pics/print_thin_64.png"/>
+            </div>
+            <div id="langs" 
+              class="fastclick Button  float-left iconButton iconButton">
+              <img class="flagMenuImg" src="pics/flags/fra.png"/>
+            </div>
+            <div class="clear"></div>
+            <div id="copyLink" class="hidden">
+              <form>
+              <input id="linkText" type="text" name="linkText" onfocus="this.select()" >
+              </form>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div class="news">
+              <b><span class="data" dataText="date">xxxx</span> :</b><br/>
+              <table border="0">
+                <tr>
+                  <td><img src="pics/nordic-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="nordic">xxxx</span>&nbsp;km</td>
+                  <td><img src="pics/alpine-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="downhill">xxxx</span>&nbsp;km</td>
+                </tr>
+                <tr>
+                  <td><img src="pics/sled-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="sled">xxxx</span>&nbsp;km</td>
+                  <td><img src="pics/drag_lift-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="aerialway">xxxx</span>&nbsp;km</td>
+                </tr>
+                <tr>
+                  <td><img src="pics/skitour-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="skitour">xxxx</span>&nbsp;km</td>
+                  <td><img src="pics/snowshoe-nb-20.png"/>&nbsp;</td>
+                  <td><span class="data" dataText="snowshoeing">xxxx</span>&nbsp;km</td>
+                </tr>
+              </table>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
+            <div class="news">
+                <b>News</b><br/>
+                <a class="amenuLtEmphasis" target="_blank" 
+                  href="https://blog.opensnowmap.org/routing-is-now-availale-on-mobile/"
+                  >&bullet;&nbsp;Routing is now available on mobile&nbsp;&raquo;</a>
+                <br/>
+                <a class="amenuLt" target="_blank" 
+                  href="https://blog.opensnowmap.org/opensnowmap-summer-upgrade/"
+                  >&bullet;&nbsp;OpenSnowMap summer upgrade&nbsp;&raquo;</a>
+                <br/>
+                <a class="amenuLt" target="_blank" 
+                  href="https://blog.opensnowmap.org/"
+                  >&bullet;&nbsp;...&nbsp;&raquo;</a>
+            </div>
+          </div>
+          <div id="search">
+            <hr class="hr"/>
+            <div id="search_header">
+              <div id="doClearSearch" class="fastclick Button float-left iconButton">
+                <img class="button-img"  src="pics/close_64.svg" />
+              </div>
+              <div id="doSearch" class="fastclick Button float-left iconButton">
+                <img class="button-img"  src="pics/search_thin_64.png" />
+              </div>
+              <form name="search" class="float-left">
+                <input id="search_input" type="text" name="nom_search" autofocus>
+              </form>
+              <div class="clear"></div>
+              <div id="search_tooltip" class="Button fastclick textButton float-left iconButtonHint" >
+                <span class="i18n" i18nText="search-tooltip"></span>
+              </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hr"/>
+            <div id="search_results">
+              <!-- divs to display search results -->
+              <div id="searchWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+              <div id="topo_header">
+              </div>
+              <div id="piste_search_results">
+              </div>
+              <div id="waiterNominatim" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+              <div id="nominatim_results">
+                <ul class="nominatimLi" id="nominatimLi"></ul>
+                <div id="nominatim_results_footer"></div>
+              </div>
+              <br/>
+            </div>
+          </div>
+          <div id="route">
+            <hr class="hr"/>
+            <div id="route_header">
+                  <div id="doRoute" class="Button fastclick iconButton float-left" style="margin: auto;">
+                    <img id="routeSwitchImg" class="button-img"  src="pics/route.svg"/>
+                  </div>
+                  <div id="doRouteButton" class="Button fastclick textButton float-left iconButtonHint" >
+                    <span class="i18n" i18nText="routing_tooltip"></span>
+                  </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hr"/>
+            <div id="routeWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="route_results">
+              <!-- divs to display search results -->
+            </div>
+          </div>
+          <div id="query">
+            <hr class="hr"/>
+            <div id="query_header">
+                  <div id="doQueryPistes" class="Button fastclick iconButton float-left" style="margin: auto;">
+                    <img id="querySwitchImg" class="button-img"  src="pics/query.svg"/>
+                  </div>
+                  <div id="doQueryPistesButton" class="Button fastclick textButton float-left iconButtonHint" >
+                    <span class="i18n" i18nText="interactive-tooltip"></span>
+                  </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hr"/>
+              <div id="queryWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="query_results">
+              <!-- divs to display search results -->
+            </div>
+          </div>
+          <div id="pisteList">
+            <hr class="hr"/>
+            <div id="pisteList_header">
+                  <div id="dolistViewport" class="fastclick Button iconButton float-left" style="margin: auto;">
+                    <img class="button-img"  src="pics/list_50.png"/>
+                  </div>
+                  <div id="listViewportButton" class="Button fastclick textButton float-left iconButtonHint" >
+                    <span class="i18n" i18nText="list_pistes-tooltip"></span>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <hr class="hr"/>
+              <div id="listWaiterResults" class="hidden">
+                <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+              </div>
+            <div id="pisteList_results">
+              <!-- divs to display search results -->
+            </div>
+          </div>
+          <div id="legend">
+            <p><img src="pics/mapkey.png"/></p>
+            <p><span class="i18n" i18nText="key-color"></span>
+              <a target="blank" href="https://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.
+            </p>
+            <p><span class="i18n" i18nText="learn-difficulties"></span>
+              <a target="blank" href="https://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#Difficulty"> (2)</a>.
+            </p>
+            <hr class="hrmenu"/>
+            <p><a href="iframes/how-to-en.html" target="blank"><span class="i18n" i18nText="how_to"></span></a></p>
+          </div>
+          <div id="about"></div>
+          <div id="languages" class="hidden sideBarContent"></div>
+        </div>
+        <div id="content-control">
+          <div id="reduceButton" class="">
+            <img class="button-img" src="pics/reduce_thin_64.png">
+          </div>
+        </div>
+      </div>
+      <!-- content -->
+      <div id="content-control-closed" class="hidden">
+        <div id="expandButton" class="">
+          <img class="button-img" src="pics/expand_thin_64.png">
+        </div>
+        <div id="routingButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="routingButtonHeaderImg" class="button-img"  src="pics/route.svg"/>
+        </div>
+        <div id="queryButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="queryButtonHeaderImg" class="button-img"  src="pics/query.svg"/>
+        </div>
+      </div>
+      <!--PROTOS-->
+      <div class="hidden">
+        <div id="imgSliderProto" class="imgSlider">
+          <a href="#slide-1">&nbsp;1&nbsp;</a>
+          <a href="#slide-2">&nbsp;2&nbsp;</a>
+          <a href="#slide-3">&nbsp;3&nbsp;</a>
+          <div class="slides">
+            <div id="slide-1">
+              <img id="elePic" src="https://www.opensnowmap.org/tmp/profile45306-ele.png">
+            </div>
+            <div id="slide-2">
+              <img id="2dPic" src="https://www.opensnowmap.org/tmp/profile45306-3d.png">
+            </div>
+            <div id="slide-3">
+              <img id="3dPic" src="https://www.opensnowmap.org/tmp/profile45306-2d.png">
+            </div>
+          </div>
+        </div>
 <!--
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
+        <div id="popup">
+        <div id="overlay_content">
+          <div class="overlay_close" id="close_popup" 
+          onmouseover="document.images['close_popup'].src='pics/minimize_vertical_22_hover.png'"
+          onmouseout="document.images['close_popup'].src='pics/minimize_vertical_22.png'">
+          <img name="close_popup" src="pics/minimize_vertical_22.png">
+          </div>
+          
+          <div class="overlay_controls" id="delete_all"
+          onmouseover="document.images['binAll'].src='pics/bin_22_hover.png'"
+          onmouseout="document.images['binAll'].src='pics/bin_22.png'">
+          <img name="binAll" src="pics/bin_22.png">
+          </div>
+          <div class="overlay_controls" id="delete_point"
+          onmouseover="document.images['bin'].src='pics/delete_point_22_hover.png'"
+          onmouseout="document.images['bin'].src='pics/delete_point_22.png'">
+          <img name="bin" src="pics/delete_point_22.png">
+          </div>
+      </div>
 -->
-			<div id="sideBar" class="float-right">
-				<div id="sideBarHeader" class="sideBarHeader">
-					<div class="Button textButton" id="sideBarCloseControl"
-						onclick="close_sideBar();echap();">
-						<img class="button-img" name="sideBarClose"  src="pics/reduce_down_thin_64.png">
-					</div>
-					<div id="sideBarTitle"></div>
-					<div id="sideBarControls">
-						<div id="next" class="Button float-right sideBarControlsButton"  onclick="nextResult();"
-						>&nbsp;&raquo;&nbsp;</div>
-						<div id="prev" class="Button float-right sideBarControlsButton"  onclick="prevResult();"
-						>&nbsp;&laquo;&nbsp;</div>
-						<div id="prev" class="Button  float-right"  onclick="show_helper();"
-						><span class="i18n" i18nText="HELP"></span></div>
-					</div>
-				</div>
-                    <hr class="hrmenu">
-				<div id="sideBarInBox" class="sideBarInBox">
-					<!-- The content-->
-					<div id="pisteListElementsProtos" class="hidden sideBarContent"> <!-- div to clone to build pistes lists -->
-						<!--
-						//////////////////////////////////////
-						//////////////////////////////////////
-						//   pisteListElements Prototypes   //
-						//////////////////////////////////////
-						//////////////////////////////////////
-						-->
-						
-						
-						<hr class="light" id="hrLightProto">
-                        
-                        <hr class="superlight" id="hrSuperLightProto">
-						
-						<div class="clear" id="clearProto"></div>
-						
-						<div class="pisteListElement" id="pisteListElementProto">
-							<!-- Buttons -->
-							<div class="Button getProfileButton">
-								
-								<img src="pics/profile-flat22.png">
-							</div>
-							
-							<div  class="Button moreInfoButton">
-								
-								<img src="pics/info-flat22.png">
-							</div>
-							
-							<div  class="Button getMemberListButton">
-								
-								<img src="pics/list-flat22.png">
-							</div>
-							<!-- Buttons -->
-							<div class="pisteListButton">
-								
-								&nbsp;
-								<div class="pisteIconDiv">
-									<img  src="pics/alpine.png">
-									<img  src="pics/nordic.png">
-								</div>
-								&nbsp;
-								<div class="float-left">
-									&nbsp;
-									<span class="routeColorSpan">
-										<b>●</b>
-									</span>
-									&nbsp;
-									<span class="pisteNameSpan">
-										<font>Piste</font>
-									</span>
-									<b><span class="siteNameSpan">
-										Site
-									</span></b>
-									&nbsp;
-									<div class="diffInfos" class="float-right">
-										(
-										<span class="difficultySpan">
-											<font>difficulty</font>
-										</span>
-										<span class="difficultyColorSpan">
-											<b style="color:green;">&nbsp;●&nbsp;</b>
-										</span>
-										)
-									</div>
-								</div>
-							</div>
-							
-							<div class="clear"></div>
-						
-						</div>
-						
-
-						<div class="siteStats pisteListButtonStatic" id="siteStatsProto">
-                            <hr class="superlight">
-							<div class="stats" class="hidden">
-								<table><tbody>
-									<tr>
-										<td><img class="statsIcon" src="pics/alpine-nb-20.png">&nbsp;
-										<span class="data" dataText="downhill">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/skitour-nb-20.png">&nbsp;
-										<span class="data" dataText="skitour">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/snowpark-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="snow_park" style="color:red">x</span></td>
-										<td><img class="statsIcon" src="pics/jump-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="jump" style="color:red">x</span></td>
-									</tr><tr>
-										<td><img class="statsIcon" src="pics/nordic-nb-20.png">&nbsp;
-										<span class="data" dataText="nordic">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/sled-nb-20.png">&nbsp;
-										<span class="data" dataText="sled">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/playground-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="playground" style="color:red">x</span></td>
-										<td><img class="statsIcon" src="pics/sleigh-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="sleigh" style="color:red">x</span></td>
-									</tr><tr>
-										<td><img class="statsIcon" src="pics/drag_lift-nb-20.png">&nbsp;
-										<span class="data" dataText="lifts">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/snowshoe-nb-20.png">&nbsp;
-										<span class="data" dataText="hike">xx</span>&nbsp;km<br></td>
-										<td><img class="statsIcon" src="pics/iceskate-nb-20.png">&nbsp;&nbsp;
-										<span class="data" dataText="ice_skate" style="color:green">&#9679;</span></td>
-									</tr>
-								</tbody></table>
-							</div>
-						</div>
-						
-						<div class="elementExtLink pisteListButtonStatic" id="elementExtLinkProto">
-                            
-                            <div class="clear"></div>
-							<p>
-								<span class="data" dataText="siteType">xxxx</span>&nbsp;
-								<a  class="data" dataText="siteUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
-									&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
-									<img class="textImg" src="pics/external-flat22.png">
-								</a>
-								<div class="analyse hidden">
-									<span>Analyse</span>&nbsp;
-									<a  class="data" dataText="analyseUrl" href="http://openstreetmap.org/browse/relation/xxx" target="blank">
-										&nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
-										<img src="pics/external-flat22.png" class="textImg">
-									</a>
-								</div>
-							</p>
-                            <div class="clear"></div>
-						</div>
-						<div class="clear"></div>
-                        <hr class="superLight">
-						<div class="pisteListElement"> <!-- style display -->
-							<div  class="inRouteElement pisteListButton" id="inRouteElementProto">
-									&nbsp;
-									<span class="routeColorSpan">
-										<b>●</b>
-									</span>
-									&nbsp;
-									<span class="routeNameSpan">
-										<font>Route</font>
-									</span>
-								<img class="textImg" src="pics/profile-flat22.png">
-							</div>
-							
-							<div class="inSiteElement pisteListButton" id="inSiteElementProto">
-								<b><span class="siteNameSpan">Metabief - Mont d'or</span></b>
-								<img class="textImg" src="pics/list-flat22.png">
-							</div>
-						</div>
-						<div class="clear"></div>
-						<hr class="light">
-						<div class="clear"></div>
-						<li class="nominatim_result_list" id="nominatim_result_list_proto">
-									<a class="Result">
-								Jougne, Pontarlier, Doubs, Bourgogne-Franche-Comté, France métropolitaine, 25370, France
-									</a><br/>
-						</li>
-						
-						<div id="flagsLinksProto" class="pisteListButton">
-						</div>
-						<!--
-						//////////////////////////////////////
-						//////////////////////////////////////
-						//   pisteListElements Prototypes   //
-						//////////////////////////////////////
-						//////////////////////////////////////
-						-->
-						
-					</div>
-					
-					
-					<div id="sideBarHistory" class="hidden"></div> <!-- div to display prev and next content -->
-					<div id="requestWaiter" class="hidden sideBarContent"> <!-- rolling snake  -->
-						<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
-					</div>
-					<div id="search_results" class="hidden sideBarContent"> <!-- divs to display search results -->
-						<div id="piste_search_results" class="hidden"></div>
-						<div id="nominatim_results" class="hidden">
-							<hr/>
-							<ul></ul>
-							<div id="nominatim_results_footer"></div>
-						</div>
-					</div>
-					
-					<div id="topo" class="hidden sideBarContent"> <!-- profile and piste lists -->
-
-						
-						<div id="profile_title" class="hidden">
-							<b><span class="i18n" i18nText="PROFILE">xxxx</span></b>
-						</div>
-						
-						<div id="profileWaiter" class="hidden">
-							<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
-						</div>
-						<div id="route_profile" class="hidden">
-							<div id="route_profile_image"><img src="pics/profile54698.png"></div>
-						</div>
-						
-						<div class="Button iconButton float-right" onclick="new_window();">
-							<img src="pics/print-22.png">
-						</div>
-						
-						<div class="clear"></div>
-						
-						<div id="routing_title" class="hidden">
-							<b><span class="i18n" i18nText="routing_title">xxxx</span>
-							&nbsp;-&nbsp;
-							<span class="data" dataText="route_length">0</span>&nbsp;km</b>
-						</div>
-						
-						<div id="routeWaiter" class="hidden">
-							<p><img class="waiterImg" src="pics/snake_transparent.gif" />&nbsp;&nbsp;[Esc]</p>
-						</div>
-						<div id="route_list" class="hidden"></div>
-					</div>
-					
-					<div id="languages" class="hidden sideBarContent"></div> <!-- control to choose languages -->
-					<div id="catcher" class="hidden sideBarContent"> <!-- displayed once whenentering the site -->
-						<div class="float-left" itemscope itemtype="http://data-vocabulary.org/Event">
+        <div id="popup">
+        <div id="overlay_content">
+          <div class="overlay_controls" id="close_popup">
+          <img class="overlayImg" name="close_popup" src="pics/check_32.svg">
+          </div>
+          <div class="overlay_controls" id="delete_all">
+          <img class="overlayImg" name="binAll" src="pics/bin_32.svg">
+          </div>
+          <div class="overlay_controls" id="delete_point">
+          <img class="overlayImg" name="bin" src="pics/delete_32.svg">
+          </div>
+      </div>
+        </div>
+        <div class="siteStats pisteListButtonStatic" id="siteStatsProto">
+          <hr class="superlight"/>
+          <div class="stats">
+            <table>
+              <tbody>
+                <tr>
+                  <td><img class="statsIcon" src="pics/alpine-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="downhill">xx</span>&nbsp;km<br/>
+                  </td>
+                  <td><img class="statsIcon" src="pics/nordic-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="nordic">xx</span>&nbsp;km<br/>
+                  </td>
+                  <td><img class="statsIcon" src="pics/drag_lift-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="lifts">xx</span>&nbsp;km<br/>
+                  </td>
+                </tr>
+                <tr>
+                  <td><img class="statsIcon" src="pics/skitour-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="skitour">xx</span>&nbsp;km<br/>
+                  </td>
+                  <td><img class="statsIcon" src="pics/sled-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="sled">xx</span>&nbsp;km<br/>
+                  </td>
+                  <td><img class="statsIcon" src="pics/snowshoe-nb-20.png"/>&nbsp;
+                    <span class="data" dataText="hike">xx</span>&nbsp;km<br/>
+                  </td>
+                </tr>
+                <tr>
+                  <td><img class="statsIcon" src="pics/snowpark-nb-20.png"/>&nbsp;&nbsp;
+                    <span class="data" dataText="snow_park" style="color:red">x</span>
+                  </td>
+                  <td><img class="statsIcon" src="pics/jump-nb-20.png"/>&nbsp;&nbsp;
+                    <span class="data" dataText="jump" style="color:red">x</span>
+                  </td>
+                  <td><img class="statsIcon" src="pics/playground-nb-20.png"/>&nbsp;&nbsp;
+                    <span class="data" dataText="playground" style="color:red">x</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><img class="statsIcon" src="pics/sleigh-nb-20.png"/>&nbsp;&nbsp;
+                    <span class="data" dataText="sleigh" style="color:red">x</span>
+                  </td>
+                  <td><img class="statsIcon" src="pics/iceskate-nb-20.png"/>&nbsp;&nbsp;
+                    <span class="data" dataText="ice_skate" style="color:green">&#9679;</span>
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="elementExtLink pisteListButtonStatic" id="elementExtLinkProto">
+          <div class="clear"></div>
+          <span class="data" dataText="siteType">xxxx</span>&nbsp;
+          <a  class="data" dataText="siteUrl" href="https://openstreetmap.org/browse/relation/xxx" target="blank">
+          &nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
+          <img class="textImg" src="pics/external-flat22.png"/>
+          </a>
+          <div class="analyse hidden">
+            <span>Analyse</span>&nbsp;
+            <a  class="data" dataText="analyseUrl" href="https://openstreetmap.org/browse/relation/xxx" target="blank">
+            &nbsp;<span class="data" dataText="siteId">xxxx</span>&nbsp;
+            <img src="pics/external-flat22.png" class="textImg"/>
+            </a>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <ul>
+          <li class="nominatim_result_list" id="nominatim_result_list_proto">
+            <a class="Result">
+            Jougne, Pontarlier, Doubs, Bourgogne-Franche-Comté, France métropolitaine, 25370, France
+            </a><br/>
+          </li>
+        </ul>
+        <div id="waiterProto" class="hidden">
+          <p><img class="waiterImg" src="pics/snake_transparent.gif" /></p>
+        </div>
+        <div id="flagsLinksProto" class="pisteListButton"></div>
+        <hr class="light" id="hrLightProto"/>
+        <hr class="superlight" id="hrSuperLightProto"/>
+        <div class="clear" id="clearProto"></div>
+        
+        <div class="routeHeader" id="routeHeaderProto"> Parcours     17 km</div>
+        <div class="clear"></div>
+        <div class="singlePiste" id="singlePisteProto">
 <!--
-							<a href="http://wiki.openstreetmap.org" target="blank">
-								<img src="pics/osm-pistes-nordiques_logo-60px.png"></img>
-							</a>
+          <div class="singlePisteHeader"  > 1      km 0.5    X</div>
 -->
-						</div>
-							<b>
-							<span itemprop="summary">
-								<span id="full_length">xxxx</span> 
-								<span class="i18n" i18nText="piste_length">xxxx</span>
-							</span>
-							<span class="i18n" i18nText="you">xxxx</span></b>
+          <div class="clear"></div>
+          <div class="singlePisteLeft" >
 <!--
-							<a class="amenu i18n" 
-							href="javascript:void(0);" onclick="close_sideBar();show_edit();return false;" 
-							i18nText="EDIT">
-							xxxx
-							</a>
+            <img src="pics/nordic-nb-20.png"/>
+            <img src="pics/nordic-nb-20.png"/>
+            <img src="pics/nordic-nb-20.png"/>
 -->
-							
-						<div class="news">
-                          <b><span class="data" dataText="date">xxxx</span></b><br/>
-						  <table border="0">
-							<tr>
-							<td><img src="pics/nordic-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="nordic">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/alpine-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="downhill">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/drag_lift-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="aerialway">xxxx</span>&nbsp;km</td>
-							</tr>
-							
-							<tr>
-							<td><img src="pics/sled-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="sled">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/skitour-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="skitour">xxxx</span>&nbsp;km</td>
-							<td><img src="pics/snowshoe-nb-20.png">&nbsp;</td>
-							<td><span class="data" dataText="snowshoeing">xxxx</span>&nbsp;km</td>
-							</tr>
-						  </table>
-                        </div>
-                        <div class="news">
-                            <b>News</b><br/>
-							<a class="amenuLtEmphasis" target="_blank" 
-							  href="https://blog.opensnowmap.org/routing-is-now-availale-on-mobile/"
-							  >&bullet;&nbsp;Routing is now available on mobile&nbsp;&raquo;</a>
-							<br/>
-							<a class="amenuLt" target="_blank" 
-							  href="https://blog.opensnowmap.org/opensnowmap-summer-upgrade/"
-							  >&bullet;&nbsp;OpenSnowMap summer upgrade&nbsp;&raquo;</a>
-							<br/>
-                            <a class="amenuLt" target="_blank" 
-                              href="http://blog.opensnowmap.org/"
-                              >&bullet;&nbsp;...&nbsp;&raquo;</a>
-                        </div>
-                        
-					</div>
-					<div id="helper" class="hidden sideBarContent">  <!-- help -->
-						<img src="pics/interactive-help.png"/><br/>
-					</div>
-					<div id="legend" class="hidden sideBarContent"> <!-- map key -->
-						<p><img src="pics/mapkey.png"></p>
-						<p>
-						<span class="i18n" i18nText="key-color">xxxx</span>
-						<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Tag:route%3Dpiste"> (1)</a>.</p>
-						<p>
-						<span class="i18n" i18nText="learn-difficulties">xxxx</span>
-						<a target="blank" href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#Difficulty"> (2)</a>.
-						</p>
-						<hr class="hrmenu">
-						<p><a class="localizedIframe" href="iframes/how-to-eng.html" target="blank">
-						<span class="i18n" i18nText="how_to">xxxx</span>
-						</a></p>
-						<hr class="hrmenu">
-					</div>
-					<div id="settings" class="hidden sideBarContent"> <!-- controls -->
-					
-						<b><span class="i18n" i18nText="base_map">xxxx</span></b>
-						<table class="sideBarTable">
-							<tr><td>
-								
-							<div class="Button ButtonMap float-left" 
-							onClick="setBaseLayer('osm');" id="setOSMLayer" value="mapnik">
-							<img  src="pics/osm-bg.png"></img>
-							</div>OpenStreetMap&nbsp;
-							
-							</td><td>
-							
-							<div class="Button ButtonMap float-left" 
-							onClick="setBaseLayer('snowbase');" id="setSnowBaseLayer" value="snowbase">
-							<img  src="pics/bsm-bg.png"></img>
-							</div>SnowMap&nbsp;
-							
-							</td></tr>
-						</table>
-						
-						 <hr class="hrmenu">
-						 
-						 <b><span class="i18n" i18nText="last_edits">xxxx</span></b>
-						<table class="sideBarTable">
-							<tr><td>
-							<div class="ButtonStatic ButtonMap float-left" >
-							<img src="pics/additions.png"></img>
-							</div>
-							</td><td>
-							 <input type="checkbox" id="checkD" class="radio"
-							 name="live" value="daily" 
-							 onClick="show_live_edits(value,checked)"   />
-							 <label ><span class="i18n" i18nText="yesterday">xxxx</span></label><br/>
-							
-							 <input type="checkbox" id="checkW" class="radio"
-							 name="live" value="weekly" 
-							 onClick="show_live_edits(value,checked)"   />
-							 <label><span class="i18n" i18nText="weekly">xxxx</span></label><br/>
-							</td></tr>
-						</table>
-                        
-                        <table class="sideBarTable">
-                                <tr>
-                                    <div class="ButtonStatic ButtonMap float-left" >
-                                    <img src="pics/changes_legend.png"></img>
-                                    <a href="http://www.opensnowmap.org/qa/Pistes_changes/web/" target="_blank">View changes &raquo;</a>
-                                    </div>
-                                </tr>
-                        </table>
-						 <hr class="hrmenu">
-						 
-						 <b><span class="i18n" i18nText="Interactive map">xxxx</span></b>
-						 <div >
-							<div class="Button iconButton float-left" onclick="infoMode()"><img src="pics/select-22.png"></div>
-							<span class="i18n" i18nText="vector_help">xxxx</span>
-						</div>
-					
-					</div>
-					<div id="edit" class="hidden sideBarContent"> <!-- allow user to modify the map -->
-						<p><b><span class="i18n" i18nText="edit_the_map_using">xxxx</span></b></p>
-						
-						<p><span class="i18n" i18nText="edit_the_map_explain">xxxx</span></p>
-						<div id="edit_zoom_in"></div>
-						<br/>
-							 
-						<table class="sideBarTable">
-							<tr><td>
-							<b>ID</b><br/>
-							<a id="permalink.id" target="blank" href="">
-								<img id="id_pic" src="pics/id-48.png"></a>
-								
-							</td><td>
-								 
-							<b>JOSM (remote)</b><br/>
-							<a onclick="josmRemote();return false;" href="">
-								<img id="josm_pic" src="pics/josm-48.png"></a>
-							</td></tr>
-						</table>
-						
-						<hr class="hrmenu">
-						
-						<p><a onclick="openOffseter();return false;" target="blank" href="">
-							<img id="offseter_pic" class="float-left" src="pics/offseter-48.png"></a>
-						<span class="i18n" i18nText="offseter_explain">xxxx</span></p>
-						<br class="clear" />
-						<hr class="hrmenu">
-						<p><a class="localizedIframe" href="iframes/how-to-eng.html" target="blank">
-							<span class="i18n" i18nText="how_to">xxxx</span></a></p>
-						<hr class="hrmenu">
-						
-					</div>
-					<div id="about" class="hidden sideBarContent"></div> <!-- about -->
-				</div>
-			
-			</div>
-			
-			
+          </div>
+          <div class="singlePisteRight" >
+            <div class="singlePisteShortName fastclick" onclick="toggleShort(this)">● Lorem ipsum ...&raquo;</div>
+            <div class="singlePisteLongName fastclick" onclick="toggleLong(this)">●Lorem ipsum dolor sit amet ●consectetur adipisici elit</div>
+            <div class="singlePisteDiff" >(intermediate)</div>
+          </div>
 <!--
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
-/////////////////////////////////////
+          <div class="clear"></div>
+          <div class="singlePisteFooter" >[ + ]</div>
 -->
-			
-			<br class="clear" />
-			<div id="MainBlock">
-				<div id="MenuBlock">
+          <div class="clear"></div>
+          <div class="singlePisteMore" ></div>
+        
+        </div>
+        
+      <div class="pisteListElement" id="pisteListElementProto">
+        <!-- Buttons -->
+        <div class="pisteListButton">
+          &nbsp;
+          <div class="pisteIconDiv">
+            <img  src="pics/alpine.png"/><!--      <img  src="pics/nordic.png"/>-->
+          </div>
+          &nbsp;
+          
+          <div class="Button getProfileButton float-left">
+            <img src="pics/profile-flat22.png"/>
+          </div>
+          <div  class="Button moreInfoButton float-left">
+            <img src="pics/info-flat22.png"/>
+          </div>
+          <div  class="Button getMemberListButton float-left">
+            <img src="pics/list-flat22.png"/>
+          </div>
+          
+          <div class="float-left">
+            &nbsp;
+            <span class="routeColorSpan">
+            <b>●</b>
+            </span>
+            &nbsp;
+            <span class="pisteNameSpan">
+            <font>Piste </font>
+            </span>
+            <b><span class="siteNameSpan">
+            Site
+            </span></b>
+            &nbsp;
+          </div>
+          <div class="diffInfos float-left">
+            (
+            <span class="difficultySpan">
+            <font>difficulty</font>
+            </span>
+            <span class="difficultyColorSpan">
+            <b style="color:green;">&nbsp;●&nbsp;</b>
+            </span>
+            )
+          </div>
+        </div>
+        <div class="clear"></div>
+        <!-- Buttons -->
+        <div class="pisteListElementFooter">
 <!--
-					<div id="MenuVerticalLeft" class="IconBarVertical">
-						<div class="closeBox" id="mainCloseControl"
-						onclick="closeMenu();"
-						onmouseover="document.images['menuClose'].src='pics/collapse-22-hover_lt.png'"
-						onmouseout="document.images['menuClose'].src='pics/collapse-22_lt.png'">
-						<img name="menuClose"  src="pics/collapse-22_lt.png"></div>
-						<br class="clear" />
-					</div>
+          <div class="Button getProfileButton">
+            <img src="pics/profile-flat22.png"/>
+          </div>
+          <div  class="Button moreInfoButton">
+            <img src="pics/info-flat22.png"/>
+          </div>
+          <div  class="Button getMemberListButton">
+            <img src="pics/list-flat22.png"/>
+          </div>
 -->
-					
-					<div id="MenuVerticalRight" class="">
-<!--
-						<br class="clear" />
--->
-	<!--				Menu buttons-->
-						<div id="MenuTextButtons">
-							<div class="Button textButton float-left" onclick="close_sideBar();show_settings();return false;"
-							id="settingsMenuButton">
-								<span class="i18n" i18nText="SETTINGS"></span></div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left" onclick="close_sideBar();show_legend();return false;"
-							id="mapkeyMenuButton">
-								<span class="i18n" i18nText="MAP_KEY"></span></div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left" onclick="close_sideBar();show_edit();return false;"
-							id="editMenuButton">
-								<span class="i18n" i18nText="EDIT"></span></div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                                
-							<div class="Button textButton float-left" onclick="close_sideBar();show_about();return false;"
-							id="aboutMenuButton">
-								<span class="i18n" i18nText="ABOUT"></span></div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left" onclick="show_helper();return false;"
-							id="aboutMenuButton">
-								<span class="i18n" i18nText="HELP"></span></div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left" onclick="window.open('http://blog.opensnowmap.org');"
-							id="blogMenuButton">
-								<span class="i18n" i18nText="BLOG"></span>&nbsp;&raquo;</div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left"  onclick="window.open('iframes/data.html');"
-							id="dataMenuButton">
-								<span class="i18n" i18nText="DATA"></span>&nbsp;&raquo;</div>
-<!--
-                            <div class=" textButton float-left">|</div>
--->
-                            
-							<div class="Button textButton float-left" onclick="window.open('iframes/donate.html');"
-							id="settingsMenuButton">
-								<span class="i18n" i18nText="menu-donate"></span></div>
-<!--
-							Empty items to avoid justifying the last line
--->
-<!--
-                            <div class="Button textButton float-left" 
-							id="settingsMenuButton">
-								<span></span></div>
-							<div class="Button textButton float-left" 
-							id="settingsMenuButton">
-								<span></span></div>
--->
-						</div>
-<!--
-						<br class="clear" />
--->
-	<!--				MenuIcons-->
-                        <hr class="hrmenu">
-						<div id="MenuIcons">
-                            
-                            <div id="selectButton" class="Button iconButton float-left" onclick="infoMode()">
-                                <img class="button-img" name="selectPic" src="pics/select_thin_64.png">
-                            </div>
-                            
-							<div onclick="getTopoByViewport();"
-                                id="listPistesMenuButton"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="listPic" src="pics/list_thin_64.png">
-                            </div>
-                            
-                            <div id="mobileswitch"  href="javascript:void(0);"
-                                onclick="window.open(document.getElementById('permalink.simple').href.replace('index','mobile'));
-									document.cookie='version=mobile';"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="mobilePic" src="pics/mobile_thin_64.png">
-                            </div>
-                            
-                            <div id="location"
-                                onclick="toggleLocation();"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="localisePic" src="pics/localisation_thin_64.png">
-                            </div>
-                            
-							<div id="permalink.simple" href="javascript:void(0);" 
-                                onclick="location.href=document.getElementById('permalink').href;"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="linkPicMenu" src="pics/link_thin_64.png">
-                            </div>
-                            
-							<div id="permalink.marker" href="javascript:void(0);"
-                                onclick="location.href=document.getElementById('permalink').href+'&marker=true';"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="markerPic" src="pics/marker_thin_64.png">
-                            </div>
-                            
-							<div onclick="show_printSettings();"
-                                id="printMenuButton"
-                                class="Button iconButton float-left" >
-								<img class="button-img" name="printPic" src="pics/print_thin_64.png">
-                            </div>
-								
-								
-							<div id="langs" onclick="show_languages();"
-                                class="Button iconButton float-left" >
-							</div>
-                            
-						</div>
-					</div>
-				</div>
-<!--
-				TITLE
--->
-				<div id="TitleBlock">
-						<div class="Button iconButton float-left" onclick="toggleMenu();">
-                            <img name="menuExt" class="button-img " src="pics/menu_thin_64.png"></div>
-<!--
-						<br class="clear" />
--->
-<!--
-						<div id="selectButton" class="Button iconButton" onclick="infoMode()"
-                            onmouseover="document.images['selectPic'].src='pics/select-22-hover.png'"
-                            onmouseout="document.images['selectPic'].src='pics/select-22.png'">
-							<img name="selectPic" src="pics/select-22.png"></div>
--->
-						<div class="Button iconButton float-left" onclick="SearchByName(document.search.nom_search.value);"
-                            id="searchMenuButton">
-							<img class="button-img" name="searchPic" src="pics/search_thin_64.png"></div>
-<!--
-					<div id="" class="">
-						<img id="titleImg" src="pics/opensnowmap_title_thin_420.png" alt="OpenSnowMap.org">
-					</div>
--->
-                        <div id="searchDiv" class="float-left">
-                            <form name="search">
-                                <input id="search_input" type="text" name="nom_search"/>
-                            </form>
-                        </div>
-				</div>
-				
-			</div>
-
-		</div> <!-- end right-container-->
-
-
-		
-<!--
-		<div id="donate-centering" >
-			<div id="donate-content">
-
-					<div id="donateCloseControl"
-						onclick="close_donate();"
-						onmouseover="document.images['helperClose'].src='pics/close-22-hover_lt.png'"
-						onmouseout="document.images['helperClose'].src='pics/close-22.png_lt'">
-						<img name="helperClose"  src="pics/close-22_lt.png">
-					</div>
-			     
-					 <div class="Button textButton" id="donate">
-					    <a class="black" href="iframes/donate.html" target="blank"><span class="i18n" i18nText="Donate"></span></a>
-					 </div>
-
-		    </div>
-	     </div>
--->
-			
-			
-		<div id="attributions">
-				&#169;<a href="http://www.openstreetmap.org" target="blank" class="black">
-				OpenStreetMap.org</a> -
-				<a href="https://asterweb.jpl.nasa.gov" target="_blank" class="black">ASTER</a> -
-				<a href="http://www2.jpl.nasa.gov/srtm/" target="_blank" class="black">SRTM</a>-
-				<a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank" class="black">EUDEM</a>
-		</div>
-		<a id="permalink" href="" 
-			onmouseover="document.images['linkPic'].src='pics/link_hover.png'"
-			onmouseout="document.images['linkPic'].src='pics/link.png'">
-			<img name="linkPic" src="pics/link.png" >
-		</a>
-		
-	</body>
+        </div>
+        <div class="profile"></div>
+        <div class="clear"></div>
+      </div>
+      <div class="pisteListElement">
+        <!-- style display -->
+        <div  class="inRouteElement pisteListButton" id="inRouteElementProto">
+          <img class="textImg" src="pics/info-flat22.png"/>
+          <span class="routeColorSpan">
+          <b>●</b>
+          </span>
+          &nbsp;
+          <span class="routeNameSpan">
+          <font>Route</font>
+          </span>
+        </div>
+        <div class="inSiteElement pisteListButton" id="inSiteElementProto">
+          <img class="textImg" src="pics/list-flat22.png"/>
+          <b><span class="siteNameSpan">Metabief - Mont d'or</span></b><br/>
+        </div>
+      </div>      </div>
+      <!--PROTOS-->
+      <div id="map" class="map">
+        <!--
+          <div id="customZoom">
+            <a class="fastclick" href="#customZoomIn" id="customZoomIn">+</a>
+            <a class="fastclick" href="#customZoomOut" id="customZoomOut">-</a>
+          </div>
+          -->
+        <div id="zoom"></div>
+      </div>
+      <div id="attribution">
+        &#169;<a href="https://www.openstreetmap.org" target="blank">
+        OpenStreetMap.org</a> -
+        <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -
+        <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-
+        <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>
+      </div>
+    </div>
+    <!-- page -->
+  </body>
 </html>
