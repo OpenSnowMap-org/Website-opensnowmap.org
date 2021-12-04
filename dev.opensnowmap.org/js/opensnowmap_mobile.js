@@ -616,8 +616,11 @@ function showLastEditsSettings() {
 }
 
 function showMapEditSettings() {
+  
   var dd = document.getElementsByClassName('menuDropDownContent');
   var content = document.getElementById('mapEditDropDownContent');
+  var link = content.getElementsByClassName('localizedIframe')[0];
+  link.href='iframes/how-to-' + iframelocale + '.html';
 
   if (content.style.display == 'none') {
     for (var d = 0; d < dd.length; d++)
@@ -626,6 +629,16 @@ function showMapEditSettings() {
   } else
     content.style.display = 'none';
   return true;
+}
+
+function show_printSettings() {
+  var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
+  var hash = "#map="+map.getView().getZoom()+'/'+c[0]+'/'+c[1]+'&base='+BASELAYER;
+    //~ var center = map.getCenter().transform(new OpenLayers.Projection('EPSG:900913'), new OpenLayers.Projection('EPSG:4326'));
+    //~ //#map=4/6/42/0
+    //~ var hash = "#map="+z+'/'+center.lon+'/'+center.lat+'&base='+BASELAYER;
+    console.log(hash);
+  window.open("print.html" + hash, "_blank", "height=480,width=685");
 }
 
 function showmenu() {
@@ -967,6 +980,9 @@ function page_init() {
   document.getElementById('setMarker').onclick = function() {
     MARKER = !MARKER;
     setMarker();
+  };
+  document.getElementById('printMenuButton').onclick = function() {
+    show_printSettings();
   };
   document.getElementById('langs').onclick = function() {
     show_languages();

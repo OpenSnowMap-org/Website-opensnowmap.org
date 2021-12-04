@@ -33,7 +33,7 @@ if (window.location.hash !== '') {
 	
 		parts.forEach(function(part) {
 			//~ if (part.search('marker=true') > -1) {MARKER = true;}
-			if (part.search('base=snowbase') > -1) {base_layer = 'snowmap';}
+			if (part.search('base=snowmap') > -1) {base_layer = 'snowmap';}
 			if (part.search('base=osm') > -1) {base_layer = 'osm';}
 		});
 	}
