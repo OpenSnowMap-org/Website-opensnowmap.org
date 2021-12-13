@@ -1460,7 +1460,7 @@ function getTopoByViewport() { //DONE in pisteList
   XMLHttp.send();
   return true;
 }
-function getRouteTopoByWaysId(ids,routeLength, routeWKT) {
+function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     //close_sideBar();
     document.getElementById("routeWaiterResults").style.display = 'inline';
     abortXHR('PisteAPI'); // abort another request if any
@@ -1478,13 +1478,22 @@ function getRouteTopoByWaysId(ids,routeLength, routeWKT) {
             document.getElementById("routeWaiterResults").style.display = 'none';
             var resp = XMLHttp.responseText;
             jsonPisteList = JSON.parse(resp);
-            showHTMLRoute(document.getElementById('route_results'),routeLength, routeWKT)
+            RouteInjectLenghts(lengths);
+            showHTMLRoute(document.getElementById('route_results'), routeLength, routeWKT)
         }
     };
     XMLHttp.send();
     return true;
 }
-
+function RouteInjectLenghts(lengths) {
+  var d=0.0;
+  if (jsonPisteList.pistes !== null) {
+    for (p = 0; p < jsonPisteList.pistes.length; p++) {
+      jsonPisteList.pistes[p]["distance"]=d;
+      d+=parseFloat(lengths[p]);
+    }
+  }
+}
 function getTopoById(ids) { //DONE in pisteList
   document.getElementById("queryWaiterResults").style.display = 'inline';
 
@@ -1943,11 +1952,12 @@ function requestRoute(thisPoint) {
   //~ console.log("routing "+pointids);
   //~ if (thisPoint) {console.log("   after"+thisPoint.getProperties().id);}
   
-  var query = server+'routing?';
+  var query = 'http://0.0.0.0:5000/route/v1/ski/';
   for (pt in lonlats) {
-    query = query + lonlats[pt].lat + ';' +lonlats[pt].lon + ',';
+    query = query + lonlats[pt].lon + ',' +lonlats[pt].lat + ';';
   };
-  
+  query = query.slice(0, -1);
+  query += '?overview=full&annotations=false&steps=true';
   ROUTING = true;
   fetch(query, {
                 method: 'get',
@@ -1957,34 +1967,65 @@ function requestRoute(thisPoint) {
     if (!response.ok) {
       throw new Error("HTTP error, status = " + response.status);
     }
-    return response.text();
+    return response.json();
   })
   .then(function(data) {
-    const parser = new DOMParser();
-    const responseXML = parser.parseFromString(data, "application/xml");
+    //const parser = new DOMParser();
+    //const responseXML = parser.parseFromString(data, "application/xml");
     
-    if (responseXML.getElementsByTagName('wkt')[0]!=null) {
-        var routeWKT = getNodeText(responseXML.getElementsByTagName('wkt')[0]);
-        var routeIds=getNodeText(responseXML.getElementsByTagName('ids')[0]);
-        var routeLength = getNodeText(responseXML.getElementsByTagName('length')[0]);
-        
+    if (data['routes'][0]!=null) {
+        var routePol = data['routes'][0]['geometry'];
+            var encPol = new ol.format.Polyline();
+            var wkt = new ol.format.WKT();
+            var feature = encPol.readFeature(routePol);
+            var routeWKT =  wkt.writeFeature(feature, {
+              projection: 'EPSG:4326'
+            });
+            
+        var routeLength = data['routes'][0]['distance'];
+        var routeIds=[];
+        for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
+        {
+          for (var i = 0 ; i < data['routes'][0]['legs'][j]['steps'].length; i++)
+          {
+            routeIds.push(data['routes'][0]['legs'][j]['steps'][i]['name']);
+          }
+        }
+        var lengths=[];
+        for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
+        {
+          for (var i = 0 ; i < data['routes'][0]['legs'][j]['steps'].length; i++)
+          {
+            lengths.push(data['routes'][0]['legs'][j]['steps'][i]['distance']);
+          }
+        }
         // show profile
-        getRouteTopoByWaysId(routeIds, routeLength, routeWKT);
+        getRouteTopoByWaysId(routeIds, lengths, routeLength, routeWKT);
         
         // show route
         var format = new ol.format.WKT();
         var route3857 = format.readFeature(routeWKT);
         var line;
         var segment;
-        for (i=0 ; i < route3857.getGeometry().getLineStrings().length; i++) 
-              {
-                line =route3857.getGeometry().getLineStrings()[i]
+        if (route3857.getGeometry().getType() == 'LineString') {
+                line =route3857.getGeometry()
                 line.transform('EPSG:4326', 'EPSG:3857');
                 segment = new ol.Feature({geometry: line});
                 segment.setProperties({'id': lineID, 'type': "routeSegment"});
                 routeLinesfeatures.push(segment);
                 lineID += 1;
-            }
+        }
+        else {
+          for (i=0 ; i < route3857.getGeometry().getLineStrings().length; i++) 
+                {
+                  line =route3857.getGeometry().getLineStrings()[i]
+                  line.transform('EPSG:4326', 'EPSG:3857');
+                  segment = new ol.Feature({geometry: line});
+                  segment.setProperties({'id': lineID, 'type': "routeSegment"});
+                  routeLinesfeatures.push(segment);
+                  lineID += 1;
+              }
+          }
       return true;
     }
     else {
@@ -2435,7 +2476,7 @@ function showHTMLRoute(Div,routeLength, routeWKT) {
   
   var header = document.getElementById('routeHeaderProto').cloneNode(true);
   
-  header.innerHTML= "<H1>" +_("routing_title") + " - " + parseFloat(routeLength).toFixed(1) + " km";
+  header.innerHTML= "<H1>" +_("routing_title") + " - " + (parseFloat(routeLength)/1000).toFixed(1) + " km";
   
   Div.appendChild(header);  
   
@@ -2780,7 +2821,8 @@ function showHTMLRouteList(Div) {
       }
       
       //PISTE:DIFFICULTY DISPLAY
-      var diffHTML ='(';
+      var dist="km "+(parseFloat(piste["distance"])/1000).toFixed(1);
+      var diffHTML =dist+' (';
       if (piste.difficulty) {
         diffHTML += _(piste.difficulty);
       }
