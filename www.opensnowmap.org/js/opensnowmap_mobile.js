@@ -1714,7 +1714,7 @@ function RouteOnUp(evt) {
   var deltaPxX = RouteInteractionDragOrigin_[0]-evt.pixel[0];
   var deltaPxY = RouteInteractionDragOrigin_[1]-evt.pixel[1];
   // Allow slight pan when tapping to add a point
-  if (Math.abs(deltaPxX) + Math.abs(deltaPxY) < 2) {RouteInteractionPanning_=false;}
+  if (Math.abs(deltaPxX) + Math.abs(deltaPxY) < 10) {RouteInteractionPanning_=false;}
   //~ console.log('upped ! at ', deltaPxX, deltaPxY , RouteInteractionPanning_);
   
   // Disable draggable feature
