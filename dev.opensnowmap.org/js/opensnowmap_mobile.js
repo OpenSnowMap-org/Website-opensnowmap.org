@@ -1486,11 +1486,21 @@ function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     return true;
 }
 function RouteInjectLenghts(lengths) {
-  var d=0.0;
+  d=0.0;
   if (jsonPisteList.pistes !== null) {
     for (p = 0; p < jsonPisteList.pistes.length; p++) {
       jsonPisteList.pistes[p]["distance"]=d;
-      d+=parseFloat(lengths[p]);
+      
+      //~ Remove duplicated ids in topo json:
+      pisteIds = jsonPisteList.pistes[p].ids;
+      uniqueArray = pisteIds.filter(function(item, pos) {
+          return pisteIds.indexOf(item) == pos;
+      })
+      for (i = 0; i < uniqueArray.length; i ++) {
+          //~ pistes are concatenated in jsonPisteList, we need
+          //~ to progress in the lengths array accordingly
+          d+=parseFloat(lengths[uniqueArray[i]])
+        }
     }
   }
 }
@@ -1952,12 +1962,13 @@ function requestRoute(thisPoint) {
   //~ console.log("routing "+pointids);
   //~ if (thisPoint) {console.log("   after"+thisPoint.getProperties().id);}
   
-  var query = 'http://0.0.0.0:5000/route/v1/ski/';
+  //~ var query = 'http://0.0.0.0:5105/route/ski/'; // to test locally
+  var query =server+'routing?ski/'
   for (pt in lonlats) {
     query = query + lonlats[pt].lon + ',' +lonlats[pt].lat + ';';
   };
   query = query.slice(0, -1);
-  query += '?overview=full&annotations=false&steps=true';
+  //query += '?overview=full&annotations=false&steps=true&alternatives=true';
   ROUTING = true;
   fetch(query, {
                 method: 'get',
@@ -1972,8 +1983,20 @@ function requestRoute(thisPoint) {
   .then(function(data) {
     //const parser = new DOMParser();
     //const responseXML = parser.parseFromString(data, "application/xml");
-    
+    if(!data['routes']) {
+      console.log("Routing failed, no route.");
+      throw new Error("Routing failed, no route.");
+    }
     if (data['routes'][0]!=null) {
+        /*Check if waypoints close enough, no need to show a route 8km away*/
+        var wps = data['waypoints'];
+        for (var k=0; k < wps.length; k++) {
+          if(wps[k]['distance'] > 500){
+            console.log("Routing failed, waypoints too far away.");
+            throw new Error("Routing failed, waypoints too far away.");
+          }
+        }
+        /*parse resulting route*/
         var routePol = data['routes'][0]['geometry'];
             var encPol = new ol.format.Polyline();
             var wkt = new ol.format.WKT();
@@ -1991,14 +2014,19 @@ function requestRoute(thisPoint) {
             routeIds.push(data['routes'][0]['legs'][j]['steps'][i]['name']);
           }
         }
-        var lengths=[];
+        var lengths={}; // this should be handled properly by the topo request call
         for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
         {
           for (var i = 0 ; i < data['routes'][0]['legs'][j]['steps'].length; i++)
           {
-            lengths.push(data['routes'][0]['legs'][j]['steps'][i]['distance']);
+            if (lengths[data['routes'][0]['legs'][j]['steps'][i]['way_osm_id']]) {
+              lengths[data['routes'][0]['legs'][j]['steps'][i]['way_osm_id']] += data['routes'][0]['legs'][j]['steps'][i]['distance'];
+            } else {
+              lengths[data['routes'][0]['legs'][j]['steps'][i]['way_osm_id']] = data['routes'][0]['legs'][j]['steps'][i]['distance'];
+            }
           }
         }
+        console.log(routeIds);
         // show profile
         getRouteTopoByWaysId(routeIds, lengths, routeLength, routeWKT);
         
@@ -2030,12 +2058,14 @@ function requestRoute(thisPoint) {
     }
     else {
       // onRouteFail(); maybe one day we'll do better than a 500 error
+      console.log("Routing failed, empty route.");
+      throw new Error("Routing failed, empty route.");
       return null;
     }
   })
   .catch(function(error) {
     /* re-route()*/
-    console.log("routing failed");
+    console.log("routing failed.");
     thisPoint.setProperties({'routable': false});
     RouteReStyle();
     requestRoute();
@@ -2111,8 +2141,10 @@ function RouteRemovePointById(selectedpointID) {
   i = 0;
   var lines=routeSourceLines.getFeatures();
   for (f in features) {
-      lines[f].setProperties({'id': i});
-      i+=1;
+      if (lines[f]){
+        lines[f].setProperties({'id': i});
+        i+=1;
+      }
   }
   RouteReStyle();
   // re-route on remaing points
