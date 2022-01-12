@@ -76,5 +76,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Přidat do mapy poznámku",
+"note_zoom_in": "Pro přidání poznámky přejděte na větší měřítko",
+"Note_title":"Přidat poznámku",
+"note-tooltip":"Zahlédli jste chybu nebo prázdné místo? Dejte vědět ostatním uživatelům, aby to mohli napravit. Posuňte značku na správné místo a napište poznámku vysvětlující problém",
+"note-disclaimer":"Vaše poznámka je veřejná a může sloužit k úpravám mapy, proto nevkládejte žádné osobní údaje ani informace z autorskoprávně chráněných map či adresářů",
+"note-submit":"Přidat poznámku"
 }

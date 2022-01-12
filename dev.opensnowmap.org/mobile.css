@@ -180,6 +180,18 @@ position: absolute;
     border-radius:5px;
 */
 }
+.Button:after {
+    background-color:#FDFDFD;
+    border-style:solid;
+    border-width:0px 0px 0px 0px;
+    border-color: #1A1A1A;
+    padding: 5px;
+    margin: 2px;
+/*
+    -moz-border-radius:5px;
+    border-radius:5px;
+*/
+}
 .noBorder {
     border-width:0px;
     }
@@ -546,4 +558,32 @@ margin-left:auto;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   
+}
+#doSubmit {
+  border: 0.5px solid gray;
+  border-radius: 6px;
+  font-size: 1.2em;
+  font-weight: 800;
+  color: #365FBF;
+  padding: 6px;
+  width:calc(100% - 12px);
+  text-align: center;
+}
+#note_input {
+  border: 0.5px solid gray;
+  padding: 6px;
+  width:calc(100% - 12px);
+}
+#note-tooltip {
+  border-radius: 6px;
+  padding: 6px;
+  background-color: #D1DFEE;
+  font-size: 1em;
+}
+#note-disclaimer {
+  color: #747474;
+  font-style: italic;
+  padding: 6px;
+  padding: 6px;
+  font-size: 0.95em;
 }

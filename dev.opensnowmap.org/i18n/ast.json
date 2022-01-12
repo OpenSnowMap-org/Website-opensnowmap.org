@@ -76,5 +76,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Amestar una nota al mapa",
+"note_zoom_in":"Ampliar p'amestar una nota al mapa",
+"Note_title":"Amestar nota",
+"note-tooltip":"¿Alcontrasti un error o falta daqué? Informa a otros mapeadores pa que podamos igualo. Mueve'l marcador a la posición correuta y escribi una nota pa esplicar el problema.",
+"note-disclaimer":"La nota ye pública y puede usase p'anovar el mapa, de mou que nun escribas información personal, o información de mapes con drechos d'autor o llistes de teléfonos).",
+"note-submit":"Amestar una nota"
 }

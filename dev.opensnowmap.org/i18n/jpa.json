@@ -77,5 +77,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"今後の修正のために地図にメモを残す",
+"note_zoom_in": "メモを地図に追加するには拡大してください",
+"Note_title":"メモを追加",
+"note-tooltip":"間違いや情報の抜けがありましたか？　他のマッパーが修正できるよう、お知らせください。マーカーを正しい位置に移動し、問題を説明するメモを入力します。",
+"note-disclaimer":"投稿した地図メモは公開され、地図の更新に利用されます。そのため、著作権保護された地図や一覧情報からの転用情報や、個人情報の入力は行わないでください。",
+"note-submit":"メモを追加"
 }

@@ -76,5 +76,11 @@
 "Search_title": "Recherche",
 "Query_pistes_title": "Informations sur les pistes",
 "List_pistes_title": "Lister les pistes visibles",
-"routing_tooltip":"Cliquez sur une piste pour ajouter, insérer et déplacer des points de passage et construire votre parcours."
+"routing_tooltip":"Cliquez sur une piste pour ajouter, insérer et déplacer des points de passage et construire votre parcours.",
+"Add a note":"Suggérer une amélioration de la carte",
+"note_zoom_in": "Zoomer pour ajouter une note sur la carte",
+"Note_title":"Ajouter une note",
+"note-tooltip":"Vous avez repéré une erreur ou un manque ? Faites-le savoir aux autres cartographes afin qu’ils puissent y remédier. Déplacez le marqueur à la position exacte et écrivez une note pour expliquer le problème.",
+"note-disclaimer":"Votre note est publique et peut être utilisée pour mettre à jour la carte, aussi n’entrez aucune information personnelle, ni aucune information venant de cartes protégées, ni aucune entrée de répertoire ou d’annuaire.",
+"note-submit":"Ajouter une note"
 }

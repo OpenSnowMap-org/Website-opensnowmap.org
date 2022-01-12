@@ -77,7 +77,13 @@ var rus = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Добавить заметку на карту",
+"note_zoom_in": "Приблизьте карту, чтобы добавить заметку",
+"Note_title":"Добавить заметку",
+"note-tooltip":"Заметили ошибку или отсутствие чего-либо? Дайте знать об этом другим картографам, чтобы они могли это исправить. Переместите маркер в нужное место и напечатайте сообщение, объясняющее проблему.",
+"note-disclaimer":"Ваша заметка является общедоступной и может использоваться для обновления карты, поэтому не вводите личную информацию, информацию из защищённых авторскими правами карт или справочников.",
+"note-submit":"Добавить заметку"
 }
 
 var hun = {
@@ -158,7 +164,13 @@ var hun = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Jegyzet hozzáadása a térképhez",
+"note_zoom_in": "Nagyíts térképes jegyzet hozzáadásához",
+"Note_title":"Jegyzet hozzáadása",
+"note-tooltip":"Hibát találtál vagy valami hiányzik? Tudasd a többi térképezővel, hogy javítani tudjuk. Mozgasd a jelölőt a megfelelő helyre, és minél pontosabban írd le a problémát.",
+"note-disclaimer":"A jegyzeted nyilvános és használható a térkép frissítéséhez, ezért ne adj meg személyes adatokat vagy jogvédett térképről vagy katalógusokból származó információkat.",
+"note-submit":"Új jegyzet"
 }
 
 var jpa = {
@@ -240,7 +252,13 @@ var jpa = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"今後の修正のために地図にメモを残す",
+"note_zoom_in": "メモを地図に追加するには拡大してください",
+"Note_title":"メモを追加",
+"note-tooltip":"間違いや情報の抜けがありましたか？　他のマッパーが修正できるよう、お知らせください。マーカーを正しい位置に移動し、問題を説明するメモを入力します。",
+"note-disclaimer":"投稿した地図メモは公開され、地図の更新に利用されます。そのため、著作権保護された地図や一覧情報からの転用情報や、個人情報の入力は行わないでください。",
+"note-submit":"メモを追加"
 }
 var spa = {
 "menu-donate": "DONACION",
@@ -320,7 +338,13 @@ var spa = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Añadir una nota al mapa",
+"note_zoom_in": "Acercar para añadir una nota al mapa",
+"Note_title":"Añadir nota",
+"note-tooltip":"¿Detectó un error o falta algo? Informe a otros mapeadores para que podamos solucionarlo. Mueva el marcador a la posición correcta y escriba una nota para explicar el problema.",
+"note-disclaimer":"La nota será pública y podría utilizarse para actualizar el mapa, así que no des información personal ni datos provenientes de mapas o catálogos protegidos por derechos de autor.",
+"note-submit":"Añadir una nota"
 }
 var cze = {
 "menu-donate": "PODPOŘTE NÁS",
@@ -400,7 +424,13 @@ var cze = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Přidat do mapy poznámku",
+"note_zoom_in": "Pro přidání poznámky přejděte na větší měřítko",
+"Note_title":"Přidat poznámku",
+"note-tooltip":"Zahlédli jste chybu nebo prázdné místo? Dejte vědět ostatním uživatelům, aby to mohli napravit. Posuňte značku na správné místo a napište poznámku vysvětlující problém",
+"note-disclaimer":"Vaše poznámka je veřejná a může sloužit k úpravám mapy, proto nevkládejte žádné osobní údaje ani informace z autorskoprávně chráněných map či adresářů",
+"note-submit":"Přidat poznámku"
 }
 var nno = {
 "menu-donate": "GJE PENGEGAVE",
@@ -480,7 +510,13 @@ var nno = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Legg til ein merknad på kartet",
+"note_zoom_in": "Zoom inn for å leggje til ein merknad på kartet",
+"Note_title":"Legg til merknad",
+"note-tooltip":"Funnet en feil eller noe som mangler? La andre kartleggere få vite det så vi kan fikse det. Flytt markøren til riktig posisjon og skriv en merknad som beskriver problemet.",
+"note-disclaimer":"Merknaden din blir publisert offentlig og blir brukt av kartleggere for å oppdatere kartet, så ikke inkluder personlig info eller informasjon fra opphavsrett-beskyttede kart eller kataloger.",
+"note-submit":"Legg til ein notis"
 }
 
 var ita = {
@@ -561,7 +597,13 @@ var ita = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Aggiungi una nota sulla mappa",
+"note_zoom_in": "Ingrandisci la mappa per aggiungere una nota",
+"Note_title":"Aggiungi la nota",
+"note-tooltip":"Ti sei accorto di un errore o di qualcosa che manca? Fallo sapere agli altri mappatori così possono correggerlo. Sposta il puntatore nella posizione esatta e inserisci una nota per spiegare il problema.",
+"note-disclaimer":"La tua nota è pubblica e potrebbe essere utilizzata per aggiornare la mappa, pertanto non inserire informazioni personali e neppure dati provenienti da mappe protette da copyright oppure elenchi.",
+"note-submit":"Aggiungi la nota"
 }
 var deu = {
 "menu-donate": "SPENDEN",
@@ -641,7 +683,13 @@ var deu = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Einen Hinweis/Fehler zu den Kartendaten melden",
+"note_zoom_in": "Zum Erstellen von Hinweisen muss eine höhere Zoomstufe gewählt werden",
+"Note_title":"Hinweis geben/Fehler melden",
+"note-tooltip":"Fehlt etwas oder hast du einen Fehler gefunden? Bitte verschiebe den Marker auf die exakte Position und gib genaue Hinweise/Informationen an bzw. beschreibe den Fehler in der Karte möglichst präzise.",
+"note-disclaimer":"Deine Meldung ist öffentlich und kann zur Aktualisierung der Karte verwendet werden. Gib deshalb keine persönlichen oder urheberrechtlich geschützten Informationen von anderen Karten oder Verzeichnislisten an.",
+"note-submit":"Hinweis geben/Fehler melden"
 }
 var nld = {
 "menu-donate": "DONEREN",
@@ -721,7 +769,13 @@ var nld = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Opmerking bij kaart maken",
+"note_zoom_in": "Inzoomen om een opmerking op de kaart toe te voegen",
+"Note_title":"Opmerking toevoegen",
+"note-tooltip":"Een fout gezien of ontbreekt er iets? Laat het andere mappers weten zodat wij het kunnen oplossen. Verplaats de markering naar de correcte positie en beschrijf het probleem.",
+"note-disclaimer":"Deze opmerking is openbaar en kan gebruikt worden om de kaart bij te werken. Vul hier dus geen persoonlijke informatie in, en ook geen informatie uit kaarten of telefoonboeken waar auteursrechtelijke bescherming op rust.",
+"note-submit":"Opmerking toevoegen"
 }
 
 var ukr = {
@@ -802,7 +856,13 @@ var ukr = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Додати нотатку на мапу",
+"note_zoom_in": "Треба наблизитись для додання нотатки",
+"Note_title":"Додати нотатку",
+"note-tooltip":"Помітили помилку або чогось не вистачає? Дайте знати іншим маперам, щоб можна було це виправити. Перемістіть позначку в потрібне місце та додайте пояснення проблеми.",
+"note-disclaimer":"Ваша нотатка є публічною та може бути використана для оновлення мапи. Будь ласка, не додавайте персональні дані або інформацію, яка міститься на захищених авторським правом мапах чи каталогах.",
+"note-submit":"Додати нотатку"
 }
 var fra = {
 "menu-donate": "FAIRE UN DON",
@@ -882,7 +942,13 @@ var fra = {
 "Search_title": "Recherche",
 "Query_pistes_title": "Informations sur les pistes",
 "List_pistes_title": "Lister les pistes visibles",
-"routing_tooltip":"Cliquez sur une piste pour ajouter, insérer et déplacer des points de passage et construire votre parcours."
+"routing_tooltip":"Cliquez sur une piste pour ajouter, insérer et déplacer des points de passage et construire votre parcours.",
+"Add a note":"Suggérer une amélioration de la carte",
+"note_zoom_in": "Zoomer pour ajouter une note sur la carte",
+"Note_title":"Ajouter une note",
+"note-tooltip":"Vous avez repéré une erreur ou un manque ? Faites-le savoir aux autres cartographes afin qu’ils puissent y remédier. Déplacez le marqueur à la position exacte et écrivez une note pour expliquer le problème.",
+"note-disclaimer":"Votre note est publique et peut être utilisée pour mettre à jour la carte, aussi n’entrez aucune information personnelle, ni aucune information venant de cartes protégées, ni aucune entrée de répertoire ou d’annuaire.",
+"note-submit":"Ajouter une note"
 }
 var ast = {
 "menu-donate": "FAI UN DONATIVU",
@@ -962,7 +1028,13 @@ var ast = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Amestar una nota al mapa",
+"note_zoom_in":"Ampliar p'amestar una nota al mapa",
+"Note_title":"Amestar nota",
+"note-tooltip":"¿Alcontrasti un error o falta daqué? Informa a otros mapeadores pa que podamos igualo. Mueve'l marcador a la posición correuta y escribi una nota pa esplicar el problema.",
+"note-disclaimer":"La nota ye pública y puede usase p'anovar el mapa, de mou que nun escribas información personal, o información de mapes con drechos d'autor o llistes de teléfonos).",
+"note-submit":"Amestar una nota"
 }
 var swe = {
 "menu-donate": "DONERA",
@@ -1042,7 +1114,13 @@ var swe = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Lägg till en anteckning på kartan",
+"note_zoom_in": "Zooma in för att lägga till anteckningar på kartan",
+"Note_title":"Lägg till anteckning",
+"note-tooltip":"Upptäckt ett misstag eller något som saknas? Låt andra karterare veta så att vi kan fixa det. Flytta markören till rätt position och skriv in en kommentar som förklarar problemet.",
+"note-disclaimer":"Din anteckning är offentlig och kan användas för att uppdatera kartan, så skriv inte personuppgifter eller information från upphovsrättsligt skyddade kartor eller kataloger.",
+"note-submit":"Lägg till en anteckning"
 }
 var cat = {
 "menu-donate": "DONACIO",
@@ -1122,7 +1200,13 @@ var cat = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Afegiu una nota al mapa",
+"note_zoom_in": "Fes zoom per afegir una nota al mapa",
+"Note_title":"Afegeix una nota",
+"note-tooltip":"Heu trobat un error o bé hi falta res? Informeu-ne a altres col·laboradors per tal que puguin solucionar-ho. Moveu el marcador a la posició correcta i escriviu-hi una anotació per tal de descriure el problema.",
+"note-disclaimer":"La vostra nota és pública i pot utilitzar-se per actualitzar el mapa, per tant, no hi introduïu cap informació personal, o informació de mapes amb copyright o bé llistats de directori.",
+"note-submit":"Afegeix una nota"
 }
 
 var eng = {
@@ -1203,7 +1287,13 @@ var eng = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Add a note to the map",
+"note_zoom_in": "Zoom in to add a note to the map",
+"Note_title":"Add Note",
+"note-tooltip":"Spotted a mistake or something missing? Let other mappers know so we can fix it. Move the marker to the correct position and type a note to explain the problem.",
+"note-disclaimer":"Your note is public and may be used to update the map, so don't enter personal information, or information from copyrighted maps or directory listings.",
+"note-submit":"Add a note"
 }
 var fin = {
 "menu-donate": "LAHJOITA",
@@ -1283,6 +1373,13 @@ var fin = {
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Ilmoita karttavirheestä",
+"note_zoom_in": "Lähennä karttaa ennen karttavirheestä ilmoittamista.",
+"Note_title":"Lähetä ilmoitus",
+"note-tooltip":"Huomasitko virheen tai puuttuvan kohteen? Ilmoita siitä muille kartoittajille, jolloin virhe voidaan korjata. Siirrä merkkipiste oikeaan kohtaan ja kirjoita selite ongelmasta.",
+"note-disclaimer":"Merkintä näkyy julkisesti kaikille, älä kirjoita henkilökohtaisia tietoja. Aineistoa kehitetään palautteen perusteella, minkä takia älä käytä lähteenä muita karttoja tai hakemistoja.",
+"note-submit":"Ilmoita karttavirheestä"
+
 }
 

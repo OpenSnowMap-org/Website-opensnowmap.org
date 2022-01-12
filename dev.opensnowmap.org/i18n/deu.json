@@ -76,5 +76,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Einen Hinweis/Fehler zu den Kartendaten melden",
+"note_zoom_in": "Zum Erstellen von Hinweisen muss eine höhere Zoomstufe gewählt werden",
+"Note_title":"Hinweis geben/Fehler melden",
+"note-tooltip":"Fehlt etwas oder hast du einen Fehler gefunden? Bitte verschiebe den Marker auf die exakte Position und gib genaue Hinweise/Informationen an bzw. beschreibe den Fehler in der Karte möglichst präzise.",
+"note-disclaimer":"Deine Meldung ist öffentlich und kann zur Aktualisierung der Karte verwendet werden. Gib deshalb keine persönlichen oder urheberrechtlich geschützten Informationen von anderen Karten oder Verzeichnislisten an.",
+"note-submit":"Hinweis geben/Fehler melden"
 }

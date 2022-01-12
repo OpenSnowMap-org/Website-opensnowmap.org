@@ -76,6 +76,12 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Jegyzet hozzáadása a térképhez",
+"note_zoom_in": "Nagyíts térképes jegyzet hozzáadásához",
+"Note_title":"Jegyzet hozzáadása",
+"note-tooltip":"Hibát találtál vagy valami hiányzik? Tudasd a többi térképezővel, hogy javítani tudjuk. Mozgasd a jelölőt a megfelelő helyre, és minél pontosabban írd le a problémát.",
+"note-disclaimer":"A jegyzeted nyilvános és használható a térkép frissítéséhez, ezért ne adj meg személyes adatokat vagy jogvédett térképről vagy katalógusokból származó információkat.",
+"note-submit":"Új jegyzet"
 }
 

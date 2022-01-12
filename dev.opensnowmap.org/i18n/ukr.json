@@ -76,5 +76,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Додати нотатку на мапу",
+"note_zoom_in": "Треба наблизитись для додання нотатки",
+"Note_title":"Додати нотатку",
+"note-tooltip":"Помітили помилку або чогось не вистачає? Дайте знати іншим маперам, щоб можна було це виправити. Перемістіть позначку в потрібне місце та додайте пояснення проблеми.",
+"note-disclaimer":"Ваша нотатка є публічною та може бути використана для оновлення мапи. Будь ласка, не додавайте персональні дані або інформацію, яка міститься на захищених авторським правом мапах чи каталогах.",
+"note-submit":"Додати нотатку"
 }

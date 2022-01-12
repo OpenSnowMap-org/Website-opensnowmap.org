@@ -55,6 +55,7 @@ var geoLoc = null;
 /* piste query */
 var PISTELISTMODE = false;
 var QUERYMODE = false;
+var NOTEMODE = false;
 var modifyPoints;
 var drawPoints;
 var Pointsfeatures = new ol.Collection();
@@ -169,6 +170,22 @@ var updateHashPermalink = function() {
   return true;
 };
 
+var updateZoomContent = function() {
+  updateHashPermalink();
+  
+  var zoom = view.getZoom();
+  if (zoom > 12) {
+    document.getElementById('note_input').placeholder = _('note-disclaimer');
+    document.getElementById('note_input').disabled=false;
+    document.getElementById('doSubmit').style.display='inline';
+  }
+  else {
+    document.getElementById('note_input').placeholder = _('note_zoom_in');
+    document.getElementById('note_input').disabled=true;
+    document.getElementById('doSubmit').style.display='none';
+  }
+  return true;
+};
 var extent = ol.proj.get('EPSG:3857').getExtent();
 var tileSizePixels = 384;
 var tileSizeMtrs = ol.extent.getWidth(extent) / 384;
@@ -571,7 +588,7 @@ function toggleQueriesHints(){
 }
 
 var closeContent = function() {
-  if(!QUERYMODE && !ROUTEMODE) {
+  if(!QUERYMODE && !ROUTEMODE && !NOTEMODE) {
     closecontent();
   }
 }
@@ -579,9 +596,7 @@ var closeContent = function() {
 function closecontent() {
     document.getElementById('content-outer').style.display = "none";
     document.getElementById('content').style.display = "none";
-    if (ROUTEMODE) {
-      document.getElementById('content-control-closed').style.display = "inline";
-    } else if (QUERYMODE) {
+    if (ROUTEMODE || QUERYMODE || NOTEMODE) {
       document.getElementById('content-control-closed').style.display = "inline";
     } else {
       document.getElementById('content-control-closed').style.display = "none";      
@@ -668,6 +683,16 @@ function showsearch() {
   document.getElementById('content').style.display = 'inline';
   document.getElementById('content-control').style.display = 'inline';
   document.getElementById('content_title').innerHTML = '&nbsp;' + _('Search_title');
+  document.getElementById('content-outer').scrollTop = 0;
+  //~ document.getElementById('search_input').focus();
+}
+function shownote() {
+  hideexcept('note');
+  document.getElementById('note').style.display = 'inline';
+  document.getElementById('content-outer').style.display = 'inline';
+  document.getElementById('content').style.display = 'inline';
+  document.getElementById('content-control').style.display = 'inline';
+  document.getElementById('content_title').innerHTML = '&nbsp;' + _('Note_title');
   document.getElementById('content-outer').scrollTop = 0;
   //~ document.getElementById('search_input').focus();
 }
@@ -792,6 +817,9 @@ function hideexcept(div) {
   document.getElementById('content-outer').style.maxWidth = "240px";
   if (div != 'menu') {
     document.getElementById('menu').style.display = 'none';
+  }
+  if (div != 'note') {
+    document.getElementById('note').style.display = 'none';
   }
   if (div != 'search') {
     document.getElementById('search').style.display = 'none';
@@ -953,16 +981,20 @@ function page_init() {
     getTopoByViewport();
   };
   document.getElementById('doQueryPistes').onclick = function() {
-    queryPistes();
+    if (QUERYMODE) {switchDrawMode('');}
+    else {switchDrawMode('QUERYMODE');}
   };
   document.getElementById('doQueryPistesButton').onclick = function() {
-    queryPistes();
+    if (QUERYMODE) {switchDrawMode('');}
+    else {switchDrawMode('QUERYMODE');}
   };
   document.getElementById('doRouteButton').onclick = function() {
-    Route();
+    if (ROUTEMODE) {switchDrawMode('');}
+    else {switchDrawMode('ROUTEMODE');}
   };
   document.getElementById('doRoute').onclick = function() {
-    Route();
+    if (ROUTEMODE) {switchDrawMode('');}
+    else {switchDrawMode('ROUTEMODE');}
   };
   //~ document.getElementById('mobileswitch').onclick = function() {
     //~ document.cookie = 'version=mobile';
@@ -1045,15 +1077,24 @@ function page_init() {
   };
   document.getElementById('routingMenuButton').onclick = function() {
     showroute();
-    if (!ROUTEMODE) {Route();}
+    if (!ROUTEMODE) {switchDrawMode('ROUTEMODE');}
   };
   document.getElementById('queryMenuButton').onclick = function() {
     showquery();
-    if (!QUERYMODE) {queryPistes();}
+    if (!QUERYMODE) {switchDrawMode('QUERYMODE');}
+  };
+  document.getElementById('addNoteMenuButton').onclick = function() {
+    shownote();
+    if (!NOTEMODE) {switchDrawMode('NOTEMODE');}
+  };
+  document.getElementById('notesExternalLink').onclick = function() {
+    var url = "https://ent8r.github.io/NotesReview/?view=map&map=2%2F18.3128%2F-0.1758&query=opensnowmap"
+    window.open(url);
   };
   document.getElementById('content-control-closed').onclick = function() {
     if (QUERYMODE) {showquery();}
     if (ROUTEMODE) {showroute();}
+    if (NOTEMODE) {shownote();}
   };
   document.getElementById('pisteListMenuButton').onclick = function() {
     showpisteList();
@@ -1733,7 +1774,7 @@ function RouteOnUp(evt) {
   var deltaPxX = RouteInteractionDragOrigin_[0]-evt.pixel[0];
   var deltaPxY = RouteInteractionDragOrigin_[1]-evt.pixel[1];
   // Allow slight pan when tapping to add a point
-  if (Math.abs(deltaPxX) + Math.abs(deltaPxY) < 2) {RouteInteractionPanning_=false;}
+  if (Math.abs(deltaPxX) + Math.abs(deltaPxY) < 10) {RouteInteractionPanning_=false;}
   //~ console.log('upped ! at ', deltaPxX, deltaPxY , RouteInteractionPanning_);
   
   // Disable draggable feature
@@ -1781,150 +1822,6 @@ function RouteOnUp(evt) {
   return false;
 }
 
-function Route() { //DONE in pisteList
-  
-  if (!ROUTEMODE) {
-    ROUTEMODE = true;
-    pointID = 0;
-    lineID = 0;
-    // remove query mode features
-    if (getLayerByName('pointsLayer')) {
-      getLayerByName('pointsLayer').getSource().clear();
-      map.removeLayer(getLayerByName('pointsLayer'));
-      pointID = 0;
-      drawPoints.setActive(false);
-      modifyPoints.setActive(false);
-      map.removeInteraction(drawPoints);
-      map.removeInteraction(modifyPoints);
-    }
-    QUERYMODE = false;
-    document.getElementById('querySwitchImg').src = 'pics/query.svg';
-    document.getElementById('querySwitchImg').classList.remove("blink-image");
-    document.getElementById('routeSwitchImg').src = 'pics/route_blue.svg';
-    document.getElementById('routeSwitchImg').classList.add("blink-image");
-    document.getElementById('routingButtonHeaderImg').src = 'pics/route_blue.svg';
-    document.getElementById('routingButtonHeaderImg').classList.add("blink-image");
-    document.getElementById('routingButtonHeader').style.display='block';
-    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
-    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('queryButtonHeader').style.display='none';
-    
-    if (BASELAYER == 'osm' && HDPI) {
-      // avoid this baselayer when draw interactions are there
-      // still lacking user feedback
-      BASELAYER = "snowmap";
-      HDPI = true;
-      setBaseLayer();
-    }
-    
-    // Create popup control to modify points
-    
-    document.getElementById('overlay_content').style.display='block';
-    var popup = new ol.Overlay({
-      element: document.getElementById('overlay_content'),
-      positioning: 'top-left',
-      offset: [-20,-20],
-    });
-    popup.setPosition(undefined);
-    popup.set('name', 'deletePoint');
-    map.addOverlay(popup);
-
-  // Layer where the app add calculated routes
-    var linesLayer = new ol.layer.Vector({
-      source: routeSourceLines, 
-      name: 'linesLayer',
-      style: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-              color: 'rgba(0, 0, 0, 0.7)',
-              width: 3,
-              lineCap: 'butt',
-              lineDash: [8,6]
-            }),
-            fill: new ol.style.Fill({
-              color: 'rgba(0, 0, 255, 0.1)'
-            }),
-          image: new ol.style.Circle({
-              stroke: new ol.style.Stroke({
-                color: 'black',
-                width: 2
-              }),
-              fill: new ol.style.Fill({
-                color: 'rgba(0, 0, 255, 0.5)'
-              }),
-            radius: 6
-            })
-          
-          }),
-    });
-    map.addLayer(linesLayer);
-    
-    // Layer where the user add routing points, above lines for selection purpose
-    var pointsLayer = new ol.layer.Vector({
-      source: routeSourcePoints,
-      name: 'pointsLayer',
-      style : RoutePointStyle,
-    });
-    map.addLayer(pointsLayer)
-    
-    /*routeIteraction allows to :
-    * - add waypoints
-    * - drag existing waypoints
-    * - select existing waypoints to display a popup allowing deletion
-    * - split exiting route segments to add a waypoint
-    * */
-    RouteInteractionDragCoordinate_;
-    RouteInteractionDraggableFeature_=false; 
-    RouteInteractionInserting_=false;
-    RouteInteractionPanning_=false;
-    RouteInteractionStopDownEvent = false;
-    
-    routeIteraction = new ol.interaction.Pointer({
-          layer: pointsLayer,
-          handleDownEvent: RouteOnDown,
-          handleDragEvent: RouteOnDrag,
-          handleMoveEvent: RouteOnMove,
-          handleUpEvent: RouteOnUp,
-          stopDown: RouteStopDown,
-          condition: function () {
-            return this.getPointerCount() === 1
-            },
-        });
-    map.addInteraction(routeIteraction);
-
-    snapPoints = new ol.interaction.Snap({
-      source: routeSourcePoints,
-      pixelTolerance:20,
-    });
-    map.addInteraction(snapPoints);
-    
-  } else {
-    if (getLayerByName('pointsLayer')) {
-      getLayerByName('pointsLayer').getSource().clear();
-      map.removeLayer(getLayerByName('pointsLayer'));
-      pointID = 0;
-      map.removeInteraction(routeIteraction);
-    }
-    if (getLayerByName('linesLayer')) {
-      getLayerByName('linesLayer').getSource().clear();
-      map.removeLayer(getLayerByName('linesLayer'));
-      lineID = 0;
-    }
-    if (getOverlayByName('deletePoint')) {
-      document.getElementById('overlay_content').style.display='none';
-      //map.removeOverlay(getOverlayByName('delete'));
-    }
-    document.getElementById('routeSwitchImg').src = 'pics/route.svg';
-    document.getElementById('routeSwitchImg').classList.remove("blink-image");
-    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routingButtonHeader').style.display='none';
-    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
-    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('queryButtonHeader').style.display='none';
-    ROUTEMODE = false;
-  }
-
-}
 function requestRoute(thisPoint) {
   routeLinesfeatures.clear();
   var lineID = 0;
@@ -2156,159 +2053,373 @@ function RouteRemovePointById(selectedpointID) {
   }
   
 }
-function queryPistes() { //DONE in pisteList
-  
-  if (!QUERYMODE) {
-    QUERYMODE = true;
-    ROUTEMODE = false;
-    // remove route mode features
-    if (getLayerByName('pointsLayer')) {
-      getLayerByName('pointsLayer').getSource().clear();
-      map.removeLayer(getLayerByName('pointsLayer'));
-      pointID = 0;
-      map.removeInteraction(routeIteraction);
-    }
-    if (getLayerByName('linesLayer')) {
-      getLayerByName('linesLayer').getSource().clear();
-      map.removeLayer(getLayerByName('linesLayer'));
-      lineID = 0;
-      map.removeInteraction(routeIteraction);
-    }
-    if (getOverlayByName('deletePoint')) {
-      document.getElementById('overlay_content').style.display='none';
-      //map.removeOverlay(getOverlayByName('delete'));
-    }
-    document.getElementById('routeSwitchImg').src = 'pics/route.svg';
-    document.getElementById('routeSwitchImg').classList.remove("blink-image");
-    document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
-    document.getElementById('querySwitchImg').classList.add("blink-image");
-    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routingButtonHeader').style.display='none';
-    document.getElementById('queryButtonHeaderImg').src = 'pics/query_blue.svg';
-    document.getElementById('queryButtonHeaderImg').classList.add("blink-image");
-    document.getElementById('queryButtonHeader').style.display='block';
-    
-    if (BASELAYER == 'osm' && HDPI) {
-      // avoid this baselayer when draw interactions are there
-      // still lacking user feedback
-      BASELAYER = "snowmap";
-      HDPI = true;
-      setBaseLayer();
-    }
-    
-    // Layer where the user add routing points
-    var pointsLayer = new ol.layer.Vector({
-      source: sourcePoints,
-      name: 'pointsLayer',
-      style:new ol.style.Style({
-                
-                image: new ol.style.Circle({
-                    stroke: new ol.style.Stroke({
-                        color: 'black',
-                        width: 2
-                        }),
-                    fill: new ol.style.Fill({
-                        color: 'rgba(200, 200, 255, 0.5)'
-                        }),
-                    radius: 8,
-                    })
-                }),
-    });
-    map.addLayer(pointsLayer)
 
-    //allow user to move points
-    // modifyPoints after modifyLines for it to handle a point drag 
-    // event instead of the later
-    modifyPoints = new ol.interaction.Modify({
-      features: Pointsfeatures,
-      style : new ol.style.Style({
-                image: new ol.style.Circle({
-                    stroke: new ol.style.Stroke({
-                        color: 'black',
-                        width: 2
-                        }),
-                    fill: new ol.style.Fill({
-                        color: 'rgba(200, 200, 255, 0.5)'
-                        }),
-                    radius: 16
-                    })
-                }),
-      pixelTolerance: 40
-    });
-    map.addInteraction(modifyPoints);
-    // snap and move the popup control when a point is moved
-    modifyPoints.on('modifyend', function(event) {
-      var coord = event.mapBrowserEvent.coordinate;
-      map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
-        
-        feature.setProperties({
+function switchDrawMode(modeRequested) { 
+  // Clear previous drawing layers and features by checking the active mode
+  if (QUERYMODE) {
+        pointID = 0;
+        lineID = 0;
+        // remove query mode features
+        if (getLayerByName('pointsLayer')) {
+          getLayerByName('pointsLayer').getSource().clear();
+          map.removeLayer(getLayerByName('pointsLayer'));
+          pointID = 0;
+          map.removeInteraction(drawPoints);
+          map.removeInteraction(modifyPoints);
+        }
+        QUERYMODE=false;
+    } 
+  // QUERYMODE feature cleared
+  if (ROUTEMODE) {
+        // remove route mode features
+        pointID = 0;
+        lineID = 0;
+        if (getLayerByName('pointsLayer')) {
+          getLayerByName('pointsLayer').getSource().clear();
+          map.removeLayer(getLayerByName('pointsLayer'));
+          map.removeInteraction(routeIteraction);
+        }
+        if (getLayerByName('linesLayer')) {
+          getLayerByName('linesLayer').getSource().clear();
+          map.removeLayer(getLayerByName('linesLayer'));
+          lineID = 0;
+          map.removeInteraction(routeIteraction);
+        }
+        if (getOverlayByName('deletePoint')) {
+          document.getElementById('overlay_content').style.display='none';
+          //map.removeOverlay(getOverlayByName('delete'));
+        }
+        ROUTEMODE=false;
+    } 
+  // ROUTEMODE feature cleared
+  if (NOTEMODE) {
+        pointID = 0;
+        lineID = 0;
+        // remove query mode features
+        if (getLayerByName('pointsLayer')) {
+          getLayerByName('pointsLayer').getSource().clear();
+          map.removeLayer(getLayerByName('pointsLayer'));
+          pointID = 0;
+          map.removeInteraction(drawPoints);
+          map.removeInteraction(modifyPoints);
+        }  
+        NOTEMODE=false;  
+    } 
+  // NOTEMODE feature cleared
+  
+  // Clear Mode feedback icons
+      document.getElementById('routeSwitchImg').src = 'pics/route.svg';
+      document.getElementById('routeSwitchImg').classList.remove("blink-image");
+      document.getElementById('querySwitchImg').src = 'pics/query.svg';
+      document.getElementById('querySwitchImg').classList.remove("blink-image");
+      
+      document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
+      document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
+      document.getElementById('routingButtonHeader').style.display='none';
+      
+      document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
+      document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
+      document.getElementById('queryButtonHeader').style.display='none';
+      
+      document.getElementById('noteButtonHeaderImg').src = 'pics/note.svg';
+      document.getElementById('noteButtonHeaderImg').classList.remove("blink-image");
+      document.getElementById('noteButtonHeader').style.display='none';
+  
+  // Re-create drawing layers and features for the requested mode
+  if (modeRequested=='QUERYMODE') {
+      QUERYMODE=true;
+      ROUTEMODE=false;
+      NOTEMODE=false;
+      
+      document.getElementById('querySwitchImg').src = 'pics/query_blue.svg';
+      document.getElementById('querySwitchImg').classList.add("blink-image");
+      document.getElementById('queryButtonHeaderImg').src = 'pics/query_blue.svg';
+      document.getElementById('queryButtonHeaderImg').classList.add("blink-image");
+      document.getElementById('queryButtonHeader').style.display='block';
+      
+      if (BASELAYER == 'osm' && HDPI) {
+        // avoid this baselayer when draw interactions are there
+        // still lacking user feedback
+        BASELAYER = "snowmap";
+        HDPI = true;
+        setBaseLayer();
+      }
+      
+      // Layer where the user add routing points
+      var pointsLayer = new ol.layer.Vector({
+        source: sourcePoints,
+        name: 'pointsLayer',
+        style:new ol.style.Style({
+                  
+                  image: new ol.style.Circle({
+                      stroke: new ol.style.Stroke({
+                          color: 'black',
+                          width: 2
+                          }),
+                      fill: new ol.style.Fill({
+                          color: 'rgba(200, 200, 255, 0.5)'
+                          }),
+                      radius: 8,
+                      })
+                  }),
+      });
+      map.addLayer(pointsLayer)
+
+      //allow user to move points
+      // modifyPoints after modifyLines for it to handle a point drag 
+      // event instead of the later
+      modifyPoints = new ol.interaction.Modify({
+        features: Pointsfeatures,
+        style : new ol.style.Style({
+                  image: new ol.style.Circle({
+                      stroke: new ol.style.Stroke({
+                          color: 'black',
+                          width: 2
+                          }),
+                      fill: new ol.style.Fill({
+                          color: 'rgba(200, 200, 255, 0.5)'
+                          }),
+                      radius: 16
+                      })
+                  }),
+        pixelTolerance: 40
+      });
+      map.addInteraction(modifyPoints);
+      // snap and move the popup control when a point is moved
+      modifyPoints.on('modifyend', function(event) {
+        var coord = event.mapBrowserEvent.coordinate;
+        map.forEachFeatureAtPixel(event.mapBrowserEvent.pixel, function(feature, layer) {
+          
+          feature.setProperties({
+            'isSnapped': false,
+            'routable': true,
+          });
+          RouteSnap(feature);
+        });
+      });
+
+      //When adding a point, add an ID
+      drawPoints = new ol.interaction.Draw({
+        features: Pointsfeatures,
+        type: /** @type {ol.geom.GeometryType} */ ('Point')
+      });
+
+      drawPoints.on('drawend', function(event) {
+        //event.stopPropagation(); useless to avoid modifyend event
+        pointID = pointID + 1;
+        event.feature.setProperties({
+          'id': pointID,
+          'type': "queryPoint"
+        });
+
+        // remove previous points
+        pointsLayer.getSource().forEachFeature(function(feature) {
+          if (feature.id != pointID) {
+            pointsLayer.getSource().removeFeature(feature);
+          }
+        });
+
+        event.feature.setProperties({
           'isSnapped': false,
           'routable': true,
-        });
-        RouteSnap(feature);
+        }); // used to avoid snapping on modifyend
+        RouteSnap(event.feature);
+        var coord = event.feature.getGeometry().getCoordinates();
+
+        /* sometimes a point was modifyed just after being drawn, to fix
+         * Possible cause: request aborted, then onRouteFail()
+         * Fixed in not sending routing call when one is running. 
+         * Fix fail if route fail and another point is selected before 
+         * routefail request finish*/
       });
-    });
-
-    //When adding a point, add an ID
-    drawPoints = new ol.interaction.Draw({
-      features: Pointsfeatures,
-      type: /** @type {ol.geom.GeometryType} */ ('Point')
-    });
-
-    drawPoints.on('drawend', function(event) {
-      //event.stopPropagation(); useless to avoid modifyend event
-      pointID = pointID + 1;
-      event.feature.setProperties({
-        'id': pointID,
-        'type': "queryPoint"
-      });
-
-      // remove previous points
-      pointsLayer.getSource().forEachFeature(function(feature) {
-        if (feature.id != pointID) {
-          pointsLayer.getSource().removeFeature(feature);
-        }
-      });
-
-      event.feature.setProperties({
-        'isSnapped': false,
-        'routable': true,
-      }); // used to avoid snapping on modifyend
-      RouteSnap(event.feature);
-      var coord = event.feature.getGeometry().getCoordinates();
-
-      /* sometimes a point was modifyed just after being drawn, to fix
-       * Possible cause: request aborted, then onRouteFail()
-       * Fixed in not sending routing call when one is running. 
-       * Fix fail if route fail and another point is selected before 
-       * routefail request finish*/
-    });
-    map.addInteraction(drawPoints);
-    
-    drawPoints.setActive(true)
-    modifyPoints.setActive(true)
-  } else {
-    if (getLayerByName('pointsLayer')) {
-      getLayerByName('pointsLayer').getSource().clear();
-      map.removeLayer(getLayerByName('pointsLayer'));
-      pointID = 0;
-      drawPoints.setActive(false);
-      modifyPoints.setActive(false);
-      map.removeInteraction(drawPoints);
-      map.removeInteraction(modifyPoints);
+      map.addInteraction(drawPoints);
+      
+      drawPoints.setActive(true)
+      modifyPoints.setActive(true)
     }
+  if (modeRequested=='ROUTEMODE') {
+      QUERYMODE=false;
+      ROUTEMODE=true;
+      NOTEMODE=false;
+      
+      document.getElementById('routeSwitchImg').src = 'pics/route_blue.svg';
+      document.getElementById('routeSwitchImg').classList.add("blink-image");
+      document.getElementById('routingButtonHeaderImg').src = 'pics/route_blue.svg';
+      document.getElementById('routingButtonHeaderImg').classList.add("blink-image");
+      document.getElementById('routingButtonHeader').style.display='block';
+      
+      if (BASELAYER == 'osm' && HDPI) {
+        // avoid this baselayer when draw interactions are there
+        // still lacking user feedback
+        BASELAYER = "snowmap";
+        HDPI = true;
+        setBaseLayer();
+      }
+      
+      // Create popup control to modify points
+      
+      document.getElementById('overlay_content').style.display='block';
+      var popup = new ol.Overlay({
+        element: document.getElementById('overlay_content'),
+        positioning: 'top-left',
+        offset: [-20,-20],
+      });
+      popup.setPosition(undefined);
+      popup.set('name', 'deletePoint');
+      map.addOverlay(popup);
+
+    // Layer where the app add calculated routes
+      var linesLayer = new ol.layer.Vector({
+        source: routeSourceLines, 
+        name: 'linesLayer',
+        style: new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                color: 'rgba(0, 0, 0, 0.7)',
+                width: 3,
+                lineCap: 'butt',
+                lineDash: [8,6]
+              }),
+              fill: new ol.style.Fill({
+                color: 'rgba(0, 0, 255, 0.1)'
+              }),
+            image: new ol.style.Circle({
+                stroke: new ol.style.Stroke({
+                  color: 'black',
+                  width: 2
+                }),
+                fill: new ol.style.Fill({
+                  color: 'rgba(0, 0, 255, 0.5)'
+                }),
+              radius: 6
+              })
+            
+            }),
+      });
+      map.addLayer(linesLayer);
+      
+      // Layer where the user add routing points, above lines for selection purpose
+      var pointsLayer = new ol.layer.Vector({
+        source: routeSourcePoints,
+        name: 'pointsLayer',
+        style : RoutePointStyle,
+      });
+      map.addLayer(pointsLayer)
+      
+      /*routeIteraction allows to :
+      * - add waypoints
+      * - drag existing waypoints
+      * - select existing waypoints to display a popup allowing deletion
+      * - split exiting route segments to add a waypoint
+      * */
+      RouteInteractionDragCoordinate_;
+      RouteInteractionDraggableFeature_=false; 
+      RouteInteractionInserting_=false;
+      RouteInteractionPanning_=false;
+      RouteInteractionStopDownEvent = false;
+      
+      routeIteraction = new ol.interaction.Pointer({
+            layer: pointsLayer,
+            handleDownEvent: RouteOnDown,
+            handleDragEvent: RouteOnDrag,
+            handleMoveEvent: RouteOnMove,
+            handleUpEvent: RouteOnUp,
+            stopDown: RouteStopDown,
+            condition: function () {
+              return this.getPointerCount() === 1
+              },
+          });
+      map.addInteraction(routeIteraction);
+
+      snapPoints = new ol.interaction.Snap({
+        source: routeSourcePoints,
+        pixelTolerance:20,
+      });
+      map.addInteraction(snapPoints);
     
-    document.getElementById('querySwitchImg').src = 'pics/query.svg';
-    document.getElementById('querySwitchImg').classList.remove("blink-image");
-    document.getElementById('routingButtonHeaderImg').src = 'pics/route.svg';
-    document.getElementById('routingButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('routingButtonHeader').style.display='none';
-    document.getElementById('queryButtonHeaderImg').src = 'pics/query.svg';
-    document.getElementById('queryButtonHeaderImg').classList.remove("blink-image");
-    document.getElementById('queryButtonHeader').style.display='none';
-    QUERYMODE = false;
-  }
+    }
+  if (modeRequested=='NOTEMODE') {
+      QUERYMODE=false;
+      ROUTEMODE=false;
+      NOTEMODE=true;
+      
+      document.getElementById('noteButtonHeaderImg').src = 'pics/note_blue.svg';
+      document.getElementById('noteButtonHeaderImg').classList.add("blink-image");
+      document.getElementById('noteButtonHeader').style.display='block';
+      
+      if (BASELAYER == 'osm' && HDPI) {
+        // avoid this baselayer when draw interactions are there
+        // still lacking user feedback
+        BASELAYER = "snowmap";
+        HDPI = true;
+        setBaseLayer();
+      }
+      
+      // Layer where the user add routing points
+      var pointsLayer = new ol.layer.Vector({
+        source: sourcePoints,
+        name: 'pointsLayer',
+        style:new ol.style.Style({
+                  
+                  image: new ol.style.Circle({
+                      stroke: new ol.style.Stroke({
+                          color: 'black',
+                          width: 2
+                          }),
+                      fill: new ol.style.Fill({
+                          color: 'rgba(200, 200, 255, 0.5)'
+                          }),
+                      radius: 8,
+                      })
+                  }),
+      });
+      map.addLayer(pointsLayer)
+
+      //allow user to move points
+      // modifyPoints after modifyLines for it to handle a point drag 
+      // event instead of the later
+      modifyPoints = new ol.interaction.Modify({
+        features: Pointsfeatures,
+        style : new ol.style.Style({
+                  image: new ol.style.Circle({
+                      stroke: new ol.style.Stroke({
+                          color: 'black',
+                          width: 2
+                          }),
+                      fill: new ol.style.Fill({
+                          color: 'rgba(200, 200, 255, 0.5)'
+                          }),
+                      radius: 16
+                      })
+                  }),
+        pixelTolerance: 40
+      });
+      map.addInteraction(modifyPoints);
+
+      drawPoints = new ol.interaction.Draw({
+        features: Pointsfeatures,
+        type: /** @type {ol.geom.GeometryType} */ ('Point')
+      });
+      drawPoints.on('drawend', function(event) {
+        //event.stopPropagation(); useless to avoid modifyend event
+        // remove previous points
+        pointID = pointID + 1;
+        event.feature.setProperties({
+          'id': pointID,
+          'type': "queryPoint"
+        });
+
+        // remove previous points
+        pointsLayer.getSource().forEachFeature(function(feature) {
+          if (feature.id != pointID) {
+            pointsLayer.getSource().removeFeature(feature);
+          }
+        });
+      });
+      map.addInteraction(drawPoints);
+      
+      drawPoints.setActive(true)
+      modifyPoints.setActive(true)
+    }
 
 }
 
@@ -3808,7 +3919,7 @@ function map_init() {
 
   setBaseLayer();
   //~ setMarker();
-  map.on('moveend', updateHashPermalink);
+  map.on('moveend', updateZoomContent);
   map.on('precompose', setCanvasScale); // needed when we resize window
   map.on('click', closeContent);
   if (MARKER) {setMarker();}

@@ -76,6 +76,13 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Ilmoita karttavirheestä",
+"note_zoom_in": "Lähennä karttaa ennen karttavirheestä ilmoittamista.",
+"Note_title":"Lähetä ilmoitus",
+"note-tooltip":"Huomasitko virheen tai puuttuvan kohteen? Ilmoita siitä muille kartoittajille, jolloin virhe voidaan korjata. Siirrä merkkipiste oikeaan kohtaan ja kirjoita selite ongelmasta.",
+"note-disclaimer":"Merkintä näkyy julkisesti kaikille, älä kirjoita henkilökohtaisia tietoja. Aineistoa kehitetään palautteen perusteella, minkä takia älä käytä lähteenä muita karttoja tai hakemistoja.",
+"note-submit":"Ilmoita karttavirheestä"
+
 }
 

@@ -76,5 +76,11 @@
 "Search_title": "Search",
 "Query_pistes_title": "Get information on pistes",
 "List_pistes_title": "List the pistes on the map",
-"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will."
+"routing_tooltip":"Click on a piste to add, insert and move waypoints to create your own route at will.",
+"Add a note":"Aggiungi una nota sulla mappa",
+"note_zoom_in": "Ingrandisci la mappa per aggiungere una nota",
+"Note_title":"Aggiungi la nota",
+"note-tooltip":"Ti sei accorto di un errore o di qualcosa che manca? Fallo sapere agli altri mappatori così possono correggerlo. Sposta il puntatore nella posizione esatta e inserisci una nota per spiegare il problema.",
+"note-disclaimer":"La tua nota è pubblica e potrebbe essere utilizzata per aggiornare la mappa, pertanto non inserire informazioni personali e neppure dati provenienti da mappe protette da copyright oppure elenchi.",
+"note-submit":"Aggiungi la nota"
 }

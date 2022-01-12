@@ -111,6 +111,12 @@
             </div>
             <div class="clear"></div>
             <hr class="hrmenu"/>
+            <div id="addNoteMenuButton" class="Button fastclick textButton">
+              <img src="pics/note.svg" style="height: 20px; vertical-align:sub"/>
+              <span class="i18n toCaps" i18nText="Add a note"></span>
+            </div>
+            <div class="clear"></div>
+            <hr class="hrmenu"/>
             <div id="lastEditsDropDown" class="Button fastclick textButton">
               <img src="pics/OSM_icon_bw.svg" style="height: 20px; vertical-align:sub"/>
               <span class="i18n menuInfo toCaps" i18nText="last_edits"></span>&nbsp;&#9662;
@@ -273,6 +279,27 @@
                   >&bullet;&nbsp;...&nbsp;&raquo;</a>
             </div>
           </div>
+
+          <div id="note">
+            <hr class="hr"/>
+            <div class="clear"></div>
+            <div id="note-tooltip">
+                <span class="i18n" i18nText="note-tooltip"></span>
+            </div>
+            <div class="clear"></div>
+            <br/>
+            <textarea id="note_input" rows="8" name="note_input" autofocus></textarea>
+            <div class="clear"></div>
+            <div id="doSubmit" class="fastclick Button float-left textButton">
+              <span class="i18n" i18nText="note-submit"></span>
+            </div>
+            <br/>
+            <div id="notesExternalLink" class="Button fastclick textButton" >
+              <span>See notes related to Opensnowmap.org on <b>NotesReview</b>&nbsp;&raquo;</span>
+            </div>
+            <br/>
+            <div class="clear"></div>
+          </div>
           <div id="search">
             <hr class="hr"/>
             <div id="search_header">
@@ -398,6 +425,9 @@
         </div>
         <div id="queryButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
           <img id="queryButtonHeaderImg" class="button-img"  src="pics/query.svg"/>
+        </div>
+        <div id="noteButtonHeader" class="fastclick Button float-left iconButton noBorder hidden">
+          <img id="noteButtonHeaderImg" class="button-img"  src="pics/note.svg"/>
         </div>
       </div>
       <!--PROTOS-->
