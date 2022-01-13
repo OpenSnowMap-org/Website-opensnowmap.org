@@ -1091,6 +1091,9 @@ function page_init() {
     var url = "https://ent8r.github.io/NotesReview/?view=map&map=2%2F18.3128%2F-0.1758&query=opensnowmap"
     window.open(url);
   };
+  document.getElementById('doSubmit').onclick = function() {
+    postNote();
+  };
   document.getElementById('content-control-closed').onclick = function() {
     if (QUERYMODE) {showquery();}
     if (ROUTEMODE) {showroute();}
@@ -4057,6 +4060,42 @@ function initFlags() {
   img.className = ('flagMenuImg');
   document.getElementById('langs').innerHTML = '';
   document.getElementById('langs').appendChild(img);
+}
+
+function postNote() {
+  content = '[opensnowmap] '+document.getElementById('note_input').value;
+  point=getLayerByName('pointsLayer').getSource().getFeatures()[0];
+  coords = point.getGeometry().getCoordinates();
+  wgs84= ol.proj.toLonLat(coords,'EPSG:3857');
+  query= "lat="+wgs84[1]+"&lon="+wgs84[0]+"&text="+content.replaceAll(' ','+');
+  
+  if (content.length > 5) {
+  fetch("https://upload.apis.dev.openstreetmap.org/api/0.6/notes.json",
+    {
+        headers: {
+          'accept': '*/*',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        method: "POST",
+        body: query
+    })
+    .then(function(res){ 
+        if (!res.ok) {
+          throw new Error("HTTP error, status = " + response.status);
+        }
+        else {
+         document.getElementById('note_input').value='';
+         document.getElementById('note_input').placeholder='OK\n';
+         document.getElementById('note_input').placeholder+=content;
+        }
+      })
+    .catch((error) => {
+      console.error('Error:', error);
+         document.getElementById('note_input').value='';
+         document.getElementById('note_input').placeholder='error';
+      
+    });
+  }
 }
 //--------------
 // Utilities
