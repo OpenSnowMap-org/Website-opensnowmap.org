@@ -1596,7 +1596,13 @@ function RoutePointStyle() {
                         color: 'rgba(200, 200, 255, 0.5)'
                         }),
                     radius: 8,
-                    })
+                    }),
+                text: new ol.style.Text({
+                    font: 'bold 10px "Open Sans", "Arial Unicode MS", "sans-serif"',
+                    placement: 'point',
+                    fill: new ol.style.Fill({color: '#fff'}),
+                    stroke: new ol.style.Stroke({color: '#000', width: 2}),
+                }),
                 });
   return s;
 }
@@ -1644,7 +1650,10 @@ function RouteReStyle(){
        f.setStyle(RouteEndPointStyle()); // last point with flag
        }
      else {
-       f.setStyle(RoutePointStyle()); // route point
+       s= RoutePointStyle();
+       s.getText().setText(f.get('id').toString());
+       f.setStyle(s); // route point
+       //f.getStyle().getText().setText(f.get('id'));
        }
      }
      else {
@@ -1926,6 +1935,9 @@ function Route() { //DONE in pisteList
 
 }
 function requestRoute(thisPoint) {
+  
+  routeIteraction.setActive(false);
+  
   routeLinesfeatures.clear();
   var lineID = 0;
   var points=routeSourcePoints.getFeatures();
@@ -1936,7 +1948,10 @@ function requestRoute(thisPoint) {
     if (point.getProperties().isSnapped && point.getProperties().routable)
      routingPointsNumber+=1;
   }
-  if (routingPointsNumber <= 1) {return true;}
+  if (routingPointsNumber <= 1) {
+    routeIteraction.setActive(true);
+    return true;
+    }
   
   var lls={};
   var lonlats=[];
@@ -1987,7 +2002,7 @@ function requestRoute(thisPoint) {
       console.log("Routing failed, no route.");
       throw new Error("Routing failed, no route.");
     }
-    if (data['routes'][0]!=null) {
+    if (data['routes'][0]!=null) { // put on hold
         /*Check if waypoints close enough, no need to show a route 8km away*/
         var wps = data['waypoints'];
         for (var k=0; k < wps.length; k++) {
@@ -1997,14 +2012,6 @@ function requestRoute(thisPoint) {
           }
         }
         /*parse resulting route*/
-        // Valid for a single geometry
-        /*var routePol = data['routes'][0]['geometry'];
-            var encPol = new ol.format.Polyline();
-            var wkt = new ol.format.WKT();
-            var feature = encPol.readFeature(routePol);
-            var routeWKT =  wkt.writeFeature(feature, {
-              projection: 'EPSG:4326'
-            });*/
         var routeWKTs=[]
         
         for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
@@ -2041,34 +2048,9 @@ function requestRoute(thisPoint) {
           }
         }
         console.log(routeIds);
-        // show profile
-        getRouteTopoByWaysId(routeIds, lengths, routeLength, routeWKT);
         
         // show route
         var format = new ol.format.WKT();
-        // Valid for a single geometry
-        /*var route3857 = format.readFeature(routeWKT);
-        var line;
-        var segment;
-        if (route3857.getGeometry().getType() == 'LineString') {
-                line =route3857.getGeometry()
-                line.transform('EPSG:4326', 'EPSG:3857');
-                segment = new ol.Feature({geometry: line});
-                segment.setProperties({'id': lineID, 'type': "routeSegment"});
-                routeLinesfeatures.push(segment);
-                lineID += 1;
-        }
-        else {
-          for (i=0 ; i < route3857.getGeometry().getLineStrings().length; i++) 
-                {
-                  line =route3857.getGeometry().getLineStrings()[i]
-                  line.transform('EPSG:4326', 'EPSG:3857');
-                  segment = new ol.Feature({geometry: line});
-                  segment.setProperties({'id': lineID, 'type': "routeSegment"});
-                  routeLinesfeatures.push(segment);
-                  lineID += 1;
-              }
-          }*/
           for (var i= 0; i < routeWKTs.length; i++) 
           {
             var route3857 = format.readFeature(routeWKTs[i]);
@@ -2094,6 +2076,12 @@ function requestRoute(thisPoint) {
                   }
               }
         }
+        
+      // show profile and topo
+      // TODO: could be long, maybe a good idea to put interactions on hold
+      getRouteTopoByWaysId(routeIds, lengths, routeLength, routeWKT);
+      
+      routeIteraction.setActive(true);
       return true;
     }
     else {
@@ -2107,6 +2095,7 @@ function requestRoute(thisPoint) {
     /* re-route()*/
     console.log("routing failed.");
     thisPoint.setProperties({'routable': false});
+    routeIteraction.setActive(true);
     RouteReStyle();
     requestRoute();
     ROUTING = false;
@@ -2353,6 +2342,8 @@ function queryPistes() { //DONE in pisteList
 }
 
 function RouteSnap(point) {
+  if (ROUTEMODE) { routeIteraction.setActive(false);}
+  
   if (ROUTEMODE) {
     while (document.getElementById("route_results").firstChild) {
       document.getElementById("route_results").removeChild(document.getElementById("route_results").firstChild);
@@ -2419,6 +2410,7 @@ function RouteSnap(point) {
     })
     .then(function (ok) {
       if (ROUTEMODE) {
+        routeIteraction.setActive(true);
         requestRoute(point); // pass last point as parameter to invalidate on routing fail
       }
       return true
