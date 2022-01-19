@@ -1997,13 +1997,27 @@ function requestRoute(thisPoint) {
           }
         }
         /*parse resulting route*/
-        var routePol = data['routes'][0]['geometry'];
+        // Valid for a single geometry
+        /*var routePol = data['routes'][0]['geometry'];
+            var encPol = new ol.format.Polyline();
+            var wkt = new ol.format.WKT();
+            var feature = encPol.readFeature(routePol);
+            var routeWKT =  wkt.writeFeature(feature, {
+              projection: 'EPSG:4326'
+            });*/
+        var routeWKTs=[]
+        
+        for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
+        {
+            var routePol = data['routes'][0]['legs'][j]['geometry'];
             var encPol = new ol.format.Polyline();
             var wkt = new ol.format.WKT();
             var feature = encPol.readFeature(routePol);
             var routeWKT =  wkt.writeFeature(feature, {
               projection: 'EPSG:4326'
             });
+            routeWKTs.push(routeWKT);
+          }
             
         var routeLength = data['routes'][0]['distance'];
         var routeIds=[];
@@ -2032,7 +2046,8 @@ function requestRoute(thisPoint) {
         
         // show route
         var format = new ol.format.WKT();
-        var route3857 = format.readFeature(routeWKT);
+        // Valid for a single geometry
+        /*var route3857 = format.readFeature(routeWKT);
         var line;
         var segment;
         if (route3857.getGeometry().getType() == 'LineString') {
@@ -2053,7 +2068,32 @@ function requestRoute(thisPoint) {
                   routeLinesfeatures.push(segment);
                   lineID += 1;
               }
-          }
+          }*/
+          for (var i= 0; i < routeWKTs.length; i++) 
+          {
+            var route3857 = format.readFeature(routeWKTs[i]);
+            var line;
+            var segment;
+            if (route3857.getGeometry().getType() == 'LineString') {
+                    line =route3857.getGeometry()
+                    line.transform('EPSG:4326', 'EPSG:3857');
+                    segment = new ol.Feature({geometry: line});
+                    segment.setProperties({'id': lineID, 'type': "routeSegment"});
+                    routeLinesfeatures.push(segment);
+                    lineID += 1;
+            }
+            else {
+              for (i=0 ; i < route3857.getGeometry().getLineStrings().length; i++) 
+                    {
+                      line =route3857.getGeometry().getLineStrings()[i]
+                      line.transform('EPSG:4326', 'EPSG:3857');
+                      segment = new ol.Feature({geometry: line});
+                      segment.setProperties({'id': lineID, 'type': "routeSegment"});
+                      routeLinesfeatures.push(segment);
+                      lineID += 1;
+                  }
+              }
+        }
       return true;
     }
     else {
