@@ -2560,134 +2560,10 @@ function showHTMLRoute(Div,routeLength, routeWKT) {
   showHTMLRouteList(Div);
   showRouteProfile(routeWKT, ProfileDiv, 'black');
 }
-function showHTMLRouteList(Div) {
-  if (jsonPisteList.pistes !== null) {
-    for (p = 0; p < jsonPisteList.pistes.length; p++) {
-      
-      pisteHTML = document.getElementById('singlePisteProto').cloneNode(true);
-      
-      piste = jsonPisteList.pistes[p];
+function addImgElement(picDiv, pisteType, pisteGrooming) {
 
-      osm_ids = piste.ids.join('_').toString();
-      
-      var element_type='';
-      if (piste.type) {
-        element_type = piste.type;
-      }
-      var pistetype='';
-      if (piste.pistetype) {
-        pistetype = piste.pistetype;
-      }
-      if (piste.in_routes.length !== 0) {
-        for (r = 0; r < piste.in_routes.length; r++) {
-          // this info is not returned by the API yet
-          if (piste.in_routes[r].pistetype) {
-            pistetype += ";" + piste.in_routes[r].pistetype;
-          }
-        }
-      }
-      if (piste.aerialway) {
-        pistetype += ";"+piste.aerialway;
-      }
-      
-      var color = '';
-      if (piste.color) {
-        color = piste.color;
-      }
-
-      lon = piste.center[0];
-      lat = piste.center[1];
-
-      var difficulty = '';
-      if (piste.difficulty) {
-        difficulty = piste.difficulty;
-      }
-      
-      // NAME DISPLAY
-      var limitShort =18;
-      var lengthLong =0;
-      var char=0;
-      nameHTML = "";
-      shortNameHTML = "";
-      
-      if (pistetype.indexOf("downhill") > -1) {
-        // downhill routes are not taken into account
-        // Downhill name length is not taken into account;
-        
-        color = '';
-        marker = '';
-        if (lat > 0 && lon < -40) {
-          if (piste.difficulty == 'expert') {
-            marker = '&diams;&diams;';
-          }
-          if (piste.difficulty == 'advanced') {
-            marker = '&diams;';
-          }
-          if (piste.difficulty == 'freeride') {
-            marker = '!!';
-          }
-          color = diffcolorUS[piste.difficulty];
-        } else {
-          color = diffcolor[piste.difficulty];
-        }
-        if (marker) {
-          nameHTML += marker +" ";
-          nameHTML += piste.name;
-        } else if (color) {
-          nameHTML += " <span style=\"color:"+color+"\">●</span><span>";
-          nameHTML += piste.name;
-        }
-      } else {
-        nameHTML = piste.name;
-        lengthLong += nameHTML.length;
-        shortNameHTML = "";
-      }
-      
-      if (piste.in_routes.length !== 0) {
-
-        for (r = 0; r < piste.in_routes.length; r++) {
-
-          color = 'black';
-          if (piste.in_routes[r].color) {
-            color = piste.in_routes[r].color;
-          } else {
-            color = diffcolor[piste.in_routes[r].difficulty];
-          }
-          routeName = piste.in_routes[r].name;
-          nameHTML += " <span style=\"color:"+color+"\">●</span><span>"+routeName+"</span>";
-          lengthLong += 2 + routeName.length;
-          shortNameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span>";
-          char += 2;
-        }
-        
-        shortNameHTML += piste.name.substring(0, limitShort-char)+"&nbsp;";
-        char += piste.name.substring(0, limitShort-char).length;
-        for (r = 0; r < piste.in_routes.length; r++) {
-          if (char <=limitShort) {
-            shortNameHTML += "&nbsp;"+piste.in_routes[r].name.substring(0, limitShort-char);
-            char += piste.in_routes[r].name.substring(0, limitShort-char).length+1;
-          }
-        }
-      }
-      
-      
-      if (lengthLong <= limitShort) {shortNameHTML = nameHTML;}
-      else {shortNameHTML += nameHTML.substring(0, limitShort-char)+"...  »"}
-      
-      var longNameDiv = pisteHTML.getElementsByClassName('singlePisteLongName')[0];
-      var shortNameDiv = pisteHTML.getElementsByClassName('singlePisteShortName')[0];
-      
-      longNameDiv.innerHTML = nameHTML;
-      shortNameDiv.innerHTML = shortNameHTML;
-      longNameDiv.style.display="none";
-      
-      //PISTE:TYPE & GROOMING DISPLAY
-      picDiv = pisteHTML.getElementsByClassName('singlePisteLeft')[0];
-      picDiv.innerHTML = null;
-      var pistetypes=  pistetype.split(";");
-      for (e in pistetypes) {
-        var t = pistetypes[e];
-        var g = piste.grooming;
+        var t = pisteType;
+        var g = pisteGrooming;
 
           if (t.indexOf("nordic") > -1) {
             var done = false;
@@ -2902,7 +2778,135 @@ function showHTMLRouteList(Div) {
             }
         }
         
+  return true;
+}
+function showHTMLRouteList(Div) {
+  if (jsonPisteList.pistes !== null) {
+    for (p = 0; p < jsonPisteList.pistes.length; p++) {
+      
+      pisteHTML = document.getElementById('singlePisteProto').cloneNode(true);
+      
+      piste = jsonPisteList.pistes[p];
+
+      osm_ids = piste.ids.join('_').toString();
+      
+      var element_type='';
+      if (piste.type) {
+        element_type = piste.type;
       }
+      var pistetype='';
+      if (piste.pistetype) {
+        pistetype = piste.pistetype;
+      }
+      if (piste.in_routes.length !== 0) {
+        for (r = 0; r < piste.in_routes.length; r++) {
+          // this info is not returned by the API yet
+          if (piste.in_routes[r].pistetype) {
+            pistetype += ";" + piste.in_routes[r].pistetype;
+          }
+        }
+      }
+      if (piste.aerialway) {
+        pistetype += ";"+piste.aerialway;
+      }
+      
+      var color = '';
+      if (piste.color) {
+        color = piste.color;
+      }
+
+      lon = piste.center[0];
+      lat = piste.center[1];
+
+      var difficulty = '';
+      if (piste.difficulty) {
+        difficulty = piste.difficulty;
+      }
+      
+      // NAME DISPLAY
+      var limitShort =18;
+      var lengthLong =0;
+      var char=0;
+      nameHTML = "";
+      shortNameHTML = "";
+      
+      if (pistetype.indexOf("downhill") > -1) {
+        // downhill routes are not taken into account
+        // Downhill name length is not taken into account;
+        
+        color = '';
+        marker = '';
+        if (lat > 0 && lon < -40) {
+          if (piste.difficulty == 'expert') {
+            marker = '&diams;&diams;';
+          }
+          if (piste.difficulty == 'advanced') {
+            marker = '&diams;';
+          }
+          if (piste.difficulty == 'freeride') {
+            marker = '!!';
+          }
+          color = diffcolorUS[piste.difficulty];
+        } else {
+          color = diffcolor[piste.difficulty];
+        }
+        if (marker) {
+          nameHTML += marker +" ";
+          nameHTML += piste.name;
+        } else if (color) {
+          nameHTML += " <span style=\"color:"+color+"\">●</span><span>";
+          nameHTML += piste.name;
+        }
+      } else {
+        nameHTML = piste.name;
+        lengthLong += nameHTML.length;
+        shortNameHTML = "";
+      }
+      
+      if (piste.in_routes.length !== 0) {
+
+        for (r = 0; r < piste.in_routes.length; r++) {
+
+          color = 'black';
+          if (piste.in_routes[r].color) {
+            color = piste.in_routes[r].color;
+          } else {
+            color = diffcolor[piste.in_routes[r].difficulty];
+          }
+          routeName = piste.in_routes[r].name;
+          nameHTML += " <span style=\"color:"+color+"\">●</span><span>"+routeName+"</span>";
+          lengthLong += 2 + routeName.length;
+          shortNameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span>";
+          char += 2;
+        }
+        
+        shortNameHTML += piste.name.substring(0, limitShort-char)+"&nbsp;";
+        char += piste.name.substring(0, limitShort-char).length;
+        for (r = 0; r < piste.in_routes.length; r++) {
+          if (char <=limitShort) {
+            shortNameHTML += "&nbsp;"+piste.in_routes[r].name.substring(0, limitShort-char);
+            char += piste.in_routes[r].name.substring(0, limitShort-char).length+1;
+          }
+        }
+      }
+      
+      
+      if (lengthLong <= limitShort) {shortNameHTML = nameHTML;}
+      else {shortNameHTML += nameHTML.substring(0, limitShort-char)+"...  »"}
+      
+      var longNameDiv = pisteHTML.getElementsByClassName('singlePisteLongName')[0];
+      var shortNameDiv = pisteHTML.getElementsByClassName('singlePisteShortName')[0];
+      
+      longNameDiv.innerHTML = nameHTML;
+      shortNameDiv.innerHTML = shortNameHTML;
+      longNameDiv.style.display="none";
+      
+      //PISTE:TYPE & GROOMING DISPLAY
+      picDiv = pisteHTML.getElementsByClassName('singlePisteLeft')[0];
+      picDiv.innerHTML = null;
+      var t = pistetype;
+      var g = piste.grooming;
+      addImgElement(picDiv, t, g);
       
       //PISTE:DIFFICULTY DISPLAY
       var dist="km "+(parseFloat(piste["distance"])/1000).toFixed(1);
@@ -3132,17 +3136,10 @@ function showHTMLPistesList(Div) {
       picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
       picDiv.innerHTML = '';
       if (site.pistetype) {
-        types = '';
-        types = site.pistetype.split(';');
-        for (t = 0; t < types.length; t++) {
-          pic = icon[types[t]];
-          if (pic) {
-            img = document.createElement('img');
-            img.src = pic;
-            img.className = 'pisteIcon';
-            picDiv.appendChild(img);
-          }
-        }
+      //PISTE:TYPE DISPLAY , no grooming avail here
+        var t = site.pistetype;
+        //var g = piste.grooming;
+        addImgElement(picDiv, t, '');
       }
 
       sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
@@ -3399,20 +3396,17 @@ function showHTMLPistesList(Div) {
         } // difficultyColorSpan
       }
 
-
+      //PISTE:TYPE & GROOMING DISPLAY
       picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
       picDiv.innerHTML = '';
-      pic = null;
       if (piste.pistetype) {
-        pic = icon[piste.pistetype];
+            var t = piste.pistetype;
+            var g = piste.grooming;
+            addImgElement(picDiv, t, g);
       } else {
-        pic = icon[piste.aerialway];
-      }
-      if (pic) {
-        img = document.createElement('img');
-        img.src = pic;
-        img.className = 'pisteIcon';
-        picDiv.appendChild(img);
+            var t = piste.aerialway;
+            var g = piste.grooming;
+            addImgElement(picDiv, t, g);
       }
 
       if (!piste.pistetype) {
