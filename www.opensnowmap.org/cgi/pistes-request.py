@@ -841,6 +841,7 @@ def makeList(IDS, GEO):
 		SELECT
 			id,
 			COALESCE(tags->'piste:name',tags->'name',''),
+      tags->'piste:type',
 			COALESCE(tags->'color',tags->'colour',''),
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
@@ -867,10 +868,11 @@ def makeList(IDS, GEO):
 				tmp['type']='relation'
 				route_ids.append(tmp['id'])
 				tmp['name']=route[1]
-				tmp['color']=route[2]
-				tmp['center']=[route[3],route[4]]
-				tmp['bbox']=route[5]
-				if GEO: tmp['geometry']=encodeWKT(route[6])
+				tmp['pistetype']=route[2]
+				tmp['color']=route[3]
+				tmp['center']=[route[4],route[5]]
+				tmp['bbox']=route[6]
+				if GEO: tmp['geometry']=encodeWKT(route[7])
 				s['in_routes'].append(tmp)
 		
 		#look for sites

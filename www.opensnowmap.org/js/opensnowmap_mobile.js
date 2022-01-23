@@ -3401,8 +3401,15 @@ function showHTMLPistesList(Div) {
       //PISTE:TYPE & GROOMING DISPLAY
       picDiv = pistediv.getElementsByClassName("pisteIconDiv")[0];
       picDiv.innerHTML = '';
-      if (piste.pistetype) {
-            var t = piste.pistetype;
+      /* display also parent route type*/
+      parentType='';
+      if (piste.in_routes.length !== 0) {
+        for (r = 0; r < piste.in_routes.length; r++) {
+          parentType += ';'+piste.in_routes[r].pistetype;
+        }
+      }
+      if (piste.pistetype || parentType) {
+            var t = piste.pistetype + parentType;
             var g = piste.grooming;
             addImgElement(picDiv, t, g);
       } else {
