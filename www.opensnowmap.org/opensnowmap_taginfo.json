@@ -134,9 +134,14 @@
        "description": "Rendered for downhill piste if 'gladed'='yes'."
    },
    {
+       "key": "colour",
+       "object_types": ["relation"],
+       "description": "Crosscountry ski routes are rendered according to their 'colour'='..' or 'color'='..' tag, not by 'piste:difficulty'."
+   },
+   {
        "key": "color",
        "object_types": ["relation"],
-       "description": "Crosscountry ski routes are rendered according to their 'color'='..' tag, not by 'piste:difficulty'."
+       "description": "Crosscountry ski routes are rendered according to their 'colour'='..' or 'color'='..' tag, not by 'piste:difficulty'."
    }     
    ]
 }
