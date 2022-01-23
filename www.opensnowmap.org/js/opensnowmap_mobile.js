@@ -2012,6 +2012,7 @@ function requestRoute(thisPoint) {
           }
         }
         /*parse resulting route*/
+        /* get all legs geometry for vector display on map*/
         var routeWKTs=[]
         
         for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
@@ -2025,7 +2026,16 @@ function requestRoute(thisPoint) {
             });
             routeWKTs.push(routeWKT);
           }
-            
+        /* get complete route for profile display*/
+        var mergedRouteWKT;
+            var routePol = data['routes'][0]['geometry'];
+            var encPol = new ol.format.Polyline();
+            var wkt = new ol.format.WKT();
+            var feature = encPol.readFeature(routePol);
+            var mergedRouteWKT =  wkt.writeFeature(feature, {
+              projection: 'EPSG:4326'
+            });
+        /*get route ways idf for topo*/
         var routeLength = data['routes'][0]['distance'];
         var routeIds=[];
         for (var j = 0 ; j < data['routes'][0]['legs'].length; j++)
@@ -2078,8 +2088,8 @@ function requestRoute(thisPoint) {
         }
         
       // show profile and topo
-      // TODO: could be long, maybe a good idea to put interactions on hold
-      getRouteTopoByWaysId(routeIds, lengths, routeLength, routeWKT);
+      // could be long, maybe a good idea to put interactions on hold
+      getRouteTopoByWaysId(routeIds, lengths, routeLength, mergedRouteWKT);
       
       routeIteraction.setActive(true);
       return true;
