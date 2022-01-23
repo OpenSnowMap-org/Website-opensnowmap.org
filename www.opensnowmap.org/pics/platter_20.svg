@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="platter_20.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   version="1.1"
+   id="svg2998"
+   height="20"
+   width="20"
+   inkscape:export-filename="/home/yves/KIMSUFI/www.git/mapnik-styles/offset-style/drag_lift.png"
+   inkscape:export-xdpi="8"
+   inkscape:export-ydpi="8"
+   viewBox="0 0 18.75 18.75">
+  <defs
+     id="defs3000" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="8.2"
+     inkscape:cx="-11.007302"
+     inkscape:cy="-12.811437"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1870"
+     inkscape:window-height="1016"
+     inkscape:window-x="50"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="false"
+     inkscape:snap-nodes="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-grids="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-global="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3006"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3003">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1033.6122)">
+    <g
+       id="g821"
+       transform="matrix(0.1090817,0,0,0.1090817,-2.6617593,937.72576)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path839"
+         d="M 110.34353,886.5448 C 67.941555,1019.5325 67.941555,1019.5325 67.941555,1019.5325"
+         style="fill:none;stroke:#000000;stroke-width:7.63197756px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+      <g
+         transform="matrix(0.84223366,0,0,0.84223366,10.453363,161.43537)"
+         id="g822">
+        <path
+           style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:11.44796753;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+           id="path843"
+           sodipodi:type="arc"
+           sodipodi:cx="65.371719"
+           sodipodi:cy="1026.828"
+           sodipodi:rx="32.075619"
+           sodipodi:ry="17.787079"
+           sodipodi:start="5.2918383"
+           sodipodi:end="4.4715335"
+           d="m 82.935149,1011.9444 a 32.075619,17.787079 0 0 1 12.290537,21.3881 32.075619,17.787079 0 0 1 -35.258367,11.0283 32.075619,17.787079 0 0 1 -26.65069,-16.8965 32.075619,17.787079 0 0 1 24.403981,-17.9099"
+           sodipodi:open="true" />
+        <path
+           sodipodi:open="true"
+           d="m 85.349157,1006.0099 a 32.075619,17.787079 0 0 1 13.058448,21.1203 32.075619,17.787079 0 0 1 -34.448475,11.5577 32.075619,17.787079 0 0 1 -27.676841,-16.2157 32.075619,17.787079 0 0 1 22.703659,-18.4389"
+           sodipodi:end="4.4191737"
+           sodipodi:start="5.274385"
+           sodipodi:ry="17.787079"
+           sodipodi:rx="32.075619"
+           sodipodi:cy="1021.0612"
+           sodipodi:cx="68.256821"
+           sodipodi:type="arc"
+           id="path855"
+           style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:11.44796753;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+      </g>
+    </g>
+  </g>
+</svg>

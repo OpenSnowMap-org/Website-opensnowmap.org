@@ -213,10 +213,11 @@ var icon = {
   "skitour": 'pics/skitour_20.svg',
   "snowshoe": 'pics/snowshoe_20.svg',
   "hike": 'pics/hike_20.svg',
-  "t-bar": 'pics/drag_lift_20.svg',
-  "j-bar": 'pics/drag_lift_20.svg',
-  "platter": 'pics/drag_lift_20.svg',
-  "rope_tow": 'pics/drag_lift_20.svg',
+  "fatbike": 'pics/fatbike_20.svg',
+  "t-bar": 'pics/tbar_20.svg',
+  "j-bar": 'pics/jbar_20.svg',
+  "platter": 'pics/platter_20.svg',
+  "rope_tow": 'pics/rope_tow_20.svg',
   "station": 'pics/station.png',
   "playground": 'pics/playground_20.svg',
   "sled": 'pics/sled_20.svg',
@@ -669,6 +670,7 @@ function showsearch() {
   document.getElementById('content-control').style.display = 'inline';
   document.getElementById('content_title').innerHTML = '&nbsp;' + _('Search_title');
   document.getElementById('content-outer').scrollTop = 0;
+  
   //~ document.getElementById('search_input').focus();
 }
 
@@ -2792,6 +2794,14 @@ function showHTMLRouteList(Div) {
             if (! done) {
               img = document.createElement('img');
               img.src = icon["ski_jump"];
+              img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
+            }
+        }
+          if (t.indexOf("fatbike") > -1) {
+            var done = false;
+            if (! done) {
+              img = document.createElement('img');
+              img.src = icon["fatbike"];
               img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
         }
