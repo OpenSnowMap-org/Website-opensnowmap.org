@@ -2564,6 +2564,8 @@ function addImgElement(picDiv, pisteType, pisteGrooming) {
 
         var t = pisteType;
         var g = pisteGrooming;
+        if (!t) {return true;}
+        if (!g) {g='';}
 
           if (t.indexOf("nordic") > -1) {
             var done = false;
