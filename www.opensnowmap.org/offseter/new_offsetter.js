@@ -107,7 +107,7 @@ function requestRelations(extent, resolution, projection) {
                     
                     var rel=[];
                     rel['name']=element.name;
-                    rel['color']=element.color;
+                    rel['color']=element.color.split(";")[0];
                     rel['id'] =element.ids[0];
                     
                     if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
@@ -117,7 +117,7 @@ function requestRelations(extent, resolution, projection) {
                     updateRelationList();
                     
                     var stroke= new ol.style.Stroke({
-                               color: element.color,
+                               color: element.color.split(";")[0],
                                width: 3
                              });
                     var style = new ol.style.Style({
