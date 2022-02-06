@@ -56,7 +56,7 @@ function getLayerByName(name) {
 }
 function searchLocation(hash) {
     var id = hash.split('#')[1].split(':')[0];
-    var url = 'http://www.opensnowmap.org/request?ids='+id+','+id+'&list=true';
+    var url = '/request?ids='+id+','+id+'&list=true';
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     var onError = function() {
@@ -85,7 +85,7 @@ function requestRelations(extent, resolution, projection) {
     vectorSource.clear();
      var proj = projection.getCode();
      var bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-     var url = 'http://www.opensnowmap.org/request?group=true&geo=true&list=true&sort_alpha=true' +
+     var url = '/request?group=true&geo=true&list=true&sort_alpha=true' +
          '&bbox=' + bbox.join(',');
      var xhr = new XMLHttpRequest();
      xhr.open('GET', url);
