@@ -107,7 +107,7 @@ function requestRelations(extent, resolution, projection) {
                     
                     var rel=[];
                     rel['name']=element.name;
-                    rel['color']=element.color;
+                    rel['color']=element.color.split(";")[0];
                     rel['id'] =element.ids[0];
                     
                     if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
@@ -117,19 +117,18 @@ function requestRelations(extent, resolution, projection) {
                     updateRelationList();
                     
                     var stroke= new ol.style.Stroke({
-                               color: element.color,
+                               color: element.color.split(";")[0],
                                width: 3
                              });
-                    var style = new ol.style.Style({
-                        stroke: stroke
-                    });
                     var geom = new ol.geom.MultiLineString();
+                    var len = 0;
                     for (l=0; l < element.geometry.length; l++){
                         var f = vectorSource.getFormat().readFeature(element.geometry[l],
                          {dataProjection: 'EPSG:4326',
                           featureProjection: 'EPSG:3857'
                         });
                         var line = f.getGeometry();
+                        len += 0-Math.floor(line.getLength());
                         var coords = [];
                         var counter = 0;
                         var dist = rel['of'] * (3+0.5) * map.getView().getResolution();
@@ -150,11 +149,18 @@ function requestRelations(extent, resolution, projection) {
                         geom.appendLineString(new ol.geom.LineString(coords));
                     }
                     
+                    console.log(len);
+                    var style = new ol.style.Style({
+                        stroke: stroke
+                    });
                     var feature = new ol.Feature({
                         geometry: geom,
                         osm_id: element.ids[0]
                         });
+                        
+                    style.setZIndex(len);
                     feature.setStyle(style);
+                    
                     vectorSource.addFeature(feature);
                     
                     
@@ -196,7 +202,8 @@ function map_init(){
 							ol.source.OSM.ATTRIBUTION
 							],
 						}),
-					visible: true
+					visible: true,
+          opacity: 0.7
 				}),
 				
 				new ol.layer.Tile({
