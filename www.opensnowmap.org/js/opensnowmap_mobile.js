@@ -27,10 +27,13 @@ if (!window.location.host) {
   server = window.location.pathname.replace("index.html", '');
   server = window.location.pathname.replace("mobile.html", '');
 }
-if (server.search('home') != -1) {
-  server = protocol + "//beta.opensnowmap.org/";
-}
 
+var routingserver=server+'routing?ski/';
+
+if (server.search('home') != -1) {
+  server = protocol + "//www.opensnowmap.org/";
+  routingserver='http://0.0.0.0:5105/route/ski/'; // to test locally
+}
 
 var pistes_and_relief_overlay_URL = protocol + "//tiles.opensnowmap.org/pistes-relief/";
 var pistes_only_overlay_HDPI_URL = protocol + "//tiles.opensnowmap.org/pistes-high-dpi/";
@@ -1979,8 +1982,7 @@ function requestRoute(thisPoint) {
   //~ console.log("routing "+pointids);
   //~ if (thisPoint) {console.log("   after"+thisPoint.getProperties().id);}
   
-  //~ var query = 'http://0.0.0.0:5105/route/ski/'; // to test locally
-  var query =server+'routing?ski/'
+  var query = routingserver;
   for (pt in lonlats) {
     query = query + lonlats[pt].lon + ',' +lonlats[pt].lat + ';';
   };

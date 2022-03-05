@@ -1,4 +1,3 @@
-# Python 3 server example
 
 import json
 import psycopg2
@@ -9,20 +8,16 @@ pp = pprint.PrettyPrinter(indent=4)
 DEBUG = True
 
 def routes(query):
-    if (DEBUG): print('Query: '+query)
     resp={}
 
-    db='routing'
+    db='pistes_osm2pgsql'
     global conn
     global cur
-    global pp
-    pp = pprint.PrettyPrinter(indent=4)
-    
-    try:
-        conn = psycopg2.connect("dbname="+db+" user=admin")
-        cur = conn.cursor()
-    except:
-        return
+    # ~ try:
+    conn = psycopg2.connect("dbname="+db+" user=yves")
+    cur = conn.cursor()
+    # ~ except:
+        # ~ pass
         
     cs=query.split(';')
     coords=[]
@@ -43,9 +38,13 @@ def routes(query):
         else:
             conn.close()
             return resp
+    if (DEBUG):
+      print(resp)
     
     for i in range(len(resp['waypoints']) -1):
         leg = route(resp['waypoints'][i],resp['waypoints'][i+1])
+        if (DEBUG):
+          print("leg: "+str(leg))
         if leg['geometry'] != '':
             if 'routes' not in resp:
                 resp['routes']=[]
@@ -56,7 +55,8 @@ def routes(query):
         else:
             conn.close()
             return {}
-    
+    if (DEBUG):
+      print(resp)
     # re-compute each step distance
     
     distance=0
@@ -99,9 +99,9 @@ def route (wpt1, wpt2):
     query = ("""
     select * FROM pgr_trsp(
     'SELECT CAST(gid AS INT4) AS id , CAST(source AS INT4), CAST(target AS INT4), cost, reverse_cost 
-    FROM ways
-    WHERE the_geom && ST_Expand(
-        (SELECT ST_Collect(the_geom) FROM ways WHERE gid IN( %s,%s ) ) , 0.1) 
+    FROM lines
+    WHERE geom && ST_Expand(
+        (SELECT ST_Collect(geom) FROM lines WHERE gid IN( %s,%s ) ) , 0.1) 
     ',
      %s,%s,%s,%s, 
      true, true
@@ -114,7 +114,7 @@ def route (wpt1, wpt2):
             wpt2['ratio'], ))
     cur.execute(query)
     pgr = cur.fetchall()
-    if(DEBUG): pp.pprint(pgr)
+    if(DEBUG): pp.pprint("pgr: "+str(pgr))
 
     """
     seq, id1 (node), id2 (edge), cost
@@ -137,7 +137,7 @@ def route (wpt1, wpt2):
         step={}
         query = ("""
         SELECT osm_id
-        FROM ways
+        FROM lines
         WHERE gid = %s
         ;
         """ % (p[2],) )
@@ -150,7 +150,7 @@ def route (wpt1, wpt2):
         
         query = ("""
         SELECT length_m
-        FROM ways
+        FROM lines
         WHERE gid = %s
         ;
         """ % (p[2],))
@@ -167,9 +167,9 @@ def route (wpt1, wpt2):
     # Compute overall leg geometry
     if len(pgr) == 2 : # Routing along a single edge
         query = ("""
-                SELECT ST_LineLocatePoint(the_geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)),
-                       ST_LineLocatePoint(the_geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))
-                FROM ways WHERE gid = %s;
+                SELECT ST_LineLocatePoint(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)),
+                       ST_LineLocatePoint(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))
+                FROM lines WHERE gid = %s;
                 """ % ( wpt1['coord']['lon'],
                         wpt1['coord']['lat'],
                         wpt2['coord']['lon'],
@@ -184,9 +184,9 @@ def route (wpt1, wpt2):
         else:
             ratio = str(r2) + ',' + str(r1)
         query = ("""
-                SELECT ST_AsEncodedPolyline(ST_LineSubstring(the_geom, %s)),
-                    ST_AsText(ST_LineSubstring(the_geom, %s))
-                FROM ways WHERE gid = %s;
+                SELECT ST_AsEncodedPolyline(ST_LineSubstring(geom, %s)),
+                    ST_AsText(ST_LineSubstring(geom, %s))
+                FROM lines WHERE gid = %s;
                 """ % ( ratio,
                         ratio,
                         pgr[0][2]
@@ -202,18 +202,18 @@ def route (wpt1, wpt2):
         # in the direction of the way:
         query = ("""
             WITH end_first_edge AS (
-                SELECT ST_EndPoint(the_geom) 
+                SELECT ST_EndPoint(geom) 
                 AS geom
-                FROM ways WHERE gid = %s
+                FROM lines WHERE gid = %s
                 ),
                 next_vertice AS (
                 SELECT the_geom 
                 AS geom
-                FROM ways_vertices_pgr WHERE id =  %s
+                FROM lines_vertices_pgr WHERE id =  %s
                 ),
                 ratio AS (
-                SELECT ST_LineLocatePoint(the_geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))::float as r
-                FROM ways WHERE gid = %s
+                SELECT ST_LineLocatePoint(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))::float as r
+                FROM lines WHERE gid = %s
                 )
             SELECT CASE
             WHEN 
@@ -243,18 +243,18 @@ def route (wpt1, wpt2):
         # Same for last edge
         query = ("""
             WITH start_last_edge AS (
-                SELECT ST_StartPoint(the_geom) 
+                SELECT ST_StartPoint(geom) 
                 AS geom
-                FROM ways WHERE gid = %s
+                FROM lines WHERE gid = %s
                 ),
                 prev_vertice AS (
                 SELECT the_geom 
                 AS geom
-                FROM ways_vertices_pgr WHERE id =  %s
+                FROM lines_vertices_pgr WHERE id =  %s
                 ),
                 ratio AS (
-                SELECT ST_LineLocatePoint(the_geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))::float as r
-                FROM ways WHERE gid = %s
+                SELECT ST_LineLocatePoint(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326))::float as r
+                FROM lines WHERE gid = %s
                 )
             SELECT CASE
             WHEN 
@@ -285,19 +285,19 @@ def route (wpt1, wpt2):
             query = ("""
                 WITH
                     start_edge AS (
-                        SELECT ST_LineSubstring(the_geom, %s)
+                        SELECT ST_LineSubstring(geom, %s)
                         AS geom
-                        FROM ways WHERE gid = %s
+                        FROM lines WHERE gid = %s
                     ),
                     end_edge AS (
-                        SELECT ST_LineSubstring(the_geom, %s)
+                        SELECT ST_LineSubstring(geom, %s)
                         AS geom
-                        FROM ways WHERE gid = %s
+                        FROM lines WHERE gid = %s
                     ),
                     middle_edges AS (
-                        SELECT ST_LineMerge(ST_Collect(the_geom))
+                        SELECT ST_LineMerge(ST_Collect(geom))
                         AS geom
-                        FROM ways WHERE gid IN (%s)
+                        FROM lines WHERE gid IN (%s)
                     )
                 SELECT ST_AsEncodedPolyline(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))),
                 ST_AsText(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom])))
@@ -317,14 +317,14 @@ def route (wpt1, wpt2):
             query = ("""
                 WITH
                     start_edge AS (
-                        SELECT ST_LineSubstring(the_geom, %s)
+                        SELECT ST_LineSubstring(geom, %s)
                         AS geom
-                        FROM ways WHERE gid = %s
+                        FROM lines WHERE gid = %s
                     ),
                     end_edge AS (
-                        SELECT ST_LineSubstring(the_geom, %s)
+                        SELECT ST_LineSubstring(geom, %s)
                         AS geom
-                        FROM ways WHERE gid = %s
+                        FROM lines WHERE gid = %s
                     )
                 SELECT ST_AsEncodedPolyline(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, end_edge.geom]))),
                 ST_AsText(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, end_edge.geom])))
@@ -357,17 +357,17 @@ def snap(c):
     
     
     cur.execute("""
-    select gid, osm_id, ST_LineLocatePoint(the_geom, ST_GeometryFromText('POINT(%s %s)', 4326))
-    FROM ways
-    WHERE the_geom && st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326)  \
-    ORDER BY ST_Distance(the_geom, ST_GeometryFromText('POINT(%s %s)', 4326)) LIMIT 1;
+    select gid, osm_id, ST_LineLocatePoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
+    FROM lines
+    WHERE geom && st_setsrid('BOX3D(%s %s,%s %s)'::box3d, 4326)  \
+    ORDER BY ST_Distance(geom, ST_GeometryFromText('POINT(%s %s)', 4326)) LIMIT 1;
     """ % (lon, lat, left, bottom, right, top, lon, lat) )
     edgid, osmid, ratio = cur.fetchone()
     
     cur.execute("""
-    select ST_X(ST_LineInterpolatePoint(the_geom,%s)),
-    ST_Y(ST_LineInterpolatePoint(the_geom,%s))
-    FROM ways
+    select ST_X(ST_LineInterpolatePoint(geom,%s)),
+    ST_Y(ST_LineInterpolatePoint(geom,%s))
+    FROM lines
     WHERE gid = %s  
     LIMIT 1;
     """ % (ratio,ratio,edgid) )
