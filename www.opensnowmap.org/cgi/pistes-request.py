@@ -10,10 +10,10 @@ pp = pprint.PrettyPrinter(indent=4)
 
 def application(environ,start_response):
             
-	request = environ['QUERY_STRING']
+	request = urllib.unquote(environ['QUERY_STRING'])
 	if (DEBUG): print('Query: '+request)
-	if (request.find("request") !=-1) :
-		query=request[4:-1]
+	if (request.find("request?") !=-1) :
+		query=request[1:-1]
 		responseObject = requestPistes.requestPistes(query)
 		if(DEBUG): pp.pprint(responseObject)
 		status = '200 OK'

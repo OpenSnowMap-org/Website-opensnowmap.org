@@ -29,10 +29,12 @@ if (!window.location.host) {
 }
 
 var routingserver=server+'routing?ski/';
+var pisteRequestserver=server+'request?';
 
 if (server.search('home') != -1) {
   server = protocol + "//www.opensnowmap.org/";
   routingserver='http://0.0.0.0:5105/route/ski/'; // to test locally
+  pisteRequestserver='http://0.0.0.0:5106/'; // to test locally
 }
 
 var pistes_and_relief_overlay_URL = protocol + "//tiles.opensnowmap.org/pistes-relief/";
@@ -1408,7 +1410,7 @@ function getMembersById(id) {
   } //clear previous list
   document.getElementById('piste_search_results').innerHTML = '';
 
-  var q = server + "request?geo=true&list=true&sort_alpha=true&group=true&members=" + id;
+  var q = pisteRequestserver + "geo=true&list=true&sort_alpha=true&group=true&members=" + id;
   var XMLHttp = new XMLHttpRequest();
   XMLHttp.open("GET", q);
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -1446,7 +1448,7 @@ function getTopoByViewport() { //DONE in pisteList
 
 
   var bb = ol.extent.applyTransform(map.getView().calculateExtent(), ol.proj.getTransform('EPSG:3857', 'EPSG:4326'), undefined);
-  var q = server + "request?group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
+  var q = pisteRequestserver + "group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
   var XMLHttp = new XMLHttpRequest();
 
   //PisteAPIXHR.push(XMLHttp);
@@ -1470,7 +1472,7 @@ function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     document.getElementById("routeWaiterResults").style.display = 'inline';
     abortXHR('PisteAPI'); // abort another request if any
 
-    var q = server + "request?geo=true&topo=true&ids_ways=" + ids;
+    var q = pisteRequestserver + "geo=true&topo=true&ids_ways=" + ids;
     var XMLHttp = new XMLHttpRequest();
 
     PisteAPIXHR.push(XMLHttp);
@@ -1519,7 +1521,7 @@ function getTopoById(ids) { //DONE in pisteList
   } //clear previous list
   document.getElementById('piste_search_results').innerHTML = '';
 
-  var q = server + "request?geo=true&topo=true&ids=" + ids;
+  var q = pisteRequestserver + "geo=true&topo=true&ids=" + ids;
   var XMLHttp = new XMLHttpRequest();
 
   //PisteAPIXHR.push(XMLHttp);
@@ -2382,8 +2384,8 @@ function RouteSnap(point) {
   if (!point.getProperties().isSnapped && point.getProperties().routable) {
     var coords = point.getGeometry().getCoordinates();
     var ll = ol.proj.toLonLat(coords, 'EPSG:3857');
-    var q = server 
-          + "request?geo=true&list=true&closest=" 
+    var q = pisteRequestserver 
+          + "geo=true&list=true&closest=" 
           + ll[0] + ',' + ll[1];
           
     fetch(q)
@@ -2439,7 +2441,7 @@ function RouteSnap(point) {
 function getByName(name) {
   document.getElementById("searchWaiterResults").style.display = 'inline';
   document.getElementById('piste_search_results').innerHTML = '';
-  var q = server + "request?group=true&geo=true&list=true&name=" + name;
+  var q = pisteRequestserver + "group=true&geo=true&list=true&name=" + name;
   var XMLHttp = new XMLHttpRequest();
   XMLHttp.open("GET", q);
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -3602,7 +3604,7 @@ function showSiteStats(div, id, element_type) { // fix for normal ways
 
     //abortXHR('PisteAPI'); // abort another request if any
 
-    var q = server + "request?site-stats=" + id;
+    var q = pisteRequestserver + "site-stats=" + id;
     var XMLHttp = new XMLHttpRequest();
 
     //PisteAPIXHR.push(XMLHttp);

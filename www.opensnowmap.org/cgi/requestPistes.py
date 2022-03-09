@@ -53,6 +53,7 @@ import psycopg2
 import pdb
 import re
 import json
+import urllib
 
 import math
 
@@ -67,9 +68,18 @@ http://beta.opensnowmap.org/search?group=true&geo=true&sort_alpha=true&list=true
 """
 LIMIT = 50
 
+DEBUG=True
 
-def requestPistes(environ,start_response):
-	
+def requestPistes(request):
+
+	db='pistes_osm2pgsql'
+	global conn
+	global cur
+	# ~ try:
+	conn = psycopg2.connect("dbname="+db+" user=yves")
+	cur = conn.cursor()
+
+	if (DEBUG): print(request)
 	NAME=False
 	CLOSEST=False
 	BBOX=False
@@ -87,8 +97,9 @@ def requestPistes(environ,start_response):
 	LIMIT_REACHED = False
 	#==================================================
 	# handle GET request paramaters
-	request = urllib.unquote(environ['QUERY_STRING'])
 	
+	if (DEBUG): print(request)
+  
 	if request.find('name=') !=-1:
 		NAME = True
 		SORT_ALPHA=False

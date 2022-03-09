@@ -14,8 +14,9 @@ serverPort = 5106
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        if (self.path.find("request")) :
-            query=self.path[11:-1]
+        
+        if (self.path.find("request?")) :
+            query=self.path[1:-1]
             response = requestPistes.requestPistes(query)
             if(DEBUG): pp.pprint(response)
             self.send_response(200)
