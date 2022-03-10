@@ -23,7 +23,7 @@ class MyServer(BaseHTTPRequestHandler):
             
             self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(bytes(json.dumps(response)))
+            self.wfile.write(bytes(response[0]))
         else:
             self.send_response(404)
 

@@ -14,10 +14,10 @@ Request type
 		return the closest way to (lon, lat). Use after a click on the map, for 
 		instance.
 	* ids=id1, id2, ...
-		return the sites and pistes in the id list order. Usefull to create a 
+		return the sites and pistes in the osm_id list order. Usefull to create a 
 		routing topo client-side, for instance
 	* members=id
-		return the pistes member of the relation id (site or route relation)
+		return the pistes member of the relation osm_id (site or route relation)
 		
 Result type
 At least one result type is mandatory
@@ -54,6 +54,7 @@ import pdb
 import re
 import json
 import urllib
+from cStringIO import StringIO
 
 import math
 
@@ -208,8 +209,6 @@ def requestPistes(request):
 		
 		response_body=json.dumps({request:environ['QUERY_STRING']}, sort_keys=True, indent=4)
 		status = '400 Bad Request'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
 		
 		return [response_body]
 	
@@ -246,9 +245,9 @@ def requestPistes(request):
 			IDS['snap']=snap
 		response_body=json.dumps(IDS, sort_keys=True, indent=4)
 		status = '200 OK'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
 		
+		cur.close()
+		conn.close()
 		return [response_body]
 		
 	elif LIST:
@@ -280,9 +279,9 @@ def requestPistes(request):
 		
 		response_body=json.dumps(topo, sort_keys=True, indent=4)
 		status = '200 OK'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
 		
+		cur.close()
+		conn.close()
 		return [response_body]
 	
 	elif SITE_STATS_REQUEST:
@@ -291,8 +290,8 @@ def requestPistes(request):
 		
 		response_body=json.dumps(stats, sort_keys=True, indent=4)
 		status = '200 OK'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
+		cur.close()
+		conn.close()
 		return [response_body]
 		
 	elif TOPO_REQUEST :
@@ -317,25 +316,23 @@ def requestPistes(request):
 			topo['limit_reached']= True;
 			topo['info']= 'Your request size exceed the API limit, results are truncated';
 		
-		response_body=json.dumps(topo, sort_keys=True, indent=4)
-		status = '200 OK'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
 		
+		status = '200 OK'
+		
+		cur.close()
+		conn.close()
 		return [response_body]
 	else:
 		response_body=json.dumps({'request': environ['QUERY_STRING']}, sort_keys=True, indent=4)
 		status = '400 Bad Request'
-		response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response_body)))]
-		start_response(status, response_headers)
 		
+		cur.close()
+		conn.close()
 		return [response_body]
 
 #==================================================
 def queryMembersById(ids, PARENT_ID):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	cur = con.cursor()
 	
 	cur.execute("""
 	SELECT member_id FROM relation_members 
@@ -345,52 +342,45 @@ def queryMembersById(ids, PARENT_ID):
 	ids = cur.fetchall()
 	ids = ','.join([str(long(x[0])) for x in ids])
 	
-	con.commit()
-	cur.close()
-	con.close()
+	conn.commit()
 	if PARENT_ID:
 		print PARENT_ID
-		ids=PARENT_ID+','+ids #insert the parent id in the list
+		ids=PARENT_ID+','+ids #insert the parent osm_id in the list
 	site_ids, route_ids, way_ids=queryByIds(ids)
 	
 	return site_ids, route_ids, way_ids
 	
 def queryByIds(ids):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	cur = con.cursor()
-	
 	cur.execute("""
-	SELECT id FROM relations 
-	WHERE id in (%s)
-		and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports');
+	SELECT osm_id FROM relations 
+	WHERE osm_id in (%s)
+		and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports');
 	"""
 	% (ids,))
 	site_ids = cur.fetchall()
 	site_ids = [x[0] for x in site_ids]
-	con.commit()
+	conn.commit()
 	
 	cur.execute("""
-	SELECT id FROM relations 
-	WHERE id in (%s)
-		and (tags->'route' = 'piste' or tags->'route' = 'ski' or tags->'type' = 'route');
+	SELECT osm_id FROM relations 
+	WHERE osm_id in (%s)
+		and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route');
 	"""
 	% (ids,))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
-	con.commit()
+	conn.commit()
 	
 	cur.execute("""
-	SELECT id FROM ways 
-	WHERE id in (%s);
+	SELECT osm_id FROM lines
+	WHERE osm_id in (%s);
 	"""
 	% (ids,))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
-	con.commit()
+	conn.commit()
 	
-	cur.close()
-	con.close()
 	
 	return site_ids, route_ids, way_ids
 
@@ -402,41 +392,39 @@ def queryByName(name):
 	
 	# set limit for pg_trgm
 	cur.execute("""select set_limit(0.5);""")
-	con.commit()
+	conn.commit()
 	
 	cur.execute("""
-	SELECT id FROM relations 
+	SELECT osm_id FROM relations 
 	WHERE name_trgm %% '%s'
-		and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports')
+		and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports')
 	ORDER by similarity(name_trgm,'%s');
 	"""
 	% (name,name))
 	site_ids = cur.fetchall()
 	site_ids = [x[0] for x in site_ids]
-	con.commit()
+	conn.commit()
 	
 	cur.execute("""
-	SELECT id FROM relations 
+	SELECT osm_id FROM relations 
 	WHERE name_trgm %% '%s'
-		and (tags->'route' = 'piste' or tags->'route' = 'ski' or tags->'type' = 'route')
+		and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route')
 	ORDER by similarity(name_trgm,'%s');
 	"""
 	% (name,name))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
-	con.commit()
+	conn.commit()
 	
 	cur.execute("""
-	SELECT id FROM ways 
+	SELECT osm_id FROM lines
 	WHERE name_trgm %% '%s'
-	ORDER by similarity(name_trgm,'%s'), tags->'name', tags->'piste:name';
+	ORDER by similarity(name_trgm,'%s'), tags::json->>'name', tags::json->>'piste:name';
 	"""
 	% (name,name))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
-	con.commit()
-	cur.close()
-	con.close()
+	conn.commit()
 	
 	if len(site_ids) > LIMIT:
 		site_ids=site_ids[:LIMIT]
@@ -451,55 +439,47 @@ def queryByName(name):
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def queryClosest(center):
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
+	# ~ con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
 	
-	cur = con.cursor()
+	# ~ cur = con.cursor()
 	
 	cur.execute("""
-	SELECT id FROM ways 
-	WHERE (tags->'site' is null) AND (tags->'landuse' is null)
+	SELECT osm_id FROM lines
 	ORDER BY 
-	ST_Distance(linestring, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
+	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
 	"""
+	
+	# ~ WHERE (tags::json->>'site' is null) AND (tags::json->>'landuse' is null)
 	% (center['lon'],center['lat']))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	
 	
-	con.commit()
-	cur.close()
-	con.close()
 	return [], [], way_ids
 
 def snapToWay(ID, center):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	
-	cur = con.cursor()
 	
 	cur.execute("""
 	SELECT
 		ST_X(
-			ST_LineInterpolatePoint(linestring,
-				st_linelocatepoint(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+			ST_LineInterpolatePoint(geom,
+				st_linelocatepoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
 			)
 		),
 		ST_Y(
-			ST_LineInterpolatePoint(linestring,
-				st_linelocatepoint(linestring, ST_GeometryFromText('POINT(%s %s)', 4326))
+			ST_LineInterpolatePoint(geom,
+				st_linelocatepoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
 			)
 		)
-	FROM ways
-	WHERE id=%s;
+	FROM lines
+	WHERE osm_id=%s;
 	"""
 	% (center['lon'],center['lat'],center['lon'],center['lat'],ID))
 	way_ids = cur.fetchall()
 	
 	
-	con.commit()
-	cur.close()
-	con.close()
 	return way_ids[0][0],way_ids[0][1]
 
 def queryByBbox(bbox):
@@ -511,38 +491,30 @@ def queryByBbox(bbox):
 	
 	#~ Need to build a geometryfor relations ...
 	cur.execute("""
-	SELECT id FROM relations 
+	SELECT osm_id FROM relations 
 	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	and (tags->'type' = 'site' or tags->'landuse' = 'winter_sports');
+	and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports');
 	"""
 	% (bbox[0],bbox[1],bbox[2],bbox[3]))
 	site_ids = cur.fetchall()
 	site_ids = [x[0] for x in site_ids]
-	cur.close()
-	cur = con.cursor()
 	cur.execute("""
-	SELECT id FROM relations 
+	SELECT osm_id FROM relations 
 	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	and (tags->'route' = 'piste' or tags->'route' = 'ski' or tags->'type' = 'route') ;
+	and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route') ;
 	"""
 	% (bbox[0],bbox[1],bbox[2],bbox[3]))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
 	
-	cur.close()
-	cur = con.cursor()
 	cur.execute("""
-	SELECT id FROM ways 
-	WHERE linestring && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326);
+	SELECT osm_id FROM lines
+	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326);
 	"""
 	% (bbox[0],bbox[1],bbox[2],bbox[3]))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
-	con.commit()
-	
-	
-	cur.close()
-	con.close()
+	conn.commit()
 	
 	if len(site_ids) > LIMIT:
 		site_ids=site_ids[:LIMIT]
@@ -569,16 +541,16 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 				
 				cur.execute(
 				"""
-				SELECT id FROM ways
+				SELECT osm_id FROM lines
 				WHERE 
-				(id in (
-						SELECT member_id FROM relation_members 
+				(osm_id in (
+						SELECT member_id FROM relations 
 						WHERE relation_id =%s and member_id in (%s)
 						)
 					AND
-						tags->'piste:type' = (
-							SELECT tags->'piste:type' FROM relations
-							WHERE id = %s
+						piste_type = (
+							SELECT piste_type FROM routes
+							WHERE osm_id = %s
 							))
 				OR (
 					EXIST(tags, 'piste:type') = FALSE
@@ -589,7 +561,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 				%(long(i),wayList,long(i)))
 				
 				to_remove.extend(cur.fetchall())
-				con.commit()
+				conn.commit()
 			to_remove=[t[0] for t in to_remove] 
 			clean_way_ids=[]
 			for wid in way_ids:
@@ -602,37 +574,37 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			cur.execute(
 			"""
 			SELECT distinct array_agg(distinct a.id)
-			FROM ways as a, ways as b
+			FROM lines as a, ways as b
 			WHERE 
 				a.id in (%s)
 				and b.id in (%s)
-				and (a.tags->'name' <>'' or a.tags->'piste:name' <> '')
+				and (a.tags::json->>'name' <>'' or a.tags::json->>'piste:name' <> '')
 			GROUP BY 
-				(COALESCE(a.tags->'name','')||' '|| COALESCE(a.tags->'piste:name','')),
-				ST_touches(a.linestring,b.linestring),
-				a.tags->'piste:difficulty',
-				a.tags->'piste:grooming',
-				a.tags->'aerialway',
-				a.tags->'railway'
+				(COALESCE(a.tags::json->>'name','')||' '|| COALESCE(a.tags::json->>'piste:name','')),
+				ST_touches(a.geom,b.geom),
+				a.tags::json->>'piste:difficulty',
+				a.tags::json->>'piste:grooming',
+				a.tags::json->>'aerialway',
+				a.tags::json->>'railway'
 			HAVING
-				ST_touches(a.linestring,b.linestring)
+				ST_touches(a.geom,b.geom)
 			"""
 			%(wayList,wayList))
 			way_ids=cur.fetchall()
-			con.commit()
+			conn.commit()
 			
 			way_ids = [list(set(x[0])) for x in way_ids]
 			
 			cur.execute(
 			"""
 			SELECT id
-			FROM ways
+			FROM lines
 			WHERE
 				id in (%s);
 			"""
 			%(wayList,))
 			way_ids2=cur.fetchall()
-			con.commit()
+			conn.commit()
 			
 			if len(way_ids2):
 				way_ids2 = [[x[0]] for x in way_ids2]
@@ -643,8 +615,6 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			# query magical, we have now to re-group further by id
 			#~ way_ids=list(concatPistes(way_ids))
 			way_ids=concatPistes(way_ids)
-		cur.close()
-		con.close()
 	else: way_ids=[[w] for w in way_ids]
 	IDS = {}
 	IDS['sites']=site_ids
@@ -654,37 +624,35 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	return IDS
 
 def makeList(IDS, GEO):
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
 	
 	if GEO: geomS=',ST_AsText(ST_buffer(geom,0.01))'
 	else: geomS=''
 	if GEO: geomR=',ST_AsText(geom)'
 	else: geomR=''
-	if GEO: geomW=',ST_AsText(ST_Collect(ST_LineMerge(linestring)))'
+	if GEO: geomW=',ST_AsText(ST_Collect(ST_LineMerge(geom)))'
 	else: geomW=''
 
 	topo={}
 
 	## SITES
-	cur = con.cursor()
 	topo['sites']=[]
 	for osm_id in IDS['sites']:
 		osm_id=str(long(osm_id))
 		cur.execute("""
 		SELECT 
-			id,
-			COALESCE(tags->'piste:name',tags->'name',''),
-			tags->'piste:type',
+			osm_id,
+			name,
+			piste_type,
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
-			tags->'was_way',
+			site_type,
 			box2d(geom)
 			%s
-		FROM relations 
-		WHERE id=%s;
+		FROM sites 
+		WHERE osm_id=%s;
 		"""
 		% (geomS,osm_id))
 		site=cur.fetchone()
-		con.commit()
+		conn.commit()
 		
 		s={}
 		if site:
@@ -692,48 +660,45 @@ def makeList(IDS, GEO):
 			s['name']=site[1]
 			s['pistetype']=site[2]
 			s['center']=[site[3],site[4]]
-			if site[5] == 'yes': s['type']='way'
-			else: s['type']='relation'
+			s['type']=site[5]
 			s['bbox']=site[6]
 			if GEO: s['geometry']=encodeWKT(site[7])
 			
 		topo['sites'].append(s)
-	cur.close()
 	
 	## ROUTES
-	cur = con.cursor()
 	topo['pistes']=[]
 	for osm_id in IDS['routes']:
 		osm_id=str(long(osm_id))
 		cur.execute("""
 		SELECT 
-			id,
-			COALESCE(tags->'name','')||' '||COALESCE(tags->'piste:name',''),
-			tags->'piste:type',
-			COALESCE(tags->'color',tags->'colour',''),
+			osm_id,
+			name,
+			piste_type,
+			COALESCE(tags::json->>'color',tags::json->>'colour',''),
 			COALESCE( 
-				array_to_string(array(SELECT distinct tags->'piste:difficulty' from ways
-				WHERE id in (
-					SELECT member_id FROM relation_members 
+				array_to_string(array(SELECT distinct tags::json->>'piste:difficulty' FROM lines
+				WHERE osm_id in (
+					SELECT member_id FROM relations 
 					WHERE relation_id =%s )
 					),',')
-				,tags->'piste:difficulty'),
+				,tags::json->>'piste:difficulty'),
 			COALESCE( 
-				array_to_string(array(SELECT distinct tags->'piste:grooming' from ways
-				WHERE id in (
-					SELECT member_id FROM relation_members 
+				array_to_string(array(SELECT distinct tags::json->>'piste:grooming' FROM lines
+				WHERE osm_id in (
+					SELECT member_id FROM relations 
 					WHERE relation_id =%s )
 					),',')
-				,tags->'piste:grooming'),
+				,tags::json->>'piste:grooming'),
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
-		FROM relations 
-		WHERE id=%s;
+		FROM routes 
+		WHERE osm_id=%s;
 		"""
 		% (osm_id,osm_id,geomR,osm_id))
 		piste=cur.fetchone()
-		con.commit()
+		conn.commit()
 		
 		s={}
 		if piste:
@@ -755,24 +720,22 @@ def makeList(IDS, GEO):
 		#look for sites
 		cur.execute("""
 		SELECT
-			id,
-			COALESCE(tags->'piste:name',tags->'name',''),
-			tags->'piste:type',
+			osm_id,
+			name,
+			piste_type',
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
-		FROM relations 
-		WHERE id in (
+		FROM sites 
+		WHERE osm_id in (
 			SELECT 
 			relation_id
-			FROM relation_members 
+			FROM relations 
 			WHERE member_id in (%s))
-		AND
-			tags->'type'='site';
 		"""
 		% (geomS,osm_id))
 		sites=cur.fetchall()
-		con.commit()
+		conn.commit()
 		if sites:
 			s['in_sites']=[]
 			for site in sites:
@@ -787,29 +750,26 @@ def makeList(IDS, GEO):
 				s['in_sites'].append(tmp)
 		
 		topo['pistes'].append(s)
-	cur.close()
 	
 	## WAYS
-	cur = con.cursor()
 	for osm_ids in IDS['ways']:
 		
 		osm_id=str(long(osm_ids[0]))
 		
 		cur.execute("""
 		SELECT 
-			id,
-			COALESCE(tags->'name','')||' '||COALESCE(tags->'piste:name',''),
-			tags->'piste:type',
-			tags->'piste:difficulty',
-			tags->'aerialway',
-			tags->'railway',
-			tags->'piste:grooming'
-		FROM ways 
-		WHERE id=%s;
+			osm_id,
+			name,
+			piste_type,
+			tags::json->>'piste:difficulty',
+			lift_type,
+			tags::json->>'piste:grooming'
+		FROM lines
+		WHERE osm_id=%s;
 		"""
 		% (osm_id,))
 		piste=cur.fetchone()
-		con.commit()
+		conn.commit()
 		
 		s={}
 		if piste:
@@ -819,25 +779,24 @@ def makeList(IDS, GEO):
 			s['pistetype']=piste[2]
 			s['color']=''
 			s['difficulty']=piste[3]
-			if (piste[4]): s['aerialway']=piste[4]
-			else: s['aerialway']=piste[5]
-			s['grooming']=piste[6]
+			s['aerialway']=piste[4]
+			s['grooming']=piste[5]
 			s['in_sites']=[]
 			s['in_routes']=[]
 		
 		way_list=','.join([str(long(i)) for i in osm_ids])
 		cur.execute("""
 		SELECT 
-			ST_X(ST_Centroid(ST_Collect(linestring))),
-			ST_Y(ST_Centroid(ST_Collect(linestring))),
-			box2d(ST_Collect(linestring))
+			ST_X(ST_Centroid(ST_Collect(geom))),
+			ST_Y(ST_Centroid(ST_Collect(geom))),
+			box2d(ST_Collect(geom))
 			%s
-		FROM ways 
-		WHERE id in (%s);
+		FROM lines
+		WHERE osm_id in (%s);
 		"""
 		% (geomW,way_list))
 		piste=cur.fetchone()
-		con.commit()
+		conn.commit()
 		if piste:
 			s['center']=[piste[0],piste[1]]
 			s['bbox']=piste[2]
@@ -846,25 +805,23 @@ def makeList(IDS, GEO):
 		#look for routes
 		cur.execute("""
 		SELECT
-			id,
-			COALESCE(tags->'piste:name',tags->'name',''),
-      tags->'piste:type',
-			COALESCE(tags->'color',tags->'colour',''),
+			osm_id,
+			name,
+      relation_piste_type,
+			COALESCE(tags::json->>'color',tags::json->>'colour',''),
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
-		FROM relations 
-		WHERE id in (
+		FROM routes 
+		WHERE osm_id in (
 			SELECT 
 			relation_id
-			FROM relation_members 
+			FROM relations
 			WHERE member_id=%s)
-		AND
-			tags->'type'='route';
 		"""
 		% (geomR,osm_id))
 		routes=cur.fetchall()
-		con.commit()
+		conn.commit()
 		
 		route_ids=[]
 		if routes:
@@ -888,24 +845,22 @@ def makeList(IDS, GEO):
 		ids=','.join(route_ids)
 		cur.execute("""
 		SELECT
-			id,
-			COALESCE(tags->'piste:name',tags->'name',''),
-			tags->'piste:type',
+			osm_id,
+			name,
+			piste_type,
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
-		FROM relations 
-		WHERE id in (
+		FROM sites 
+		WHERE osm_id in (
 			SELECT 
 			relation_id
-			FROM relation_members 
+			FROM relations 
 			WHERE member_id in (%s))
-		AND
-			tags->'type'='site';
 		"""
 		% (geomS,ids))
 		sites=cur.fetchall()
-		con.commit()
+		conn.commit()
 		
 		if sites:
 			s['in_sites']=[]
@@ -921,9 +876,6 @@ def makeList(IDS, GEO):
 				s['in_sites'].append(tmp)
 		
 		topo['pistes'].append(s)
-	cur.close()
-	
-	con.close()
 	
 	return topo
 
@@ -988,32 +940,30 @@ def concatPistes(ways_ids):
 			#~ yield list(f)
 def getSiteStats(ID):
 	
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	cur = con.cursor()
 	
 	stats={}
 	stats['site']=ID
 	
-	sql="""select sum(ST_LengthSpheroid(linestring,'SPHEROID["GRS_1980",6378137,298.257222101]'))
+	sql="""select sum(ST_LengthSpheroid(geom,'SPHEROID["GRS_1980",6378137,298.257222101]'))
 	from (
-		SELECT DISTINCT linestring FROM ways 
-		WHERE id in (
+		SELECT DISTINCT geom FROM lines
+		WHERE osm_id in (
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (
 				SELECT member_id FROM relation_members 
 				WHERE relation_id in (%s)
 				)
 			)
-		and tags->%s 
+		and tags::json->>%s 
 		UNION ALL
 		
-		SELECT DISTINCT linestring FROM ways 
-		WHERE id in (
+		SELECT DISTINCT geom FROM lines
+		WHERE osm_id in (
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (%s)
 			)
-		and tags->%s and (tags->'area'<>'yes' or not tags ? 'area')
-		) as linestring;"""
+		and tags::json->>%s and (tags::json->>'area'<>'yes' or not tags ? 'area')
+		) as geom;"""
 	
 	cur.execute(sql% (ID,"'piste:type'='nordic'",ID,"'piste:type'='nordic'"))
 	stats['nordic']=cur.fetchone()[0]
@@ -1030,24 +980,24 @@ def getSiteStats(ID):
 	
 	sql=""" select count(*)
 	from (
-		SELECT DISTINCT * FROM ways 
-		WHERE id in (
+		SELECT DISTINCT * FROM lines
+		WHERE osm_id in (
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (
 				SELECT member_id FROM relation_members 
 				WHERE relation_id in (%s)
 				)
 			)
-		and tags->%s 
+		and tags::json->>%s 
 		UNION ALL
 		
-		SELECT DISTINCT * FROM ways 
-		WHERE id in (
+		SELECT DISTINCT * FROM lines
+		WHERE osm_id in (
 			SELECT member_id FROM relation_members 
 			WHERE relation_id in (%s)
 			)
-		and tags->%s
-		) as linestring;"""
+		and tags::json->>%s
+		) as geom;"""
 	
 	cur.execute(sql% (ID,"'piste:type'='snow_park'",ID,"'piste:type'='snow_park'"))
 	stats['snow_park']=cur.fetchone()[0]

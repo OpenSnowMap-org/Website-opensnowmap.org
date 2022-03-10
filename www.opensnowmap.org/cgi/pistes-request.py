@@ -20,7 +20,7 @@ def application(environ,start_response):
 	else:
 		status = '404'
 		
-	response = json.dumps(responseObject)
+	response=json.dumps(topo, sort_keys=True, indent=4)
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response)))]
 	start_response(status, response_headers)
 	return response
