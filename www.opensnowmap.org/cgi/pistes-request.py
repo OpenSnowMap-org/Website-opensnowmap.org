@@ -13,7 +13,7 @@ def application(environ,start_response):
 	request = urllib.unquote(environ['QUERY_STRING'])
 	if (DEBUG): print('Query: '+request)
 	if (request.find("request?") !=-1) :
-		query=request[1:-1]
+		query=request[9:]
 		responseObject = requestPistes.requestPistes(query)
 		if(DEBUG): pp.pprint(responseObject)
 		status = '200 OK'

@@ -68,6 +68,7 @@ http://beta.opensnowmap.org/search?name=La%20Petite%20Grand&geo=true&list=true
 http://beta.opensnowmap.org/search?group=true&geo=true&sort_alpha=true&list=true&ids=32235255,29283990,8216510
 """
 LIMIT = 50
+HARDLIMIT = 500
 
 DEBUG=True
 
@@ -126,7 +127,6 @@ def requestPistes(request):
 		ids=request.split('ids=')[1]
 		if ids.find('&'): ids=ids.split('&')[0]
 		# ids='id1, id2, ...'
-		
 		
 	if request.find('ids_ways=') !=-1:
 		TOPO_REQUEST = True
@@ -229,7 +229,8 @@ def requestPistes(request):
 		sites : [id, id, ...]
 				
 		routes : [id, id, ...]
-		ways : [[id, id], ...] # ways can be grouped later if similar enough (touches each other, same name, same type, same difficulty)
+		ways : [[id, id], ...] # ways can be grouped later if similar enough 
+		(touches each other, same name, same type, same difficulty)
 	}
 	"""
 	#==================================================
@@ -318,7 +319,7 @@ def requestPistes(request):
 		
 		
 		status = '200 OK'
-		
+		response_body=json.dumps(topo, sort_keys=True, indent=4)
 		cur.close()
 		conn.close()
 		return [response_body]
@@ -335,7 +336,7 @@ def queryMembersById(ids, PARENT_ID):
 	
 	
 	cur.execute("""
-	SELECT member_id FROM relation_members 
+	SELECT member_id FROM relations 
 	WHERE relation_id in (%s);
 	"""
 	% (ids,))
@@ -353,9 +354,8 @@ def queryMembersById(ids, PARENT_ID):
 def queryByIds(ids):
 	
 	cur.execute("""
-	SELECT osm_id FROM relations 
+	SELECT osm_id FROM sites 
 	WHERE osm_id in (%s)
-		and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports');
 	"""
 	% (ids,))
 	site_ids = cur.fetchall()
@@ -363,9 +363,8 @@ def queryByIds(ids):
 	conn.commit()
 	
 	cur.execute("""
-	SELECT osm_id FROM relations 
+	SELECT osm_id FROM routes 
 	WHERE osm_id in (%s)
-		and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route');
 	"""
 	% (ids,))
 	route_ids = cur.fetchall()
@@ -386,19 +385,16 @@ def queryByIds(ids):
 
 def queryByName(name):
 	LIMIT_REACHED = False
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	cur = con.cursor()
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
 	# set limit for pg_trgm
-	cur.execute("""select set_limit(0.5);""")
+	cur.execute("""select set_limit(0.4);""")
 	conn.commit()
 	
 	cur.execute("""
-	SELECT osm_id FROM relations 
-	WHERE name_trgm %% '%s'
-		and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports')
-	ORDER by similarity(name_trgm,'%s');
+	SELECT osm_id FROM sites 
+	WHERE name %% '%s'
+	ORDER by similarity(name,'%s');
 	"""
 	% (name,name))
 	site_ids = cur.fetchall()
@@ -406,10 +402,9 @@ def queryByName(name):
 	conn.commit()
 	
 	cur.execute("""
-	SELECT osm_id FROM relations 
-	WHERE name_trgm %% '%s'
-		and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route')
-	ORDER by similarity(name_trgm,'%s');
+	SELECT osm_id FROM routes 
+	WHERE name %% '%s'
+	ORDER by similarity(name,'%s');
 	"""
 	% (name,name))
 	route_ids = cur.fetchall()
@@ -418,13 +413,14 @@ def queryByName(name):
 	
 	cur.execute("""
 	SELECT osm_id FROM lines
-	WHERE name_trgm %% '%s'
-	ORDER by similarity(name_trgm,'%s'), tags::json->>'name', tags::json->>'piste:name';
+	WHERE name %% '%s'
+	ORDER by similarity(name,'%s');
 	"""
 	% (name,name))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
+	# TODO also add areas
 	
 	if len(site_ids) > LIMIT:
 		site_ids=site_ids[:LIMIT]
@@ -439,9 +435,6 @@ def queryByName(name):
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def queryClosest(center):
-	# ~ con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	
-	# ~ cur = con.cursor()
 	
 	cur.execute("""
 	SELECT osm_id FROM lines
@@ -484,45 +477,47 @@ def snapToWay(ID, center):
 
 def queryByBbox(bbox):
 	LIMIT_REACHED = False
-	con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-	cur = con.cursor()
+	if (LIMIT < HARDLIMIT): 
+		l=LIMIT
+	else:
+		l=HARDLIMIT
 	site_ids=[]
 	route_ids=[]
 	
-	#~ Need to build a geometryfor relations ...
 	cur.execute("""
-	SELECT osm_id FROM relations 
+	SELECT osm_id FROM sites 
 	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	and (tags::json->>'type' = 'site' or tags::json->>'landuse' = 'winter_sports');
+	LIMIT %s;
 	"""
-	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
 	site_ids = cur.fetchall()
 	site_ids = [x[0] for x in site_ids]
 	cur.execute("""
-	SELECT osm_id FROM relations 
+	SELECT osm_id FROM routes 
 	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	and (tags::json->>'route' = 'piste' or tags::json->>'route' = 'ski' or tags::json->>'type' = 'route') ;
+	LIMIT %s;
 	"""
-	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
 	
 	cur.execute("""
 	SELECT osm_id FROM lines
-	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326);
+	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+	LIMIT %s;
 	"""
-	% (bbox[0],bbox[1],bbox[2],bbox[3]))
+	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
 	
-	if len(site_ids) > LIMIT:
+	if len(site_ids) >= LIMIT:
 		site_ids=site_ids[:LIMIT]
 		LIMIT_REACHED = True
-	if len(route_ids) > LIMIT:
+	if len(route_ids) >= LIMIT:
 		route_ids=route_ids[:LIMIT]
 		LIMIT_REACHED = True
-	if len(way_ids) > LIMIT:
+	if len(way_ids) >= LIMIT:
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
 	
@@ -531,8 +526,6 @@ def queryByBbox(bbox):
 def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	
 	if CONCAT:
-		con = psycopg2.connect("dbname=pistes-pgsnapshot user=xapi")
-		cur = con.cursor()
 		if len(way_ids):
 			# remove duplicates: way member of a route #of same piste:type
 			wayList = ','.join([str(long(i)) for i in way_ids])
@@ -553,9 +546,8 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 							WHERE osm_id = %s
 							))
 				OR (
-					EXIST(tags, 'piste:type') = FALSE
-					and EXIST(tags, 'aerialway') = FALSE
-					and EXIST(tags, 'railway') = FALSE
+					piste_type is null
+					AND lift_type is null
 				);
 				"""
 				%(long(i),wayList,long(i)))
@@ -573,19 +565,18 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			wayList = ','.join([str(long(i)) for i in way_ids])
 			cur.execute(
 			"""
-			SELECT distinct array_agg(distinct a.id)
-			FROM lines as a, ways as b
+			SELECT distinct array_agg(distinct a.osm_id)
+			FROM lines as a, lines as b
 			WHERE 
-				a.id in (%s)
-				and b.id in (%s)
-				and (a.tags::json->>'name' <>'' or a.tags::json->>'piste:name' <> '')
+				a.osm_id in (%s)
+				and b.osm_id in (%s)
+				and (a.name <> '')
 			GROUP BY 
-				(COALESCE(a.tags::json->>'name','')||' '|| COALESCE(a.tags::json->>'piste:name','')),
+				a.name,
 				ST_touches(a.geom,b.geom),
 				a.tags::json->>'piste:difficulty',
 				a.tags::json->>'piste:grooming',
-				a.tags::json->>'aerialway',
-				a.tags::json->>'railway'
+				a.lift_type
 			HAVING
 				ST_touches(a.geom,b.geom)
 			"""
@@ -597,10 +588,10 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			
 			cur.execute(
 			"""
-			SELECT id
+			SELECT osm_id
 			FROM lines
 			WHERE
-				id in (%s);
+				osm_id in (%s);
 			"""
 			%(wayList,))
 			way_ids2=cur.fetchall()
@@ -674,7 +665,7 @@ def makeList(IDS, GEO):
 		SELECT 
 			osm_id,
 			name,
-			piste_type,
+			relation_piste_type,
 			COALESCE(tags::json->>'color',tags::json->>'colour',''),
 			COALESCE( 
 				array_to_string(array(SELECT distinct tags::json->>'piste:difficulty' FROM lines
@@ -722,7 +713,7 @@ def makeList(IDS, GEO):
 		SELECT
 			osm_id,
 			name,
-			piste_type',
+			piste_type,
 			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
 			box2d(geom)
 			%s
@@ -731,7 +722,7 @@ def makeList(IDS, GEO):
 			SELECT 
 			relation_id
 			FROM relations 
-			WHERE member_id in (%s))
+			WHERE member_id in (%s));
 		"""
 		% (geomS,osm_id))
 		sites=cur.fetchall()
@@ -902,6 +893,7 @@ def compareAttributes(piste1, piste2):
 	return True
 	
 def nameSorter(name):
+	if not name: return 'zzzzzzzzzzzz'
 	name=name.strip(' ')
 	if name !='': return name
 	else: return 'zzzzzzzzzzzz'
@@ -948,68 +940,103 @@ def getSiteStats(ID):
 	from (
 		SELECT DISTINCT geom FROM lines
 		WHERE osm_id in (
-			SELECT member_id FROM relation_members 
+			SELECT member_id FROM relations 
 			WHERE relation_id in (
-				SELECT member_id FROM relation_members 
+				SELECT member_id FROM relations 
 				WHERE relation_id in (%s)
+				AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
 				)
 			)
-		and tags::json->>%s 
+		and piste_Type LIKE %s
 		UNION ALL
 		
 		SELECT DISTINCT geom FROM lines
 		WHERE osm_id in (
-			SELECT member_id FROM relation_members 
+			SELECT member_id FROM relations 
 			WHERE relation_id in (%s)
+			AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
 			)
-		and tags::json->>%s and (tags::json->>'area'<>'yes' or not tags ? 'area')
+		and piste_type LIKE %s
 		) as geom;"""
 	
-	cur.execute(sql% (ID,"'piste:type'='nordic'",ID,"'piste:type'='nordic'"))
+	cur.execute(sql% (ID,"'nordic'",ID,"'nordic'"))
 	stats['nordic']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='downhill'",ID,"'piste:type'='downhill'"))
+	cur.execute(sql% (ID,"'downhill'",ID,"'downhill'"))
+	print(sql% (ID,"'downhill'",ID,"'downhill'"))
+	
 	stats['downhill']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='skitour'",ID,"'piste:type'='skitour'"))
+	cur.execute(sql% (ID,"'skitour'",ID,"'skitour'"))
 	stats['skitour']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='hike'",ID,"'piste:type'='hike'"))
+	cur.execute(sql% (ID,"'hike'",ID,"'hike'"))
 	stats['hike']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='sled'",ID,"'piste:type'='sled'"))
+	cur.execute(sql% (ID,"'sled'",ID,"'sled'"))
 	stats['sled']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'aerialway'<>''",ID,"'aerialway'<>''"))
-	stats['lifts']=cur.fetchone()[0]
 	
 	sql=""" select count(*)
 	from (
 		SELECT DISTINCT * FROM lines
 		WHERE osm_id in (
-			SELECT member_id FROM relation_members 
+			SELECT member_id FROM relations 
 			WHERE relation_id in (
-				SELECT member_id FROM relation_members 
+				SELECT member_id FROM relations 
 				WHERE relation_id in (%s)
+				AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
 				)
 			)
-		and tags::json->>%s 
+		and piste_type LIKE %s
 		UNION ALL
 		
 		SELECT DISTINCT * FROM lines
 		WHERE osm_id in (
-			SELECT member_id FROM relation_members 
+			SELECT member_id FROM relations 
 			WHERE relation_id in (%s)
+			AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
 			)
-		and tags::json->>%s
+		and piste_type LIKE %s
 		) as geom;"""
 	
-	cur.execute(sql% (ID,"'piste:type'='snow_park'",ID,"'piste:type'='snow_park'"))
+	cur.execute(sql% (ID,"'snow_park'",ID,"'snow_park'"))
 	stats['snow_park']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='playground'",ID,"'piste:type'='playground'"))
+	cur.execute(sql% (ID,"'playground'",ID,"'playground'"))
 	stats['playground']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'piste:type'='sleigh'",ID,"'piste:type'='sleigh'"))
+	cur.execute(sql% (ID,"'sleigh'",ID,"'sleigh'"))
 	stats['sleigh']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'sport'='ski_jump'",ID,"'sport'='ski_jump'"))
+	cur.execute(sql% (ID,"'ski_jump'",ID,"'ski_jump'"))
 	stats['jump']=cur.fetchone()[0]
-	cur.execute(sql% (ID,"'sport'='skating'",ID,"'sport'='skating'"))
+	cur.execute(sql% (ID,"'skating'",ID,"'skating'"))
 	stats['ice_skate']=cur.fetchone()[0]
 	
+	sql="""select sum(ST_LengthSpheroid(geom,'SPHEROID["GRS_1980",6378137,298.257222101]'))
+	from (
+		SELECT DISTINCT geom FROM lines
+		WHERE osm_id in (
+			SELECT member_id FROM relations 
+			WHERE relation_id in (
+				SELECT member_id FROM relations 
+				WHERE relation_id in (%s)
+				AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
+				)
+			)
+		and lift_type <>''
+		UNION ALL
+		
+		SELECT DISTINCT geom FROM lines
+		WHERE osm_id in (
+			SELECT member_id FROM relations 
+			WHERE relation_id in (%s)
+			AND (relation_type='landuse' AND member_type='w'
+				OR relation_type='site')
+			)
+		and lift_type <>''
+		) as geom;"""
+	print(sql% (ID,ID))
+	cur.execute(sql% (ID,ID))
+	stats['lifts']=cur.fetchone()[0]
 	for  p in stats:
 		if not stats[p]:stats[p]=0
 	return stats
