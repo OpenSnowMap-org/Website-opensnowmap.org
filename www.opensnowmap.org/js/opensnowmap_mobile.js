@@ -2795,6 +2795,7 @@ function showHTMLRouteList(Div) {
       piste = jsonPisteList.pistes[p];
 
       osm_ids = piste.ids.join('_').toString();
+      if(!piste.name) {piste.name= '';}
       
       var element_type='';
       if (piste.type) {
@@ -2916,11 +2917,15 @@ function showHTMLRouteList(Div) {
       
       //PISTE:DIFFICULTY DISPLAY
       var dist="km "+(parseFloat(piste["distance"])/1000).toFixed(1);
-      var diffHTML =dist+' (';
-      if (piste.difficulty) {
-        diffHTML += _(piste.difficulty);
+      var diffHTML =dist;
+      if (piste.difficulty && piste.aerialway=='') {
+        diffHTML += ' ('+_(piste.difficulty);
       }
-      marker =_('difficulty')+' ?';
+      marker='';
+      if(piste.aerialway == '') {
+        //~ initialize a default difficultymarker
+        marker =_('difficulty')+' ?';
+      }
       if (pistetype.indexOf("downhill") > -1) {
         if (piste.difficulty) {
           marker = '&#9679;'; // bullet
@@ -3021,10 +3026,13 @@ function showHTMLRouteList(Div) {
           }
         } 
       }
+      
       if (marker){        
           diffHTML += "&nbsp;<span style=\"color:"+color+"\">"+marker+"</span><span>";
       }
-      diffHTML += ')';
+      if(piste.aerialway == '') {
+        diffHTML += ')';
+      }
       var diffDiv = pisteHTML.getElementsByClassName('singlePisteDiff')[0];
       if (diffHTML.length >2) {
         diffDiv.innerHTML=diffHTML;
