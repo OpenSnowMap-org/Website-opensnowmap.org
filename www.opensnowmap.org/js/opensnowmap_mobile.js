@@ -34,7 +34,7 @@ var pisteRequestserver=server+'request?';
 if (server.search('home') != -1) {
   server = protocol + "//www.opensnowmap.org/";
   routingserver='http://0.0.0.0:5105/route/ski/'; // to test locally
-  pisteRequestserver='http://0.0.0.0:5106/'; // to test locally
+  pisteRequestserver='http://0.0.0.0:5106/request?'; // to test locally
 }
 
 var pistes_and_relief_overlay_URL = protocol + "//tiles.opensnowmap.org/pistes-relief/";
@@ -3468,7 +3468,7 @@ function showHTMLPistesList(Div) {
             getMembersById(this.getAttribute('parent_site_id'));
           };
           footer.appendChild(insitediv);
-          spans = pistediv.getElementsByTagName('span');
+          spans = insitediv.getElementsByTagName('span');
           for (i = 0; i < spans.length; i++) {
             span = spans[i];
             if (span.className == "siteNameSpan") {
