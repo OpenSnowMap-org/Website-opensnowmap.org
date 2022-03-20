@@ -508,10 +508,11 @@ def queryByBbox(bbox, CONCAT):
 	route_ids = [x[0] for x in route_ids]
 	if(CONCAT) :
 		# Better filtering before than haviong to group afterward
+		# for ways having same type than their parent relations
 		query="""
 		SELECT osm_id FROM lines
 		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-		AND position(piste_type in piste_type) = 0
+		AND position(piste_type in relation_piste_type) = 0
 		LIMIT %s;
 		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
 	else:
