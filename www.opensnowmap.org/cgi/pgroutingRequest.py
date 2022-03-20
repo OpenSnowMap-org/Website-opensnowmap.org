@@ -5,7 +5,7 @@ import pprint
 import pdb
 
 pp = pprint.PrettyPrinter(indent=4)
-DEBUG = True
+DEBUG = False
 
 def routes(query):
     resp={}

@@ -1944,7 +1944,7 @@ function Route() { //DONE in pisteList
 function requestRoute(thisPoint) {
   
   routeIteraction.setActive(false);
-  
+  showroute(); //useful when listing pistes in the viewport while in route mode
   routeLinesfeatures.clear();
   var lineID = 0;
   var points=routeSourcePoints.getFeatures();
@@ -2110,11 +2110,13 @@ function requestRoute(thisPoint) {
   .catch(function(error) {
     /* re-route()*/
     console.log("routing failed.");
-    thisPoint.setProperties({'routable': false});
-    routeIteraction.setActive(true);
-    RouteReStyle();
-    requestRoute();
     ROUTING = false;
+    routeIteraction.setActive(true);
+    if (thisPoint) {
+      thisPoint.setProperties({'routable': false});
+      RouteReStyle();
+      requestRoute();
+    }
   });
   return true;
 }
@@ -2372,14 +2374,6 @@ function RouteSnap(point) {
       }
     document.getElementById("queryWaiterResults").style.display = 'inline';
   }
-  // count all routablepoints so that we can route when they're sanpped - useless ?
-  /*var routableCnt=0;
-  for (f in routeSourcePoints.getFeatures()) {
-    var pt = routeSourcePoints.getFeatures()[f];
-    if (pt.getProperties().routable) {
-      routableCnt +=1;
-    }
-  }*/
   
   if (!point.getProperties().isSnapped && point.getProperties().routable) {
     var coords = point.getGeometry().getCoordinates();
@@ -2416,9 +2410,11 @@ function RouteSnap(point) {
       RouteReStyle();
       
       if (ROUTEMODE) {
+        showroute(); //useful when listing pistes in the viewport while in route mode
         showHTMLPistesList(document.getElementById('route_results'));
       }
       else {
+        showquery(); //useful when listing pistes in the viewport while in query mode
         showHTMLPistesList(document.getElementById('query_results'));
       }
       
@@ -2433,6 +2429,14 @@ function RouteSnap(point) {
     })
     .catch(function(error) {
       point.setProperties({'isSnapped': false, 'routable': false});
+      document.getElementById("routeWaiterResults").style.display = 'none';
+      console.log("snaping failed.");
+      if (ROUTEMODE){
+        ROUTING = false;
+        routeIteraction.setActive(true);
+        RouteReStyle();
+        requestRoute();
+      }
     });
   }
   return true
