@@ -346,7 +346,6 @@ def queryMembersById(ids, PARENT_ID):
 	
 	conn.commit()
 	if PARENT_ID:
-		print PARENT_ID
 		ids=PARENT_ID+','+ids #insert the parent osm_id in the list
 	site_ids, route_ids, way_ids=queryByIds(ids)
 	
@@ -763,7 +762,6 @@ def makeList(IDS, GEO):
 	
 	## WAYS
 	tmp_time=time.time()
-	print(IDS['ways'])
 	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
 	# list of first ids
 	# Todo: faire une seule requetes sur lines, route et piste en un seul coup
@@ -926,28 +924,32 @@ def makeList(IDS, GEO):
 		for i in range(0, len(ordered_ids)):
 			idx=ordered_ids[i]
 			piste=all_pistes[idx]
-			topo['pistes'].append(piste)
-			# ~ Check if a the id is singular, otherwise get the right geometry
-			# ~ when plural
+			
+			# ~ Check if the id is singular, otherwise get the right geometry
+			# ~ when pistes are already concatenated
+			# ~ Check a list view request around 690949555L, 690949556L
 			if len(IDS['ways'][i]) > 1:
-				print(IDS['ways'][i])
-				# ~ way_list=','.join([str(long(i)) for i in osm_ids])
-				# ~ cur.execute("""
-				# ~ SELECT 
-					# ~ ST_X(ST_Centroid(ST_Collect(linestring))),
-					# ~ ST_Y(ST_Centroid(ST_Collect(linestring))),
-					# ~ box2d(ST_Collect(linestring))
-					# ~ %s
-				# ~ FROM ways 
-				# ~ WHERE id in (%s);
-				# ~ """
-				# ~ % (geomW,way_list))
-				# ~ piste=cur.fetchone()
-				# ~ con.commit()
-				# ~ if piste:
-					# ~ s['center']=[piste[0],piste[1]]
-					# ~ s['bbox']=piste[2]
-					# ~ if GEO: s['geometry']=encodeWKT(piste[3])
+				if (DEBUG): print("composed ways : "+str(IDS['ways'][i]))
+				id_list=','.join([str(long(j)) for j in IDS['ways'][i]])
+				cur.execute("""
+				SELECT 
+					ST_X(ST_Centroid(ST_Collect(geom))),
+					ST_Y(ST_Centroid(ST_Collect(geom))),
+					box2d(ST_Collect(geom))
+					%s
+				FROM lines 
+				WHERE osm_id in (%s);
+				"""
+				% (geomW,id_list))
+				p=cur.fetchone()
+				conn.commit()
+				if p:
+					piste['ids']=IDS['ways'][i]
+					piste['center']=[p[0],p[1]]
+					piste['bbox']=p[2]
+					if GEO: piste['geometry']=encodeWKT(p[3])
+			
+			topo['pistes'].append(piste)
 		
 		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
 		
@@ -1117,7 +1119,7 @@ def getSiteStats(ID):
 			)
 		and lift_type <>''
 		) as geom;"""
-	print(sql% (ID,ID))
+	
 	cur.execute(sql% (ID,ID))
 	stats['lifts']=cur.fetchone()[0]
 	for  p in stats:
