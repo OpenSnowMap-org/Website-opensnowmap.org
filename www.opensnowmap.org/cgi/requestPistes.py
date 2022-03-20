@@ -3,6 +3,7 @@
 #
 # Piste search API
 
+# TODO also add areas
 """
 Request type
 	* name=xxx
@@ -423,7 +424,7 @@ def queryByName(name):
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
-	# TODO also add areas
+	
 	
 	if len(site_ids) > LIMIT:
 		site_ids=site_ids[:LIMIT]
@@ -810,7 +811,7 @@ def makeList(IDS, GEO):
 			in_sites=''
 			s={}
 			if piste:
-				s['ids']=[piste[0]] # temporary TODO
+				s['ids']=[piste[0]] # temporary, this will be set to the original id list at the end
 				s['type']='way'
 				s['name']=piste[1]
 				s['pistetype']=piste[2]
