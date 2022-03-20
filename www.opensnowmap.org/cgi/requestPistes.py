@@ -54,6 +54,7 @@ import pdb
 import re
 import json
 import urllib
+import time
 from cStringIO import StringIO
 
 import math
@@ -70,8 +71,8 @@ http://beta.opensnowmap.org/search?group=true&geo=true&sort_alpha=true&list=true
 LIMIT = 50
 HARDLIMIT = 500
 
-DEBUG=True
-
+DEBUG=False
+SPEEDDEBUG=False
 def requestPistes(request):
 
 	db='pistes_osm2pgsql'
@@ -196,7 +197,7 @@ def requestPistes(request):
 	elif MEMBERS_REQUEST: 
 		site_ids, route_ids, way_ids = queryMembersById(ids, PARENT_ID)
 	elif BBOX:
-		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox)
+		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, CONCAT)
 	elif CLOSEST:
 		site_ids, route_ids, way_ids = queryClosest(center)
 		snap={}
@@ -333,7 +334,7 @@ def requestPistes(request):
 
 #==================================================
 def queryMembersById(ids, PARENT_ID):
-	
+	start_time=time.time()
 	
 	cur.execute("""
 	SELECT member_id FROM relations 
@@ -349,10 +350,11 @@ def queryMembersById(ids, PARENT_ID):
 		ids=PARENT_ID+','+ids #insert the parent osm_id in the list
 	site_ids, route_ids, way_ids=queryByIds(ids)
 	
+	if(SPEEDDEBUG): print("queryMembersById took: " + str(time.time()-start_time))
 	return site_ids, route_ids, way_ids
 	
 def queryByIds(ids):
-	
+	start_time=time.time()
 	cur.execute("""
 	SELECT osm_id FROM sites 
 	WHERE osm_id in (%s)
@@ -381,9 +383,11 @@ def queryByIds(ids):
 	conn.commit()
 	
 	
+	if(SPEEDDEBUG): print("queryByIds took: " + str(time.time()-start_time))
 	return site_ids, route_ids, way_ids
 
 def queryByName(name):
+	start_time=time.time()
 	LIMIT_REACHED = False
 	name=name.replace(' ','&').replace('%20','&').replace('"', '&').replace("'", "&")
 	
@@ -432,6 +436,7 @@ def queryByName(name):
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
 	
+	if(SPEEDDEBUG): print("queryByName took: " + str(time.time()-start_time))
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def queryClosest(center):
@@ -475,7 +480,8 @@ def snapToWay(ID, center):
 	
 	return way_ids[0][0],way_ids[0][1]
 
-def queryByBbox(bbox):
+def queryByBbox(bbox, CONCAT):
+	start_time=time.time()
 	LIMIT_REACHED = False
 	if (LIMIT < HARDLIMIT): 
 		l=LIMIT
@@ -500,13 +506,22 @@ def queryByBbox(bbox):
 	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
-	
-	cur.execute("""
-	SELECT osm_id FROM lines
-	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-	LIMIT %s;
-	"""
-	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
+	if(CONCAT) :
+		# Better filtering before than haviong to group afterward
+		query="""
+		SELECT osm_id FROM lines
+		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+		AND position(piste_type in piste_type) = 0
+		LIMIT %s;
+		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
+	else:
+		query="""
+		SELECT osm_id FROM lines
+		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+		LIMIT %s;
+		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
+		
+	cur.execute(query)
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
@@ -521,39 +536,39 @@ def queryByBbox(bbox):
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
 	
+	if(SPEEDDEBUG): print("queryByBbox took: " + str(time.time()-start_time))
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def buildIds(site_ids, route_ids, way_ids, CONCAT):
-	
+	start_time=time.time()
 	if CONCAT:
+		
 		if len(way_ids):
 			# remove duplicates: way member of a route #of same piste:type
+			# already useless when from BBOX
 			wayList = ','.join([str(long(i)) for i in way_ids])
 			to_remove=[]
+			int_time=time.time()
 			for i in route_ids:
-				
-				cur.execute(
-				"""
+				query="""
 				SELECT osm_id FROM lines
-				WHERE 
-				(osm_id in (
-						SELECT member_id FROM relations 
-						WHERE relation_id =%s and member_id in (%s)
-						)
-					AND
+				WHERE %s = ANY (routes_ids)
+				AND osm_id in (%s)
+				AND
 						piste_type = (
-							SELECT piste_type FROM routes
+							SELECT relation_piste_type FROM routes
 							WHERE osm_id = %s
-							))
+							)
 				OR (
 					piste_type is null
 					AND lift_type is null
 				);
-				"""
-				%(long(i),wayList,long(i)))
+				"""%(long(i),wayList,long(i))
 				
+				cur.execute(query)
 				to_remove.extend(cur.fetchall())
 				conn.commit()
+			if(SPEEDDEBUG): print("buildIds - remove duplicates took: " + str(time.time()-int_time))
 			to_remove=[t[0] for t in to_remove] 
 			clean_way_ids=[]
 			for wid in way_ids:
@@ -561,7 +576,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			way_ids=clean_way_ids
 		if len(way_ids)==1 : way_ids=[way_ids]
 		if len(way_ids)>1:	# group ways
-			
+			int_time=time.time()
 			wayList = ','.join([str(long(i)) for i in way_ids])
 			cur.execute(
 			"""
@@ -583,7 +598,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 			%(wayList,wayList))
 			way_ids=cur.fetchall()
 			conn.commit()
-			
+			if(SPEEDDEBUG): print("buildIds - groupWays took: " + str(time.time()-int_time))
 			way_ids = [list(set(x[0])) for x in way_ids]
 			
 			cur.execute(
@@ -611,11 +626,11 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	IDS['sites']=site_ids
 	IDS['routes']=route_ids
 	IDS['ways']=way_ids
-	
+	if(SPEEDDEBUG): print("buildIds took: " + str(time.time()-start_time))
 	return IDS
 
 def makeList(IDS, GEO):
-	
+	start_time=time.time()
 	if GEO: geomS=',ST_AsText(ST_buffer(geom,0.01))'
 	else: geomS=''
 	if GEO: geomR=',ST_AsText(geom)'
@@ -626,6 +641,7 @@ def makeList(IDS, GEO):
 	topo={}
 
 	## SITES
+	tmp_time=time.time()
 	topo['sites']=[]
 	for osm_id in IDS['sites']:
 		osm_id=str(long(osm_id))
@@ -656,8 +672,9 @@ def makeList(IDS, GEO):
 			if GEO: s['geometry']=encodeWKT(site[7])
 			
 		topo['sites'].append(s)
-	
+	if(SPEEDDEBUG): print("For sites, makeList took: " + str(time.time()-tmp_time))
 	## ROUTES
+	tmp_time=time.time()
 	topo['pistes']=[]
 	for osm_id in IDS['routes']:
 		osm_id=str(long(osm_id))
@@ -741,133 +758,199 @@ def makeList(IDS, GEO):
 				s['in_sites'].append(tmp)
 		
 		topo['pistes'].append(s)
+	if(SPEEDDEBUG): print("For routes, makeList took: " + str(time.time()-tmp_time))
 	
 	## WAYS
-	for osm_ids in IDS['ways']:
-		
-		osm_id=str(long(osm_ids[0]))
-		
-		cur.execute("""
-		SELECT 
-			osm_id,
-			name,
-			piste_type,
-			tags::json->>'piste:difficulty',
-			lift_type,
-			tags::json->>'piste:grooming'
-		FROM lines
-		WHERE osm_id=%s;
-		"""
-		% (osm_id,))
-		piste=cur.fetchone()
-		conn.commit()
-		
-		s={}
-		if piste:
-			s['ids']=osm_ids
-			s['type']='way'
-			s['name']=piste[1]
-			s['pistetype']=piste[2]
-			s['color']=''
-			s['difficulty']=piste[3]
-			s['aerialway']=piste[4]
-			s['grooming']=piste[5]
-			s['in_sites']=[]
-			s['in_routes']=[]
-		
-		way_list=','.join([str(long(i)) for i in osm_ids])
-		cur.execute("""
-		SELECT 
-			ST_X(ST_Centroid(ST_Collect(geom))),
-			ST_Y(ST_Centroid(ST_Collect(geom))),
-			box2d(ST_Collect(geom))
-			%s
-		FROM lines
-		WHERE osm_id in (%s);
-		"""
-		% (geomW,way_list))
-		piste=cur.fetchone()
-		conn.commit()
-		if piste:
-			s['center']=[piste[0],piste[1]]
-			s['bbox']=piste[2]
-			if GEO: s['geometry']=encodeWKT(piste[3])
-		
-		#look for routes
-		cur.execute("""
-		SELECT
-			osm_id,
-			name,
-      relation_piste_type,
-			COALESCE(tags::json->>'color',tags::json->>'colour',''),
-			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
-			box2d(geom)
-			%s
-		FROM routes 
-		WHERE osm_id in (
+	tmp_time=time.time()
+	print(IDS['ways'])
+	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
+	# list of first ids
+	# Todo: faire une seule requetes sur lines, route et piste en un seul coup
+	# avec IN (first_ids_list) puis a partir de deux liste de tous les parents.
+	# Looper sur les resultats pour faire la liste, une seule requete
+	# sera plus rapide.
+	# Ensuite, completer la liste avec autant de requetes que necessaires
+	# pour la geometrie pour les ways qui doivent etre merged.
+	first_ids_list=','.join(str(r[0]) for r in IDS['ways'])
+	all_parent_routes=''
+	all_parent_sites=''
+	if len(first_ids_list):
+		query = """
 			SELECT 
-			relation_id
-			FROM relations
-			WHERE member_id=%s)
-		"""
-		% (geomR,osm_id))
-		routes=cur.fetchall()
-		conn.commit()
+				osm_id,
+				name,
+				piste_type,
+				tags::json->>'piste:difficulty',
+				lift_type,
+				tags::json->>'piste:grooming',
+				array_to_string(routes_ids,','),
+				array_to_string(array_cat(sites_ids, landuses_ids),','),
+				ST_X(ST_Centroid(ST_Collect(geom))),
+				ST_Y(ST_Centroid(ST_Collect(geom))),
+				box2d(ST_Collect(geom))
+				%s
+			FROM lines
+			WHERE osm_id in (%s)
+			GROUP BY 
+				osm_id,
+				name,
+				piste_type,
+				tags::json->>'piste:difficulty',
+				lift_type,
+				tags::json->>'piste:grooming',
+				array_to_string(routes_ids,','),
+				array_to_string(array_cat(sites_ids, landuses_ids),',')
+			;""" % (geomW,first_ids_list)
+		# Note: the request ways_ids order is lost, then rebuilt later
+		cur.execute(query)
+		pistes=cur.fetchall()
+		all_pistes={}
+		for piste in pistes:
+
+			in_routes=''
+			in_sites=''
+			s={}
+			if piste:
+				s['ids']=[piste[0]] # temporary TODO
+				s['type']='way'
+				s['name']=piste[1]
+				s['pistetype']=piste[2]
+				s['color']=''
+				s['difficulty']=piste[3]
+				s['aerialway']=piste[4]
+				s['grooming']=piste[5]
+				s['in_sites']=[]
+				s['in_routes']=[]
+				if (piste[6]):
+					in_routes=str(piste[6])
+				if (piste[7]):
+					in_sites=str(piste[7]) # not used, we want also sites only routes are member of
+				s['parent_routes_ids']=in_routes
+				s['parent_sites_ids']=in_sites
+				
+				s['center']=[piste[8],piste[9]]
+				s['bbox']=piste[10]
+				if GEO: s['geometry']=encodeWKT(piste[11])
+				if in_routes:
+					all_parent_routes+=','+in_routes
+				if in_sites:
+					all_parent_sites+=','+in_sites
+				all_pistes[str(piste[0])]=s
+			
+			if(SPEEDDEBUG): print("For this way, makeList took: " + str(time.time()-tmp_time))
+		#look for in_routes
+		all_parent_routes = all_parent_routes.strip(',')
+		all_routes={}
+		if len(all_parent_routes) :
+			cur.execute("""
+			SELECT
+				osm_id,
+				name,
+				relation_piste_type,
+				COALESCE(tags::json->>'color',tags::json->>'colour',''),
+				ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
+				box2d(geom)
+				%s
+			FROM routes 
+			WHERE osm_id in (%s)
+			"""
+			% (geomR,all_parent_routes))
+			routes=cur.fetchall()
+			conn.commit()
+			
+			route_ids=[]
+			if routes:
+				for route in routes:
+					tmp={}
+					tmp['id']=route[0]
+					tmp['type']='relation'
+					route_ids.append(tmp['id'])
+					tmp['name']=route[1]
+					tmp['pistetype']=route[2]
+					tmp['color']=route[3]
+					tmp['center']=[route[4],route[5]]
+					tmp['bbox']=route[6]
+					if GEO: tmp['geometry']=encodeWKT(route[7])
+					all_routes[str(tmp['id'])]=tmp
+		if(SPEEDDEBUG): print("For in_routes, makeList took: " + str(time.time()-tmp_time))
 		
-		route_ids=[]
-		if routes:
-			s['in_routes']=[]
-			for route in routes:
-				tmp={}
-				tmp['id']=route[0]
-				tmp['type']='relation'
-				route_ids.append(tmp['id'])
-				tmp['name']=route[1]
-				tmp['pistetype']=route[2]
-				tmp['color']=route[3]
-				tmp['center']=[route[4],route[5]]
-				tmp['bbox']=route[6]
-				if GEO: tmp['geometry']=encodeWKT(route[7])
-				s['in_routes'].append(tmp)
+		#look for in_sites
+		all_parent_sites = all_parent_sites.strip(',')
+		all_sites={}
+		if len(all_parent_sites) :
+			cur.execute("""
+			SELECT
+				osm_id,
+				name,
+				piste_type,
+				ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
+				box2d(geom)
+				%s
+			FROM sites 
+			WHERE osm_id in (%s)
+			""" % (geomS,all_parent_sites))
+			sites=cur.fetchall()
+			conn.commit()
+			
+			if sites:
+				for site in sites:
+					tmp={}
+					tmp['id']=site[0]
+					tmp['type']='relation'
+					tmp['name']=site[1]
+					tmp['pistetype']=site[2]
+					tmp['center']=[site[3],site[4]]
+					tmp['bbox']=site[5]
+					if GEO: tmp['geometry']=encodeWKT(site[6])
+					all_sites[str(tmp['id'])]=tmp
+		if(SPEEDDEBUG): print("For insites, makeList took: " + str(time.time()-tmp_time))
 		
-		#look for sites
-		route_ids=[str(long(i)) for i in route_ids]
-		route_ids.append(osm_id)
-		ids=','.join(route_ids)
-		cur.execute("""
-		SELECT
-			osm_id,
-			name,
-			piste_type,
-			ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
-			box2d(geom)
-			%s
-		FROM sites 
-		WHERE osm_id in (
-			SELECT 
-			relation_id
-			FROM relations 
-			WHERE member_id in (%s))
-		"""
-		% (geomS,ids))
-		sites=cur.fetchall()
-		conn.commit()
+		# ~ Looping trough the piste list all_pistes to populate
+		# ~ the in_routes and in_sites fields.
+		for p in all_pistes:
+			piste=all_pistes[p]
+			if piste['parent_routes_ids']:
+				ar = str(piste['parent_routes_ids']).split(",")
+				ar=list(set(ar))
+				for routeId in sorted(ar) :
+					piste['in_routes'].append(all_routes[routeId])
+			if piste['parent_sites_ids']:
+				ar = str(piste['parent_sites_ids']).split(",")
+				ar=list(set(ar))
+				for siteId in sorted(ar) :
+					piste['in_sites'].append(all_sites[siteId])
 		
-		if sites:
-			s['in_sites']=[]
-			for site in sites:
-				tmp={}
-				tmp['id']=site[0]
-				tmp['type']='relation'
-				tmp['name']=site[1]
-				tmp['pistetype']=site[2]
-				tmp['center']=[site[3],site[4]]
-				tmp['bbox']=site[5]
-				if GEO: tmp['geometry']=encodeWKT(site[6])
-				s['in_sites'].append(tmp)
+		# ~ We  re-order the list in the initial request order.
+		ordered_ids = first_ids_list.split(',')
+		for i in range(0, len(ordered_ids)):
+			idx=ordered_ids[i]
+			piste=all_pistes[idx]
+			topo['pistes'].append(piste)
+			# ~ Check if a the id is singular, otherwise get the right geometry
+			# ~ when plural
+			if len(IDS['ways'][i]) > 1:
+				print(IDS['ways'][i])
+				# ~ way_list=','.join([str(long(i)) for i in osm_ids])
+				# ~ cur.execute("""
+				# ~ SELECT 
+					# ~ ST_X(ST_Centroid(ST_Collect(linestring))),
+					# ~ ST_Y(ST_Centroid(ST_Collect(linestring))),
+					# ~ box2d(ST_Collect(linestring))
+					# ~ %s
+				# ~ FROM ways 
+				# ~ WHERE id in (%s);
+				# ~ """
+				# ~ % (geomW,way_list))
+				# ~ piste=cur.fetchone()
+				# ~ con.commit()
+				# ~ if piste:
+					# ~ s['center']=[piste[0],piste[1]]
+					# ~ s['bbox']=piste[2]
+					# ~ if GEO: s['geometry']=encodeWKT(piste[3])
 		
-		topo['pistes'].append(s)
-	
+		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
+		
+		if(SPEEDDEBUG): print("makeList took: " + str(time.time()-start_time))
 	return topo
 
 def concatWaysByAttributes(topo):
@@ -964,7 +1047,6 @@ def getSiteStats(ID):
 	cur.execute(sql% (ID,"'nordic'",ID,"'nordic'"))
 	stats['nordic']=cur.fetchone()[0]
 	cur.execute(sql% (ID,"'downhill'",ID,"'downhill'"))
-	print(sql% (ID,"'downhill'",ID,"'downhill'"))
 	
 	stats['downhill']=cur.fetchone()[0]
 	cur.execute(sql% (ID,"'skitour'",ID,"'skitour'"))
