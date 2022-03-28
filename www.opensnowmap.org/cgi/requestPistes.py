@@ -65,9 +65,40 @@ http://beta.opensnowmap.org/search?name=Vourbey&ids_only=true
 http://beta.opensnowmap.org/search?name=Pauvre Conche&ids_only=true
 http://beta.opensnowmap.org/search?bbox=5,46,6,47&ids_only=true
 http://beta.opensnowmap.org/search?bbox=6.05,46.38,6.11,46.42&ids_only=true
-http://beta.opensnowmap.org/search?closest=5,46&ids_only=true
+http://beta.opensnowmap.org/searchwhen clicking on 'inRouteElement'?closest=5,46&ids_only=true
 http://beta.opensnowmap.org/search?name=La%20Petite%20Grand&geo=true&list=true
 http://beta.opensnowmap.org/search?group=true&geo=true&sort_alpha=true&list=true&ids=32235255,29283990,8216510
+"""
+"""
+function getMembersById(id) 
+when clicking on 'inSiteElement' for a piste or 'getMemberListButton' for a site => always with a siteid
+"geo=true&list=true&sort_alpha=true&group=true&members=" + id;
+==> "siteMembers="+id
+
+function getTopoById(ids) 
+DONE in pisteList when clicking on 'inRouteElement' => always with a single route Id
+"geo=true&topo=true&ids=" + ids;
+==> useless, everything should be in the in_routes:[n] object
+
+function getTopoByViewport() 
+"group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
+==> "bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3]
+
+function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) 
+"geo=true&topo=true&ids_ways=" + ids;
+==> "topoByWayId=" +  ids;
+
+RouteSnap(point)
+"geo=true&list=true&closest=" + ll[0] + ',' + ll[1];
+==> "closest=" +  ids;
+
+function getByName(name)
+"group=true&geo=true&list=true&name=" + name;
+==> "name=" +  ids;
+
+function showSiteStats(div, id, element_type) 
+ "site-stats=" + id;
+==> "siteStats=" +  ids;
 """
 LIMIT = 50
 HARDLIMIT = 500
@@ -79,22 +110,10 @@ def requestPistes(request):
 	db='pistes_osm2pgsql'
 	global conn
 	global cur
-	# ~ try:
 	conn = psycopg2.connect("dbname="+db+" user=yves")
 	cur = conn.cursor()
-
 	if (DEBUG): print(request)
-	NAME=False
-	CLOSEST=False
-	BBOX=False
-	ID_REQUEST=False
-	MEMBERS_REQUEST=False
-	PARENT_ID=False
-	LIST=False
-	TOPO_REQUEST=False
-	SITE_STATS_REQUEST=False
 	GEO=False
-	IDS_ONLY=False
 	SORT_ALPHA=False
 	CONCAT=False
 	global LIMIT 
@@ -103,163 +122,55 @@ def requestPistes(request):
 	# handle GET request paramaters
 	
 	if (DEBUG): print(request)
-  
 	if request.find('name=') !=-1:
-		NAME = True
-		SORT_ALPHA=False
-		# query: ...name=someplace&...
-		name=request.split('name=')[1]
-		if name.find('&'): name=name.split('&')[0]
-		#name='the%20blue slope'
+				name=request.split('name=')[1]
+				if name.find('&'): name=name.split('&')[0]
+				#name='the%20blue slope'
+				# ~ NAME = True
+				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByName(name)
+				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
+				topo=makeList(IDS,GEO)
+				# sort by name
+				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				# number the results
+				i=0
+				for s in topo['sites']:
+					s['result_index']=i
+					i+=1
+				i=0
+				for s in topo['pistes']:
+					s['result_index']=i
+					i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				if LIMIT_REACHED:
+					topo['limit_reached']= True;
+					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=json.dumps(topo, sort_keys=True, indent=4)
+				status = 200
+				
+				cur.close()
+				conn.close()
+				return status, [response_body]
 		
-	if request.find('closest=') !=-1:
-		CLOSEST = True
-		
+	elif request.find('closest=') !=-1:
 		# query: ...closest=lon,lat&... or ...closest=lon; lat&...
 		point=request.split('closest=')[1]
 		if point.find('&'): point=point.split('&')[0].replace(';',',').replace(' ','')
 		center={}
 		center['lon']=float(point.split(',')[0])
 		center['lat']=float(point.split(',')[1])
-		# center={lat: 42.36, lon: 6.34}
-		
-	if request.find('ids=') !=-1:
-		ID_REQUEST = True
-		# query: ...ids=id1, id2, id3...
-		ids=request.split('ids=')[1]
-		if ids.find('&'): ids=ids.split('&')[0]
-		# ids='id1, id2, ...'
-		
-	if request.find('ids_ways=') !=-1:
-		TOPO_REQUEST = True
-		# query: ...ids=id1, id2, id3...
-		ids=request.split('ids_ways=')[1]
-		if ids.find('&'): ids=ids.split('&')[0]
-		# ids='id1, id2, ...'
-		
-	if request.find('members=') !=-1:
-		MEMBERS_REQUEST = True
-		# query: ...members=id1...
-		ids=request.split('members=')[1]
-		if ids.find('&'): ids=ids.split('&')[0]
-		if request.find('parent=true') !=-1:
-			PARENT_ID = ids
-	
-	if request.find('site-stats=') !=-1:
-		SITE_STATS_REQUEST = True
-		# query: ...members=id1...
-		ids=request.split('site-stats=')[1]
-		if ids.find('&'): ids=ids.split('&')[0]
-	
-	if request.find('bbox=') !=-1:
-		BBOX = True
-		# query: ...bbox=left, bottom, right, top&... 
-		bbox=request.split('bbox=')[1]
-		if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
-		for b in bbox: b=float(b)
-		# bbox=[left, bottom, right, top]
-		
-	if request.find('group=true') !=-1:
-		CONCAT = True
-		# query: ...group=true... 
-	
-	if request.find('limit=false') !=-1:
-		LIMIT = 100000000
-	
-	if request.find('ids_only=true') !=-1:
-		IDS_ONLY = True
-		# query: ...ids=true...
-	
-	elif request.find('topo=true') !=-1:
-		TOPO_REQUEST = True
-		# query: ...list=true... 
-		if request.find('geo=true') !=-1:
-			GEO = True
-			# query: ...geo=true... 
-	
-	elif request.find('list=true') !=-1:
-		LIST = True
-		# query: ...list=true... 
-		if request.find('geo=true') !=-1:
-			GEO = True
-			# query: ...geo=true... 
-		if request.find('sort_alpha=true') !=-1:
-			SORT_ALPHA = True
-		
-	
-	#==================================================
-	# basic queries: create the dict of elements osm ids corresponding to the query
-	if ID_REQUEST: 
-		site_ids, route_ids, way_ids = queryByIds(ids)
-	elif TOPO_REQUEST:
-		site_ids=[]
-		route_ids=[]
-		way_ids = ids.split(',')
-	elif MEMBERS_REQUEST: 
-		site_ids, route_ids, way_ids = queryMembersById(ids, PARENT_ID)
-	elif BBOX:
-		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, CONCAT)
-	elif CLOSEST:
 		site_ids, route_ids, way_ids = queryClosest(center)
 		snap={}
 		snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
-	elif NAME:
-		site_ids, route_ids, way_ids, LIMIT_REACHED= queryByName(name)
-	elif SITE_STATS_REQUEST:
-		stats=getSiteStats(ids)
-	else:
-		
-		response_body=json.dumps({request:environ['QUERY_STRING']}, sort_keys=True, indent=4)
-		status = '400 Bad Request'
-		
-		return [response_body]
-	
-	if TOPO_REQUEST:
-		IDS = {}
-		way_ids=[[w] for w in way_ids]
-		IDS['sites']=site_ids
-		IDS['routes']=route_ids
-		IDS['ways']=way_ids
-	elif SITE_STATS_REQUEST: pass
-	else:
 		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
-		
-	
-	# Whatever the query was, we must now have an object like this:
-	"""
-	IDS={
-		sites : [id, id, ...]
-				
-		routes : [id, id, ...]
-		ways : [[id, id], ...] # ways can be grouped later if similar enough 
-		(touches each other, same name, same type, same difficulty)
-	}
-	"""
-	#==================================================
-	# build the response
-	
-	if IDS_ONLY:
-		IDS['generator']="Opensnowmap.org piste search API"
-		IDS['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
-		if LIMIT_REACHED:
-			IDS['limit_reached']= True;
-			IDS['info']= 'Your request size exceed the API limit, results are truncated';
-		if CLOSEST:
-			IDS['snap']=snap
-		response_body=json.dumps(IDS, sort_keys=True, indent=4)
-		status = '200 OK'
-		
-		cur.close()
-		conn.close()
-		return [response_body]
-		
-	elif LIST:
 		topo=makeList(IDS,GEO)
-		# sort by name
-		if SORT_ALPHA:
-			topo['sites'].sort(key=lambda k: nameSorter(k['name']))
-			topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+		topo['snap']=snap
 		
+		# sort by name
+		topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+		topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
 		# number the results
 		i=0
 		for s in topo['sites']:
@@ -269,85 +180,162 @@ def requestPistes(request):
 		for s in topo['pistes']:
 			s['result_index']=i
 			i+=1
-		
 		topo['generator']="Opensnowmap.org piste search API"
 		topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
-		
 		if LIMIT_REACHED:
 			topo['limit_reached']= True;
 			topo['info']= 'Your request size exceed the API limit, results are truncated';
-		
-		if CLOSEST:
-			topo['snap']=snap
-		
 		response_body=json.dumps(topo, sort_keys=True, indent=4)
-		status = '200 OK'
+		status = 200
 		
 		cur.close()
 		conn.close()
-		return [response_body]
-	
-	elif SITE_STATS_REQUEST:
+		return status, [response_body]
+		
+	elif request.find('siteStats=') !=-1:
+		# query: ...members=id1...
+		ids=request.split('siteStats=')[1]
+		if ids.find('&'): ids=ids.split('&')[0]
+		stats=getSiteStats(ids)
+		
 		stats['generator']="Opensnowmap.org piste search API"
 		stats['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
 		
 		response_body=json.dumps(stats, sort_keys=True, indent=4)
-		status = '200 OK'
+		status = 200
 		cur.close()
 		conn.close()
-		return [response_body]
+		return status, [response_body]
 		
-	elif TOPO_REQUEST :
-		topo=makeList(IDS,GEO)
+	elif request.find('bbox=') !=-1:
+				# query: ...bbox=left, bottom, right, top&... 
+				bbox=request.split('bbox=')[1]
+				if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
+				for b in bbox: b=float(b)
+				# ~ BBOX = True
+				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, CONCAT)
+				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
+				topo=makeList(IDS,GEO)
+				# sort by name
+				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				# number the results
+				i=0
+				for s in topo['sites']:
+					s['result_index']=i
+					i+=1
+				i=0
+				for s in topo['pistes']:
+					s['result_index']=i
+					i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				if LIMIT_REACHED:
+					topo['limit_reached']= True;
+					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=json.dumps(topo, sort_keys=True, indent=4)
+				status = 200
+				
+				cur.close()
+				conn.close()
+				return status, [response_body]
 		
-		topo=concatWaysByAttributes(topo)
+	elif request.find('siteMembers=') !=-1:
+				# query: ...members=id1...
+				ids=request.split('siteMembers=')[1]
+				if ids.find('&'): ids=ids.split('&')[0]
+				# ~ if request.find('parent=true') !=-1:
+					# ~ PARENT_ID = ids
+				# ~ MEMBERS_REQUEST = True
+				site_ids, route_ids, way_ids = queryMembersById(ids, True)
+				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
+				topo=makeList(IDS,GEO)
+				# sort by name
+				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				# number the results
+				i=0
+				for s in topo['sites']:
+					s['result_index']=i
+					i+=1
+				i=0
+				for s in topo['pistes']:
+					s['result_index']=i
+					i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				if LIMIT_REACHED:
+					topo['limit_reached']= True;
+					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=json.dumps(topo, sort_keys=True, indent=4)
+				status = 200
+				
+				cur.close()
+				conn.close()
+				return status, [response_body]
 		
-		# number the results
-		i=0
-		for s in topo['sites']:
-			s['result_index']=i
-			i+=1
-		i=0
-		for s in topo['pistes']:
-			s['result_index']=i
-			i+=1
-		
-		topo['generator']="Opensnowmap.org piste search API"
-		topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
-		
-		if LIMIT_REACHED:
-			topo['limit_reached']= True;
-			topo['info']= 'Your request size exceed the API limit, results are truncated';
-		
-		
-		status = '200 OK'
-		response_body=json.dumps(topo, sort_keys=True, indent=4)
-		cur.close()
-		conn.close()
-		return [response_body]
+	elif request.find('topoByWayIds=') !=-1:
+				# query: ...ids=id1, id2, id3...
+				ids=request.split('topoByWayIds=')[1]
+				if ids.find('&'): ids=ids.split('&')[0]
+				# ids='id1, id2, ...'
+				
+				site_ids = []
+				route_ids = []
+				way_ids = ids.split(',')
+				
+				IDS = {}
+				way_ids=[[w] for w in way_ids]
+				IDS['sites']=site_ids
+				IDS['routes']=route_ids
+				IDS['ways']=way_ids
+				topo=makeList(IDS,GEO)
+				# sort by name
+				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				# number the results
+				i=0
+				for s in topo['sites']:
+					s['result_index']=i
+					i+=1
+				i=0
+				for s in topo['pistes']:
+					s['result_index']=i
+					i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				if LIMIT_REACHED:
+					topo['limit_reached']= True;
+					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=json.dumps(topo, sort_keys=True, indent=4)
+				status = 200
+				
+				cur.close()
+				conn.close()
+				return status, [response_body]
+	
 	else:
-		response_body=json.dumps({'request': environ['QUERY_STRING']}, sort_keys=True, indent=4)
-		status = '400 Bad Request'
-		
-		cur.close()
-		conn.close()
-		return [response_body]
+				response_body="Bad Request"
+				status = 400
+				
+				return status, [response_body]
 
 #==================================================
-def queryMembersById(ids, PARENT_ID):
+#==================================================
+def queryMembersById(id, PARENT_ID):
 	start_time=time.time()
 	
 	cur.execute("""
 	SELECT member_id FROM relations 
 	WHERE relation_id in (%s);
 	"""
-	% (ids,))
+	% (id,))
 	ids = cur.fetchall()
 	ids = ','.join([str(long(x[0])) for x in ids])
 	
 	conn.commit()
 	if PARENT_ID:
-		ids=PARENT_ID+','+ids #insert the parent osm_id in the list
+		ids=id+','+ids #insert the parent osm_id in the list
 	site_ids, route_ids, way_ids=queryByIds(ids)
 	
 	if(SPEEDDEBUG): print("queryMembersById took: " + str(time.time()-start_time))
@@ -541,6 +529,17 @@ def queryByBbox(bbox, CONCAT):
 	return site_ids, route_ids, way_ids, LIMIT_REACHED
 
 def buildIds(site_ids, route_ids, way_ids, CONCAT):
+	# Whatever the query was, we must return an object like this:
+	"""
+	IDS={
+		sites : [id, id, ...]
+				
+		routes : [id, id, ...]
+		ways : [[id, id], ...] # ways can be grouped later if similar enough 
+		(touches each other, same name, same type, same difficulty)
+	}
+	"""
+	
 	start_time=time.time()
 	if CONCAT:
 		

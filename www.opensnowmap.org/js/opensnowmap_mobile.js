@@ -1396,6 +1396,7 @@ function showRouteProfile(wkt, div, color) {
   return true;
 }
 function getMembersById(id) {
+  // only used for sites
   if (QUERYMODE) {
     document.getElementById("queryWaiterResults").style.display = 'inline';
   } else if (PISTELISTMODE) {
@@ -1410,7 +1411,7 @@ function getMembersById(id) {
   } //clear previous list
   document.getElementById('piste_search_results').innerHTML = '';
 
-  var q = pisteRequestserver + "geo=true&list=true&sort_alpha=true&group=true&members=" + id;
+  var q = pisteRequestserver + "siteMembers=" + id;
   var XMLHttp = new XMLHttpRequest();
   XMLHttp.open("GET", q);
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
@@ -1448,7 +1449,7 @@ function getTopoByViewport() { //DONE in pisteList
 
 
   var bb = ol.extent.applyTransform(map.getView().calculateExtent(), ol.proj.getTransform('EPSG:3857', 'EPSG:4326'), undefined);
-  var q = pisteRequestserver + "group=true&geo=true&list=true&sort_alpha=true&bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
+  var q = pisteRequestserver + "bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
   var XMLHttp = new XMLHttpRequest();
 
   //PisteAPIXHR.push(XMLHttp);
@@ -1472,7 +1473,7 @@ function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     document.getElementById("routeWaiterResults").style.display = 'inline';
     abortXHR('PisteAPI'); // abort another request if any
 
-    var q = pisteRequestserver + "geo=true&topo=true&ids_ways=" + ids;
+    var q = pisteRequestserver + "topoByWayIds=" + ids;
     var XMLHttp = new XMLHttpRequest();
 
     PisteAPIXHR.push(XMLHttp);
@@ -2379,7 +2380,7 @@ function RouteSnap(point) {
     var coords = point.getGeometry().getCoordinates();
     var ll = ol.proj.toLonLat(coords, 'EPSG:3857');
     var q = pisteRequestserver 
-          + "geo=true&list=true&closest=" 
+          + "closest=" 
           + ll[0] + ',' + ll[1];
           
     fetch(q)
@@ -3616,7 +3617,7 @@ function showSiteStats(div, id, element_type) { // fix for normal ways
 
     //abortXHR('PisteAPI'); // abort another request if any
 
-    var q = pisteRequestserver + "site-stats=" + id;
+    var q = pisteRequestserver + "siteStats=" + id;
     var XMLHttp = new XMLHttpRequest();
 
     //PisteAPIXHR.push(XMLHttp);

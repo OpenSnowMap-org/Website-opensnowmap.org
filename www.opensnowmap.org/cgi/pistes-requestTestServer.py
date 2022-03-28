@@ -16,14 +16,20 @@ class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         if (self.path.find("request?")!=-1) :
             query=self.path[9:]
+            status=0
+            response=[]
             print("query:" + query)
-            response = requestPistes.requestPistes(query)
+            # ~ try: 
+            status, response = requestPistes.requestPistes(query)
             if(DEBUG): pp.pprint(response)
-            self.send_response(200)
-            
+            self.send_response(int(status))
             self.send_header("Content-type", "application/json")
             self.end_headers()
             self.wfile.write(bytes(response[0]))
+            # ~ except BaseException as err:
+              # ~ print(err)
+              # ~ status=500
+              # ~ self.send_response(500)
         else:
             self.send_response(404)
 
