@@ -104,7 +104,7 @@ LIMIT = 50
 HARDLIMIT = 500
 
 DEBUG=False
-SPEEDDEBUG=False
+SPEEDDEBUG=True
 def requestPistes(request):
 
 	db='pistes_osm2pgsql'
@@ -114,8 +114,6 @@ def requestPistes(request):
 	cur = conn.cursor()
 	if (DEBUG): print(request)
 	GEO=False
-	SORT_ALPHA=False
-	CONCAT=False
 	global LIMIT 
 	LIMIT_REACHED = False
 	#==================================================
@@ -128,8 +126,8 @@ def requestPistes(request):
 				#name='the%20blue slope'
 				# ~ NAME = True
 				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByName(name)
-				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
-				topo=makeList(IDS,GEO)
+				IDS=buildIds(site_ids, route_ids, way_ids, True)
+				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
 				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
@@ -164,8 +162,8 @@ def requestPistes(request):
 		site_ids, route_ids, way_ids = queryClosest(center)
 		snap={}
 		snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
-		IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
-		topo=makeList(IDS,GEO)
+		IDS=buildIds(site_ids, route_ids, way_ids, True)
+		topo=makeList(IDS,True)
 		topo['snap']=snap
 		
 		# sort by name
@@ -213,9 +211,9 @@ def requestPistes(request):
 				if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
 				for b in bbox: b=float(b)
 				# ~ BBOX = True
-				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, CONCAT)
-				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
-				topo=makeList(IDS,GEO)
+				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, True)
+				IDS=buildIds(site_ids, route_ids, way_ids, False)
+				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
 				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
@@ -248,8 +246,8 @@ def requestPistes(request):
 					# ~ PARENT_ID = ids
 				# ~ MEMBERS_REQUEST = True
 				site_ids, route_ids, way_ids = queryMembersById(ids, True)
-				IDS=buildIds(site_ids, route_ids, way_ids, CONCAT)
-				topo=makeList(IDS,GEO)
+				IDS=buildIds(site_ids, route_ids, way_ids, True)
+				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
 				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
@@ -289,10 +287,9 @@ def requestPistes(request):
 				IDS['sites']=site_ids
 				IDS['routes']=route_ids
 				IDS['ways']=way_ids
-				topo=makeList(IDS,GEO)
-				# sort by name
-				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
-				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				topo=makeList(IDS,True)
+				topo=concatWaysByAttributes(topo)
+				
 				# number the results
 				i=0
 				for s in topo['sites']:
@@ -836,7 +833,7 @@ def makeList(IDS, GEO):
 					all_parent_sites+=','+in_sites
 				all_pistes[str(piste[0])]=s
 			
-			if(SPEEDDEBUG): print("For this way, makeList took: " + str(time.time()-tmp_time))
+		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
 		#look for in_routes
 		all_parent_routes = all_parent_routes.strip(',')
 		all_routes={}
