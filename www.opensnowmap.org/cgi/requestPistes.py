@@ -125,7 +125,7 @@ def requestPistes(request):
 				if name.find('&'): name=name.split('&')[0]
 				#name='the%20blue slope'
 				# ~ NAME = True
-				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByName(name)
+				site_ids, route_ids, way_ids, area_ids, LIMIT_REACHED= queryByName(name)
 				IDS=buildIds(site_ids, route_ids, way_ids, True)
 				topo=makeList(IDS,True)
 				# sort by name
@@ -159,9 +159,13 @@ def requestPistes(request):
 		center={}
 		center['lon']=float(point.split(',')[0])
 		center['lat']=float(point.split(',')[1])
-		site_ids, route_ids, way_ids = queryClosest(center)
+		site_ids, route_ids, way_ids, area_ids = queryClosest(center)
 		snap={}
-		snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
+		print(way_ids, area_ids)
+		if way_ids:
+			snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
+		else:
+			snap['lon'], snap['lat'] = snapToArea(area_ids[0],center)
 		IDS=buildIds(site_ids, route_ids, way_ids, True)
 		topo=makeList(IDS,True)
 		topo['snap']=snap
@@ -211,7 +215,7 @@ def requestPistes(request):
 				if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
 				for b in bbox: b=float(b)
 				# ~ BBOX = True
-				site_ids, route_ids, way_ids, LIMIT_REACHED= queryByBbox(bbox, True)
+				site_ids, route_ids, way_ids, area_ids,LIMIT_REACHED= queryByBbox(bbox, True)
 				IDS=buildIds(site_ids, route_ids, way_ids, False)
 				topo=makeList(IDS,True)
 				# sort by name
@@ -245,7 +249,7 @@ def requestPistes(request):
 				# ~ if request.find('parent=true') !=-1:
 					# ~ PARENT_ID = ids
 				# ~ MEMBERS_REQUEST = True
-				site_ids, route_ids, way_ids = queryMembersById(ids, True)
+				site_ids, route_ids, way_ids, area_ids = queryMembersById(ids, True)
 				IDS=buildIds(site_ids, route_ids, way_ids, True)
 				topo=makeList(IDS,True)
 				# sort by name
@@ -333,10 +337,10 @@ def queryMembersById(id, PARENT_ID):
 	conn.commit()
 	if PARENT_ID:
 		ids=id+','+ids #insert the parent osm_id in the list
-	site_ids, route_ids, way_ids=queryByIds(ids)
+	site_ids, route_ids, way_ids, areas_ids=queryByIds(ids)
 	
 	if(SPEEDDEBUG): print("queryMembersById took: " + str(time.time()-start_time))
-	return site_ids, route_ids, way_ids
+	return site_ids, route_ids, way_ids, areas_ids
 	
 def queryByIds(ids):
 	start_time=time.time()
@@ -367,9 +371,18 @@ def queryByIds(ids):
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
 	
+	cur.execute("""
+	SELECT osm_id FROM areas
+	WHERE osm_id in (%s);
+	"""
+	% (ids,))
+	way_ids = cur.fetchall()
+	way_ids = [x[0] for x in way_ids]
+	conn.commit()
+	
 	
 	if(SPEEDDEBUG): print("queryByIds took: " + str(time.time()-start_time))
-	return site_ids, route_ids, way_ids
+	return site_ids, route_ids, way_ids, areas_ids
 
 def queryByName(name):
 	start_time=time.time()
@@ -403,13 +416,24 @@ def queryByName(name):
 	cur.execute("""
 	SELECT osm_id FROM lines
 	WHERE name %% '%s'
-	ORDER by similarity(name,'%s');
+	ORDER by similarity(name,'%s')
+	;
 	"""
 	% (name,name))
 	way_ids = cur.fetchall()
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
 	
+	cur.execute("""
+	SELECT osm_id FROM areas
+	WHERE name %% '%s'
+	ORDER by similarity(name,'%s')
+	;
+	"""
+	% (name,name))
+	areas_ids = cur.fetchall()
+	areas_ids = [x[0] for x in areas_ids]
+	conn.commit()
 	
 	if len(site_ids) > LIMIT:
 		site_ids=site_ids[:LIMIT]
@@ -420,43 +444,70 @@ def queryByName(name):
 	if len(way_ids) > LIMIT:
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
-	
+	if len(areas_ids) > LIMIT:
+		areas_ids=areas_ids[:LIMIT]
+		LIMIT_REACHED = True
 	if(SPEEDDEBUG): print("queryByName took: " + str(time.time()-start_time))
-	return site_ids, route_ids, way_ids, LIMIT_REACHED
+	return site_ids, route_ids, way_ids, areas_ids, LIMIT_REACHED
 
 def queryClosest(center):
 	
 	cur.execute("""
-	SELECT osm_id FROM lines
+	SELECT ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM lines
 	ORDER BY 
 	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
-	"""
+	"""	% (center['lon'],center['lat'],center['lon'],center['lat']))
+	resp = cur.fetchall()
+	dist_way= resp[0][0]
+	way_ids = resp[0][1]
 	
-	# ~ WHERE (tags::json->>'site' is null) AND (tags::json->>'landuse' is null)
-	% (center['lon'],center['lat']))
-	way_ids = cur.fetchall()
-	way_ids = [x[0] for x in way_ids]
+	cur.execute("""
+	SELECT ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM areas
+	ORDER BY 
+	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
+	LIMIT 1;
+	"""	% (center['lon'],center['lat'],center['lon'],center['lat']))
+	resp = cur.fetchall()
+	print(resp)
+	dist_area= resp[0][0]
+	area_ids = resp[0][1]
 	
-	
-	return [], [], way_ids
+	if dist_way < dist_area:
+		return [], [], [way_ids], []
+	else :
+		return [], [], [], [area_ids]
 
 def snapToWay(ID, center):
-	
 	
 	cur.execute("""
 	SELECT
 		ST_X(
-			ST_LineInterpolatePoint(geom,
-				st_linelocatepoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
-			)
+			ST_ClosestPoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
 		),
 		ST_Y(
-			ST_LineInterpolatePoint(geom,
-				st_linelocatepoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
-			)
+			ST_ClosestPoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
 		)
 	FROM lines
+	WHERE osm_id=%s;
+	"""
+	% (center['lon'],center['lat'],center['lon'],center['lat'],ID))
+	way_ids = cur.fetchall()
+	
+	
+	return way_ids[0][0],way_ids[0][1]
+	
+def snapToArea(ID, center):
+	
+	cur.execute("""
+	SELECT
+		ST_X(
+			ST_ClosestPoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
+		),
+		ST_Y(
+			ST_ClosestPoint(geom, ST_GeometryFromText('POINT(%s %s)', 4326))
+		)
+	FROM areas
 	WHERE osm_id=%s;
 	"""
 	% (center['lon'],center['lat'],center['lon'],center['lat'],ID))
@@ -491,6 +542,7 @@ def queryByBbox(bbox, CONCAT):
 	% (bbox[0],bbox[1],bbox[2],bbox[3],l))
 	route_ids = cur.fetchall()
 	route_ids = [x[0] for x in route_ids]
+	
 	if(CONCAT) :
 		# Better filtering before than haviong to group afterward
 		# for ways having same type than their parent relations
@@ -512,6 +564,27 @@ def queryByBbox(bbox, CONCAT):
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
 	
+	if(CONCAT) :
+		# Better filtering before than haviong to group afterward
+		# for ways having same type than their parent relations
+		query="""
+		SELECT osm_id FROM areas
+		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+		AND position(piste_type in relation_piste_type) = 0
+		LIMIT %s;
+		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
+	else:
+		query="""
+		SELECT osm_id FROM areas
+		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+		LIMIT %s;
+		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
+		
+	cur.execute(query)
+	areas_ids = cur.fetchall()
+	areas_ids = [x[0] for x in areas_ids]
+	conn.commit()
+	
 	if len(site_ids) >= LIMIT:
 		site_ids=site_ids[:LIMIT]
 		LIMIT_REACHED = True
@@ -521,9 +594,11 @@ def queryByBbox(bbox, CONCAT):
 	if len(way_ids) >= LIMIT:
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
-	
+	if len(areas_ids) > LIMIT:
+		areas_ids=areas_ids[:LIMIT]
+		LIMIT_REACHED = True
 	if(SPEEDDEBUG): print("queryByBbox took: " + str(time.time()-start_time))
-	return site_ids, route_ids, way_ids, LIMIT_REACHED
+	return site_ids, route_ids, way_ids, areas_ids, LIMIT_REACHED
 
 def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	# Whatever the query was, we must return an object like this:
@@ -533,6 +608,8 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 				
 		routes : [id, id, ...]
 		ways : [[id, id], ...] # ways can be grouped later if similar enough 
+		(touches each other, same name, same type, same difficulty)
+		areas : [[id, id], ...] # ways can be grouped later if similar enough 
 		(touches each other, same name, same type, same difficulty)
 	}
 	"""
