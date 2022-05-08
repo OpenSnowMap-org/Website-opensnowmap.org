@@ -3584,7 +3584,7 @@ function showExtLink(div, ids, element_type) {
       spans = linkdiv.getElementsByClassName('data');
       for (i = 0; i < spans.length; i++) {
         var data = spans[i].getAttribute('dataText');
-
+        if (element_type == 'area') { element_type="way";}
         if (data == 'siteUrl') {
           spans[i].href = protocol + "//openstreetmap.org/browse/" + element_type + "/" + id;
         }
