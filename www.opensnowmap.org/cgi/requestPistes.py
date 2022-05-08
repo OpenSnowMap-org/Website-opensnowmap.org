@@ -126,7 +126,7 @@ def requestPistes(request):
 				#name='the%20blue slope'
 				# ~ NAME = True
 				site_ids, route_ids, way_ids, area_ids, LIMIT_REACHED= queryByName(name)
-				IDS=buildIds(site_ids, route_ids, way_ids, True)
+				IDS=buildIds(site_ids, route_ids, way_ids, area_ids, True)
 				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
@@ -166,7 +166,7 @@ def requestPistes(request):
 			snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
 		else:
 			snap['lon'], snap['lat'] = snapToArea(area_ids[0],center)
-		IDS=buildIds(site_ids, route_ids, way_ids, True)
+		IDS=buildIds(site_ids, route_ids, way_ids, area_ids, True)
 		topo=makeList(IDS,True)
 		topo['snap']=snap
 		
@@ -216,7 +216,7 @@ def requestPistes(request):
 				for b in bbox: b=float(b)
 				# ~ BBOX = True
 				site_ids, route_ids, way_ids, area_ids,LIMIT_REACHED= queryByBbox(bbox, True)
-				IDS=buildIds(site_ids, route_ids, way_ids, False)
+				IDS=buildIds(site_ids, route_ids, way_ids,area_ids, False)
 				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
@@ -250,7 +250,7 @@ def requestPistes(request):
 					# ~ PARENT_ID = ids
 				# ~ MEMBERS_REQUEST = True
 				site_ids, route_ids, way_ids, area_ids = queryMembersById(ids, True)
-				IDS=buildIds(site_ids, route_ids, way_ids, True)
+				IDS=buildIds(site_ids, route_ids, way_ids, area_ids,True)
 				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
@@ -284,6 +284,7 @@ def requestPistes(request):
 				
 				site_ids = []
 				route_ids = []
+				area_ids = []
 				way_ids = ids.split(',')
 				
 				IDS = {}
@@ -291,6 +292,7 @@ def requestPistes(request):
 				IDS['sites']=site_ids
 				IDS['routes']=route_ids
 				IDS['ways']=way_ids
+				IDS['areas']=area_ids
 				topo=makeList(IDS,True)
 				topo=concatWaysByAttributes(topo)
 				
@@ -453,7 +455,7 @@ def queryByName(name):
 def queryClosest(center):
 	
 	cur.execute("""
-	SELECT ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM lines
+	SELECT ST_Distance_Sphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM lines
 	ORDER BY 
 	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
@@ -463,7 +465,7 @@ def queryClosest(center):
 	way_ids = resp[0][1]
 	
 	cur.execute("""
-	SELECT ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM areas
+	SELECT ST_Distance_Sphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM areas
 	ORDER BY 
 	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
@@ -472,6 +474,7 @@ def queryClosest(center):
 	print(resp)
 	dist_area= resp[0][0]
 	area_ids = resp[0][1]
+	if (dist_area == 0.0): dist_area = 10 # Try to snap to central way if exist and <10m
 	
 	if dist_way < dist_area:
 		return [], [], [way_ids], []
@@ -564,25 +567,15 @@ def queryByBbox(bbox, CONCAT):
 	way_ids = [x[0] for x in way_ids]
 	conn.commit()
 	
-	if(CONCAT) :
-		# Better filtering before than haviong to group afterward
-		# for ways having same type than their parent relations
-		query="""
-		SELECT osm_id FROM areas
-		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-		AND position(piste_type in relation_piste_type) = 0
-		LIMIT %s;
-		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
-	else:
-		query="""
-		SELECT osm_id FROM areas
-		WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
-		LIMIT %s;
-		"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
-		
+	query="""
+	SELECT osm_id FROM areas
+	WHERE geom && st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326)
+	LIMIT %s;
+	"""% (bbox[0],bbox[1],bbox[2],bbox[3],l)
+	
 	cur.execute(query)
-	areas_ids = cur.fetchall()
-	areas_ids = [x[0] for x in areas_ids]
+	area_ids = cur.fetchall()
+	area_ids = [x[0] for x in area_ids]
 	conn.commit()
 	
 	if len(site_ids) >= LIMIT:
@@ -594,13 +587,13 @@ def queryByBbox(bbox, CONCAT):
 	if len(way_ids) >= LIMIT:
 		way_ids=way_ids[:LIMIT]
 		LIMIT_REACHED = True
-	if len(areas_ids) > LIMIT:
-		areas_ids=areas_ids[:LIMIT]
+	if len(area_ids) > LIMIT:
+		area_ids=areas_ids[:LIMIT]
 		LIMIT_REACHED = True
 	if(SPEEDDEBUG): print("queryByBbox took: " + str(time.time()-start_time))
-	return site_ids, route_ids, way_ids, areas_ids, LIMIT_REACHED
+	return site_ids, route_ids, way_ids, area_ids, LIMIT_REACHED
 
-def buildIds(site_ids, route_ids, way_ids, CONCAT):
+def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 	# Whatever the query was, we must return an object like this:
 	"""
 	IDS={
@@ -700,6 +693,7 @@ def buildIds(site_ids, route_ids, way_ids, CONCAT):
 	IDS['sites']=site_ids
 	IDS['routes']=route_ids
 	IDS['ways']=way_ids
+	IDS['areas']=area_ids
 	if(SPEEDDEBUG): print("buildIds took: " + str(time.time()-start_time))
 	return IDS
 
@@ -710,6 +704,8 @@ def makeList(IDS, GEO):
 	if GEO: geomR=',ST_AsText(geom)'
 	else: geomR=''
 	if GEO: geomW=',ST_AsText(ST_Collect(ST_LineMerge(geom)))'
+	else: geomW=''
+	if GEO: geomA=',ST_AsText(ST_Collect(ST_ExteriorRing(geom)))'
 	else: geomW=''
 
 	topo={}
@@ -1026,6 +1022,137 @@ def makeList(IDS, GEO):
 			topo['pistes'].append(piste)
 		
 		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
+		
+		
+		
+	## AREAS
+	tmp_time=time.time()
+	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
+	# list of first ids
+	# Todo: faire une seule requetes sur lines, route et piste en un seul coup
+	# avec IN (first_ids_list) puis a partir de deux liste de tous les parents.
+	# Looper sur les resultats pour faire la liste, une seule requete
+	# sera plus rapide.
+	# Ensuite, completer la liste avec autant de requetes que necessaires
+	# pour la geometrie pour les ways qui doivent etre merged.
+	first_ids_list=','.join(str(r) for r in IDS['areas'])
+	all_parent_routes=''
+	all_parent_sites=''
+	if len(first_ids_list):
+		query = """
+			SELECT 
+				osm_id,
+				name,
+				piste_type,
+				tags::json->>'piste:difficulty',
+				'' as lift_type,
+				tags::json->>'piste:grooming',
+				array_to_string(routes_ids,','),
+				array_to_string(array_cat(sites_ids, landuses_ids),','),
+				ST_X(ST_Centroid(ST_Collect(geom))),
+				ST_Y(ST_Centroid(ST_Collect(geom))),
+				box2d(ST_Collect(geom))
+				%s
+			FROM areas
+			WHERE osm_id in (%s)
+			GROUP BY 
+				osm_id,
+				name,
+				piste_type,
+				lift_type,
+				tags::json->>'piste:difficulty',
+				tags::json->>'piste:grooming',
+				array_to_string(routes_ids,','),
+				array_to_string(array_cat(sites_ids, landuses_ids),',')
+			;""" % (geomA,first_ids_list)
+		# Note: the request ways_ids order is lost, then rebuilt later
+		cur.execute(query)
+		pistes=cur.fetchall()
+		all_pistes={}
+		for piste in pistes:
+
+			in_routes=''
+			in_sites=''
+			s={}
+			if piste:
+				s['ids']=[piste[0]] # temporary, this will be set to the original id list at the end
+				s['type']='area'
+				s['name']=piste[1]
+				s['pistetype']=piste[2]
+				s['color']=''
+				s['difficulty']=piste[3]
+				s['aerialway']=''
+				s['grooming']=piste[5]
+				s['in_sites']=[]
+				s['in_routes']=[]
+				if (piste[6]):
+					in_routes=str(piste[6])
+				if (piste[7]):
+					in_sites=str(piste[7]) # not used, we want also sites only routes are member of
+				s['parent_routes_ids']=in_routes
+				s['parent_sites_ids']=in_sites
+				
+				s['center']=[piste[8],piste[9]]
+				s['bbox']=piste[10]
+				if GEO: s['geometry']=encodeWKT(piste[11])
+				if in_routes:
+					all_parent_routes+=','+in_routes
+				if in_sites:
+					all_parent_sites+=','+in_sites
+				all_pistes[str(piste[0])]=s
+			
+		if(SPEEDDEBUG): print("For areas, makeList took: " + str(time.time()-tmp_time))
+		#don't look for in_routes
+		
+		#look for in_sites
+		all_parent_sites = all_parent_sites.strip(',')
+		all_sites={}
+		if len(all_parent_sites) :
+			cur.execute("""
+			SELECT
+				osm_id,
+				name,
+				piste_type,
+				ST_X(ST_Centroid(geom)),ST_Y(ST_Centroid(geom)),
+				box2d(geom)
+				%s
+			FROM sites 
+			WHERE osm_id in (%s)
+			""" % (geomS,all_parent_sites))
+			sites=cur.fetchall()
+			conn.commit()
+			
+			if sites:
+				for site in sites:
+					tmp={}
+					tmp['id']=site[0]
+					tmp['type']='relation'
+					tmp['name']=site[1]
+					tmp['pistetype']=site[2]
+					tmp['center']=[site[3],site[4]]
+					tmp['bbox']=site[5]
+					if GEO: tmp['geometry']=encodeWKT(site[6])
+					all_sites[str(tmp['id'])]=tmp
+		if(SPEEDDEBUG): print("For insites, makeList took: " + str(time.time()-tmp_time))
+		
+		# ~ Looping trough the piste list all_pistes to populate
+		# ~ the in_routes and in_sites fields.
+		for p in all_pistes:
+			piste=all_pistes[p]
+			
+			if piste['parent_sites_ids']:
+				ar = str(piste['parent_sites_ids']).split(",")
+				ar=list(set(ar))
+				for siteId in sorted(ar) :
+					piste['in_sites'].append(all_sites[siteId])
+		
+		# ~ We  don't re-order the list in the initial request order.
+			
+			topo['pistes'].append(piste)
+		
+		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
+		
+		
 		
 		if(SPEEDDEBUG): print("makeList took: " + str(time.time()-start_time))
 	return topo
