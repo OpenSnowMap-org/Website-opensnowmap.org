@@ -3585,7 +3585,8 @@ function showExtLink(div, ids, element_type) {
       for (i = 0; i < spans.length; i++) {
         var data = spans[i].getAttribute('dataText');
         var osm_element_type=element_type;
-        if (osm_element_type == 'area') { osm_element_type="way";} // multipolygons ?
+        if (osm_element_type == 'area_way') { osm_element_type="way";} // multipolygons : see norway
+        if (osm_element_type == 'area_multipolygon') { osm_element_type="relation";} 
         
         if (data == 'siteUrl') {
           spans[i].href = protocol + "//openstreetmap.org/browse/" + osm_element_type + "/" + id;

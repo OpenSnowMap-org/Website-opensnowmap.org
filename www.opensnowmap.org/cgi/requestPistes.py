@@ -1046,6 +1046,7 @@ def makeList(IDS, GEO):
 				osm_id,
 				name,
 				piste_type,
+				type,
 				tags::json->>'piste:difficulty',
 				'' as lift_type,
 				tags::json->>'piste:grooming',
@@ -1061,6 +1062,7 @@ def makeList(IDS, GEO):
 				osm_id,
 				name,
 				piste_type,
+				type,
 				lift_type,
 				tags::json->>'piste:difficulty',
 				tags::json->>'piste:grooming',
@@ -1078,25 +1080,26 @@ def makeList(IDS, GEO):
 			s={}
 			if piste:
 				s['ids']=[piste[0]] # temporary, this will be set to the original id list at the end
-				s['type']='area'
+				if(piste[3] =='R') : s['type']='area_multipolygon'
+				else: s['type']='area_way'
 				s['name']=piste[1]
 				s['pistetype']=piste[2]
 				s['color']=''
-				s['difficulty']=piste[3]
+				s['difficulty']=piste[4]
 				s['aerialway']=''
 				s['grooming']=piste[5]
 				s['in_sites']=[]
 				s['in_routes']=[]
-				if (piste[6]):
-					in_routes=str(piste[6])
 				if (piste[7]):
-					in_sites=str(piste[7]) # not used, we want also sites only routes are member of
+					in_routes=str(piste[7])
+				if (piste[8]):
+					in_sites=str(piste[8]) # not used, we want also sites only routes are member of
 				s['parent_routes_ids']=in_routes
 				s['parent_sites_ids']=in_sites
 				
-				s['center']=[piste[8],piste[9]]
-				s['bbox']=piste[10]
-				if GEO: s['geometry']=encodeWKT(piste[11])
+				s['center']=[piste[9],piste[10]]
+				s['bbox']=piste[11]
+				if GEO: s['geometry']=encodeWKT(piste[12])
 				if in_routes:
 					all_parent_routes+=','+in_routes
 				if in_sites:
