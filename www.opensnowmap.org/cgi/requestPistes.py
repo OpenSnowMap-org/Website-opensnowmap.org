@@ -128,6 +128,7 @@ def requestPistes(request):
 				site_ids, route_ids, way_ids, area_ids, LIMIT_REACHED= queryByName(name)
 				IDS=buildIds(site_ids, route_ids, way_ids, area_ids, True)
 				topo=makeList(IDS,True)
+				topo=concatWaysByAttributes(topo)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
 				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
@@ -218,6 +219,7 @@ def requestPistes(request):
 				site_ids, route_ids, way_ids, area_ids,LIMIT_REACHED= queryByBbox(bbox, True)
 				IDS=buildIds(site_ids, route_ids, way_ids,area_ids, False)
 				topo=makeList(IDS,True)
+				topo=concatWaysByAttributes(topo)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
 				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
@@ -1172,7 +1174,8 @@ def concatWaysByAttributes(topo):
 	
 def compareAttributes(piste1, piste2):
 	for att in piste1:
-		if att not in ('geometry','ids','result_index','bbox','center'):
+		if att not in ('geometry','ids','result_index','bbox','center','in_routes','in_sites'):
+			# parent_routes_ids and parent_sites_idsstrings are still checked
 			if piste1[att]==piste2[att]:
 				continue
 			else :

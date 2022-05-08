@@ -3584,9 +3584,11 @@ function showExtLink(div, ids, element_type) {
       spans = linkdiv.getElementsByClassName('data');
       for (i = 0; i < spans.length; i++) {
         var data = spans[i].getAttribute('dataText');
-        if (element_type == 'area') { element_type="way";}
+        var osm_element_type=element_type;
+        if (osm_element_type == 'area') { osm_element_type="way";} // multipolygons ?
+        
         if (data == 'siteUrl') {
-          spans[i].href = protocol + "//openstreetmap.org/browse/" + element_type + "/" + id;
+          spans[i].href = protocol + "//openstreetmap.org/browse/" + osm_element_type + "/" + id;
         }
         if (data == 'siteId') {
           spans[i].innerHTML = id;
