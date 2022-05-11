@@ -3,7 +3,6 @@
 #
 # Piste search API
 
-# TODO also add areas
 """
 Request type
 	* name=xxx
@@ -103,14 +102,14 @@ function showSiteStats(div, id, element_type)
 LIMIT = 50
 HARDLIMIT = 500
 
-DEBUG=False
+DEBUG=True
 SPEEDDEBUG=True
 def requestPistes(request):
 
-	db='pistes_osm2pgsql'
+	db='pistes_api_osm2pgsql'
 	global conn
 	global cur
-	conn = psycopg2.connect("dbname="+db+" user=yves")
+	conn = psycopg2.connect("dbname="+db+" user=osmuser")
 	cur = conn.cursor()
 	if (DEBUG): print(request)
 	GEO=False
@@ -146,12 +145,12 @@ def requestPistes(request):
 				if LIMIT_REACHED:
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
-				response_body=json.dumps(topo, sort_keys=True, indent=4)
-				status = 200
+				response_body=topo
+				status = '200 OK'
 				
 				cur.close()
 				conn.close()
-				return status, [response_body]
+				return status, response_body
 		
 	elif request.find('closest=') !=-1:
 		# query: ...closest=lon,lat&... or ...closest=lon; lat&...
@@ -162,7 +161,8 @@ def requestPistes(request):
 		center['lat']=float(point.split(',')[1])
 		site_ids, route_ids, way_ids, area_ids = queryClosest(center)
 		snap={}
-		print(way_ids, area_ids)
+		if (DEBUG): print(way_ids, area_ids)
+		
 		if way_ids:
 			snap['lon'], snap['lat'] = snapToWay(way_ids[0],center)
 		else:
@@ -188,12 +188,12 @@ def requestPistes(request):
 		if LIMIT_REACHED:
 			topo['limit_reached']= True;
 			topo['info']= 'Your request size exceed the API limit, results are truncated';
-		response_body=json.dumps(topo, sort_keys=True, indent=4)
-		status = 200
+		response_body=topo
+		status = '200 OK'
 		
 		cur.close()
 		conn.close()
-		return status, [response_body]
+		return status, response_body
 		
 	elif request.find('siteStats=') !=-1:
 		# query: ...members=id1...
@@ -204,11 +204,11 @@ def requestPistes(request):
 		stats['generator']="Opensnowmap.org piste search API"
 		stats['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
 		
-		response_body=json.dumps(stats, sort_keys=True, indent=4)
-		status = 200
+		response_body=stats
+		status = '200 OK'
 		cur.close()
 		conn.close()
-		return status, [response_body]
+		return status, response_body
 		
 	elif request.find('bbox=') !=-1:
 				# query: ...bbox=left, bottom, right, top&... 
@@ -237,12 +237,12 @@ def requestPistes(request):
 				if LIMIT_REACHED:
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
-				response_body=json.dumps(topo, sort_keys=True, indent=4)
-				status = 200
+				response_body=topo
+				status = '200 OK'
 				
 				cur.close()
 				conn.close()
-				return status, [response_body]
+				return status, response_body
 		
 	elif request.find('siteMembers=') !=-1:
 				# query: ...members=id1...
@@ -271,12 +271,12 @@ def requestPistes(request):
 				if LIMIT_REACHED:
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
-				response_body=json.dumps(topo, sort_keys=True, indent=4)
-				status = 200
+				response_body=topo
+				status = '200 OK'
 				
 				cur.close()
 				conn.close()
-				return status, [response_body]
+				return status, response_body
 		
 	elif request.find('topoByWayIds=') !=-1:
 				# query: ...ids=id1, id2, id3...
@@ -312,18 +312,18 @@ def requestPistes(request):
 				if LIMIT_REACHED:
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
-				response_body=json.dumps(topo, sort_keys=True, indent=4)
-				status = 200
+				response_body=topo
+				status = '200 OK'
 				
 				cur.close()
 				conn.close()
-				return status, [response_body]
+				return status, response_body
 	
 	else:
 				response_body="Bad Request"
-				status = 400
+				status = '404'
 				
-				return status, [response_body]
+				return status, response_body
 
 #==================================================
 #==================================================
@@ -380,8 +380,8 @@ def queryByIds(ids):
 	WHERE osm_id in (%s);
 	"""
 	% (ids,))
-	way_ids = cur.fetchall()
-	way_ids = [x[0] for x in way_ids]
+	areas_ids = cur.fetchall()
+	areas_ids = [x[0] for x in areas_ids]
 	conn.commit()
 	
 	
@@ -473,7 +473,7 @@ def queryClosest(center):
 	LIMIT 1;
 	"""	% (center['lon'],center['lat'],center['lon'],center['lat']))
 	resp = cur.fetchall()
-	print(resp)
+	if (DEBUG): print(resp)
 	dist_area= resp[0][0]
 	area_ids = resp[0][1]
 	if (dist_area == 0.0): dist_area = 10 # Try to snap to central way if exist and <10m
@@ -836,7 +836,7 @@ def makeList(IDS, GEO):
 	tmp_time=time.time()
 	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
 	# list of first ids
-	# Todo: faire une seule requetes sur lines, route et piste en un seul coup
+	# une seule requetes sur lines, route et piste en un seul coup
 	# avec IN (first_ids_list) puis a partir de deux liste de tous les parents.
 	# Looper sur les resultats pour faire la liste, une seule requete
 	# sera plus rapide.
@@ -1031,7 +1031,7 @@ def makeList(IDS, GEO):
 	tmp_time=time.time()
 	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
 	# list of first ids
-	# Todo: faire une seule requetes sur lines, route et piste en un seul coup
+	# une seule requetes sur lines, route et piste en un seul coup
 	# avec IN (first_ids_list) puis a partir de deux liste de tous les parents.
 	# Looper sur les resultats pour faire la liste, une seule requete
 	# sera plus rapide.

@@ -10,11 +10,11 @@ DEBUG = False
 def routes(query):
     resp={}
 
-    db='pistes_osm2pgsql'
+    db='pistes_api_osm2pgsql'
     global conn
     global cur
     # ~ try:
-    conn = psycopg2.connect("dbname="+db+" user=yves")
+    conn = psycopg2.connect("dbname="+db+" user=osmuser")
     cur = conn.cursor()
     # ~ except:
         # ~ pass
