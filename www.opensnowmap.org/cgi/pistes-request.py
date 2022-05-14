@@ -5,7 +5,7 @@ import psycopg2
 import requestPistes
 import pprint
 import json
-DEBUG=True
+DEBUG=False
 pp = pprint.PrettyPrinter(indent=4)
 
 def application(environ,start_response):

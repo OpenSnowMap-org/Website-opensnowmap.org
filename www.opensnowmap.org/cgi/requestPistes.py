@@ -3,51 +3,6 @@
 #
 # Piste search API
 
-"""
-Request type
-	* name=xxx
-		return pistes and sites whose name is or is close to 'xxx'. By default
-		results are ordered ba orthographic similarity with the request.
-	* bbox=left, bottom, right, top
-		return pistes and sites whose bounding box intersects the bbox.
-	* closest=lon, lat
-		return the closest way to (lon, lat). Use after a click on the map, for 
-		instance.
-	* ids=id1, id2, ...
-		return the sites and pistes in the osm_id list order. Usefull to create a 
-		routing topo client-side, for instance
-	* members=id
-		return the pistes member of the relation osm_id (site or route relation)
-		
-Result type
-At least one result type is mandatory
-	* list=true
-		return a rich json dictionnary with pistes attributes, bbox, ...
-	* ids_only=true
-		return a json dictionnary containing relations and ways osm_ids only
-		
-Request modifiers
-	* limit=false
-		By default, the server won't handle more than 50 osm ways or relations
-		to ensure a fast (<5s) answer, and an informationnal message is given.
-		Final results can be less than 50 if group=true is used. This limit can
-		be overriden by limit=false.
-	* sort_alpha=true
-		sort the result in alphabetical order
-	* group=true
-		Ask the server to group the results as 'pistes': 
-			Way members of a route relation are discarded if the relation is 
-			part of the result.
-			Ways that touches each other, have a name, share the same name and
-			the same piste:type and piste:difficulty are stitched together.
-			This allow to return simpler result hiding the osm data complexity.
-		This add complexity and response time.
-	* geo=true
-		Return the results geometry as an arrray of encoded-polyline.
-	* parent=true
-		if 'members' request type, return the parent as first result.
-	
-"""
 
 import psycopg2
 import pdb
@@ -102,7 +57,7 @@ function showSiteStats(div, id, element_type)
 LIMIT = 50
 HARDLIMIT = 500
 
-DEBUG=True
+DEBUG=False
 SPEEDDEBUG=True
 def requestPistes(request):
 
@@ -129,8 +84,10 @@ def requestPistes(request):
 				topo=makeList(IDS,True)
 				topo=concatWaysByAttributes(topo)
 				# sort by name
-				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
-				topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
+				if 'sites' in topo:
+					topo['sites'].sort(key=lambda k: nameSorter(k['name']))
+				if 'pistes' in topo:
+					topo['pistes'].sort(key=lambda k: nameSorter(k['name']))
 				# number the results
 				i=0
 				for s in topo['sites']:
@@ -252,7 +209,7 @@ def requestPistes(request):
 					# ~ PARENT_ID = ids
 				# ~ MEMBERS_REQUEST = True
 				site_ids, route_ids, way_ids, area_ids = queryMembersById(ids, True)
-				IDS=buildIds(site_ids, route_ids, way_ids, area_ids,True)
+				IDS=buildIds(site_ids, route_ids, way_ids, area_ids,False)
 				topo=makeList(IDS,True)
 				# sort by name
 				topo['sites'].sort(key=lambda k: nameSorter(k['name']))
@@ -368,7 +325,8 @@ def queryByIds(ids):
 	
 	cur.execute("""
 	SELECT osm_id FROM lines
-	WHERE osm_id in (%s);
+	WHERE osm_id in (%s)
+	AND position(piste_type in relation_piste_type) = 0;
 	"""
 	% (ids,))
 	way_ids = cur.fetchall()
@@ -614,7 +572,7 @@ def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 		
 		if len(way_ids):
 			# remove duplicates: way member of a route #of same piste:type
-			# already useless when from BBOX
+			# already useless when from BBOX and siteMembers
 			wayList = ','.join([str(long(i)) for i in way_ids])
 			to_remove=[]
 			int_time=time.time()
@@ -1165,14 +1123,17 @@ def makeList(IDS, GEO):
 def concatWaysByAttributes(topo):
 	concatTopo={}
 	concatTopo['sites']=topo['sites']
-	concatTopo['pistes']=[topo['pistes'][0]]
-	for p in topo['pistes'][1:]:
-		if compareAttributes(p, concatTopo['pistes'][-1]):
-			concatTopo['pistes'][-1]['geometry'].extend(p['geometry'])
-			concatTopo['pistes'][-1]['ids'].extend(p['ids'])
-			
-		else:
-			concatTopo['pistes'].append(p)
+	if (len(topo['pistes']) > 0):
+		concatTopo['pistes']=[topo['pistes'][0]]
+		for p in topo['pistes'][1:]:
+			if compareAttributes(p, concatTopo['pistes'][-1]):
+				concatTopo['pistes'][-1]['geometry'].extend(p['geometry'])
+				concatTopo['pistes'][-1]['ids'].extend(p['ids'])
+				
+			else:
+				concatTopo['pistes'].append(p)
+	else:
+		concatTopo['pistes']=topo['pistes']
 	return concatTopo
 	
 def compareAttributes(piste1, piste2):
