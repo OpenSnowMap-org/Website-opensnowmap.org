@@ -2156,6 +2156,9 @@ function requestRoute(thisPoint) {
   .catch(function(error) {
     /* re-route()*/      
     document.getElementById("routeWaiterResults").style.display = 'none';
+    document.getElementById("routeError").style.display = 'inline';
+    setTimeout(clearError,1000,"routeError");
+    
     console.log("routing failed.");
     ROUTING = false;
     routeIteraction.setActive(true);
@@ -2476,7 +2479,13 @@ function RouteSnap(point) {
     })
     .catch(function(error) {
       point.setProperties({'isSnapped': false, 'routable': false});
-      document.getElementById("routeWaiterResults").style.display = 'none';
+      if (ROUTEMODE)
+        document.getElementById("routeWaiterResults").style.display = 'none';
+      else
+        document.getElementById("queryWaiterResults").style.display = 'none';
+      document.getElementById("routeError").style.display = 'inline';
+      setTimeout(clearError,1000,"routeError");
+      
       console.log("snaping failed.");
       if (ROUTEMODE){
         ROUTING = false;

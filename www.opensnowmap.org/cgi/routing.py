@@ -23,7 +23,8 @@ def application(environ,start_response):
 		if(DEBUG): pp.pprint(responseObject)
 		status = '200 OK'
 	else:
-		status = '404'
+		responseObject = {}
+		status = '404 Not Found'
 		
 	response = json.dumps(responseObject)
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response)))]
