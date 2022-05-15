@@ -1417,7 +1417,24 @@ function getMembersById(id) {
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
   XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
+    if (XMLHttp.readyState == 4 && this.status != 200) {
+      //Error handling
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      if (QUERYMODE) {
+        document.getElementById("queryWaiterResults").style.display = 'none';
+        document.getElementById("queryError").style.display = 'inline';
+        setTimeout(clearError,1000,"queryError");
+      } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
+        document.getElementById("listError").style.display = 'inline';
+        setTimeout(clearError,1000,"listError");
+      } else {
+        document.getElementById("searchWaiterResults").style.display = 'none';
+        document.getElementById("searchError").style.display = 'inline';
+        setTimeout(clearError,1000,"searchError");
+      }
+    }
+    if (XMLHttp.readyState == 4 && this.status == 200) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
       document.getElementById("searchWaiterResults").style.display = 'none';
@@ -1458,7 +1475,13 @@ function getTopoByViewport() { //DONE in pisteList
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
   XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
+    if (XMLHttp.readyState == 4 && this.status != 200) {
+      //Error handling
+        document.getElementById("listWaiterResults").style.display = 'none';
+        document.getElementById("listError").style.display = 'inline';
+        setTimeout(clearError,1000,"listError");
+    }
+    if (XMLHttp.readyState == 4 && this.status == 200) {
       document.getElementById("listWaiterResults").style.display = 'none';
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
@@ -1482,7 +1505,14 @@ function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
     XMLHttp.onreadystatechange = function () {
-        if (XMLHttp.readyState == 4) {
+      
+        if (XMLHttp.readyState == 4 && this.status != 200) {
+          //Error handling
+            document.getElementById("routeWaiterResults").style.display = 'none';
+            document.getElementById("routeError").style.display = 'inline';
+            setTimeout(clearError,1000,"routeError");
+        }
+        if (XMLHttp.readyState == 4 && this.status == 200) {
             document.getElementById("routeWaiterResults").style.display = 'none';
             var resp = XMLHttp.responseText;
             jsonPisteList = JSON.parse(resp);
@@ -1512,7 +1542,7 @@ function RouteInjectLenghts(lengths) {
     }
   }
 }
-function getTopoById(ids) { //DONE in pisteList
+function getRouteById(ids) { //DONE in pisteList
   document.getElementById("queryWaiterResults").style.display = 'inline';
 
 
@@ -1522,7 +1552,7 @@ function getTopoById(ids) { //DONE in pisteList
   } //clear previous list
   document.getElementById('piste_search_results').innerHTML = '';
 
-  var q = pisteRequestserver + "geo=true&topo=true&ids=" + ids;
+  var q = pisteRequestserver + "routeById=" + ids;
   var XMLHttp = new XMLHttpRequest();
 
   //PisteAPIXHR.push(XMLHttp);
@@ -1531,13 +1561,28 @@ function getTopoById(ids) { //DONE in pisteList
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
   XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
+    
+    if (XMLHttp.readyState == 4 && this.status != 200) {
+      //Error handling
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      if (QUERYMODE) {
+        document.getElementById("queryWaiterResults").style.display = 'none';
+        document.getElementById("queryError").style.display = 'inline';
+        setTimeout(clearError,1000,"queryError");
+      } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
+        document.getElementById("listError").style.display = 'inline';
+        setTimeout(clearError,1000,"listError");
+      } 
+    }
+    if (XMLHttp.readyState == 4 && this.status == 200) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
       document.getElementById("queryWaiterResults").style.display = 'none';
       if (QUERYMODE) {
         showHTMLPistesList(document.getElementById('query_results'));
       } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
         showHTMLPistesList(document.getElementById('pisteList_results'));
       } else {
         showHTMLPistesList(document.getElementById('piste_search_results'));
@@ -2109,7 +2154,8 @@ function requestRoute(thisPoint) {
     }
   })
   .catch(function(error) {
-    /* re-route()*/
+    /* re-route()*/      
+    document.getElementById("routeWaiterResults").style.display = 'none';
     console.log("routing failed.");
     ROUTING = false;
     routeIteraction.setActive(true);
@@ -2448,11 +2494,18 @@ function getByName(name) {
   document.getElementById('piste_search_results').innerHTML = '';
   var q = pisteRequestserver + "group=true&geo=true&list=true&name=" + name;
   var XMLHttp = new XMLHttpRequest();
+  
   XMLHttp.open("GET", q);
   XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
   XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
+    if (XMLHttp.readyState == 4 && this.status != 200) {
+      //Error handling
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      document.getElementById("searchError").style.display = 'inline';
+      setTimeout(clearError,1000,"searchError");
+    }
+    if (XMLHttp.readyState == 4 && this.status == 200) {
       var resp = XMLHttp.responseText;
       jsonPisteList = JSON.parse(resp);
       document.getElementById("searchWaiterResults").style.display = 'none';
@@ -3523,7 +3576,7 @@ function showHTMLPistesList(Div) {
 
           inroutediv.onclick = function() {
             //~ showProfileFromGeometryParentRoute(this.getAttribute('osm_id'), this.getAttribute('r'));
-            getTopoById(this.getAttribute('osm_id'));
+            getRouteById(this.getAttribute('osm_id'));
             //deHighlight();
           };
           footer.appendChild(inroutediv);
@@ -4072,4 +4125,7 @@ function josmRemote() {
     XMLHttp.open("GET", q, true);
     XMLHttp.send();
 
+}
+function clearError(errorId) {
+  document.getElementById(errorId).style.display = 'none';
 }

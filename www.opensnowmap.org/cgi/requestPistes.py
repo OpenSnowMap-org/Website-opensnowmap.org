@@ -276,15 +276,56 @@ def requestPistes(request):
 				conn.close()
 				return status, response_body
 	
+	elif request.find('routeById=') !=-1:
+				# query: ...ids=id1, id2, id3...
+				ids=request.split('routeById=')[1]
+				if ids.find('&'): ids=ids.split('&')[0]
+				# ids='id1, id2, ...'
+				
+				site_ids = []
+				routes_ids = ids.split(',')
+				area_ids = []
+				way_ids = []
+				
+				IDS = {}
+				route_id=[routes_ids[0]]
+				IDS['sites']=site_ids
+				IDS['routes']=route_id
+				IDS['ways']=way_ids
+				IDS['areas']=area_ids
+				topo=makeList(IDS,True)
+				
+				# number the results
+				i=0
+				for s in topo['sites']:
+					s['result_index']=i
+					i+=1
+				i=0
+				for s in topo['pistes']:
+					s['result_index']=i
+					i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				if LIMIT_REACHED:
+					topo['limit_reached']= True;
+					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=topo
+				status = '200 OK'
+				
+				cur.close()
+				conn.close()
+				return status, response_body
+	
 	else:
 				response_body="Bad Request"
-				status = '404'
+				status = '404 Not Found'
 				
 				return status, response_body
 
 #==================================================
 #==================================================
 def queryMembersById(id, PARENT_ID):
+	
 	start_time=time.time()
 	
 	cur.execute("""
