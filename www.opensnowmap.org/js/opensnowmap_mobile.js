@@ -101,8 +101,7 @@ var modifiedRelationsSource = new ol.source.Vector();
 var addedNodesSource = new ol.source.Vector();
 var addedWaysSource = new ol.source.Vector();
 var addedRelationsSource = new ol.source.Vector();
-// a dummy proxy script is located in the directory to allow use of wfs
-//~ OpenLayers.ProxyHost = "cgi/proxy.cgi?url=";
+
 
 // Permalink and URL handling
 if (window.location.hash !== '') {
