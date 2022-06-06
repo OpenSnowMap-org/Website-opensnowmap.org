@@ -211,6 +211,7 @@ var icon = {
   "magic_carpet": 'pics/magic_carpet_20.svg',
   "mixed_lift": 'pics/mixed_lift_20.svg',
   "nordic": 'pics/classic_20.svg',
+  "nordic_unknown": 'pics/nordic_unknown_20.svg',
   "classic": 'pics/classic_20.svg',
   "skating": 'pics/skating_20.svg',
   "crosscountry": 'pics/crosscountry_20.svg',
@@ -2660,6 +2661,10 @@ function addImgElement(picDiv, pisteType, pisteGrooming) {
                 img.src = icon["crosscountry"];
                 img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
               }
+            } else {
+                img = document.createElement('img');
+                img.src = icon["nordic_unknown"];
+                img.className = 'pisteIcon';picDiv.appendChild(img);done = true;
             }
             if (! done) {
               img = document.createElement('img');
@@ -2946,7 +2951,11 @@ function showHTMLRouteList(Div) {
           } else {
             color = diffcolor[piste.in_routes[r].difficulty];
           }
-          routeName = piste.in_routes[r].name;
+          if(piste.in_routes[r].name) {
+            routeName = piste.in_routes[r].name;
+          } else {
+            routeName ='-';
+          }
           nameHTML += " <span style=\"color:"+color+"\">●</span><span>"+routeName+"</span>";
           lengthLong += 2 + routeName.length;
           shortNameHTML += "&nbsp;<span style=\"color:"+color+"\">●</span>";
@@ -2957,8 +2966,13 @@ function showHTMLRouteList(Div) {
         char += piste.name.substring(0, limitShort-char).length;
         for (r = 0; r < piste.in_routes.length; r++) {
           if (char <=limitShort) {
-            shortNameHTML += "&nbsp;"+piste.in_routes[r].name.substring(0, limitShort-char);
-            char += piste.in_routes[r].name.substring(0, limitShort-char).length+1;
+            if(piste.in_routes[r].name) {
+              routeName = piste.in_routes[r].name;
+            } else {
+              routeName ='-';
+            }
+            shortNameHTML += "&nbsp;"+routeName.substring(0, limitShort-char);
+            char += routeName.substring(0, limitShort-char).length+1;
           }
         }
       }
