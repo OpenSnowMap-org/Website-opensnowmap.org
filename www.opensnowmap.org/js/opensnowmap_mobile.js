@@ -16,39 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-data={};
-const ind=0;
-function colorGamma(pixels, data) {
-  if(pixels[0][0]) {
-    pixel = pixels[0];
-    gamma = 2.2;
-    r = pixel[0] / 255.0;
-    g = pixel[1] / 255.0;
-    b = pixel[2] / 255.0;
-    pixel[0] = Math.pow(r,1/gamma) * 255;
-    pixel[1] = Math.pow(g,1/gamma) * 255;
-    pixel[2] = Math.pow(b,1/gamma) * 255;
-    pixel[3] = 255  - pixel[0];
-    return pixel;
-  } else {return (1,1,1,1);}
-}
-var Alti3D= new ol.source.XYZ({
-              url: "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png",
-              tileSize: 256,
-              tilePixelRatio: 1,
-              crossOrigin: 'anonymous'
-            });
-var Alti3DGamma = new ol.source.Raster({
-          sources: [Alti3D],
-          //~ operationType: 'pixel',
-          operation: colorGamma
-        });
-//~ Alti3DGamma.on('beforeoperations', function (event) {
-  //~ // the event.data object will be passed to operations
-    //~ data = event.data;
-    //~ data.resolution = event.resolution;
-  //~ });
-
   
 if (location.protocol != 'https:') {
   protocol = 'http:';
@@ -1049,6 +1016,9 @@ function page_init() {
   document.getElementById('SnowBaseLAyer').onclick = function() {
     BASELAYER = 'snowmap';
     setBaseLayer();
+  };
+  document.getElementById('hiRes_relief').onclick = function() {
+    toggleHiResRelief();
   };
   document.getElementById('high_dpi').onclick = function() {
     setHighDpi();
@@ -3801,7 +3771,30 @@ function setHighDpi() {
     HDPI = true;
   }
 }
+function toggleHiResRelief() {
+  if ( getLayerByName('SwissAlti3D').getVisible() ) {
+    getLayerByName('SwissAlti3D').setVisible(false);
+    document.getElementById('hiRes_relief').style.backgroundColor = '#FFF';
+    document.getElementById('attribution').innerHTML='\
+        &#169;<a href="https://www.openstreetmap.org" target="blank">\
+        OpenStreetMap.org</a> -\
+        <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
+        <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
+        <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>\
+        ';
 
+  } else {
+    getLayerByName('SwissAlti3D').setVisible(true);
+    document.getElementById('hiRes_relief').style.backgroundColor = '#DDD';
+    document.getElementById('attribution').innerHTML='\
+        &#169;<a href="https://www.openstreetmap.org" target="blank">\
+        OpenStreetMap.org</a> -\
+        <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
+        <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
+        <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>-\
+        <a href="https://www.swisstopo.admin.ch" target="_blank">swissALTI3D (c)SwissTopo</a>';
+  }
+}
 function setBaseLayer() {
   var c = map.getView().getCenter();
   var z = map.getView().getZoom();
@@ -3902,6 +3895,18 @@ function setBaseLayer() {
 }
 
 function map_init() {
+  // Sources for hi-res hillshading
+  var Alti3D= new ol.source.XYZ({
+              url: "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png",
+              tileSize: 256,
+              tilePixelRatio: 1,
+              crossOrigin: 'anonymous'
+            });
+  var Alti3DGamma = new ol.source.Raster({
+          sources: [Alti3D],
+          operation: colorGamma
+        });
+  
   map = new ol.Map({
     layers: [
       new ol.layer.Tile({
@@ -3984,7 +3989,7 @@ function map_init() {
                 //~ https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml
                 //~ <ows:LowerCorner>5.140242 45.398181</ows:LowerCorner>
                 //~ <ows:UpperCorner>11.47757 48.230651</ows:UpperCorner>
-        visible: true,
+        visible: false,
         maxZoom: 18,
         minZoom: 14,
         projection: 'EPSG:3857'
@@ -4197,4 +4202,18 @@ function josmRemote() {
 }
 function clearError(errorId) {
   document.getElementById(errorId).style.display = 'none';
+}
+function colorGamma(pixels, data) {
+  if(pixels[0][0]) {
+    pixel = pixels[0];
+    gamma = 2.2;
+    r = pixel[0] / 255.0;
+    g = pixel[1] / 255.0;
+    b = pixel[2] / 255.0;
+    pixel[0] = Math.pow(r,1/gamma) * 255;
+    pixel[1] = Math.pow(g,1/gamma) * 255;
+    pixel[2] = Math.pow(b,1/gamma) * 255;
+    pixel[3] = 255  - pixel[0];
+    return pixel;
+  } else {return (1,1,1,1);}
 }
