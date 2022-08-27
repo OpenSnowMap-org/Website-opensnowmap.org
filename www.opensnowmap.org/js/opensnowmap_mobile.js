@@ -16,6 +16,40 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+data={};
+const ind=0;
+function colorGamma(pixels, data) {
+  if(pixels[0][0]) {
+    pixel = pixels[0];
+    gamma = 2.2;
+    r = pixel[0] / 255.0;
+    g = pixel[1] / 255.0;
+    b = pixel[2] / 255.0;
+    pixel[0] = Math.pow(r,1/gamma) * 255;
+    pixel[1] = Math.pow(g,1/gamma) * 255;
+    pixel[2] = Math.pow(b,1/gamma) * 255;
+    pixel[3] = 255  - pixel[0];
+    return pixel;
+  } else {return (1,1,1,1);}
+}
+var Alti3D= new ol.source.XYZ({
+              url: "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png",
+              tileSize: 256,
+              tilePixelRatio: 1,
+              crossOrigin: 'anonymous'
+            });
+var Alti3DGamma = new ol.source.Raster({
+          sources: [Alti3D],
+          //~ operationType: 'pixel',
+          operation: colorGamma
+        });
+//~ Alti3DGamma.on('beforeoperations', function (event) {
+  //~ // the event.data object will be passed to operations
+    //~ data = event.data;
+    //~ data.resolution = event.resolution;
+  //~ });
+
+  
 if (location.protocol != 'https:') {
   protocol = 'http:';
 } else {
@@ -3941,8 +3975,21 @@ function map_init() {
         }),
         visible: false,
         maxZoom: 18
+      }),
+
+      new ol.layer.Image({
+        name: 'SwissAlti3D',
+        source: Alti3DGamma,
+        extent: ol.extent.applyTransform([5.140242, 45.398181, 11.47757, 48.230651], ol.proj.getTransform('EPSG:4326', 'EPSG:3857'), undefined),
+                //~ https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml
+                //~ <ows:LowerCorner>5.140242 45.398181</ows:LowerCorner>
+                //~ <ows:UpperCorner>11.47757 48.230651</ows:UpperCorner>
+        visible: true,
+        maxZoom: 18,
+        minZoom: 14,
+        projection: 'EPSG:3857'
       })
-    ],
+    ], // layers
     target: 'map',
     view: view,
     logo: false,
