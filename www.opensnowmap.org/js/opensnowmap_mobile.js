@@ -1017,8 +1017,11 @@ function page_init() {
     BASELAYER = 'snowmap';
     setBaseLayer();
   };
-  document.getElementById('hiRes_relief').onclick = function() {
-    toggleHiResRelief();
+  document.getElementById('hiRes_relief_CH').onclick = function() {
+    toggleHiResRelief_CH();
+  };
+  document.getElementById('hiRes_relief_FR').onclick = function() {
+    toggleHiResRelief_FR();
   };
   document.getElementById('high_dpi').onclick = function() {
     setHighDpi();
@@ -3771,10 +3774,10 @@ function setHighDpi() {
     HDPI = true;
   }
 }
-function toggleHiResRelief() {
+function toggleHiResRelief_CH() {
   if ( getLayerByName('SwissAlti3D').getVisible() ) {
     getLayerByName('SwissAlti3D').setVisible(false);
-    document.getElementById('hiRes_relief').style.backgroundColor = '#FFF';
+    document.getElementById('hiRes_relief_CH').style.backgroundColor = '#FFF';
     document.getElementById('attribution').innerHTML='\
         &#169;<a href="https://www.openstreetmap.org" target="blank">\
         OpenStreetMap.org</a> -\
@@ -3785,7 +3788,31 @@ function toggleHiResRelief() {
 
   } else {
     getLayerByName('SwissAlti3D').setVisible(true);
-    document.getElementById('hiRes_relief').style.backgroundColor = '#DDD';
+    document.getElementById('hiRes_relief_CH').style.backgroundColor = '#DDD';
+    document.getElementById('attribution').innerHTML='\
+        &#169;<a href="https://www.openstreetmap.org" target="blank">\
+        OpenStreetMap.org</a> -\
+        <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
+        <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
+        <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>-\
+        <a href="https://geoservices.ign.fr/" target="_blank">RGE Alti (c)IGN France</a>';
+  }
+}
+function toggleHiResRelief_FR() {
+  if ( getLayerByName('RGE_Alti').getVisible() ) {
+    getLayerByName('RGE_Alti').setVisible(false);
+    document.getElementById('hiRes_relief_FR').style.backgroundColor = '#FFF';
+    document.getElementById('attribution').innerHTML='\
+        &#169;<a href="https://www.openstreetmap.org" target="blank">\
+        OpenStreetMap.org</a> -\
+        <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
+        <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
+        <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>\
+        ';
+
+  } else {
+    getLayerByName('RGE_Alti').setVisible(true);
+    document.getElementById('hiRes_relief_FR').style.backgroundColor = '#DDD';
     document.getElementById('attribution').innerHTML='\
         &#169;<a href="https://www.openstreetmap.org" target="blank">\
         OpenStreetMap.org</a> -\
@@ -3896,6 +3923,7 @@ function setBaseLayer() {
 
 function map_init() {
   // Sources for hi-res hillshading
+  // SwissTopo
   var Alti3D= new ol.source.XYZ({
               url: "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png",
               tileSize: 256,
@@ -3906,7 +3934,19 @@ function map_init() {
           sources: [Alti3D],
           operation: colorGamma
         });
-  
+  // IGN RGE Alti
+  var RGE_Alti = new ol.source.TileWMS({
+      url: 'https://wxs.ign.fr/altimetrie/geoportail/r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS',
+      params: {'TILED': true,
+        'STYLES':'estompage',
+        'FORMAT':'image/png',
+        'DPI':'96',
+        'MAP_RESOLUTION':'96',
+        'FORMAT_OPTIONS':'dpi:96',
+        'TRANSPARENT': 'TRUE'
+        },
+    });
+    
   map = new ol.Map({
     layers: [
       new ol.layer.Tile({
@@ -3993,7 +4033,17 @@ function map_init() {
         maxZoom: 18,
         minZoom: 14,
         projection: 'EPSG:3857'
-      })
+      }),
+      
+      new ol.layer.Tile({
+        name: 'RGE_Alti',
+        source: RGE_Alti,
+        maxZoom: 18,
+        minZoom: 14,
+        extent: [-592262.4570742709329352, 5059008.4086222220212221, 1075695.6952448242809623, 6642780.8442238969728351],
+        projection: 'EPSG:3857',
+        visible: false,
+        })
     ], // layers
     target: 'map',
     view: view,
