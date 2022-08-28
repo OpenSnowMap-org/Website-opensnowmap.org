@@ -3788,14 +3788,16 @@ function toggleHiResRelief_CH() {
 
   } else {
     getLayerByName('SwissAlti3D').setVisible(true);
+    getLayerByName('RGE_Alti').setVisible(false)
     document.getElementById('hiRes_relief_CH').style.backgroundColor = '#DDD';
+    document.getElementById('hiRes_relief_FR').style.backgroundColor = '#FFF';
     document.getElementById('attribution').innerHTML='\
         &#169;<a href="https://www.openstreetmap.org" target="blank">\
         OpenStreetMap.org</a> -\
         <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
         <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
         <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>-\
-        <a href="https://geoservices.ign.fr/" target="_blank">RGE Alti (c)IGN France</a>';
+        <a href="https://www.swisstopo.admin.ch" target="_blank">swissALTI3D (c)SwissTopo</a>';
   }
 }
 function toggleHiResRelief_FR() {
@@ -3812,14 +3814,16 @@ function toggleHiResRelief_FR() {
 
   } else {
     getLayerByName('RGE_Alti').setVisible(true);
+    getLayerByName('SwissAlti3D').setVisible(false)
     document.getElementById('hiRes_relief_FR').style.backgroundColor = '#DDD';
+    document.getElementById('hiRes_relief_CH').style.backgroundColor = '#FFF';
     document.getElementById('attribution').innerHTML='\
         &#169;<a href="https://www.openstreetmap.org" target="blank">\
         OpenStreetMap.org</a> -\
         <a href="https://asterweb.jpl.nasa.gov" target="_blank">ASTER</a> -\
         <a href="https://www2.jpl.nasa.gov/srtm/" target="_blank">SRTM</a>-\
         <a href="https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem" target="_blank">EUDEM</a>-\
-        <a href="https://www.swisstopo.admin.ch" target="_blank">swissALTI3D (c)SwissTopo</a>';
+        <a href="https://geoservices.ign.fr/" target="_blank">RGE Alti (c)IGN France</a>';
   }
 }
 function setBaseLayer() {
