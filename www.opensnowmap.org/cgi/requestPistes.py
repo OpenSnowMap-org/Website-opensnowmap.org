@@ -456,7 +456,7 @@ def queryByName(name):
 def queryClosest(center):
 	
 	cur.execute("""
-	SELECT ST_Distance_Sphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM lines
+	SELECT ST_DistanceSphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM lines
 	ORDER BY 
 	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
@@ -466,7 +466,7 @@ def queryClosest(center):
 	way_ids = resp[0][1]
 	
 	cur.execute("""
-	SELECT ST_Distance_Sphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM areas
+	SELECT ST_DistanceSphere(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)), osm_id FROM areas
 	ORDER BY 
 	ST_Distance(geom, ST_SetSRID(ST_MakePoint(%s,%s),4326)) ASC
 	LIMIT 1;
