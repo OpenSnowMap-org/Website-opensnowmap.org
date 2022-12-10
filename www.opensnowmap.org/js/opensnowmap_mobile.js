@@ -667,6 +667,8 @@ function showlegend() {
   document.getElementById('content-control').style.display = 'inline';
   document.getElementById('content_title').innerHTML = '&nbsp;' + _('MAP_KEY').replace('<br/>', ' ');
   document.getElementById('content-outer').scrollTop = 0;
+  document.getElementById('content-outer').style.maxWidth = "80%";
+  document.getElementById('content-outer').style.width = "80%";
 }
 function showsearch() {
   hideexcept('search');
