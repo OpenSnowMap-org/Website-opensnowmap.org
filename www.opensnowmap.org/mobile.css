@@ -434,6 +434,12 @@ float:right;
 #legend {
         overflow: scroll;
      }
+@media (max-width:767px) {
+    .mapkeyImg{
+        max-width: 942px;
+    }
+}
+
 #left_scroll{
 	position:fixed;
 	left:0px;
