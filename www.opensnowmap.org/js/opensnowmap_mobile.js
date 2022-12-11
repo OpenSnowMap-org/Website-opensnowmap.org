@@ -595,6 +595,13 @@ function closecontent() {
     }
 }
 
+function scrollleft() {
+    document.getElementById('content').scrollLeft -= 450;
+}
+function scrollright() {
+    document.getElementById('content').scrollLeft += 450;
+}
+
 function showMapSettings() {
   var dd = document.getElementsByClassName('menuDropDownContent');
   var content = document.getElementById('mapSettingsDropDownContent');
@@ -949,6 +956,12 @@ function page_init() {
 
   document.getElementById('reduceButton').onclick = function() {
     closecontent();
+  };
+  document.getElementById('left_scroll').onclick = function() {
+    scrollleft();
+  };
+  document.getElementById('right_scroll').onclick = function() {
+    scrollright();
   };
   document.getElementById('doSearch').onclick = function() {
     SearchByName(document.search.nom_search.value);

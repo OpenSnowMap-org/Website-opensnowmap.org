@@ -424,6 +424,8 @@ float:right;
         max-width: calc(100% - 30px);
         width: calc(100% - 30px);
         z-index: 1;
+        
+        scroll-behavior: smooth;
 /*
         max-width:210px;width:210px;top: 39px;
 */
