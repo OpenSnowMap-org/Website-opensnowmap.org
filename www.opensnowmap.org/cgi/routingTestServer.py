@@ -21,8 +21,9 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_response(200)
             
             self.send_header("Content-type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(bytes(json.dumps(response)))
+            self.wfile.write(bytes(json.dumps(response), 'utf-8'))
         else:
             self.send_response(404)
 

@@ -20,12 +20,14 @@ class MyServer(BaseHTTPRequestHandler):
             response=[]
             print("query:" + query)
             # ~ try: 
-            status, response = requestPistes.requestPistes(query)
+            status, responseObject = requestPistes.requestPistes(query)
             if(DEBUG): pp.pprint(response)
-            self.send_response(int(status))
+            self.send_response(int(status),"")
             self.send_header("Content-type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(bytes(response[0]))
+            pp.pprint(responseObject)
+            self.wfile.write(bytes(json.dumps(responseObject), 'utf-8'))
             # ~ except BaseException as err:
               # ~ print(err)
               # ~ status=500

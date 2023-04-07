@@ -10,8 +10,8 @@ import re
 import json
 import urllib
 import time
-from cStringIO import StringIO
-
+# ~ from cStringIO import StringIO
+from io import StringIO
 import math
 
 """
@@ -103,7 +103,7 @@ def requestPistes(request):
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
 				response_body=topo
-				status = '200 OK'
+				status = '200'
 				
 				cur.close()
 				conn.close()
@@ -146,7 +146,7 @@ def requestPistes(request):
 			topo['limit_reached']= True;
 			topo['info']= 'Your request size exceed the API limit, results are truncated';
 		response_body=topo
-		status = '200 OK'
+		status = '200'
 		
 		cur.close()
 		conn.close()
@@ -162,7 +162,7 @@ def requestPistes(request):
 		stats['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
 		
 		response_body=stats
-		status = '200 OK'
+		status = '200'
 		cur.close()
 		conn.close()
 		return status, response_body
@@ -195,7 +195,7 @@ def requestPistes(request):
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
 				response_body=topo
-				status = '200 OK'
+				status = '200'
 				
 				cur.close()
 				conn.close()
@@ -229,7 +229,7 @@ def requestPistes(request):
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
 				response_body=topo
-				status = '200 OK'
+				status = '200'
 				
 				cur.close()
 				conn.close()
@@ -270,7 +270,7 @@ def requestPistes(request):
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
 				response_body=topo
-				status = '200 OK'
+				status = '200'
 				
 				cur.close()
 				conn.close()
@@ -310,7 +310,7 @@ def requestPistes(request):
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
 				response_body=topo
-				status = '200 OK'
+				status = '200'
 				
 				cur.close()
 				conn.close()
@@ -318,7 +318,7 @@ def requestPistes(request):
 	
 	else:
 				response_body="Bad Request"
-				status = '404 Not Found'
+				status = '404'
 				
 				return status, response_body
 
@@ -614,7 +614,7 @@ def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 		if len(way_ids):
 			# remove duplicates: way member of a route #of same piste:type
 			# already useless when from BBOX and siteMembers
-			wayList = ','.join([str(long(i)) for i in way_ids])
+			wayList = ','.join([str(int(i)) for i in way_ids])
 			to_remove=[]
 			int_time=time.time()
 			for i in route_ids:
@@ -631,7 +631,7 @@ def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 					piste_type is null
 					AND lift_type is null
 				);
-				"""%(long(i),wayList,long(i))
+				"""%(int(i),wayList,int(i))
 				
 				cur.execute(query)
 				to_remove.extend(cur.fetchall())
@@ -645,7 +645,7 @@ def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 		if len(way_ids)==1 : way_ids=[way_ids]
 		if len(way_ids)>1:	# group ways
 			int_time=time.time()
-			wayList = ','.join([str(long(i)) for i in way_ids])
+			wayList = ','.join([str(int(i)) for i in way_ids])
 			cur.execute(
 			"""
 			SELECT distinct array_agg(distinct a.osm_id)
@@ -715,7 +715,7 @@ def makeList(IDS, GEO):
 	tmp_time=time.time()
 	topo['sites']=[]
 	for osm_id in IDS['sites']:
-		osm_id=str(long(osm_id))
+		osm_id=str(int(osm_id))
 		cur.execute("""
 		SELECT 
 			osm_id,
@@ -748,7 +748,7 @@ def makeList(IDS, GEO):
 	tmp_time=time.time()
 	topo['pistes']=[]
 	for osm_id in IDS['routes']:
-		osm_id=str(long(osm_id))
+		osm_id=str(int(osm_id))
 		cur.execute("""
 		SELECT 
 			osm_id,
@@ -1001,7 +1001,7 @@ def makeList(IDS, GEO):
 			# ~ Check a list view request around 690949555L, 690949556L
 			if len(IDS['ways'][i]) > 1:
 				if (DEBUG): print("composed ways : "+str(IDS['ways'][i]))
-				id_list=','.join([str(long(j)) for j in IDS['ways'][i]])
+				id_list=','.join([str(int(j)) for j in IDS['ways'][i]])
 				cur.execute("""
 				SELECT 
 					ST_X(ST_Centroid(ST_Collect(geom))),
