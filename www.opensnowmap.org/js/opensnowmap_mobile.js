@@ -724,46 +724,40 @@ function showabout() {
   aboutDiv.style.display = 'inline';
   document.getElementById('content-outer').style.maxWidth = "80%";
   document.getElementById('content-outer').style.width = "80%";
-
-  var XMLHttp = new XMLHttpRequest();
-  url = server + 'iframes/about.' + iframelocale + '.html';
-  XMLHttp.open("GET", url);
-  XMLHttp.setRequestHeader("Content-type", "text/html; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
-      //var full_length = parseFloat(data.downhill) + parseFloat(data.nordic) + parseFloat(data.aerialway) + parseFloat(data.skitour) + parseFloat(data.sled) + parseFloat(data.snowshoeing);
-
-      var content = XMLHttp.responseText;
-      content = content.replace('**update**', data.date)
-        .replace('**nordic**', data.nordic)
-        .replace('**downhill**', data.downhill)
-        .replace('**aerialway**', data.aerialway)
-        .replace('**skitour**', data.skitour)
-        .replace('**sled**', data.sled)
-        .replace('**snowshoeing**', data.snowshoeing);
-      aboutDiv.innerHTML = content;
-
-      document.getElementById('content_title').innerHTML = '&nbsp;' + _('ABOUT');
-      document.getElementById('about').innerHTML = content;
-      document.getElementById('about').style.display = 'inline';
-      document.getElementById('content-outer').style.display = 'inline';
-      document.getElementById('content').style.display = 'inline';
-      document.getElementById('content-control').style.display = 'inline';
-      document.getElementById('content-outer').scrollTop = 0;
-      //aboutDiv.style.display='inline';
-      //cacheInHistory(aboutDiv);
+  q = server + 'iframes/about.' + iframelocale + '.html';
+  
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
     }
-  };
-  XMLHttp.send();
-  //~ return true;
-  //~ var content = get_page(url).replace('**update**',update)
-  //~ .replace('**nordic**',lengthes.nordic)
-  //~ .replace('**downhill**',lengthes.downhill)
-  //~ .replace('**aerialway**',lengthes.aerialway)
-  //~ .replace('**skitour**',lengthes.skitour)
-  //~ .replace('**sled**',lengthes.sled)
-  //~ .replace('**snowshoeing**',lengthes.snowshoeing);
+    return response.text();
+  })
+  .then(function(response) {
+    var content = response;
+    content = content.replace('**update**', data.date)
+      .replace('**nordic**', data.nordic)
+      .replace('**downhill**', data.downhill)
+      .replace('**aerialway**', data.aerialway)
+      .replace('**skitour**', data.skitour)
+      .replace('**sled**', data.sled)
+      .replace('**snowshoeing**', data.snowshoeing);
+    aboutDiv.innerHTML = content;
+  
+    document.getElementById('content_title').innerHTML = '&nbsp;' + _('ABOUT');
+    document.getElementById('about').innerHTML = content;
+    document.getElementById('about').style.display = 'inline';
+    document.getElementById('content-outer').style.display = 'inline';
+    document.getElementById('content').style.display = 'inline';
+    document.getElementById('content-control').style.display = 'inline';
+    document.getElementById('content-outer').scrollTop = 0;
+  })
+  .then(function (ok) {
+    return true
+  })
+  .catch(function(error) {
+  });
+  return true
 }
 
 function show_languages() {
@@ -1434,12 +1428,34 @@ function getMembersById(id) {
   document.getElementById('piste_search_results').innerHTML = '';
 
   var q = pisteRequestserver + "siteMembers=" + id;
-  var XMLHttp = new XMLHttpRequest();
-  XMLHttp.open("GET", q);
-  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4 && this.status != 200) {
+  
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.json();
+  })
+  .then(function(json) {
+      jsonPisteList = json;
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      if (QUERYMODE) {
+        document.getElementById("queryWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('query_results'));
+      } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('pisteList_results'));
+      } else {
+        document.getElementById("searchWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('piste_search_results'));
+      }
+      return true
+  })
+  .then(function (ok) {
+      
+      return true
+  })
+  .catch(function(error) {
       //Error handling
       document.getElementById("searchWaiterResults").style.display = 'none';
       if (QUERYMODE) {
@@ -1455,94 +1471,76 @@ function getMembersById(id) {
         document.getElementById("searchError").style.display = 'inline';
         setTimeout(clearError,1000,"searchError");
       }
-    }
-    if (XMLHttp.readyState == 4 && this.status == 200) {
-      var resp = XMLHttp.responseText;
-      jsonPisteList = JSON.parse(resp);
-      document.getElementById("searchWaiterResults").style.display = 'none';
-      if (QUERYMODE) {
-        document.getElementById("queryWaiterResults").style.display = 'none';
-        showHTMLPistesList(document.getElementById('query_results'));
-      } else if (PISTELISTMODE) {
-        document.getElementById("listWaiterResults").style.display = 'none';
-        showHTMLPistesList(document.getElementById('pisteList_results'));
-      } else {
-        document.getElementById("searchWaiterResults").style.display = 'none';
-        showHTMLPistesList(document.getElementById('piste_search_results'));
-      }
-    }
-  };
-  XMLHttp.send();
+  });
+  return true;
 }
 
 function getTopoByViewport() { //DONE in pisteList
   document.getElementById("listWaiterResults").style.display = 'inline';
-
-
+  
   var list = document.getElementsByClassName('nominatimLi')[0];
   while (list.firstChild) {
     list.removeChild(list.firstChild);
   } //clear previous list
   document.getElementById('piste_search_results').innerHTML = '';
-
-
-
+  
   var bb = ol.extent.applyTransform(map.getView().calculateExtent(), ol.proj.getTransform('EPSG:3857', 'EPSG:4326'), undefined);
   var q = pisteRequestserver + "bbox=" + bb[0] + ',' + bb[1] + ',' + bb[2] + ',' + bb[3];
-  var XMLHttp = new XMLHttpRequest();
-
-  //PisteAPIXHR.push(XMLHttp);
-
-  XMLHttp.open("GET", q);
-  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4 && this.status != 200) {
-      //Error handling
-        document.getElementById("listWaiterResults").style.display = 'none';
-        document.getElementById("listError").style.display = 'inline';
-        setTimeout(clearError,1000,"listError");
+  
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
     }
-    if (XMLHttp.readyState == 4 && this.status == 200) {
+    return response.json();
+  })
+  .then(function(json) {
       document.getElementById("listWaiterResults").style.display = 'none';
-      var resp = XMLHttp.responseText;
-      jsonPisteList = JSON.parse(resp);
+      jsonPisteList = json;
       showHTMLPistesList(document.getElementById('pisteList_results'));
-    }
-  };
-  XMLHttp.send();
+      return true
+  })
+  .then(function (ok) {
+      
+      return true
+  })
+  .catch(function(error) {
+    //Error handling
+      document.getElementById("listWaiterResults").style.display = 'none';
+      document.getElementById("listError").style.display = 'inline';
+      setTimeout(clearError,1000,"listError");
+  });
   return true;
 }
 function getRouteTopoByWaysId(ids, lengths, routeLength, routeWKT) {
     //close_sideBar();
     document.getElementById("routeWaiterResults").style.display = 'inline';
-    abortXHR('PisteAPI'); // abort another request if any
 
     var q = pisteRequestserver + "topoByWayIds=" + ids;
-    var XMLHttp = new XMLHttpRequest();
-
-    PisteAPIXHR.push(XMLHttp);
-
-    XMLHttp.open("GET", q);
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-    XMLHttp.onreadystatechange = function () {
-      
-        if (XMLHttp.readyState == 4 && this.status != 200) {
-          //Error handling
+    
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.json();
+  })
+  .then(function(json) {
+      document.getElementById("routeWaiterResults").style.display = 'none';
+      jsonPisteList = json;
+      RouteInjectLenghts(lengths);
+      showHTMLRoute(document.getElementById('route_results'), routeLength, routeWKT)
+      return true
+  })
+  .then(function (ok) {
+      return true
+  })
+  .catch(function(error) {
+      //Error handling
             document.getElementById("routeWaiterResults").style.display = 'none';
             document.getElementById("routeError").style.display = 'inline';
             setTimeout(clearError,1000,"routeError");
-        }
-        if (XMLHttp.readyState == 4 && this.status == 200) {
-            document.getElementById("routeWaiterResults").style.display = 'none';
-            var resp = XMLHttp.responseText;
-            jsonPisteList = JSON.parse(resp);
-            RouteInjectLenghts(lengths);
-            showHTMLRoute(document.getElementById('route_results'), routeLength, routeWKT)
-        }
-    };
-    XMLHttp.send();
+  });
     return true;
 }
 function RouteInjectLenghts(lengths) {
@@ -1575,16 +1573,30 @@ function getRouteById(ids) { //DONE in pisteList
   document.getElementById('piste_search_results').innerHTML = '';
 
   var q = pisteRequestserver + "routeById=" + ids;
-  var XMLHttp = new XMLHttpRequest();
-
-  //PisteAPIXHR.push(XMLHttp);
-
-  XMLHttp.open("GET", q);
-  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    
-    if (XMLHttp.readyState == 4 && this.status != 200) {
+  
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.json();
+  })
+  .then(function(json) {
+      jsonPisteList = json;
+      document.getElementById("queryWaiterResults").style.display = 'none';
+      if (QUERYMODE) {
+        showHTMLPistesList(document.getElementById('query_results'));
+      } else if (PISTELISTMODE) {
+        document.getElementById("listWaiterResults").style.display = 'none';
+        showHTMLPistesList(document.getElementById('pisteList_results'));
+      } else {
+        showHTMLPistesList(document.getElementById('piste_search_results'));
+      }
+  })
+  .then(function (ok) {
+      return true
+  })
+  .catch(function(error) {
       //Error handling
       document.getElementById("searchWaiterResults").style.display = 'none';
       if (QUERYMODE) {
@@ -1596,22 +1608,7 @@ function getRouteById(ids) { //DONE in pisteList
         document.getElementById("listError").style.display = 'inline';
         setTimeout(clearError,1000,"listError");
       } 
-    }
-    if (XMLHttp.readyState == 4 && this.status == 200) {
-      var resp = XMLHttp.responseText;
-      jsonPisteList = JSON.parse(resp);
-      document.getElementById("queryWaiterResults").style.display = 'none';
-      if (QUERYMODE) {
-        showHTMLPistesList(document.getElementById('query_results'));
-      } else if (PISTELISTMODE) {
-        document.getElementById("listWaiterResults").style.display = 'none';
-        showHTMLPistesList(document.getElementById('pisteList_results'));
-      } else {
-        showHTMLPistesList(document.getElementById('piste_search_results'));
-      }
-    }
-  };
-  XMLHttp.send();
+  });
   return true;
 }
 
@@ -2524,26 +2521,30 @@ function getByName(name) {
   document.getElementById("searchWaiterResults").style.display = 'inline';
   document.getElementById('piste_search_results').innerHTML = '';
   var q = pisteRequestserver + "group=true&geo=true&list=true&name=" + name;
-  var XMLHttp = new XMLHttpRequest();
   
-  XMLHttp.open("GET", q);
-  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4 && this.status != 200) {
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.json();
+  })
+  .then(function(json) {
+      jsonPisteList = json;
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      showHTMLPistesList(document.getElementById('piste_search_results'));
+      return true
+  })
+  .then(function (ok) {
+      
+      return true
+  })
+  .catch(function(error) {
       //Error handling
       document.getElementById("searchWaiterResults").style.display = 'none';
       document.getElementById("searchError").style.display = 'inline';
       setTimeout(clearError,1000,"searchError");
-    }
-    if (XMLHttp.readyState == 4 && this.status == 200) {
-      var resp = XMLHttp.responseText;
-      jsonPisteList = JSON.parse(resp);
-      document.getElementById("searchWaiterResults").style.display = 'none';
-      showHTMLPistesList(document.getElementById('piste_search_results'));
-    }
-  };
-  XMLHttp.send();
+  });
   return true;
 }
 
@@ -2554,13 +2555,16 @@ function nominatimSearch(name) {
     list.removeChild(list.firstChild);
   } //clear previous list
   var q = server + 'nominatim?format=json&place=' + name;
-  var XMLHttp = new XMLHttpRequest();
-  XMLHttp.open("GET", q);
-  XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
-      var nom = JSON.parse(XMLHttp.responseText);
+  
+  fetch(q)
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.json();
+  })
+  .then(function(json) {
+      var nom = json;
       document.getElementById("waiterNominatim").style.display = 'none';
 
       var Ul = document.getElementsByClassName('nominatimLi')[0];
@@ -2575,9 +2579,15 @@ function nominatimSearch(name) {
         resultli.getElementsByTagName('a')[0].innerHTML = nom[i].display_name;
         Ul.appendChild(resultli);
       }
-    }
-  };
-  XMLHttp.send();
+      return true
+  })
+  .then(function (ok) {
+      
+      return true
+  })
+  .catch(function(error) {
+      //Error handling
+  });
   return true;
 }
 
@@ -3714,30 +3724,31 @@ function showSiteStats(div, id, element_type) { // fix for normal ways
     var statsdiv = document.getElementById('siteStatsProto').cloneNode(true);
     statsdiv.removeAttribute("id");
     div.appendChild(statsdiv);
-
-    //abortXHR('PisteAPI'); // abort another request if any
-
     var q = pisteRequestserver + "siteStats=" + id;
-    var XMLHttp = new XMLHttpRequest();
-
-    //PisteAPIXHR.push(XMLHttp);
-
-    XMLHttp.open("GET", q);
-    XMLHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-    XMLHttp.onreadystatechange = function() {
-      if (XMLHttp.readyState == 4) {
-        var resp = XMLHttp.responseText;
-        var jsonStats = JSON.parse(resp);
+    
+    fetch(q)
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error("HTTP error, status = " + response.status);
+      }
+      return response.json();
+    })
+    .then(function(json) {
+        var jsonStats = json
         statsdiv.getElementsByClassName('stats')[0].className.replace('hidden', 'shown');
 
         fillHTMLStats(jsonStats, statsdiv, id, element_type);
-      }
-    };
-    XMLHttp.send();
+    })
+    .then(function (ok) {
+      return true
+    })
+    .catch(function(error) {
+    });
+    return true
   } else {
     child.parentNode.removeChild(child);
   }
+  
 }
 
 function fillHTMLStats(jsonStats, div, element_type) {

@@ -334,7 +334,7 @@ def queryMembersById(id, PARENT_ID):
 	"""
 	% (id,))
 	ids = cur.fetchall()
-	ids = ','.join([str(long(x[0])) for x in ids])
+	ids = ','.join([str(int(x[0])) for x in ids])
 	
 	conn.commit()
 	if PARENT_ID:
