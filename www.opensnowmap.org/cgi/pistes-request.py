@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import StringIO
+from io import StringIO
 import psycopg2
 import requestPistes
 import pprint
@@ -17,11 +17,12 @@ def application(environ,start_response):
 		status, responseObject = requestPistes.requestPistes(query)
 		if(DEBUG): pp.pprint(responseObject)
 	else:
-		status = '404 Not Found'
+		status = '404'
 		responseObject = {}
 		
 	response=json.dumps(responseObject)
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response)))]
-	start_response(status, response_headers)
-	return response
+	start_response(status+' ', response_headers)
+	
+	return [bytes(response, 'utf-8')]
 

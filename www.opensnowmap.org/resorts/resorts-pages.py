@@ -7,6 +7,7 @@ import locale
 import os
 import cgi
 import codecs
+from functools import reduce
 
 here = os.path.dirname(__file__)
 data=os.path.abspath(os.path.join(here, '../../data/resorts.json'))
@@ -21,10 +22,10 @@ def application(environ,start_response):
 		response_body=rootPage()
 	if len(request) == 3:
 		country=request[2]
-		response_body=countryPage(urllib.unquote(country).decode('utf-8'))
+		response_body=countryPage(urllib.parse.unquote(country, encoding='utf-8', errors='replace'))
 	if len(request) == 4:
 		resort=request[3]
-		response_body=resortPage(urllib.unquote(resort).decode('utf-8'))
+		response_body=resortPage(urllib.parse.unquote(resort, encoding='utf-8', errors='replace'))
 	
 		
 	status = '200 ok'
@@ -34,14 +35,14 @@ def application(environ,start_response):
 	return [response_body]
 
 def rootPage():
-	json_data=open(data).read()
+	json_data=open(data, mode="r", encoding="utf-8").read()
 	resorts=json.loads(json_data)
 	
 	countries=[]
 	for r in resorts:
 		countries.append(resorts[r]['country'])
 	countries=list(set(countries))
-	countries=sorted(countries,cmp=locale.strcoll)
+	countries=sorted(countries)
 	
 	html='<div id=list>\n'
 	html+='<table class="tableList">\n'
@@ -58,7 +59,7 @@ def rootPage():
 	
 	html+="""
 		<iframe id="map" width="710" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-		src="http://www.opensnowmap.org/embed.html?zoom=2&lat=40&lon=-20"
+		src="https://www.opensnowmap.org/embed.html?zoom=2&lat=40&lon=-20"
 		style="border: 0px">
 		</iframe>
 		"""
@@ -70,7 +71,7 @@ def rootPage():
 	return page.encode('utf-8')
 
 def countryPage(country):
-	json_data=open(data).read()
+	json_data=open(data, mode="r", encoding="utf-8").read()
 	resorts=json.loads(json_data)
 	
 	resortList=[]
@@ -100,11 +101,11 @@ def countryPage(country):
 	
 	lon= str(reduce(lambda x, y: x + y, lons) / len(lons))
 	lat= str(reduce(lambda x, y: x + y, lats) / len(lats))
-	print lon, lat
+	# ~ print lon, lat
 	
 	html+="""
 		<iframe id="map" width="710" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-		src="http://www.opensnowmap.org/embed.html?zoom=4&lat="""+lat+"""&lon="""+lon+""""
+		src="https://www.opensnowmap.org/embed.html?zoom=4&lat="""+lat+"""&lon="""+lon+""""
 		style="border: 0px">
 		</iframe>
 		"""
@@ -118,7 +119,7 @@ def countryPage(country):
 	
 def resortPage(resortName):
 	
-	json_data=open(data).read()
+	json_data=open(data, mode="r", encoding="utf-8").read()
 	resorts=json.loads(json_data)
 	
 	resort=''
@@ -132,27 +133,27 @@ def resortPage(resortName):
 	
 	lon= str(resort['lon'])
 	lat= str(resort['lat'])
-	html+='<span itemprop="map" content="http://www.opensnowmap.org/embed.html?zoom=12&lat='+lat+'&lon='+lon+'"></span>'
+	html+='<span itemprop="map" content="https://www.opensnowmap.org/embed.html?zoom=12&lat='+lat+'&lon='+lon+'"></span>'
 	
 	html+= '<div id="stats"></div>'
 	
 	
 	html+="""
 		<iframe id="map" width="710" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-		src="http://www.opensnowmap.org/embed.html?zoom=12&lat="""+lat+"""&lon="""+lon+""""
+		src="https://www.opensnowmap.org/embed.html?zoom=12&lat="""+lat+"""&lon="""+lon+""""
 		style="border: 0px">
 		</iframe>
 		"""
 	
 	
-	html+='<p><a href="http://www.opensnowmap.org?zoom=12&lat='+lat+'&lon='+lon+'" title="ski map'+resortName+'">'
+	html+='<p><a href="https://www.opensnowmap.org?zoom=12&lat='+lat+'&lon='+lon+'" title="ski map'+resortName+'">'
 	html+=resortName+' on www.opensnowmap.org<img src="/pics/external-flat22.png"></img></a></p>'
 	
 	html+= '<div id="pisteList"></div>'
 	
 	html+= '<div><script>on_load('+osm_id+');</script></div>'
 	
-	html+= '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
+	html+= '<span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">'
 	html+= '<meta itemprop="addressCountry" content="'+resort['country']+'">'
 	html+= '<meta itemprop="addressRegion" content="'+resort['state']+'"></span>'
 	

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #import cgi
-import urllib2
+from urllib.request import urlopen
 import sys, os
 
 
@@ -20,7 +20,7 @@ def application(environ,start_response):
 	baseUrl = ' http://nominatim.openstreetmap.org/search?format=json&q='
 	place = str(place).replace(' ','+').replace('%20','+')
 	url= baseUrl+str(place)
-	y = urllib2.urlopen(url)
+	y = urlopen(url)
 	
 	response_body=y.read()
 	y.close()

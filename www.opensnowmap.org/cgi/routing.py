@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import StringIO
+from io import StringIO
 import psycopg2
 import pgroutingRequest
 import pprint
@@ -28,6 +28,7 @@ def application(environ,start_response):
 		
 	response = json.dumps(responseObject)
 	response_headers = [('Content-Type', 'application/json'),('Content-Length', str(len(response)))]
-	start_response(status, response_headers)
-	return response
+	start_response(status+' ', response_headers)
+	
+	return [bytes(response, 'utf-8')]
 
