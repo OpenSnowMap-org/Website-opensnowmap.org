@@ -5,7 +5,7 @@ import pprint
 import pdb
 
 pp = pprint.PrettyPrinter(indent=4)
-DEBUG = False
+DEBUG = True
 
 def routes(query):
     resp={}
@@ -38,8 +38,8 @@ def routes(query):
         else:
             conn.close()
             return resp
-    if (DEBUG):
-      print(resp)
+    # ~ if (DEBUG):
+      # ~ print(resp)
     
     for i in range(len(resp['waypoints']) -1):
         leg = route(resp['waypoints'][i],resp['waypoints'][i+1])
@@ -55,8 +55,8 @@ def routes(query):
         else:
             conn.close()
             return {}
-    if (DEBUG):
-      print(resp)
+    # ~ if (DEBUG):
+      # ~ print(resp)
     # re-compute each step distance
     
     distance=0
@@ -114,7 +114,9 @@ def route (wpt1, wpt2):
             wpt2['ratio'], ))
     cur.execute(query)
     pgr = cur.fetchall()
-    if(DEBUG): pp.pprint("pgr: "+str(pgr))
+    if(DEBUG): 
+        print("pgr: \n")
+        pp.pprint(pgr)
 
     """
     seq, id1 (node), id2 (edge), cost
@@ -144,6 +146,9 @@ def route (wpt1, wpt2):
         
         cur.execute(query)
         osm_id = cur.fetchone()[0]
+        if(DEBUG): 
+            print(p[2], osm_id)
+        
         step['way_osm_id']=osm_id
         step['name']=osm_id
         step['edge_id']=p[2]
@@ -285,23 +290,29 @@ def route (wpt1, wpt2):
             query = ("""
                 WITH
                     start_edge AS (
-                        SELECT ST_LineSubstring(geom, %s)
+                        SELECT ST_LineSubstring(ST_SnapToGrid(geom,0.0000001), %s)
                         AS geom
                         FROM lines_noded WHERE id = %s
                     ),
                     end_edge AS (
-                        SELECT ST_LineSubstring(geom, %s)
+                        SELECT ST_LineSubstring(ST_SnapToGrid(geom,0.0000001), %s)
                         AS geom
                         FROM lines_noded WHERE id = %s
                     ),
                     middle_edges AS (
-                        SELECT ST_LineMerge(ST_Collect(geom))
+                        SELECT
+                            ST_LineMerge(ST_Collect(ST_SnapToGrid(geom,0.0000001)))
                         AS geom
                         FROM lines_noded WHERE id IN (%s)
                     )
-                SELECT ST_AsEncodedPolyline(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))),
-                ST_AsText(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom])))
-                FROM start_edge CROSS JOIN middle_edges CROSS JOIN end_edge
+                SELECT 
+                    ST_AsEncodedPolyline(
+                            ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))
+                    ),
+                    ST_AsText(
+                        ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))
+                    )
+                FROM start_edge , middle_edges , end_edge
                 ;
                 """ % ( first_ratio,
                         pgr[0][2],
@@ -315,21 +326,28 @@ def route (wpt1, wpt2):
             cur.execute(query)
             pol, wkt = cur.fetchone()
             leg['geometry']=pol
+            if (DEBUG): 
+              print(wkt)
         else: # only two edges
             query = ("""
                 WITH
                     start_edge AS (
-                        SELECT ST_LineSubstring(geom, %s)
+                        SELECT ST_LineSubstring(ST_SnapToGrid(geom,0.0000001), %s)
                         AS geom
                         FROM lines_noded WHERE id = %s
                     ),
                     end_edge AS (
-                        SELECT ST_LineSubstring(geom, %s)
+                        SELECT ST_LineSubstring(ST_SnapToGrid(geom,0.0000001), %s)
                         AS geom
                         FROM lines_noded WHERE id = %s
                     )
-                SELECT ST_AsEncodedPolyline(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, end_edge.geom]))),
-                ST_AsText(ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, end_edge.geom])))
+                SELECT 
+                    ST_AsEncodedPolyline(
+                            ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))
+                    ),
+                    ST_AsText(
+                        ST_LineMerge(ST_Collect(ARRAY[start_edge.geom, middle_edges.geom, end_edge.geom]))
+                    )
                 FROM start_edge CROSS JOIN end_edge
                 ;
                 """ % ( first_ratio,
