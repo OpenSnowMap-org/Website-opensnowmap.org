@@ -85,7 +85,7 @@ function requestRelations(extent, resolution, projection) {
     vectorSource.clear();
      var proj = projection.getCode();
      var bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-     var url = '/request?group=true&geo=true&list=true&sort_alpha=true' +
+     var url = 'https://www.opensnowmap.org/request?group=true&geo=true&list=true&sort_alpha=true' +
          '&bbox=' + bbox.join(',');
      var xhr = new XMLHttpRequest();
      xhr.open('GET', url);
@@ -209,7 +209,7 @@ function map_init(){
 				new ol.layer.Tile({
 					name: 'pistes',
 					source: new ol.source.XYZ({
-						url: "http://tiles.opensnowmap.org/tiles-pistes/{z}/{x}/{y}.png",
+						url: "http://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png",
 						attributions: [
 							new ol.Attribution({
 							html: 'Opensnowmap.org CC-BY-SA' 
@@ -220,7 +220,7 @@ function map_init(){
 						}),
                     maxResolution: 500,
 					visible: true,
-                    opacity: 0.1
+                    opacity: 0.8
 				}), 
                 
                 new ol.layer.Vector ({
@@ -311,11 +311,14 @@ function showList(){
 function updateRelationList(){
 	html = '';
 	for (var t=0;t<relationList.length;t++) {
-		html += '<p style="color:'+relationList[t]['color']+
-		'">'+relationOffsets[relationList[t]['id']] +
-		'&nbsp;&nbsp;<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'+
-		'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'+
-		relationList[t]['id'] +'-'+relationList[t]['name']+'</p>';
+		html += '<p style="color:'+relationList[t]['color']+'">'
+		+String(relationOffsets[relationList[t]['id']]).padStart(4, '\xa0') 
+		+'&nbsp;&nbsp;'
+		+'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'
+		+'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
+		+ relationList[t]['id'] 
+		+'-'+relationList[t]['name']
+		+'</p>';
 	}
 	document.getElementById("content").innerHTML=html;
 	return true;

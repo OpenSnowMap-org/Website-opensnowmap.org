@@ -51,17 +51,17 @@
     .zoomDisplay{ display: block;}
     .left{float: left;}
     .clear { clear: both;}
-.Button {
-    background-color:#FDFDFD;
-    border-style:solid;
-    border-width:1px 1px 1px 1px;
-    border-color: #1A1A1A;
-    padding: 5px;
-    margin: 2px 2px 5px 2px;
-    border-radius:5px;
-}
+	.Button {
+		background-color:#FDFDFD;
+		border-style:solid;
+		border-width:1px 1px 1px 1px;
+		border-color: #1A1A1A;
+		padding: 5px;
+		margin: 2px 2px 5px 2px;
+		border-radius:5px;
+	}
     body   {
-        background:#bbb; 
+        background:#fefefe; 
         position:absolute; 
         width:100%; 
         height:100%;
@@ -107,7 +107,7 @@
         width:100%; height:30px; 
         overflow:auto;}
     #left  {
-        background:#bbb; position:absolute; 
+        background:#fefefe; position:absolute; 
         width:280px; height:100%; 
         overflow:scroll;
 		padding: 10px 10px 10px 10px;}
@@ -151,9 +151,20 @@
         
     }
     .box {
-        border: 1px solid gray;
-        font-weight: 800;
+		background-color:#efefef;
+		border-style:solid;
+		border-width:1px 1px 1px 1px;
+		border-color: #555;
+		padding: 3px;
+		margin: 2px 2px 5px 2px;
+		border-radius:6px;
     }
+    .box:active {
+		background-color:#777;
+	}
+    .box:hover {
+		background-color:#ccc;
+	}
     summary {
         font-size: 1.5em;
         font-weight: 800;        
