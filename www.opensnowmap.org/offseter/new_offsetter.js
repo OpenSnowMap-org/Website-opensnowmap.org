@@ -118,7 +118,7 @@ function requestRelations(extent, resolution, projection) {
                     
                     var stroke= new ol.style.Stroke({
                                color: element.color.split(";")[0],
-                               width: 3
+                               width: 4
                              });
                     var geom = new ol.geom.MultiLineString();
                     var len = 0;
@@ -131,7 +131,7 @@ function requestRelations(extent, resolution, projection) {
                         len += 0-Math.floor(line.getLength());
                         var coords = [];
                         var counter = 0;
-                        var dist = rel['of'] * (3+0.5) * map.getView().getResolution();
+                        var dist = rel['of'] * (4+0.5) * map.getView().getResolution();
                         line.forEachSegment(function(from, to) {
                             var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
                             var newFrom = [
@@ -203,7 +203,7 @@ function map_init(){
 							],
 						}),
 					visible: true,
-          opacity: 0.7
+					opacity: 0.7
 				}),
 				
 				new ol.layer.Tile({
@@ -220,13 +220,14 @@ function map_init(){
 						}),
                     maxResolution: 500,
 					visible: true,
-                    opacity: 0.8
+                    opacity: 0.5
 				}), 
                 
                 new ol.layer.Vector ({
                     name: 'relations',
                     source: vectorSource,
-					visible: true
+					visible: true,
+                    opacity: 0.5
                 })
 
 		],
