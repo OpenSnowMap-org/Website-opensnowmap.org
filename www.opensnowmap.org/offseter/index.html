@@ -14,6 +14,7 @@
 		<link rel="stylesheet" href="main.css" media="screen" />
 -->
 		<link rel="stylesheet" href="js/ol.css" type="text/css">
+		<link rel="stylesheet" href="main.css" type="text/css">
 		<script src="../js/json2.js" type="text/javascript"></script>
 		<script src="../js/ol.js" type="text/javascript"></script>
 		<script src="new_offsetter.js" type="text/javascript"></script>
@@ -29,155 +30,11 @@
 		}, 10);
 		
 		</script>
-	<style type="text/css">
-		.map {
-		width: 100%;
-		height: 100%;
-		margin: 0;
-        background:#888; 
-		}
-		.map_sep {
-		width: 100%;
-		height: 1%;
-		margin: 0;
-		}
-		#attribution {
-			font-size: xx-small;
-		    font-family:'Open Sans', sans-serif;
-			position:absolute;
-			bottom: 0px;
-			z-index:1000;
-		}
-    .zoomDisplay{ display: block;}
-    .left{float: left;}
-    .clear { clear: both;}
-	.Button {
-		background-color:#FDFDFD;
-		border-style:solid;
-		border-width:1px 1px 1px 1px;
-		border-color: #1A1A1A;
-		padding: 5px;
-		margin: 2px 2px 5px 2px;
-		border-radius:5px;
-	}
-    body   {
-        background:#fefefe; 
-        position:absolute; 
-        width:100%; 
-        height:100%;
-        font-family:'Open Sans', sans-serif;
-        font-size: 0.9em;
-        font-weight: 400;
-		margin: 10px 10px 10px 10px;
-        overflow:hidden;
-        text-align: justify;
-
-        }
-     ul, li {margin:10; padding:10;}
-    .small   {
-        height:100%;
-        font-family:'Open Sans', sans-serif;
-        font-size: 0.8em;
-        font-weight: 400;
-        }
-    H1 {
-        font-size: 1.3em;
-        font-weight: 800;
-        margin-top: 0px;
-        margin-bottom: 1px;
-        }
-    H2 {
-        font-size: 1.2em;
-        font-weight: 800;
-        margin-top: 0px;
-        margin-bottom: 1px;
-        }
-    H3 {
-        font-size: 1em;
-        font-weight: 800;
-        margin-top: 0px;
-        margin-bottom: 1px;
-        }
-    #main  {
-        background:#fff; position:absolute; 
-        top:40px; bottom:55px; 
-        width:100%;}
-    #head  {
-        background:#fff; position:absolute; 
-        width:100%; height:30px; 
-        overflow:auto;}
-    #left  {
-        background:#fefefe; position:absolute; 
-        width:280px; height:100%; 
-        overflow:scroll;
-		padding: 10px 10px 10px 10px;}
-    #right {
-        background:#fff; margin-left:300px; 
-        height:100%; 
-        overflow:hidden;}
-    #foot  {
-        position:absolute; 
-        bottom:0; 
-        width:100%; height:50px; 
-        overflow:auto;
-        background-color: #EDEDED;
-        font-size: 0.8em;
-        font-weight: 300;
-		padding: 0px 20px 0px 20px;}
-    #copyright{
-        font-size: 0.9em;
-        font-weight: 300;
-        padding: 00px 20px 00px 20px;
-        background-color: #C7E3F9;
-        }
-    #mapControls{
-        z-index: 1000;
-        position:absolute;
-        top: 0px;
-        right: 5px;
-        background-color: #FFFFFF;
-        padding: 10px;
-        margin: 5px;
-    }
-    .cursorArrow {
-        cursor: pointer;
-        text-decoration: none;
-        color: #000000;
-        
-    }
-    .cursorArrow:hover {
-        color: #0041D7;
-        text-decoration: none;
-        
-    }
-    .box {
-		background-color:#efefef;
-		border-style:solid;
-		border-width:1px 1px 1px 1px;
-		border-color: #555;
-		padding: 3px;
-		margin: 2px 2px 5px 2px;
-		border-radius:6px;
-    }
-    .box:active {
-		background-color:#777;
-	}
-    .box:hover {
-		background-color:#ccc;
-	}
-    summary {
-        font-size: 1.5em;
-        font-weight: 800;        
-    }
-    
-	</style>
-
-</style>
 	</head>
 	<body >
       
 
-    <div id='head'><H1>Helper tool to create offset of nordic relation on Opensnowmap rendering</H1></div>
+    <div id='head'><H1>Helper tool to create offset of nordic ski relation on Opensnowmap rendering</H1></div>
     <div id='main'>
       <div id='left'>
         <p>
@@ -190,10 +47,9 @@
 		github</a>.
 		Simply fork, add your file, commit and send a pull request.</br>
 		Your work will be taken into account in the map rendering.</p>
-		<div id="form">
-		<form>
-		<input type="submit" value="Export" onclick="showList();return false;">
-		</form><a onclick="reset();return false;" href="">Reset</a>
+		<div id="controls">
+			<div id="export" class="box" onclick="showList();return false;">Export</div>
+			<div id="reset" class="box" onclick="reset();return false;">Reset</div>
 		</div>
 		<div id="content">
 		</div>

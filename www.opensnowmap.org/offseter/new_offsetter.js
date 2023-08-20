@@ -346,8 +346,10 @@ function updateOffset(id,side) {
 	return true;
 }
 function reset() {
+	console.log('reset');
     relationOffsets={};
     relationList.length=0;
     vectorSource.clear();
+    updatePermalink();
     return false;
 }
