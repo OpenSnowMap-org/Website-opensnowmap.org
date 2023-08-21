@@ -87,92 +87,92 @@ function requestRelations(extent, resolution, projection) {
      var bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
      var url = 'https://www.opensnowmap.org/request?group=true&geo=true&list=true&sort_alpha=true' +
          '&bbox=' + bbox.join(',');
-     var xhr = new XMLHttpRequest();
-     xhr.open('GET', url);
-     var onError = function() {
-       //vectorSource.removeLoadedExtent(extent);
-     }
-     
-     xhr.onerror = onError;
-     
-     xhr.onload = function() {
-       if (xhr.status == 200) {
-            relationList.length = 0;
-            var resp = xhr.responseText;
-            jsonPisteList = JSON.parse(resp);
-            for (p = 0; p < jsonPisteList.pistes.length; p++) {
-                var element = jsonPisteList.pistes[p];
+    document.getElementById("searchWaiterResults").style.display = 'inline';
+    fetch(url)
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error("HTTP error, status = " + response.status);
+      }
+      return response.json();
+    })
+    .then(function(json) {
+        relationList.length = 0;
+        jsonPisteList = json;
+        for (p = 0; p < jsonPisteList.pistes.length; p++) {
+            var element = jsonPisteList.pistes[p];
+            
+            if (element.type == 'relation'){
                 
-                if (element.type == 'relation'){
-                    
-                    var rel=[];
-                    rel['name']=element.name;
-                    rel['color']=element.color.split(";")[0];
-                    rel['id'] =element.ids[0];
-                    
-                    if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
-                    rel['of'] = relationOffsets[ rel['id'] ]; 
-                    
-                    relationList.push(rel);
-                    updateRelationList();
-                    
-                    var stroke= new ol.style.Stroke({
-                               color: element.color.split(";")[0],
-                               width: 4
-                             });
-                    var geom = new ol.geom.MultiLineString();
-                    var len = 0;
-                    for (l=0; l < element.geometry.length; l++){
-                        var f = vectorSource.getFormat().readFeature(element.geometry[l],
-                         {dataProjection: 'EPSG:4326',
-                          featureProjection: 'EPSG:3857'
-                        });
-                        var line = f.getGeometry();
-                        len += 0-Math.floor(line.getLength());
-                        var coords = [];
-                        var counter = 0;
-                        var dist = rel['of'] * (4+0.5) * map.getView().getResolution();
-                        line.forEachSegment(function(from, to) {
-                            var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
-                            var newFrom = [
-                                Math.sin(angle) * dist + from[0],
-                                -Math.cos(angle) * dist + from[1]
-                            ];
-                            var newTo = [
-                                Math.sin(angle) * dist + to[0],
-                                -Math.cos(angle) * dist + to[1]
-                            ];
-                            coords.push(newFrom);
-                            coords.push(newTo);
-                        });
-                        
-                        geom.appendLineString(new ol.geom.LineString(coords));
-                    }
-                    
-                    console.log(len);
-                    var style = new ol.style.Style({
-                        stroke: stroke
+                var rel=[];
+                rel['name']=element.name;
+                rel['color']=element.color.split(";")[0];
+                rel['id'] =element.ids[0];
+                
+                if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
+                rel['of'] = relationOffsets[ rel['id'] ]; 
+                
+                relationList.push(rel);
+                updateRelationList();
+                
+                var stroke= new ol.style.Stroke({
+                           color: element.color.split(";")[0],
+                           width: 4
+                         });
+                var geom = new ol.geom.MultiLineString();
+                var len = 0;
+                for (l=0; l < element.geometry.length; l++){
+                    var f = vectorSource.getFormat().readFeature(element.geometry[l],
+                     {dataProjection: 'EPSG:4326',
+                      featureProjection: 'EPSG:3857'
                     });
-                    var feature = new ol.Feature({
-                        geometry: geom,
-                        osm_id: element.ids[0]
-                        });
-                        
-                    style.setZIndex(len);
-                    feature.setStyle(style);
+                    var line = f.getGeometry();
+                    len += 0-Math.floor(line.getLength());
+                    var coords = [];
+                    var counter = 0;
+                    var dist = rel['of'] * (4+0.5) * map.getView().getResolution();
+                    line.forEachSegment(function(from, to) {
+                        var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
+                        var newFrom = [
+                            Math.sin(angle) * dist + from[0],
+                            -Math.cos(angle) * dist + from[1]
+                        ];
+                        var newTo = [
+                            Math.sin(angle) * dist + to[0],
+                            -Math.cos(angle) * dist + to[1]
+                        ];
+                        coords.push(newFrom);
+                        coords.push(newTo);
+                    });
                     
-                    vectorSource.addFeature(feature);
+                    geom.appendLineString(new ol.geom.LineString(coords));
+                }
+                
+                console.log(len);
+                var style = new ol.style.Style({
+                    stroke: stroke
+                });
+                var feature = new ol.Feature({
+                    geometry: geom,
+                    osm_id: element.ids[0]
+                    });
                     
-                    
+                style.setZIndex(len);
+                feature.setStyle(style);
+                
+                vectorSource.addFeature(feature);
+            }
+        }
 
-                }
-                }
-        } else {
-         onError();
-       }
-     };
-     xhr.send();
-   }
+    })
+    .then(function (ok) {
+      
+      document.getElementById("searchWaiterResults").style.display = 'none';
+      return true
+    })
+    .catch(function(error) {
+    });
+    return true
+}
 
 function map_init(){
     vectorSource = new ol.source.Vector ({
