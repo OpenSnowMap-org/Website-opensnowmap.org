@@ -34,25 +34,37 @@
 	<body >
       
 
-    <div id='head'><H1>Helper tool to create offset of nordic ski relation on Opensnowmap rendering</H1></div>
+    <div id='head'><H1>Helper tool to create offset of nordic ski route relations on Opensnowmap rendering</H1></div>
     <div id='main'>
       <div id='left'>
+		<hr/>
+		<details><summary>Instructions</summary>
+			<p style="font-size:0.5 em;font-weight:200;">Adjust the pistes lateral offset from the list below. 
+			When you are pleased with the result, press 'export'.</br>
+			The resulting file can be sent to webmaster_at_opensnowmap.org or committed to 
+			<a target="blank" href="https://github.com/yvecai/mapnik-opensnowmap.org/tree/master/offset_lists">
+			github</a>.
+			Simply fork, add your file, commit and send a pull request.</br>
+			Your work will be taken into account in the map rendering.</p>
+		</details>
+		<hr/>
+		<div id="controls">
+			<div id="export" class="box left" onclick="showList();return false;">Export Offset File</div>
+			<div id="reset" class="box left" onclick="reset();return false;">Reset</div>
+			<div class="clear"></div><hr/>
+			<div id="showOSnM" class="box left" onclick="showOSnM();return false;">Show actual</div>
+			<div id="toggleLayers" class="box left" onclick="toggleLayers();return false;"> &harr; </div>
+			<div id="showVector" class="box left" onclick="showVector();return false;">Show future</div>
+			<div class="clear"></div>
+		</div>
+		<hr/>
+		<div id="content">
+		</div>
+		
+		<hr/>
         <p>
              <a href="https://www.opensnowmap.org" target=_"_blank">OpenSnowMap</a>. <br/>
         </p>
-		<p style="font-size:0.5 em;font-weight:200;">Adjust the pistes lateral offset from the list below. 
-		When you are pleased with the result, press 'export'.</br>
-		The resulting file can be sent to webmaster_at_opensnowmap.org or committed to 
-		<a target="blank" href="https://github.com/yvecai/mapnik-opensnowmap.org/tree/master/offset_lists">
-		github</a>.
-		Simply fork, add your file, commit and send a pull request.</br>
-		Your work will be taken into account in the map rendering.</p>
-		<div id="controls">
-			<div id="export" class="box" onclick="showList();return false;">Export</div>
-			<div id="reset" class="box" onclick="reset();return false;">Reset</div>
-		</div>
-		<div id="content">
-		</div>
     </div>
 
 

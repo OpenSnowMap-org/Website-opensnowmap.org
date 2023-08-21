@@ -245,6 +245,7 @@ function map_init(){
 	// MAP EVENTS
 	map.on('moveend', updatePermalink);
     updatePermalink();
+    styleLayerButtons();
 }
 
 var updatePermalink = function() {
@@ -287,7 +288,6 @@ var updatePermalink = function() {
 	window.history.pushState(state, 'map', hash);
 	//file:///home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/offseter/new_offsetter.html#map=16/6.382/46.764/1482062:0:orange|1970150:0:blue|1970151:0:green|1970152:0:purple|1970153:0:purple|7921593:0:purple|2065811:0:blue|2726388:0:cyan|1982237:0:red|
 };
-
 
 function page_init() {
 
@@ -352,4 +352,44 @@ function reset() {
     vectorSource.clear();
     updatePermalink();
     return false;
+}
+function showVector() {
+  if ( getLayerByName('relations').getVisible() ) {
+    getLayerByName('relations').setVisible(false);
+  } else {
+    getLayerByName('relations').setVisible(true);
+  }
+    
+  styleLayerButtons();
+}
+function showOSnM() {
+  if ( getLayerByName('pistes').getVisible() ) {
+    getLayerByName('pistes').setVisible(false);
+  } else {
+    getLayerByName('pistes').setVisible(true);
+  }
+    
+  styleLayerButtons();
+}
+function toggleLayers() {
+  if ( getLayerByName('relations').getVisible() ) {
+    getLayerByName('relations').setVisible(false);
+    getLayerByName('pistes').setVisible(true);
+  } else {
+    getLayerByName('pistes').setVisible(false);
+    getLayerByName('relations').setVisible(true);
+  } 
+  styleLayerButtons();
+}
+function styleLayerButtons() {
+  if ( getLayerByName('relations').getVisible() ) {
+    document.getElementById('showVector').style.backgroundColor = '#aaa';
+  } else {
+    document.getElementById('showVector').style.backgroundColor = '#efefef';
+  }
+  if ( getLayerByName('pistes').getVisible() ) {
+    document.getElementById('showOSnM').style.backgroundColor = '#aaa';
+  } else {
+    document.getElementById('showOSnM').style.backgroundColor = '#efefef';
+  }
 }
