@@ -1116,7 +1116,7 @@ function page_init() {
   document.getElementById('EditOffset').onclick = function() {
   var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
   var hash = "#map="+map.getView().getZoom()+'/'+c[0]+'/'+c[1];
-  window.open("http://www.opensnowmap.org/offseter/index.html" + hash, "_blank");
+  window.open("https://www.opensnowmap.org/offseter/index.html" + hash, "_blank");
   };
   
   // Control elements for routing
