@@ -135,8 +135,8 @@ function requestRelations(extent, resolution, projection) {
                   if (! coords.includes(coord[1])) {coords.push(coord[1]);}
                 });
                 if(rel['id'] == 1970151) {
-                  console.log(coords);
-                  console.log(element.geometry[0]);
+                  //~ console.log(coords);
+                  //~ console.log(element.geometry[0]);
                      //~ member   |  osm_id  | geometrytype 
                   //~ ------------+----------+--------------
                     //~ 145732493 | -1970151 | LINESTRING
@@ -152,40 +152,37 @@ function requestRelations(extent, resolution, projection) {
                 });
                 var feature = new ol.Feature({
                     geometry: geom,
-                    osm_id: rel['id'] //element.ids[0]
+                    osm_id: rel['id']
                     });
-                //~ console.log(rel['length'])
                 style.setZIndex(-rel['length']);
                 feature.setStyle(style);
                 
                 vectorSource.addFeature(feature);
             }
         }
-
     })
     .then(function (ok) {
-      
       document.getElementById("searchWaiterResults").style.display = 'none';
       return true
     })
-    //~ .catch(function(error) {
-    //~ });
+    .catch(function(error) {
+    });
     return true
 }
 function offsetSegment(from, to, dist) {
-                      var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
-                      var newFrom = [
-                          Math.sin(angle) * dist + from[0],
-                          -Math.cos(angle) * dist + from[1]
-                      ];
-                      var newTo = [
-                          Math.sin(angle) * dist + to[0],
-                          -Math.cos(angle) * dist + to[1]
-                      ];
-                      //~ coords.push(newFrom);
-                      //~ coords.push(newTo);
-                      return [newFrom, newTo];
-                    }
+    var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
+    var newFrom = [
+        Math.sin(angle) * dist + from[0],
+        -Math.cos(angle) * dist + from[1]
+    ];
+    var newTo = [
+        Math.sin(angle) * dist + to[0],
+        -Math.cos(angle) * dist + to[1]
+    ];
+    //~ coords.push(newFrom);
+    //~ coords.push(newTo);
+    return [newFrom, newTo];
+  }
 function map_init(){
     vectorSource = new ol.source.Vector ({
         format: new ol.format.Polyline(),
@@ -280,15 +277,7 @@ var updatePermalink = function() {
             relList+=r+":"+relationOffsets[r]+":|"
         }
     }
-	/*for (var t in relationList) 
-    {
-        if (relationOffsets[relationList[t]['id']] !=0) {
-        relList+=relationList[t]['id']+":"
-            +relationOffsets[relationList[t]['id']]
-            +":"+relationList[t]['color']+"|";
-        }
-	}*/
-	relList=relList.replace(/#/g,'');
+    relList=relList.replace(/#/g,'');
     
     hash+=relList;
     
@@ -330,8 +319,10 @@ function updateRelationList(){
       html += '<p style="color:'+relationList[t]['color']+'">'
       +String(relationOffsets[relationList[t]['id']]).padStart(4, '\xa0') 
       +'&nbsp;&nbsp;'
-      +'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'
-      +'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
+      +'<a class="box" onClick="offset('+relationList[t]['id']
+      +   ',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'
+      +'<a class="box" onClick="offset('+relationList[t]['id']
+      +   ',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
       + relationList[t]['id'] 
       +'-'+relationList[t]['name']
       +'</p>';
@@ -347,15 +338,22 @@ function offset(id, of, side) {
 	return true;
 }
 function updateOffset(id,side) {
+    ids=[]
+    
     for ( var t=0;t < relationList.length; t++ ) {
+      if (! ids.includes(id) ) {
+        
         if(relationList[t]['id'] == id){
-        if(side =='right') {
-            relationOffsets[id]-=1;
+          ids.push(id);
+          if(side =='right') {
+              relationOffsets[id]+=1;
+          }
+          if(side =='left') {
+              relationOffsets[id]-=1;
+          }
+          
         }
-        if(side =='left') {
-            relationOffsets[id]+=1;
-        }
-        }
+    }
   }
 	//permalinkOffset.updateLink();
     updateRelationList();
