@@ -70,6 +70,9 @@ H3 {
     width:280px; height:100%; 
     overflow:scroll;
     padding: 10px 10px 10px 10px;}
+.route{
+    white-space: nowrap;
+}
 #right {
     background:#fff; margin-left:300px; 
     height:100%; 

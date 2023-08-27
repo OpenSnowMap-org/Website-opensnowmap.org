@@ -334,7 +334,7 @@ function updateRelationList(){
 	for (var t=0;t<relationList.length;t++) {
     if (! ids.includes(relationList[t]['id']) ) {
       ids.push(relationList[t]['id'])
-      html += '<p style="color:'+relationList[t]['color']+'">'
+      html += '<div class="route"><p style="color:'+relationList[t]['color']+'">'
       +String(relationOffsets[relationList[t]['id']]).padStart(4, '\xa0') 
       +'&nbsp;&nbsp;'
       +'<a class="box" onClick="offset('+relationList[t]['id']
@@ -343,7 +343,7 @@ function updateRelationList(){
       +   ',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
       + relationList[t]['id'] 
       +'-'+relationList[t]['name']
-      +'</p>';
+      +'</p></div>';
     }
 	}
 	document.getElementById("content").innerHTML=html;
