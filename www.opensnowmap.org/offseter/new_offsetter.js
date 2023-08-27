@@ -374,7 +374,8 @@ function updateOffset(id,side) {
     }
   }
 	//permalinkOffset.updateLink();
-    updateRelationList();
+  vectorSource.clear(false); 
+  updateRelationList();
 	return true;
 }
 function reset() {
