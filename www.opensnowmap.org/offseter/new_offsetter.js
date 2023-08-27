@@ -11,6 +11,8 @@ var relationOffsets={};
 var relationList=[];
 var OFFSET_DIR=1;
 
+var lockRequest = false;
+
 if (window.location.hash !== '') {
     //opensnowmap.org/offseter/new_offsetter.html#map=16/6.382/46.764/1482062:0:orange|1970150:0:blue|1970151:0:green|1970152:0:purple|1970153:0:purple|7921593:0:purple|2065811:0:blue|2726388:0:cyan|1982237:0:red|
     
@@ -46,7 +48,9 @@ if (window.location.hash !== '') {
     }
     
 }
-
+function clearLock() {
+  lockRequest = false;
+}
 function getLayerByName(name) {
 	var l = null;
 	map.getLayers().forEach(function(layer) {
@@ -80,9 +84,18 @@ function searchLocation(hash) {
    return true;
 }
 function requestRelations(extent, resolution, projection) {
-    if (map.getView().getZoom() < 12) {return true;}
+    if (lockRequest) {return true;}
+    lockRequest=true;
+    setTimeout(clearLock, 200);
     
-    vectorSource.clear(false);
+    if (map.getView().getZoom() < 12) {
+      document.getElementById("zoomInPlease").style.display = 'inline';
+      return true;
+    } else {
+      document.getElementById("zoomInPlease").style.display = 'none';
+    }
+    
+    //~ vectorSource.clear(false);
      var proj = projection.getCode();
      var bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
      var url = 'https://www.opensnowmap.org/request?bboxOffsetter=' + bbox.join(',');
@@ -163,6 +176,8 @@ function requestRelations(extent, resolution, projection) {
     })
     .then(function (ok) {
       document.getElementById("searchWaiterResults").style.display = 'none';
+      
+      lockRequest=false;
       return true
     })
     .catch(function(error) {
@@ -252,14 +267,17 @@ function map_init(){
 		
 	});
 	// MAP EVENTS
-	map.on('moveend', updatePermalink);
+	map.on('moveend', function(e) {
+    vectorSource.clear(false); // Otherwise won't reload at zoomin, which is an issue if you get below z12. Bear with two load at zoomout & pan, or write your own strategy. A short lock in the request avoid most double calls.
+    updatePermalink();
+    });
+    
     updatePermalink();
     styleLayerButtons();
 }
 
 var updatePermalink = function() {
-	
-	vectorSource.clear(true);
+	//~ vectorSource.clear(false);
     
 	var view = map.getView();
 	var zoom=view.getZoom();
@@ -363,7 +381,7 @@ function reset() {
 	console.log('reset');
     relationOffsets={};
     relationList.length=0;
-    vectorSource.clear();
+    vectorSource.clear(false);
     updatePermalink();
     return false;
 }

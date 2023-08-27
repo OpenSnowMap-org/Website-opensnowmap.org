@@ -135,3 +135,7 @@ summary {
 .shown {
     display: inline
 }
+#messageArea {
+    height: 2.5em;
+    padding: 1px;
+}
