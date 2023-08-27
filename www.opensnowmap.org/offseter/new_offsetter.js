@@ -330,7 +330,12 @@ function showList(){
 }
 function updateRelationList(){
 	html = '';
-  ids=[]
+  ids=[]; // To list once and only each relation 
+  
+  relationList.sort(function(a, b){
+    return a['length']-b['length']
+    }); // For ordered list display 
+    
 	for (var t=0;t<relationList.length;t++) {
     if (! ids.includes(relationList[t]['id']) ) {
       ids.push(relationList[t]['id'])
