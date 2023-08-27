@@ -58,7 +58,7 @@ LIMIT = 50
 HARDLIMIT = 500
 
 DEBUG=False
-SPEEDDEBUG=True
+SPEEDDEBUG=False
 def requestPistes(request):
 
 	db='pistes_api_osm2pgsql'
@@ -66,6 +66,10 @@ def requestPistes(request):
 	global cur
 	conn = psycopg2.connect("dbname="+db+" user=osmuser")
 	cur = conn.cursor()
+	
+	global connRender
+	global curRender
+	
 	if (DEBUG): print(request)
 	GEO=False
 	global LIMIT 
@@ -102,6 +106,36 @@ def requestPistes(request):
 				if LIMIT_REACHED:
 					topo['limit_reached']= True;
 					topo['info']= 'Your request size exceed the API limit, results are truncated';
+				response_body=topo
+				status = '200'
+				
+				cur.close()
+				conn.close()
+				return status, response_body
+
+	elif request.find('bboxOffsetter=') !=-1:
+				# query: ...bbox=left, bottom, right, top&... 
+				bbox=request.split('bboxOffsetter=')[1]
+				if bbox.find('&'): bbox=bbox.split('&')[0].replace(';',',').replace(' ','').split(',')
+				for b in bbox: b=float(b)
+				# ~ BBOX = True
+				site_ids, route_ids, way_ids, area_ids,LIMIT_REACHED= queryRenderDbByBbox(bbox)
+				IDS=buildIds(site_ids, route_ids, way_ids,area_ids, False)
+				topo=makeListRenderDB(IDS, True)
+				# number the results
+				# ~ i=0
+				# ~ for s in topo['sites']:
+					# ~ s['result_index']=i
+					# ~ i+=1
+				# ~ i=0
+				# ~ for s in topo['pistes']:
+					# ~ print(s)
+					# ~ s['result_index']=i
+					# ~ i+=1
+				topo['generator']="Opensnowmap.org piste search API"
+				topo['copyright']= "The data included in this document is from www.openstreetmap.org. It is licenced under ODBL, and has there been collected by a large group of contributors."
+				topo['a']=way_ids
+				topo['b']=IDS
 				response_body=topo
 				status = '200'
 				
@@ -593,6 +627,52 @@ def queryByBbox(bbox, CONCAT):
 		LIMIT_REACHED = True
 	if(SPEEDDEBUG): print("queryByBbox took: " + str(time.time()-start_time))
 	return site_ids, route_ids, way_ids, area_ids, LIMIT_REACHED
+
+def queryRenderDbByBbox(bbox):
+	
+	# ~ dbRender='pistes_imposm' # Connection only on request
+	connRender = psycopg2.connect("dbname=pistes_imposm user=admin")
+	curRender = connRender.cursor()
+	
+	start_time=time.time()
+	site_ids=[]
+	route_ids=[]
+	area_ids=[]
+	
+	# ~ query="""
+		# ~ SELECT osm_id FROM pistes_routes
+		# ~ WHERE ST_Intersects(geometry , st_transform(st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326),3857) )
+		# ~ LIMIT 500;
+		# ~ """% (bbox[0],bbox[1],bbox[2],bbox[3])
+	
+	# ~ curRender.execute(query)
+	# ~ route_ids = curRender.fetchall()
+	# ~ route_ids = [str(x[0]) for x in route_ids]
+	# ~ routes='('
+	# ~ routes+=','.join(route_ids)
+	# ~ routes+=')'
+	
+	# ~ query="""
+		# ~ SELECT member FROM osm_pistes_route_members
+		# ~ WHERE osm_id in %s
+		# ~ AND GeometryType(geometry) = 'LINESTRING'
+		# ~ LIMIT 500;
+		# ~ """% (routes)
+	
+	query="""
+		SELECT member FROM osm_pistes_route_members
+		WHERE ST_Intersects(geometry , st_transform(st_setsrid('BOX(%s %s,%s %s)'::box2d, 4326),3857) )
+		LIMIT 500;
+		"""% (bbox[0],bbox[1],bbox[2],bbox[3])
+	curRender.execute(query)
+	way_ids = curRender.fetchall()
+	way_ids = [x[0] for x in way_ids]
+	connRender.commit()
+	connRender.close()
+	if(SPEEDDEBUG): print("queryRenderDbByBbox took: " + str(time.time()-start_time))
+	
+	route_ids=[]
+	return site_ids, route_ids, way_ids, area_ids, False
 
 def buildIds(site_ids, route_ids, way_ids, area_ids, CONCAT):
 	# Whatever the query was, we must return an object like this:
@@ -1159,6 +1239,95 @@ def makeList(IDS, GEO):
 		
 		
 		if(SPEEDDEBUG): print("makeList took: " + str(time.time()-start_time))
+	return topo
+
+def makeListRenderDB(IDS, GEO):
+	start_time=time.time()
+	# ~ dbRender='pistes_imposm' # Connection only on request
+	connRender = psycopg2.connect("dbname=pistes_imposm user=admin")
+	curRender = connRender.cursor()
+	topo={}
+
+	## SITES
+	tmp_time=time.time()
+	topo['sites']=[]
+	## ROUTES
+	tmp_time=time.time()
+	index = 0
+	topo['pistes']=[]
+	## WAYS
+	tmp_time=time.time()
+	# ~ IDS['ways']=[['144553388'], ['144553402'], ['144553370'], ['144553373'], ['397844436'], ['397844438'], ['466148245'], ['401260522'], ['87063832'], ['726870373'], ['466148244'], ['87063829'], ['469934990'], ['76835033'], ['401260516'], ['469934992'], ['469934991']]
+	# list of first ids
+	# une seule requetes sur lines, route et piste en un seul coup
+	# avec IN (first_ids_list) puis a partir de deux liste de tous les parents.
+	# Looper sur les resultats pour faire la liste, une seule requete
+	# sera plus rapide.
+	# Ensuite, completer la liste avec autant de requetes que necessaires
+	# pour la geometrie pour les ways qui doivent etre merged.
+	first_ids_list=','.join(str(r[0]) for r in IDS['ways'])
+	all_parent_routes=''
+	all_parent_sites=''
+	if len(first_ids_list):
+		query = """
+			SELECT 
+				member,
+				relname,
+				piste_type,
+				difficulty,
+				nordic_route_offset,
+				nordic_route_colour,
+				nordic_route_length,
+				nordic_route_render_colour,
+				direction_to_route,
+				osm_id,
+				ST_X(st_transform(ST_Centroid(geometry),4326)),
+				ST_Y(st_transform(ST_Centroid(geometry),4326)),
+				box2d(st_transform(geometry,4326)),
+				ST_Astext(st_transform(geometry,4326))
+			FROM osm_pistes_route_members
+			WHERE member in (%s) and piste_type like 'nordic'
+			;""" % (first_ids_list)
+		# Note: the request ways_ids order is lost, then rebuilt later
+		curRender.execute(query)
+		pistes=curRender.fetchall()
+		connRender.commit()
+		all_pistes={}
+		for piste in pistes:
+
+			in_routes=''
+			in_sites=''
+			s={}
+			if piste:
+				s['ids']=[piste[0]] # temporary, this will be set to the original id list at the end
+				s['type']='way'
+				s['name']=piste[1]
+				s['pistetype']=piste[2]
+				s['difficulty']=piste[3]
+				s['nordic_route_offset']=piste[4]
+				s['nordic_route_colour']=piste[5]
+				s['nordic_route_length']=piste[6]
+				s['nordic_route_render_colour']=piste[7]
+				s['direction_to_route']=piste[8]
+				s['in_routes']=[]
+				if (piste[9]):
+					in_routes=str(piste[9])
+				s['parent_routes_ids']=in_routes
+				s['parent_sites_ids']=in_sites
+				
+				s['center']=[piste[10],piste[11]]
+				s['bbox']=piste[12]
+				if GEO: s['geometry']=encodeWKT(piste[13])
+				if GEO: s['geometryWkt']=piste[13]
+				all_pistes[index]=s
+				index+=1
+			
+		if(SPEEDDEBUG): print("For ways, makeList took: " + str(time.time()-tmp_time))
+		#look for in_routes
+		
+		
+	topo['pistes']=all_pistes
+	connRender.close()
 	return topo
 
 def concatWaysByAttributes(topo):

@@ -12,7 +12,7 @@ def application(environ,start_response):
             
 	request = environ['QUERY_STRING']
 	if (DEBUG): print('Query: '+request)
-	if (request.find("name") !=-1 or request.find("closest") !=-1 or request.find("bbox") !=-1 or request.find("siteMembers") !=-1 or request.find("topoByWayIds") !=-1 or request.find("siteStats") !=-1 or request.find("routeById") !=-1 ) :
+	if (request.find("name") !=-1 or request.find("closest") !=-1 or request.find("bbox") !=-1 or request.find("siteMembers") !=-1 or request.find("topoByWayIds") !=-1 or request.find("siteStats") !=-1 or request.find("routeById") !=-1 or request.find("bboxOffsetter") !=-1 ) :
 		query=request
 		status, responseObject = requestPistes.requestPistes(query)
 		if(DEBUG): pp.pprint(responseObject)

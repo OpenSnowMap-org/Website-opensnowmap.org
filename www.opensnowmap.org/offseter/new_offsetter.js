@@ -82,11 +82,10 @@ function searchLocation(hash) {
 function requestRelations(extent, resolution, projection) {
     if (map.getView().getZoom() < 12) {return true;}
     
-    vectorSource.clear();
+    vectorSource.clear(false);
      var proj = projection.getCode();
      var bbox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-     var url = 'https://www.opensnowmap.org/request?group=true&geo=true&list=true&sort_alpha=true' +
-         '&bbox=' + bbox.join(',');
+     var url = 'https://www.opensnowmap.org/request?bboxOffsetter=' + bbox.join(',');
     document.getElementById("searchWaiterResults").style.display = 'inline';
     fetch(url)
     .then(function(response) {
@@ -96,17 +95,20 @@ function requestRelations(extent, resolution, projection) {
       return response.json();
     })
     .then(function(json) {
+        
         relationList.length = 0;
         jsonPisteList = json;
-        for (p = 0; p < jsonPisteList.pistes.length; p++) {
-            var element = jsonPisteList.pistes[p];
+        for (key in jsonPisteList.pistes) {
+            var element = jsonPisteList.pistes[key];
             
-            if (element.type == 'relation'){
+            if (element.type == 'way'){
                 
                 var rel=[];
                 rel['name']=element.name;
-                rel['color']=element.color.split(";")[0];
-                rel['id'] =element.ids[0];
+                rel['color']=element.nordic_route_colour.split(";")[0];
+                rel['id'] =element.parent_routes_ids.replace('-','');
+                rel['direction_to_route'] =element.direction_to_route;
+                rel['length'] =element.nordic_route_length;
                 
                 if ( ! relationOffsets[ rel['id'] ]) {relationOffsets[ rel['id'] ] =0;}
                 rel['of'] = relationOffsets[ rel['id'] ]; 
@@ -115,48 +117,45 @@ function requestRelations(extent, resolution, projection) {
                 updateRelationList();
                 
                 var stroke= new ol.style.Stroke({
-                           color: element.color.split(";")[0],
+                           color: rel['color'],
                            width: 3
                          });
-                var geom = new ol.geom.MultiLineString();
-                var len = 0;
-                for (l=0; l < element.geometry.length; l++){
-                    var f = vectorSource.getFormat().readFeature(element.geometry[l],
-                     {dataProjection: 'EPSG:4326',
-                      featureProjection: 'EPSG:3857'
-                    });
-                    var line = f.getGeometry();
-                    len += 0-Math.floor(line.getLength());
-                    var coords = [];
-                    var counter = 0;
-                    var dist = rel['of'] * (3+0.5) * map.getView().getResolution();
-                    line.forEachSegment(function(from, to) {
-                        var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
-                        var newFrom = [
-                            Math.sin(angle) * dist + from[0],
-                            -Math.cos(angle) * dist + from[1]
-                        ];
-                        var newTo = [
-                            Math.sin(angle) * dist + to[0],
-                            -Math.cos(angle) * dist + to[1]
-                        ];
-                        coords.push(newFrom);
-                        coords.push(newTo);
-                    });
-                    
-                    geom.appendLineString(new ol.geom.LineString(coords));
+                var f = vectorSource.getFormat().readFeature(element.geometry[0],
+                 {dataProjection: 'EPSG:4326',
+                  featureProjection: 'EPSG:3857'
+                });
+                var line = f.getGeometry();
+                //~ len += 0-Math.floor(line.getLength());
+                var coords = [];
+                var counter = 0;
+                var dist = rel['direction_to_route'] * rel['of'] * (3+0.5) * map.getView().getResolution();
+                line.forEachSegment(function(from, to) {
+                  coord = offsetSegment(from, to, dist);
+                  if (! coords.includes(coord[0])) {coords.push(coord[0]);}
+                  if (! coords.includes(coord[1])) {coords.push(coord[1]);}
+                });
+                if(rel['id'] == 1970151) {
+                  console.log(coords);
+                  console.log(element.geometry[0]);
+                     //~ member   |  osm_id  | geometrytype 
+                  //~ ------------+----------+--------------
+                    //~ 145732493 | -1970151 | LINESTRING
+                    //~ 145732524 | -1970151 | LINESTRING
+                    //~ 145732483 | -1970151 | LINESTRING
+                   //~ 1590894265 | -1970151 | POINT
+
                 }
+                var geom = new ol.geom.LineString(coords);
                 
-                console.log(len);
                 var style = new ol.style.Style({
                     stroke: stroke
                 });
                 var feature = new ol.Feature({
                     geometry: geom,
-                    osm_id: element.ids[0]
+                    osm_id: rel['id'] //element.ids[0]
                     });
-                    
-                style.setZIndex(len);
+                //~ console.log(rel['length'])
+                style.setZIndex(-rel['length']);
                 feature.setStyle(style);
                 
                 vectorSource.addFeature(feature);
@@ -169,11 +168,24 @@ function requestRelations(extent, resolution, projection) {
       document.getElementById("searchWaiterResults").style.display = 'none';
       return true
     })
-    .catch(function(error) {
-    });
+    //~ .catch(function(error) {
+    //~ });
     return true
 }
-
+function offsetSegment(from, to, dist) {
+                      var angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
+                      var newFrom = [
+                          Math.sin(angle) * dist + from[0],
+                          -Math.cos(angle) * dist + from[1]
+                      ];
+                      var newTo = [
+                          Math.sin(angle) * dist + to[0],
+                          -Math.cos(angle) * dist + to[1]
+                      ];
+                      //~ coords.push(newFrom);
+                      //~ coords.push(newTo);
+                      return [newFrom, newTo];
+                    }
 function map_init(){
     vectorSource = new ol.source.Vector ({
         format: new ol.format.Polyline(),
@@ -223,11 +235,11 @@ function map_init(){
                     opacity: 0.8
 				}), 
                 
-                new ol.layer.Vector ({
+        new ol.layer.Vector ({
                     name: 'relations',
                     source: vectorSource,
-					visible: true,
-                    opacity: 0.8
+                    visible: true,
+                    opacity: 1
                 })
 
 		],
@@ -250,7 +262,7 @@ function map_init(){
 
 var updatePermalink = function() {
 	
-	vectorSource.clear();
+	vectorSource.clear(true);
     
 	var view = map.getView();
 	var zoom=view.getZoom();
@@ -311,15 +323,19 @@ function showList(){
 }
 function updateRelationList(){
 	html = '';
+  ids=[]
 	for (var t=0;t<relationList.length;t++) {
-		html += '<p style="color:'+relationList[t]['color']+'">'
-		+String(relationOffsets[relationList[t]['id']]).padStart(4, '\xa0') 
-		+'&nbsp;&nbsp;'
-		+'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'
-		+'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
-		+ relationList[t]['id'] 
-		+'-'+relationList[t]['name']
-		+'</p>';
+    if (! ids.includes(relationList[t]['id']) ) {
+      ids.push(relationList[t]['id'])
+      html += '<p style="color:'+relationList[t]['color']+'">'
+      +String(relationOffsets[relationList[t]['id']]).padStart(4, '\xa0') 
+      +'&nbsp;&nbsp;'
+      +'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'left\');">&nbsp;&laquo;&nbsp;</a>&nbsp;'
+      +'<a class="box" onClick="offset('+relationList[t]['id']+',15,\'right\');">&nbsp;&raquo;&nbsp;</a>&nbsp;'
+      + relationList[t]['id'] 
+      +'-'+relationList[t]['name']
+      +'</p>';
+    }
 	}
 	document.getElementById("content").innerHTML=html;
 	return true;
