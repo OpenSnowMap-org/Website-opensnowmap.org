@@ -128,9 +128,14 @@ function requestRelations(extent, resolution, projection) {
                 
                 relationList.push(rel);
                 updateRelationList();
-                
+                if ( rel['color'] != "") {
+					color=rel['color'];
+				} else {
+					color =[41,141,178,0.2];
+				}
+				
                 var stroke= new ol.style.Stroke({
-                           color: rel['color'],
+                           color: color,
                            width: 3
                          });
                 var f = vectorSource.getFormat().readFeature(element.geometry[0],
