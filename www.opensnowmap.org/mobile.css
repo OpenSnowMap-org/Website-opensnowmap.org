@@ -377,9 +377,9 @@ font-size: 0.9em;
 }
 
 .elementExtLink{
-  font-size: 1.05em;
+  font-size: 0.95em;
   font-style:oblique;
-  margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 20px;
   float:left
 }
 .routeLengthElement{

@@ -3694,9 +3694,11 @@ function showExtLink(div, ids, element_type) {
         var osm_element_type=element_type;
         if (osm_element_type == 'area_way') { osm_element_type="way";} // multipolygons : see norway
         if (osm_element_type == 'area_multipolygon') { osm_element_type="relation";} 
+        if (element_type == 'landuse') { osm_element_type="way";} 
+        if (element_type == 'site') { osm_element_type="relation";} 
         
         if (data == 'siteUrl') {
-          spans[i].href = protocol + "//openstreetmap.org/browse/" + osm_element_type + "/" + id;
+          spans[i].href =  "https://www.openstreetmap.org/" + osm_element_type + "/" + id;
         }
         if (data == 'siteId') {
           spans[i].innerHTML = id;
@@ -3751,8 +3753,9 @@ function showSiteStats(div, id, element_type) { // fix for normal ways
   
 }
 
-function fillHTMLStats(jsonStats, div, element_type) {
-
+function fillHTMLStats(jsonStats, div, id, element_type) {
+  
+  showExtLink(div, id, element_type);
 
   spans = div.getElementsByClassName('data');
   for (i = 0; i < spans.length; i++) {
@@ -3770,15 +3773,6 @@ function fillHTMLStats(jsonStats, div, element_type) {
           spans[i].style.color = 'red';
         }
       }
-    }
-    if (data == 'siteUrl') {
-      spans[i].href = protocol + "//openstreetmap.org/browse/" + element_type + "/" + id;
-    }
-    if (data == 'siteId') {
-      spans[i].innerHTML = id;
-    }
-    if (data == 'siteType') {
-      spans[i].innerHTML = element_type; //way or relation
     }
   }
 
