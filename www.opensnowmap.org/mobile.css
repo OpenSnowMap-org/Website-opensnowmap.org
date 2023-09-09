@@ -250,16 +250,23 @@ position: absolute;
     max-width: 200px;
     text-align:left;
 }
-.menuEntry {
-    padding-left:30px;
 /*
-    pad the content left to put the icon in a negative margin
+For menuEntries, set the width and display: inline-block + vertical-align: middle; will wrap icons and text nicely
 */
+.menuEntryText {
+    display: inline-block;
+    vertical-align: middle;
+    width: 160px;
+}
+.menuEntryExpand {
+    display: inline-block;
+    vertical-align: middle;
+    width: 10px;
 }
 .menuEntryIcon {
-    margin-left:-25px;
     height: 20px;
-    vertical-align:sub
+    display: inline-block;
+    vertical-align: middle;
 }
 .textButtonDropDown{
     font-weight: 300;
