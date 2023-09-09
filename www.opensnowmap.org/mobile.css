@@ -246,6 +246,17 @@ position: absolute;
     max-width: 200px;
     text-align:left;
 }
+.menuEntry {
+    padding-left:25px;
+/*
+    pad the content left to put the icon in a negative margin
+*/
+}
+.menuEntryIcon {
+    margin-left:-20px;
+    height: 20px;
+    vertical-align:sub
+}
 .textButtonDropDown{
     font-weight: 300;
     color: #444444;
