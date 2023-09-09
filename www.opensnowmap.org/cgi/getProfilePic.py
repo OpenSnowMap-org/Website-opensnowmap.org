@@ -369,7 +369,7 @@ def createPics(tracks, size, color):
     ax.set_zticks([])  
     zed = [tick.label.set_fontsize(7) for tick in ax.zaxis.get_major_ticks()]
     ax.elev=60
-    plt.tight_layout(pad=0.1)
+    # ~ plt.tight_layout(pad=0.1)
     #~ plt.axis('equal')
     fig.savefig(PIL_images_dir+profile_filename+'-3d.png',dpi=dpi)
     #plt.show()
@@ -414,7 +414,7 @@ def createPics(tracks, size, color):
             arrow=dict(facecolor=(0,0,0,0.7), edgecolor=(1,1,1,0), headwidth = 7, width=2, headlength = 3) #, frac = 0.7
             plt.annotate(text='',xy=(x2,y2),xytext=(mercxs[n],mercys[n]),arrowprops=arrow)
     ax.plot(mercxs[0],mercys[0],'o',color=(0,0,0), alpha=0.6)
-    plt.tight_layout(pad=0.1)
+    #plt.tight_layout(pad=0.1)
     fig.savefig(PIL_images_dir+profile_filename+'-2d.png',dpi=dpi)
     #~ plt.show()
     
