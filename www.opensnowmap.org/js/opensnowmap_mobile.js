@@ -1097,9 +1097,6 @@ function page_init() {
   document.getElementById('donateButton').onclick = function() {
     window.open('iframes/donate.html');
   };
-  document.getElementById('legacyButton').onclick = function() {
-    window.open('https://www.opensnowmap.org/legacy.html');
-  };
   document.getElementById('EditVespucci').onclick = function() {
   var c = ol.proj.fromLonLat(ol.proj.toLonLat(map.getView().getCenter(), 'EPSG:3857'), 'EPSG:4326');
   var url = "geo:"+c[1]+","+c[0]

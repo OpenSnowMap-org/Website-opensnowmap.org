@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
@@ -16,7 +14,7 @@
    inkscape:export-xdpi="115.2"
    inkscape:export-filename="/home/yves/OPENSNOWMAP/www.git/dev.opensnowmap.org/pics/reduce-50-light.png"
    sodipodi:docname="icons.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
    version="1.1"
    id="svg2"
    height="53.354626"
@@ -10067,16 +10065,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.7334232"
-     inkscape:cx="788.30935"
-     inkscape:cy="-406.36775"
+     inkscape:zoom="3.8656442"
+     inkscape:cx="61.330026"
+     inkscape:cy="-304.98516"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1870"
+     inkscape:window-width="1877"
      inkscape:window-height="1016"
-     inkscape:window-x="50"
-     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:snap-global="true"
      inkscape:snap-grids="true"
@@ -10099,7 +10097,8 @@
      inkscape:bbox-nodes="true"
      inkscape:bbox-paths="true"
      inkscape:object-nodes="true"
-     inkscape:snap-smooth-nodes="true">
+     inkscape:snap-smooth-nodes="true"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid4707"
@@ -14043,7 +14042,7 @@
          id="tspan4126"
          x="591.14215"
          y="55.694443"
-         style="font-size:16.70006561px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
+         style="font-size:16.7001px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
     <g
        inkscape:export-ydpi="56.96389"
        inkscape:export-xdpi="56.96389"
@@ -14305,7 +14304,7 @@
            id="tspan3123"
            x="330.91357"
            y="1208.2946"
-           style="font-size:16.70006561px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
+           style="font-size:16.7001px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -14959,7 +14958,7 @@
        x="432.70682"
        style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-size:16.70006561px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'"
+         style="font-size:16.7001px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'"
          y="594.31079"
          x="432.70682"
          id="tspan4348"
@@ -15061,7 +15060,7 @@
          id="tspan5876"
          x="432.70682"
          y="594.31079"
-         style="font-size:16.70006561px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
+         style="font-size:16.7001px;line-height:1.25;font-family:'Abadi MT Condensed Light';-inkscape-font-specification:'Abadi MT Condensed Light'">esc</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
@@ -15133,7 +15132,8 @@
              width="35.607677"
              id="rect4103" /></flowRegion><flowPara
            id="flowPara4105"
-           style="font-size:12px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>      <rect
+           style="font-size:12px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>
+      <rect
          style="fill:#ececec;stroke:none"
          id="rect3780"
          width="24.860741"
@@ -15207,7 +15207,8 @@
              width="458.33334"
              id="rect2879" /></flowRegion><flowPara
            id="flowPara2881"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="matrix(0.8,0,0,-0.8,-931.61737,527.88456)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834"
@@ -15219,7 +15220,8 @@
              width="5749.7559"
              id="rect2838" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840"> </flowPara></flowRoot>      <g
+           id="flowPara2840"> </flowPara></flowRoot>
+      <g
          style="stroke:#000000;stroke-width:6.28275204"
          transform="matrix(-0.03821966,0,0,0.03817999,-645.42503,-594.11494)"
          id="g3056"
@@ -15244,7 +15246,7 @@
          style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;line-height:0%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
          xml:space="preserve"><tspan
            dx="0 1.7246691 3.4493382 3.4493382 3.4493382 3.4493382 3.4493382 3.4493382 3.4493382 3.4493382 3.4493382 2.5870039 2.5870039 2.5870039 2.5870039"
-           style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:55.18941116px;line-height:125%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;writing-mode:lr-tb;text-anchor:start"
+           style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:55.1894px;line-height:125%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;writing-mode:lr-tb;text-anchor:start"
            y="496.42426"
            x="-798.29755"
            id="tspan3003"
@@ -15262,7 +15264,8 @@
              id="rect3017"
              style="font-family:sans-serif" /></flowRegion><flowPara
            id="flowPara3019"
-           style="font-size:40px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>      <text
+           style="font-size:40px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>
+      <text
          transform="matrix(0.8,0,0,-0.8,-907.61736,268.50778)"
          id="text3021"
          y="740.67798"
@@ -15288,7 +15291,8 @@
              id="rect3029"
              style="font-family:sans-serif" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:200px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold'"
-           id="flowPara3031">BLOG</flowPara></flowRoot>    </g>
+           id="flowPara3031">BLOG</flowPara></flowRoot>
+    </g>
     <g
        transform="matrix(1.25,0,0,-1.25,373.35715,-323.54718)"
        inkscape:label="skier-vector-clipart-3"
@@ -15305,7 +15309,8 @@
              width="458.33334"
              id="rect2879-8" /></flowRegion><flowPara
            id="flowPara2881-4"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="matrix(0.8,0,0,-0.8,-931.61737,527.88456)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-2"
@@ -15317,7 +15322,8 @@
              width="5749.7559"
              id="rect2838-7" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-6"> </flowPara></flowRoot>      <g
+           id="flowPara2840-6"> </flowPara></flowRoot>
+      <g
          transform="matrix(0.41109945,0,0,0.41527847,-518.15759,-263.58508)"
          id="g3048">
         <path
@@ -15357,7 +15363,7 @@
          style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;line-height:0%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
          xml:space="preserve"><tspan
            dx="0 1.3101696 2.6203392 2.6203392 2.6203392 2.6203392 2.6203392 2.6203392 2.6203392 2.6203392 2.6203392 1.9652547 1.9652547 1.9652547 1.9652547"
-           style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:40.83036423px;line-height:100%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;letter-spacing:-1.37695575px;writing-mode:lr-tb;text-anchor:start"
+           style="font-style:normal;font-variant:normal;font-weight:200;font-stretch:normal;font-size:40.8304px;line-height:100%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Ultra-Light';text-align:start;letter-spacing:-1.37696px;writing-mode:lr-tb;text-anchor:start"
            y="502.31635"
            x="-801.42706"
            id="tspan3003-1"
@@ -15375,7 +15381,8 @@
              id="rect3017-5"
              style="font-family:sans-serif" /></flowRegion><flowPara
            id="flowPara3019-2"
-           style="font-size:40px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>      <text
+           style="font-size:40px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>
+      <text
          transform="matrix(0.8,0,0,-0.8,-907.61736,268.50778)"
          id="text3021-2"
          y="740.67798"
@@ -16339,7 +16346,7 @@
          inkscape:connector-curvature="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;opacity:0.46086958;fill:url(#radialGradient12263);fill-opacity:1;stroke:none"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;opacity:0.46087;fill:url(#radialGradient12263);fill-opacity:1;stroke:none"
          x="-1048.8779"
          y="271.72229"
          id="text6302-7"
@@ -16348,21 +16355,21 @@
            id="tspan6304-0"
            x="-1048.8779"
            y="271.72229"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1">01011001</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1">01011001</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="296.47195"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
            id="tspan6415-7">00110101</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="321.22162"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
            id="tspan6417-1">10010011</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="345.97128"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263);fill-opacity:1"
            id="tspan6419-9"> </tspan></text>
       <text
          xml:space="preserve"
@@ -16375,21 +16382,21 @@
            id="tspan6304"
            x="-1049.3065"
            y="270.43625"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1">01011001</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1">01011001</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="295.18591"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
            id="tspan6415">00110101</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="319.93558"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
            id="tspan6417">10010011</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="344.68524"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265);fill-opacity:1"
            id="tspan6419"> </tspan></text>
       <path
          style="opacity:0.76521738;fill:url(#linearGradient12267);fill-opacity:1;stroke:none"
@@ -16630,7 +16637,7 @@
              x="-1663.5632"
              id="tspan4278"
              sodipodi:role="line"
-             style="font-size:43.01120377px;line-height:1.66999996">iD</tspan></text>
+             style="font-size:43.0112px;line-height:1.67">iD</tspan></text>
         <ellipse
            style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#db743b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;enable-background:accumulate"
            id="path4280-0"
@@ -16844,7 +16851,7 @@
              id="tspan4854"
              x="791.58313"
              y="549.36218"
-             style="font-size:43.01120377px;line-height:1.66999996">iD</tspan></text>
+             style="font-size:43.0112px;line-height:1.67">iD</tspan></text>
         <path
            inkscape:connector-curvature="0"
            style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#343434;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;enable-background:accumulate"
@@ -17861,7 +17868,7 @@
          inkscape:connector-curvature="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;opacity:0.46086958;fill:url(#radialGradient12263-1);fill-opacity:1;stroke:none"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;opacity:0.46087;fill:url(#radialGradient12263-1);fill-opacity:1;stroke:none"
          x="-1048.8779"
          y="271.72229"
          id="text6302-7-4"
@@ -17870,21 +17877,21 @@
            id="tspan6304-0-9"
            x="-1048.8779"
            y="271.72229"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1">01011001</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1">01011001</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="296.47195"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
            id="tspan6415-7-6">00110101</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="321.22162"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
            id="tspan6417-1-6">10010011</tspan><tspan
            sodipodi:role="line"
            x="-1048.8779"
            y="345.97128"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12263-1);fill-opacity:1"
            id="tspan6419-9-4"> </tspan></text>
       <text
          xml:space="preserve"
@@ -17897,21 +17904,21 @@
            id="tspan6304-4"
            x="-1049.3065"
            y="270.43625"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1">01011001</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1">01011001</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="295.18591"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
            id="tspan6415-3">00110101</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="319.93558"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
            id="tspan6417-3">10010011</tspan><tspan
            sodipodi:role="line"
            x="-1049.3065"
            y="344.68524"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.79973221px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7997px;line-height:1.25;font-family:monospace;-inkscape-font-specification:'Monospace Bold';fill:url(#radialGradient12265-0);fill-opacity:1"
            id="tspan6419-4"> </tspan></text>
       <path
          style="opacity:0.76521738;fill:url(#linearGradient12267-6);fill-opacity:1;stroke:none"
@@ -18153,7 +18160,7 @@
              x="-1663.5632"
              id="tspan4278-8"
              sodipodi:role="line"
-             style="font-size:43.01120377px;line-height:1.66999996">iD</tspan></text>
+             style="font-size:43.0112px;line-height:1.67">iD</tspan></text>
         <ellipse
            style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#db743b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;enable-background:accumulate"
            id="path4280-0-8"
@@ -19614,7 +19621,8 @@
              width="458.33334"
              id="rect2879-3" /></flowRegion><flowPara
            id="flowPara2881-5"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-1"
@@ -19626,7 +19634,8 @@
              width="5749.7559"
              id="rect2838-9" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-5"> </flowPara></flowRoot>      <rect
+           id="flowPara2840-5"> </flowPara></flowRoot>
+      <rect
          inkscape:export-ydpi="2.3142858"
          inkscape:export-xdpi="2.3142858"
          inkscape:export-filename="/home/yves/Images/alpine.png"
@@ -19681,7 +19690,8 @@
              width="458.33334"
              id="rect2879-2" /></flowRegion><flowPara
            id="flowPara2881-0"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-11"
@@ -19693,7 +19703,8 @@
              width="5749.7559"
              id="rect2838-5" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-4"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-4"> </flowPara></flowRoot>
+    </g>
     <g
        id="g18099"
        transform="matrix(0.90281405,0,0,0.90281405,155.07249,555.51752)">
@@ -19766,7 +19777,8 @@
              width="458.33334"
              id="rect2879-84" /></flowRegion><flowPara
            id="flowPara2881-8"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-0"
@@ -19778,7 +19790,8 @@
              width="5749.7559"
              id="rect2838-1" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-1"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-1"> </flowPara></flowRoot>
+    </g>
     <path
        inkscape:connector-curvature="0"
        style="fill:#ffffff;fill-opacity:1"
@@ -19818,7 +19831,8 @@
                x="3100"
                y="170.88774" /></flowRegion><flowPara
              id="flowPara2881-59"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            xml:space="preserve"
            id="flowRoot2834-7"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -19830,7 +19844,8 @@
                x="1227.2727"
                y="-1188.2031" /></flowRegion><flowPara
              id="flowPara2840-19"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>      </g>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+      </g>
       <g
          transform="matrix(1.8214937,0,0,-1.8214937,377.63339,522.19576)"
          id="g5354">
@@ -19874,7 +19889,8 @@
              width="458.33334"
              id="rect2879-6" /></flowRegion><flowPara
            id="flowPara2881-50"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="matrix(0.02482317,0,0,0.02482317,-9.6009307,23.975068)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#ffffff;fill-opacity:1;stroke:none"
          id="flowRoot2826"
@@ -19887,7 +19903,8 @@
              width="5090.9092"
              id="rect2830" /></flowRegion><flowPara
            id="flowPara2832"
-           style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>      <flowRoot
+           style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.132195,-1022.2761)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-79"
@@ -19899,7 +19916,8 @@
              width="5749.7559"
              id="rect2838-97" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-69"> </flowPara></flowRoot>      <rect
+           id="flowPara2840-69"> </flowPara></flowRoot>
+      <rect
          ry="1.1321961"
          rx="1.1321961"
          y="0.43490082"
@@ -19990,7 +20008,8 @@
                x="3100"
                y="170.88774" /></flowRegion><flowPara
              id="flowPara2881-9"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            xml:space="preserve"
            id="flowRoot2834-3"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20002,7 +20021,8 @@
                x="1227.2727"
                y="-1188.2031" /></flowRegion><flowPara
              id="flowPara2840-0"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>      </g>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+      </g>
       <path
          sodipodi:nodetypes="cccccc"
          inkscape:connector-curvature="0"
@@ -20072,7 +20092,8 @@
              width="458.33334"
              id="rect2879-5" /></flowRegion><flowPara
            id="flowPara2881-82"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-9"
@@ -20084,7 +20105,8 @@
              width="5749.7559"
              id="rect2838-8" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-2"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-2"> </flowPara></flowRoot>
+    </g>
     <path
        inkscape:connector-curvature="0"
        id="path9-2"
@@ -20126,7 +20148,8 @@
                x="3100"
                y="170.88774" /></flowRegion><flowPara
              id="flowPara2881-58"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            xml:space="preserve"
            id="flowRoot2834-28"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20138,7 +20161,8 @@
                x="1227.2727"
                y="-1188.2031" /></flowRegion><flowPara
              id="flowPara2840-02"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>      </g>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+      </g>
       <g
          transform="matrix(1.1233224,0,0,1.1233224,-9.5636148,-92.09921)"
          id="g3116">
@@ -20201,7 +20225,8 @@
              width="458.33334"
              id="rect2879-4-0-3" /></flowRegion><flowPara
            id="flowPara2881-59-5-5"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-7-6-6"
@@ -20213,7 +20238,8 @@
              width="5749.7559"
              id="rect2838-93-7-5" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-19-2-5"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-19-2-5"> </flowPara></flowRoot>
+    </g>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:2.62857151;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 427.84795,1651.9178 c -3.02214,-0.016 -8.24509,2.0043 -8.24509,10.0015 -3e-5,5.5943 5.06631,7.4736 5.06631,10.5005 h 6.24987 c 0,-3.1958 4.8351,-4.6806 4.8048,-10.5005 0,-7.9972 -4.85377,-9.985 -7.87589,-10.0015 z"
@@ -20389,7 +20415,8 @@
              width="458.33334"
              id="rect2879-4-0" /></flowRegion><flowPara
            id="flowPara2881-59-5"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-7-6"
@@ -20401,7 +20428,8 @@
              width="5749.7559"
              id="rect2838-93-7" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-19-2"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-19-2"> </flowPara></flowRoot>
+    </g>
     <flowRoot
        xml:space="preserve"
        id="flowRoot2875-8-3"
@@ -20414,7 +20442,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara2881-5-2"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2834-1-5"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20426,7 +20455,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara2840-5-0"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <g
        id="g15567"
        transform="translate(152.60466,435.55915)">
       <circle
@@ -20590,7 +20620,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara2881-50-5"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2826-3"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#ffffff;fill-opacity:1;stroke:none"
@@ -20603,7 +20634,8 @@
            y="-870.02136"
            style="font-size:32px;fill:#ffffff" /></flowRegion><flowPara
          id="flowPara2832-1"
-         style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>    <flowRoot
+         style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2834-79-7"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20615,7 +20647,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara2840-69-4"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <g
        id="g15537"
        transform="translate(152.60466,435.55915)">
       <circle
@@ -20692,7 +20725,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara2881-87-3"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2834-17-3"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20704,7 +20738,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara2840-12-9"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <g
        id="g15574"
        transform="translate(152.60466,435.55915)">
       <circle
@@ -20855,7 +20890,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara2881-87-0"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2834-17-1"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -20867,7 +20903,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara2840-12-8"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <g
        id="g15475"
        transform="translate(84.654533,515.21594)">
       <rect
@@ -21720,7 +21757,8 @@
            width="2640.1172"
            id="rect2879-57" /></flowRegion><flowPara
          id="flowPara2881-8-1"
-         style="font-size:230.41023254px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:230.41px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(5.7602558,0,0,5.7602558,-653.34357,-4836.8916)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2834-4"
@@ -21732,7 +21770,8 @@
            width="5749.7559"
            id="rect2838-9-0" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara2840-6-7"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara2840-6-7"> </flowPara></flowRoot>
+    <flowRoot
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2875-1-6"
        xml:space="preserve"><flowRegion
@@ -21743,7 +21782,8 @@
            width="2640.1172"
            id="rect2879-1-3" /></flowRegion><flowPara
          id="flowPara2881-2"
-         style="font-size:230.41023254px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:230.41px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(5.7602558,0,0,5.7602558,-652.1641,-5051.5515)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2834-3-4"
@@ -21755,7 +21795,8 @@
            width="5749.7559"
            id="rect2838-91" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara2840-9"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara2840-9"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot7101"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -21767,7 +21808,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara7107"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot7109"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"><flowRegion
@@ -21778,24 +21820,13 @@
            x="5844.6699"
            y="-11527.851" /></flowRegion><flowPara
          id="flowPara7115"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2880.12792969px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <path
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2880.13px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <path
        inkscape:connector-curvature="0"
        id="path3555"
        d="m -2134.0591,638.27895 h 75.6098"
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <flowRoot
-       transform="translate(-1174.957,446.99688)"
-       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot2875-2"
-       xml:space="preserve"><flowRegion
-         id="flowRegion2877-8-2"><rect
-           y="170.88774"
-           x="3100"
-           height="41.666668"
-           width="458.33334"
-           id="rect2879-2-6" /></flowRegion><flowPara
-         id="flowPara2881-3"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
        transform="translate(-1174.957,446.99688)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2834-6"
@@ -21807,19 +21838,8 @@
            width="5749.7559"
            id="rect2838-2" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara2840-90"> </flowPara></flowRoot>    <flowRoot
-       transform="translate(-1198.2308,524.78315)"
-       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot2875-9"
-       xml:space="preserve"><flowRegion
-         id="flowRegion2877-74"><rect
-           y="170.88774"
-           x="3100"
-           height="41.666668"
-           width="458.33334"
-           id="rect2879-9" /></flowRegion><flowPara
-         id="flowPara2881-9-5"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara2840-90"> </flowPara></flowRoot>
+    <flowRoot
        transform="translate(-1198.2308,524.78315)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2834-44"
@@ -21831,7 +21851,8 @@
            width="5749.7559"
            id="rect2838-1-8" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara2840-0-9"> </flowPara></flowRoot>    <rect
+         id="flowPara2840-0-9"> </flowPara></flowRoot>
+    <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="rect4707"
        width="18.424208"
@@ -21873,7 +21894,8 @@
                width="458.33334"
                id="rect2879-46" /></flowRegion><flowPara
              id="flowPara2881-34"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            transform="translate(53.437489,-1022.5961)"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
            id="flowRoot2834-63"
@@ -21885,7 +21907,8 @@
                width="5749.7559"
                id="rect2838-41" /></flowRegion><flowPara
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-             id="flowPara2840-8"> </flowPara></flowRoot>      </g>
+             id="flowPara2840-8"> </flowPara></flowRoot>
+      </g>
       <g
          id="g3832-7"
          transform="matrix(5.7602558,0,0,5.7602558,240.93264,792.05413)">
@@ -21913,7 +21936,8 @@
                width="458.33334"
                id="rect2879-5-2" /></flowRegion><flowPara
              id="flowPara2881-4-8"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            transform="translate(53.437489,-1022.5961)"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
            id="flowRoot2834-5"
@@ -21925,7 +21949,8 @@
                width="5749.7559"
                id="rect2838-4-0" /></flowRegion><flowPara
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-             id="flowPara2840-1-2"> </flowPara></flowRoot>      </g>
+             id="flowPara2840-1-2"> </flowPara></flowRoot>
+      </g>
       <rect
          style="opacity:0.8;fill:#003a8c;fill-opacity:1;stroke:none"
          id="rect3020-3"
@@ -21974,7 +21999,8 @@
                x="3100"
                y="170.88774" /></flowRegion><flowPara
              id="flowPara7016"
-             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>        <flowRoot
+             style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+        <flowRoot
            xml:space="preserve"
            id="flowRoot7018"
            style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -21986,7 +22012,8 @@
                x="1227.2727"
                y="-1188.2031" /></flowRegion><flowPara
              id="flowPara7024"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>      </g>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+      </g>
       <rect
          inkscape:export-ydpi="2.3142858"
          inkscape:export-xdpi="2.3142858"
@@ -23829,7 +23856,8 @@
                width="5090.9092"
                id="rect2830-8" /></flowRegion><flowPara
              id="flowPara2832-9"
-             style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>        <rect
+             style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>
+        <rect
            y="522.40521"
            x="295.60107"
            height="1.8828754"
@@ -24093,7 +24121,8 @@
              width="458.33334"
              id="rect2879-4-0-3-4" /></flowRegion><flowPara
            id="flowPara2881-59-5-5-8"
-           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>      <flowRoot
+           style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+      <flowRoot
          transform="translate(53.437489,-1022.5961)"
          style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot2834-7-6-6-9"
@@ -24105,7 +24134,8 @@
              width="5749.7559"
              id="rect2838-93-7-5-3" /></flowRegion><flowPara
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-           id="flowPara2840-19-2-5-0"> </flowPara></flowRoot>    </g>
+           id="flowPara2840-19-2-5-0"> </flowPara></flowRoot>
+    </g>
     <circle
        id="path9185-8"
        style="display:inline;fill:#ffffff;fill-opacity:0.50196078;stroke:none"
@@ -24341,7 +24371,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara2881-59-5-5-6"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot2834-7-6-6-3"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -24353,7 +24384,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara2840-19-2-5-6"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <g
        id="g6757"
        transform="translate(152.60466,435.55915)">
       <path
@@ -24717,7 +24749,7 @@
          id="tspan7714"
          x="107.84152"
          y="1060.6853"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:33.6111145px;line-height:1.25;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif Bold'">i</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:33.6111px;line-height:1.25;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif Bold'">i</tspan></text>
     <g
        id="g7823"
        transform="translate(3.0099812,-54.00005)"
@@ -24758,7 +24790,8 @@
            width="458.33334"
            id="rect6800" /></flowRegion><flowPara
          id="flowPara6802"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-107.45452,-1155.836)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6804"
@@ -24770,7 +24803,8 @@
            width="5749.7559"
            id="rect6808" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6810"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6810"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-220.45629,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6824"
@@ -24782,7 +24816,8 @@
            width="458.33334"
            id="rect6828" /></flowRegion><flowPara
          id="flowPara6830"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-220.45629,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6832"
@@ -24794,7 +24829,8 @@
            width="5749.7559"
            id="rect6836" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6838"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6838"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-270.45622,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6858"
@@ -24806,7 +24842,8 @@
            width="458.33334"
            id="rect6862" /></flowRegion><flowPara
          id="flowPara6864"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-270.45622,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6866"
@@ -24818,7 +24855,8 @@
            width="5749.7559"
            id="rect6870" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6872"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6872"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-420.45614,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6882"
@@ -24830,7 +24868,8 @@
            width="458.33334"
            id="rect6886" /></flowRegion><flowPara
          id="flowPara6888"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-420.45614,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6890"
@@ -24842,7 +24881,8 @@
            width="5749.7559"
            id="rect6894" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6896"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6896"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-358.4973,-1154.7932)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6912"
@@ -24854,7 +24894,8 @@
            width="458.33334"
            id="rect6916" /></flowRegion><flowPara
          id="flowPara6918"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-358.4973,-1154.7932)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6928"
@@ -24866,7 +24907,8 @@
            width="5749.7559"
            id="rect6932" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6934"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6934"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-69.95604,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6958"
@@ -24878,7 +24920,8 @@
            width="458.33334"
            id="rect6962" /></flowRegion><flowPara
          id="flowPara6964"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-69.95604,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6966"
@@ -24890,7 +24933,8 @@
            width="5749.7559"
            id="rect6970" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara6972"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara6972"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-169.9563,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6990"
@@ -24902,7 +24946,8 @@
            width="458.33334"
            id="rect6994" /></flowRegion><flowPara
          id="flowPara6996"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-169.9563,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot6998"
@@ -24914,7 +24959,8 @@
            width="5749.7559"
            id="rect7002" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara7004"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara7004"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-320.45621,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7017"
@@ -24926,7 +24972,8 @@
            width="458.33334"
            id="rect7021" /></flowRegion><flowPara
          id="flowPara7023"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-320.45621,-1150.4968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7025"
@@ -24938,7 +24985,8 @@
            width="5749.7559"
            id="rect7029" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara7031"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara7031"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,30.04394,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7049"
@@ -24950,7 +24998,8 @@
            width="458.33334"
            id="rect7053" /></flowRegion><flowPara
          id="flowPara7055"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,30.04394,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7057"
@@ -24962,7 +25011,8 @@
            width="5749.7559"
            id="rect7061" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara7063"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara7063"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-20.10752,-1150.5631)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7110"
@@ -24974,7 +25024,8 @@
            width="458.33334"
            id="rect7114" /></flowRegion><flowPara
          id="flowPara7116"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,-20.10752,-1150.5631)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7118"
@@ -24986,7 +25037,8 @@
            width="5749.7559"
            id="rect7122" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara7124"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara7124"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,80.043903,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7140"
@@ -24998,7 +25050,8 @@
            width="458.33334"
            id="rect7144" /></flowRegion><flowPara
          id="flowPara7146"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        transform="matrix(2.6497177,0,0,2.6497177,80.043903,-1150.9968)"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot7148"
@@ -25010,7 +25063,8 @@
            width="5749.7559"
            id="rect7152" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"
-         id="flowPara7154"> </flowPara></flowRoot>    <flowRoot
+         id="flowPara7154"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8120"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25022,7 +25076,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8126"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8128"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25034,7 +25089,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8134"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8150"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25046,7 +25102,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8156"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8158"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25058,7 +25115,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8164"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8186"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25070,7 +25128,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8192"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8194"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25082,7 +25141,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8200"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8212"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25094,7 +25154,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8218"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8220"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25106,7 +25167,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8226"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8242"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25118,7 +25180,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8248"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8258"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25130,7 +25193,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8264"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8288"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25142,7 +25206,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8294"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8296"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25154,7 +25219,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8302"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8322"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25166,7 +25232,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8328"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8330"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25178,7 +25245,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8336"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8350"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25190,7 +25258,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8356"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8358"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25202,7 +25271,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8364"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8384"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25214,7 +25284,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8390"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8392"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25226,7 +25297,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8398"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8440"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25238,7 +25310,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8446"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8448"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25250,7 +25323,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8454"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <flowRoot
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8472"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25262,7 +25336,8 @@
            x="3100"
            y="170.88774" /></flowRegion><flowPara
          id="flowPara8478"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <flowRoot
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <flowRoot
        xml:space="preserve"
        id="flowRoot8480"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none"
@@ -25274,7 +25349,8 @@
            x="1227.2727"
            y="-1188.2031" /></flowRegion><flowPara
          id="flowPara8486"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>    <path
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:500px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans'"> </flowPara></flowRoot>
+    <path
        style="display:inline;fill:#000000;stroke:#000000;stroke-width:0.25781193;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
        d="m -175.22062,913.63872 h -4.02426 l 7.25058,-6.11121 6.6809,6.11121 h -3.46192 v 10.25389 h -6.4453 z"
        id="rect7097"
@@ -25310,7 +25386,8 @@
            y="-286.00519"
            style="font-family:sans-serif;fill:#f9f9f9" /></flowRegion><flowPara
          id="flowPara7093"
-         style="font-weight:bold;font-size:13px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'Sans Bold'">GPX</flowPara></flowRoot>    <path
+         style="font-weight:bold;font-size:13px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'Sans Bold'">GPX</flowPara></flowRoot>
+    <path
        sodipodi:nodetypes="cccccccc"
        inkscape:connector-curvature="0"
        id="path7112"
@@ -25346,7 +25423,8 @@
            width="36.640987"
            id="rect7123" /></flowRegion><flowPara
          style="font-weight:bold;font-size:13px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'Sans Bold'"
-         id="flowPara7125">GPX</flowPara></flowRoot>    <g
+         id="flowPara7125">GPX</flowPara></flowRoot>
+    <g
        id="g8037"
        transform="translate(3.3649133,-0.58742656)">
       <g
@@ -27469,7 +27547,8 @@
              width="5090.9092"
              id="rect9700" /></flowRegion><flowPara
            id="flowPara9702"
-           style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>      <rect
+           style="font-size:32px;line-height:1.25">P</flowPara></flowRoot>
+      <rect
          y="522.40521"
          x="295.60107"
          height="1.8828754"
@@ -28820,5 +28899,75 @@
        sodipodi:end="5.492072"
        d="m 677.22054,1646.7762 a 15,15 0 0 1 21.16438,-0.072"
        sodipodi:open="true" />
+    <g
+       id="g5673"
+       transform="matrix(0.09302139,0,0,0.09302139,93.52495,923.08755)">
+      <g
+         id="g5689">
+        <path
+           id="rect4746"
+           style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000"
+           d="m 1220.3686,237.35075 h 211.1916 v 102.00198 h -211.1916 l 17.0057,-51.00099 z"
+           sodipodi:nodetypes="cccccc" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 1220.3686,237.35075 -86.2181,51.00099 86.2181,51.00099"
+           id="path4751"
+           sodipodi:nodetypes="ccc" />
+        <rect
+           style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000;stop-opacity:1"
+           id="rect5648"
+           width="32.848141"
+           height="102.00197"
+           x="1520.2068"
+           y="237.35075" />
+        <rect
+           style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000;stop-opacity:1"
+           id="rect5667"
+           width="20.972578"
+           height="102.00197"
+           x="1465.8318"
+           y="237.35075" />
+      </g>
+    </g>
+    <g
+       id="g5727"
+       transform="translate(-345.45327,-58.085958)">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:3.4883;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 225.44384,967.25612 -5.1585,-2.33847 -10.2786,5.10765 -10.2911,-3.43269 v 35.28299 l 10.0075,4.1032 10.1206,-5.2173 12.6674,4.969 8.6799,-4.5942 v -23.09907"
+         id="path4744" />
+      <g
+         id="g5701"
+         transform="matrix(0.06577605,-0.06577605,0.06577605,0.06577605,117.37005,1050.8054)">
+        <g
+           id="g5699">
+          <path
+             id="path5691"
+             style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000"
+             d="m 1220.3686,237.35075 h 211.1916 v 102.00198 h -211.1916 l 17.0057,-51.00099 z"
+             sodipodi:nodetypes="cccccc" />
+          <path
+             style="fill:none;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m 1220.3686,237.35075 -86.2181,51.00099 86.2181,51.00099"
+             id="path5693"
+             sodipodi:nodetypes="ccc" />
+          <rect
+             style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000;stop-opacity:1"
+             id="rect5695"
+             width="32.848141"
+             height="102.00197"
+             x="1520.2068"
+             y="237.35075" />
+          <rect
+             style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:23.4375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000;stop-opacity:1"
+             id="rect5697"
+             width="20.972578"
+             height="102.00197"
+             x="1465.8318"
+             y="237.35075" />
+        </g>
+      </g>
+    </g>
   </g>
 </svg>
