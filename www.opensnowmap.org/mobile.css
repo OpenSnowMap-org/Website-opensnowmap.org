@@ -62,8 +62,12 @@ hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA
 hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
 hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
 .news {
-        font-size: 0.8em;
-    
+    font-size: 0.8em;
+    font-style: italic;
+    border: 5px solid #FFFFFF;
+     background-color: #EEEEEE;
+    border-radius: 8px;
+    padding: 10px;
 }
 .clear { clear: both}
 /*use to place divs side by side*/
