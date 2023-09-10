@@ -3244,6 +3244,9 @@ function showHTMLPistesList(Div) {
         if (span.className == "pisteNameSpan") {
           span.style.display = 'none';
         }
+        if (span.className == "siteNameTitleSpan") {
+          span.innerHTML = name; //+' '+osm_id;
+        }
         if (span.className == "siteNameSpan") {
           span.innerHTML = name; //+' '+osm_id;
         }
@@ -3259,6 +3262,10 @@ function showHTMLPistesList(Div) {
       picDiv = sitediv.getElementsByClassName("pisteIconDiv")[0];
       picDiv.innerHTML = '';
       if (site.pistetype) {
+          img = document.createElement('img');
+          img.src = "pics/resort_icon.svg";
+          img.style.height = "40px";
+          picDiv.appendChild(img);
       //PISTE:TYPE DISPLAY , no grooming avail here
         var t = site.pistetype;
         //var g = piste.grooming;
@@ -3376,6 +3383,9 @@ function showHTMLPistesList(Div) {
           span.innerHTML = name;
         }
         if (span.className == "siteNameSpan") {
+          span.style.display = 'none';
+        }
+        if (span.className == "siteNameTitleSpan") {
           span.style.display = 'none';
         }
         if (span.className == "difficultySpan") {

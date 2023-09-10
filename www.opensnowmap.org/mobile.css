@@ -353,6 +353,13 @@ font-size: 0.9em;
     font-size:0.9em;
   border: 1px solid #EEEEEE;
 }
+.siteNameTitleSpan {
+    font-size:1.3em;
+    text-decoration: underline;
+}
+.pisteNameSpan {
+    font-size:1.2em;
+}
 .pisteListButton{
     background-color:#FFFFFF;
 /*
