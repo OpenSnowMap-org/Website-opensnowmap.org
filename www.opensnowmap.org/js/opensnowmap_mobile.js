@@ -3269,7 +3269,7 @@ function showHTMLPistesList(Div) {
       //PISTE:TYPE DISPLAY , no grooming avail here
         var t = site.pistetype;
         //var g = piste.grooming;
-        addImgElement(picDiv, t, '');
+        addImgElement(picDiv, t, 'classic');
       }
 
       sitediv.getElementsByClassName("diffInfos")[0].style.display = 'none';
