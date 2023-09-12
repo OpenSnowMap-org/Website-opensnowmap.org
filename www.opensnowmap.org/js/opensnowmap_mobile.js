@@ -3769,15 +3769,15 @@ function fillHTMLStats(jsonStats, div, id, element_type) {
     var data = spans[i].getAttribute('dataText');
     if (jsonStats.site !== null) {
       if (['downhill', 'nordic', 'skitour', 'sled', 'lifts', 'hike'].indexOf(data) != -1) {
-        spans[i].innerHTML = (parseFloat(jsonStats[data]) / 1000).toFixed(1);
+        spans[i].innerHTML = (parseFloat(jsonStats[data]) / 1000).toFixed(1)+"km";
       }
       if (['snow_park', 'jump', 'playground', 'sleigh', 'ice_skate'].indexOf(data) != -1) {
         if (jsonStats[data] !== 0) {
-          spans[i].innerHTML = '&#9679;';
+          spans[i].innerHTML = '&#10004;';
           spans[i].style.color = 'green';
         } else {
-          spans[i].innerHTML = 'x';
-          spans[i].style.color = 'red';
+          spans[i].innerHTML = '&#10006;';
+          spans[i].style.color = '#BBB';
         }
       }
     }

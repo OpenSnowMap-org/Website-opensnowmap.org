@@ -615,3 +615,12 @@ margin-left:auto;
   -webkit-overflow-scrolling: touch;
   
 }
+td.statsTable{
+border: 5px solid #FFF;
+text-align: center;
+border-radius: 6px;
+}
+.statsData{
+    font-size: 0.9em;
+    font-weight: 500;
+}
