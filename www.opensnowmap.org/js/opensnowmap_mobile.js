@@ -3699,10 +3699,13 @@ function showExtLink(div, ids, element_type) {
       for (i = 0; i < spans.length; i++) {
         var data = spans[i].getAttribute('dataText');
         var osm_element_type=element_type;
-        if (osm_element_type == 'area_way') { osm_element_type="way";} // multipolygons : see norway
-        if (osm_element_type == 'area_multipolygon') { osm_element_type="relation";} 
-        if (element_type == 'landuse') { osm_element_type="way";} 
-        if (element_type == 'site') { osm_element_type="relation";} 
+        var elementIcon;
+        if (osm_element_type == 'area_way') {           osm_element_type="way";      elementIcon = "area_icon.svg";} // multipolygons : see norway
+        if (osm_element_type == 'area_multipolygon') {  osm_element_type="relation"; elementIcon = "relation_icon.svg";} 
+        if (element_type == 'landuse') {                osm_element_type="way";      elementIcon = "area_icon.svg";} 
+        if (element_type == 'site') {                   osm_element_type="relation"; elementIcon = "relation_icon.svg";} 
+        if (element_type == 'relation') {               osm_element_type="relation"; elementIcon = "relation_icon.svg";} 
+        if (element_type == 'way') {                    osm_element_type="way";      elementIcon = "way_icon.svg";} 
         
         if (data == 'siteUrl') {
           spans[i].href =  "https://www.openstreetmap.org/" + osm_element_type + "/" + id;
@@ -3710,12 +3713,14 @@ function showExtLink(div, ids, element_type) {
         if (data == 'siteId') {
           spans[i].innerHTML = id;
         }
-
-        if (data == 'siteType') {
-          spans[i].innerHTML = element_type; //way or relation
-        }
         if (data == 'analyseUrl') {
           spans[i].href = "https://ra.osmsurround.org/analyzeRelation?relationId=+" + id;
+        }
+        if (data == 'historyUrl') {
+          spans[i].href = "https://osmlab.github.io/osm-deep-history/#/" + osm_element_type + "/"+ id;
+        }
+        if (data == 'elementTypeIcon') {
+          spans[i].src = "pics/"+elementIcon;
         }
       }
 
