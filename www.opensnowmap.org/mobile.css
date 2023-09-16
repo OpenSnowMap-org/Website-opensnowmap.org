@@ -58,7 +58,7 @@ select, option, input{
    margin-top: 0px;
    margin-bottom: 0px;
    }
-hr{border: 0; width: 90%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
+hr{border: 0; width: 100%; height: 1px; color: #AAAAAA; background-color: #AAAAAA}
 hr.light{border: 0px; padding:0px; margin:0px; width: 100%; height: 1px; color: #CCC; background-color: #CCC}
 hr.superlight{border: 0px; padding:0px; margin:0px 30px 0px 30px; width: 80%; height: 1px; color: #EEE; background-color: #EEE}
 .news {
@@ -406,10 +406,13 @@ font-size: 0.9em;
 }
 
 .elementExtLink{
-  font-size: 0.85em;
-  font-style:oblique;
+  font-size: 1em;
   margin: 0px 0px 0px 20px;
   float:left
+}
+.siteId {
+  font-size: 1.0em;
+  font-weight: 500;
 }
 .routeLengthElement{
   font-size: 1.2em;
