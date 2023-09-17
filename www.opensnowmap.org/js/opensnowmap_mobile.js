@@ -1367,15 +1367,23 @@ function showRouteProfile(wkt, div, color) {
   div.appendChild(waiter);
   waiter.className = waiter.className.replace('hidden', 'shown');
   
-  // request the elevation profile
-  var XMLHttp = new XMLHttpRequest();
-
-  //GetProfileXHR.push(XMLHttp); // keep the request to allow aborting
-
-  XMLHttp.open("POST", server + "demrequest?size=small&color=" + color);
-  XMLHttp.onreadystatechange = function() {
-    if (XMLHttp.readyState == 4) {
-
+  var q = server + "demrequest?size=small&color=" + color;
+  
+  fetch(q, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': "application/x-www-form-urlencoded"
+    },
+    body: wkt
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.text();
+  })
+  .then(function(responseText) {
       var profileDiv = div;
       while (profileDiv.firstChild) {
         profileDiv.removeChild(profileDiv.firstChild);
@@ -1390,19 +1398,19 @@ function showRouteProfile(wkt, div, color) {
       profileDiv.appendChild(slider);
       
       var img = document.getElementById('elePic');
-      img.src = server + 'tmp/' + XMLHttp.responseText + '-ele.png';
+      img.src = server + 'tmp/' + responseText + '-ele.png';
       var img2 = document.getElementById('2dPic');
-      img2.src = server + 'tmp/' + XMLHttp.responseText + '-2d.png';
+      img2.src = server + 'tmp/' + responseText + '-2d.png';
       var img3 = document.getElementById('3dPic');
-      img3.src = server + 'tmp/' + XMLHttp.responseText + '-3d.png';
+      img3.src = server + 'tmp/' + responseText + '-3d.png';
       
-    }
-  };
-  XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  //XMLHttp.setRequestHeader("Content-length", wktroute.length);
-  //XMLHttp.setRequestHeader("Connection", "close");
-
-  XMLHttp.send(wkt);
+    })
+  .then(function (ok) {
+    return true
+  })
+  .catch(function(error) {
+    waiter.className = waiter.className.replace('hidden', 'shown');
+  });
   return true;
 }
 function getMembersById(id) {
