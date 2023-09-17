@@ -1413,6 +1413,85 @@ function showRouteProfile(wkt, div, color) {
   });
   return true;
 }
+function showElevationProfile(osm_id, wkt, div, color) {
+  
+  var parent;
+  var alreadyShown = div.getElementsByClassName('imgSlider');
+  if (alreadyShown.length > 0) { // hide existing profile and exit
+    while (alreadyShown.length > 0) {
+      parent = alreadyShown[alreadyShown.length - 1].parentNode;
+      parent.removeChild(alreadyShown[alreadyShown.length - 1]);
+    }
+    return true;
+  }
+
+  var waiter = document.getElementById('waiterProto').cloneNode(true);
+  div.appendChild(waiter);
+  waiter.className = waiter.className.replace('hidden', 'shown');
+  if (osm_id != "") {
+        var element = null;
+        for (p = 0; p < jsonPisteList["pistes"].length; p++) {
+          var ids = jsonPisteList["pistes"][p].ids.join('_').toString();
+          if (ids == osm_id) {
+            element = jsonPisteList["pistes"][p];
+            break;
+          }
+        }
+        if (!element) {
+          waiter.className = waiter.className.replace('shown', 'hidden');
+          return false;
+        }
+
+        //drawGeomAsRoute(element.geometry, 'piste');
+        wkt = encpolArray2WKT(element.geometry).geom;
+  }
+  var q = server + "demrequest?size=small&color=" + color;
+  
+  fetch(q, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': "application/x-www-form-urlencoded"
+    },
+    body: wkt
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("HTTP error, status = " + response.status);
+    }
+    return response.text();
+  })
+  .then(function(responseText) {
+      var profileDiv = div;
+      while (profileDiv.firstChild) {
+        profileDiv.removeChild(profileDiv.firstChild);
+      } //clear previous list
+      waiter.className = waiter.className.replace('shown', 'hidden');
+
+      cleardiv = document.getElementById('clearProto').cloneNode(true);
+      cleardiv.removeAttribute("id");
+      
+      slider = document.getElementById('imgSliderProto').cloneNode(true);
+      profileDiv.appendChild(cleardiv);
+      profileDiv.appendChild(slider);
+      
+      var img = document.getElementById('elePic');
+      img.src = server + 'tmp/' + responseText + '-ele.png';
+      var img2 = document.getElementById('2dPic');
+      img2.src = server + 'tmp/' + responseText + '-2d.png';
+      var img3 = document.getElementById('3dPic');
+      img3.src = server + 'tmp/' + responseText + '-3d.png';
+      
+    })
+  .then(function (ok) {
+    return true
+  })
+  .catch(function(error) {
+    waiter.className = waiter.className.replace('hidden', 'shown');
+  });
+  return true;
+}
+
 function getMembersById(id) {
   // only used for sites
   if (QUERYMODE) {
@@ -2663,7 +2742,7 @@ function showHTMLRoute(Div,routeLength, routeWKT) {
   
   
   showHTMLRouteList(Div);
-  showRouteProfile(routeWKT, ProfileDiv, 'black');
+  showElevationProfile("",routeWKT, ProfileDiv, 'black');
 }
 function addImgElement(picDiv, pisteType, pisteGrooming) {
 
@@ -3342,8 +3421,8 @@ function showHTMLPistesList(Div) {
               var resolution = map.getView().getResolution();
               map.getView().setCenter([center[0] - 105 * resolution, center[1]]);
               var profileDiv = this.parentNode.parentNode.getElementsByClassName("profile")[0];
-              showPisteProfile(this.parentNode.parentNode.getAttribute('osm_id'),
-                               'pistes',
+              showElevationProfile(this.parentNode.parentNode.getAttribute('osm_id'),
+                               "",
                                 profileDiv,
                                 this.parentNode.parentNode.getAttribute('element_color'));
       };
