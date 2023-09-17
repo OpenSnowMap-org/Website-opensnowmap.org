@@ -1417,7 +1417,7 @@ function showElevationProfile(osm_id, wkt, div, color) {
   
   var parent;
   var alreadyShown = div.getElementsByClassName('imgSlider');
-  if (alreadyShown.length > 0) { // hide existing profile and exit
+  if (alreadyShown.length > 0) { // clear existing profile and exit
     while (alreadyShown.length > 0) {
       parent = alreadyShown[alreadyShown.length - 1].parentNode;
       parent.removeChild(alreadyShown[alreadyShown.length - 1]);
@@ -1472,14 +1472,22 @@ function showElevationProfile(osm_id, wkt, div, color) {
       cleardiv.removeAttribute("id");
       
       slider = document.getElementById('imgSliderProto').cloneNode(true);
+      var d = new Date();
+      ms = d.getMilliseconds();
+      slider.getElementsByClassName("slideDiv1")[0].id = "slide1"+ms;
+      slider.getElementsByClassName("slideDiv2")[0].id = "slide2"+ms;
+      slider.getElementsByClassName("slideDiv3")[0].id = "slide3"+ms;
+      slider.getElementsByClassName("slideLink1")[0].href = "#slide1"+ms;
+      slider.getElementsByClassName("slideLink2")[0].href = "#slide2"+ms;
+      slider.getElementsByClassName("slideLink3")[0].href = "#slide3"+ms;
+      
       profileDiv.appendChild(cleardiv);
       profileDiv.appendChild(slider);
-      
-      var img = document.getElementById('elePic');
+      var img = slider.getElementsByClassName('elePic')[0];
       img.src = server + 'tmp/' + responseText + '-ele.png';
-      var img2 = document.getElementById('2dPic');
+      var img2 = slider.getElementsByClassName('2dPic')[0];
       img2.src = server + 'tmp/' + responseText + '-2d.png';
-      var img3 = document.getElementById('3dPic');
+      var img3 = slider.getElementsByClassName('3dPic')[0];
       img3.src = server + 'tmp/' + responseText + '-3d.png';
       
     })
