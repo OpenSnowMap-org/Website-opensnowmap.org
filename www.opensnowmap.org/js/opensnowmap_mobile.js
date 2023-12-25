@@ -4265,7 +4265,10 @@ function fillData(divID) {
   for (i = 0; i < elements.length; i++) {
     elements[i].innerHTML = data[elements[i].getAttribute('dataText')];
     if (elements[i].getAttribute('dataText') == 'date') {
-      elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0];
+		now= new Date();
+		updte= new Date(data.date);
+		hours= Math.round((updte-now)/ 3600000);
+      elements[i].innerHTML = data[elements[i].getAttribute('dataText')].split("T")[0]+" ("+hours+" H)";
     }
   }
   return true;
