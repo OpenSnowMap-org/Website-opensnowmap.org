@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /cgi/
 Allow: /
-Sitemap: http://www.opensnowmap.org/sitemap.txt
+Sitemap: https://www.opensnowmap.org/sitemap.txt

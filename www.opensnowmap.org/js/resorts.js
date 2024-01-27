@@ -1,7 +1,7 @@
 
 var PisteAPIXHR=[]; // to abort
 
-var server="http://"+window.location.host+"/";
+var server="https://"+window.location.host+"/";
 
 var icon = {
 "downhill":'pics/alpine.png',
