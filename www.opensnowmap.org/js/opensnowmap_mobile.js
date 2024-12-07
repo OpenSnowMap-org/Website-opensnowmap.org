@@ -4062,8 +4062,20 @@ function map_init() {
           operation: colorGamma
         });
   // IGN RGE Alti
-  var RGE_Alti = new ol.source.TileWMS({
-      url: 'https://wxs.ign.fr/altimetrie/geoportail/r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS',
+    var RGE_Alti= new ol.source.XYZ({
+              url: "https://data.geopf.fr/wmts?service=WMTS&format=image/png&version=1.0.0&request=GetTile&style=normal&tilematrixset=PM&tilematrix={z}&tilerow={y}&tilecol={x}&layer=IGNF_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW",
+              tileSize: 256,
+              tilePixelRatio: 1,
+              crossOrigin: 'anonymous'
+            });
+  var RGE_AltiGamma = new ol.source.Raster({
+          sources: [RGE_Alti],
+          operation: colorGamma3
+        });
+  /*var RGE_Alti = new ol.source.TileWMS({
+	  //https://data.geopf.fr/wmts?service=WMTS&format=image/png&version=1.0.0&request=GetTile&style=normal&tilematrixset=PM&tilematrix={z}&tilerow={y}&tilecol={x}&layer=IGNF_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW
+	  //url: 'https://data.geopf.fr/wms-r/wms?VERSION=1.3.0&REQUEST=GetMap&LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&SERVICE=WMS',
+      //url: 'https://wxs.ign.fr/altimetrie/geoportail/r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS',
       params: {'TILED': true,
         'STYLES':'estompage',
         'FORMAT':'image/png',
@@ -4072,6 +4084,23 @@ function map_init() {
         'FORMAT_OPTIONS':'dpi:96',
         'TRANSPARENT': 'TRUE'
         },
+    });*/
+  // IGN RGE Alti
+  var USGS = new ol.source.TileWMS({
+	  url: 'https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer',
+	  //url: 'https://elevation.nationalmap.gov:443/arcgis/services/3DEPElevation/ImageServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=3DEPElevation:Hillshade Multidirectional'
+	  //&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}'
+      //url: 'https://wxs.ign.fr/altimetrie/geoportail/r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS',
+      params: { 
+		  'TRANSPARENT': 'TRUE',
+		  'VERSION':'1.3.0',
+		  'FORMAT':'image/png',
+		  'VERSION':'1.3.0',
+		  'SERVICE':'WMS',
+		  'REQUEST':'GetMap',
+		  'LAYERS':'3DEPElevation:Hillshade Multidirectional'
+        },
+        crossOrigin: 'anonymous'
     });
     
   map = new ol.Map({
@@ -4162,9 +4191,9 @@ function map_init() {
         projection: 'EPSG:3857'
       }),
       
-      new ol.layer.Tile({
+      new ol.layer.Image({
         name: 'RGE_Alti',
-        source: RGE_Alti,
+        source: RGE_AltiGamma,
         maxZoom: 18,
         minZoom: 14,
         extent: [-592262.4570742709329352, 5059008.4086222220212221, 1075695.6952448242809623, 6642780.8442238969728351],
@@ -4397,3 +4426,33 @@ function colorGamma(pixels, data) {
     return pixel;
   } else {return (1,1,1,1);}
 }
+function colorGamma2(pixels, data) {
+  if(pixels[0][0]) {
+    pixel = pixels[0];
+    gamma = 1.8;
+    r = pixel[0] / 255.0;
+    g = pixel[1] / 255.0;
+    b = pixel[2] / 255.0;
+    pixel[0] = Math.pow(r,1/gamma) * 255;
+    pixel[1] = Math.pow(g,1/gamma) * 255;
+    pixel[2] = Math.pow(b,1/gamma) * 255;
+    pixel[3] = 255  - pixel[0];
+    return pixel;
+  } else {return (1,1,1,1);}
+}
+function colorGamma3(pixels, data) {
+  //~ if(pixels[0][0]) {
+    gamma = 0.5;
+    pixel = pixels[0];
+    value = pixel[0];
+    alpha = pixel[1];
+    pixel[0] = 0;
+    pixel[1] = 0;
+    pixel[2] = 0;
+    value = (255-value)/255;
+    pixel[3] = Math.floor(Math.pow( value,1/gamma) * 255);
+    pixel[3] *= 0.4; // opacity
+    return pixel;
+  //~ } else {return (0,0,0,100);}
+}
+
